@@ -37,6 +37,7 @@ struct XlsPivotField {
   std::string name;
   std::vector<XlsPivotItem> items;
   bool default_subtotal = true, multi = false;
+  uint16_t subtotals = 0;
   uint32_t numfmt = 0;
   uint8_t sort = 0;
 };
@@ -71,6 +72,8 @@ struct XlsPivotView {
   std::string name, data_name;
   std::vector<XlsPivotField> fields;
   std::vector<std::vector<uint16_t>> axes;  // SXIVD: row fields, then column fields
+  size_t axes_seen = 0, lines_seen = 0;
+  uint16_t n_line_row = 0, n_line_col = 0;
   std::vector<XlsPivotPage> pages;
   std::vector<XlsPivotDataField> data;
   std::vector<XlsPivotLine> lines[2];
@@ -141,6 +144,8 @@ inline void xls_pv_view(const std::vector<uint8_t>& r, XlsPivotView& v) {
   v.cache = static_cast<uint16_t>(xls_pv_u16(r, 14));
   v.n_row = static_cast<uint16_t>(xls_pv_u16(r, 24));
   v.n_col = static_cast<uint16_t>(xls_pv_u16(r, 26));
+  v.n_line_row = static_cast<uint16_t>(xls_pv_u16(r, 32));
+  v.n_line_col = static_cast<uint16_t>(xls_pv_u16(r, 34));
   v.grbit = static_cast<uint16_t>(xls_pv_u16(r, 36));
   size_t cch_table = xls_pv_u16(r, 40), cch_data = xls_pv_u16(r, 42);
   size_t pos = 44;
@@ -150,6 +155,8 @@ inline void xls_pv_view(const std::vector<uint8_t>& r, XlsPivotView& v) {
 
 inline void xls_pv_field(const std::vector<uint8_t>& r, XlsPivotField& f) {
   f.axis = static_cast<uint16_t>(xls_pv_u16(r, 0));
+  f.subtotals = static_cast<uint16_t>(xls_pv_u16(r, 4));
+  f.default_subtotal = (f.subtotals & 0x0001) != 0;
   size_t cch = xls_pv_u16(r, 8);
   size_t pos = 10;
   f.name = xls_pv_string(r, pos, cch);
@@ -288,6 +295,17 @@ inline std::string xls_pivot_cache_xml(const std::vector<uint8_t>& stream, const
       f.items += "<e v=\"" + xls_error(static_cast<uint8_t>(xls_pv_u16(r, 0))) + "\"/>";
       ++f.count;
       ++f.n_other;
+    } else if (id == XlsSXDtr) {
+      XlsPivotCacheField& f = fields.back();
+      char buf[32];
+      std::snprintf(buf, sizeof(buf), "%04u-%02u-%02uT%02u:%02u:%02u", xls_pv_u16(r, 0), xls_pv_u16(r, 2), static_cast<unsigned>(r.size() > 4 ? r[4] : 0),
+                    static_cast<unsigned>(r.size() > 5 ? r[5] : 0), static_cast<unsigned>(r.size() > 6 ? r[6] : 0), static_cast<unsigned>(r.size() > 7 ? r[7] : 0));
+      std::string date = buf;
+      if (f.n_date == 0 || date < f.min_date) f.min_date = date;
+      if (f.n_date == 0 || date > f.max_date) f.max_date = date;
+      f.items += "<d v=\"" + date + "\"/>";
+      ++f.count;
+      ++f.n_date;
     } else if (id == 0x00CF) {
       XlsPivotCacheField& f = fields.back();
       f.items += "<m/>";
@@ -351,6 +369,10 @@ inline std::string xls_pivot_view_xml(const XlsPivotView& v, int32_t cache_numbe
     if (f.sort == 1) out += " sortType=\"ascending\"";
     if (f.sort == 2) out += " sortType=\"descending\"";
     if (!f.default_subtotal) out += " defaultSubtotal=\"0\"";
+    static const char* const subtotal_attr[11] = {"sumSubtotal", "countASubtotal", "avgSubtotal", "maxSubtotal", "minSubtotal", "productSubtotal",
+                                                  "countSubtotal", "stdDevSubtotal", "stdDevPSubtotal", "varSubtotal", "varPSubtotal"};
+    for (size_t k = 0; k < 11; ++k)
+      if (f.subtotals & (0x0002u << k)) out += std::string(" ") + subtotal_attr[k] + "=\"1\"";
     if (f.items.empty() || (f.axis & 0x07) == 0) {
       out += "/>";
       continue;
@@ -401,7 +423,7 @@ inline std::string xls_pivot_view_xml(const XlsPivotView& v, int32_t cache_numbe
         if (l.data > 0) lines += " i=\"" + std::to_string(l.data) + "\"";
         lines += ">";
         for (uint32_t x : l.x) {
-          if (x == 0x001000FEu) continue;
+          if (x == 0x7FFFu || x == 0x001000FEu) continue;
           lines += "<x";
           if (x > 0) lines += " v=\"" + std::to_string(x) + "\"";
           lines += "/>";
@@ -493,7 +515,6 @@ inline std::string xls_pivot_view_xml(const XlsPivotView& v, int32_t cache_numbe
   }
 
   out += "<pivotTableStyleInfo name=\"" + escape_xml(v.style) + "\"";
-  if (v.style_flags & 0x01) out += " showFirstColumn=\"1\"";
   out += std::string(" showRowHeaders=\"") + ((v.style_flags & 0x10) ? "1" : "0") + "\"";
   out += std::string(" showColHeaders=\"") + ((v.style_flags & 0x20) ? "1" : "0") + "\"";
   out += std::string(" showRowStripes=\"") + ((v.style_flags & 0x04) ? "1" : "0") + "\"";

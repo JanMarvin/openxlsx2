@@ -129,18 +129,226 @@ inline std::string xls_dib_to_bmp(const std::string& dib) {
   return out + dib;
 }
 
+// Excel keeps the DrawingML of a shape in the file, as a zip archive in a property of the shape.
+// The archive is read here, the data of a file is stored or compressed with deflate (RFC 1951).
+struct XlsInflater {
+  const uint8_t* data;
+  size_t size;
+  size_t pos = 0;
+  uint32_t bit_buf = 0;
+  int bit_cnt = 0;
+  bool ok = true;
+  std::string out;
+
+  XlsInflater(const uint8_t* d, size_t n) : data(d), size(n) {}
+
+  uint32_t bits(int need) {
+    while (bit_cnt < need) {
+      if (pos >= size) {
+        ok = false;
+        return 0;
+      }
+      bit_buf |= static_cast<uint32_t>(data[pos++]) << bit_cnt;
+      bit_cnt += 8;
+    }
+    uint32_t v = bit_buf & ((1u << need) - 1u);
+    bit_buf >>= need;
+    bit_cnt -= need;
+    return v;
+  }
+
+  // codes of the same length are consecutive in the order of their symbols
+  struct Huffman {
+    uint16_t count[16];
+    uint16_t symbol[320];
+  };
+
+  static bool build(Huffman& h, const uint8_t* lengths, size_t n) {
+    std::fill(h.count, h.count + 16, static_cast<uint16_t>(0));
+    for (size_t i = 0; i < n; ++i) ++h.count[lengths[i]];
+    uint16_t offset[16];
+    offset[1] = 0;
+    for (int len = 1; len < 15; ++len) offset[len + 1] = static_cast<uint16_t>(offset[len] + h.count[len]);
+    for (size_t i = 0; i < n; ++i)
+      if (lengths[i] != 0) h.symbol[offset[lengths[i]]++] = static_cast<uint16_t>(i);
+    return true;
+  }
+
+  int decode(const Huffman& h) {
+    int code = 0, first = 0, index = 0;
+    for (int len = 1; len < 16; ++len) {
+      code |= static_cast<int>(bits(1));
+      if (!ok) return -1;
+      int cnt = h.count[len];
+      if (code - cnt < first) return h.symbol[index + (code - first)];
+      index += cnt;
+      first += cnt;
+      first <<= 1;
+      code <<= 1;
+    }
+    ok = false;
+    return -1;
+  }
+
+  bool codes(const Huffman& lit, const Huffman& dist) {
+    static const uint16_t len_base[29] = {3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31, 35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258};
+    static const uint8_t len_extra[29] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0};
+    static const uint16_t dist_base[30] = {1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193, 257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145, 8193, 12289, 16385, 24577};
+    static const uint8_t dist_extra[30] = {0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13};
+    while (true) {
+      int sym = decode(lit);
+      if (!ok || sym < 0) return false;
+      if (sym < 256) {
+        out.push_back(static_cast<char>(sym));
+      } else if (sym == 256) {
+        return true;
+      } else {
+        sym -= 257;
+        if (sym >= 29) return false;
+        size_t len = len_base[sym] + bits(len_extra[sym]);
+        int ds = decode(dist);
+        if (!ok || ds < 0 || ds >= 30) return false;
+        size_t distance = dist_base[ds] + bits(dist_extra[ds]);
+        if (!ok || distance > out.size()) return false;
+        for (size_t i = 0; i < len; ++i) out.push_back(out[out.size() - distance]);
+      }
+      if (out.size() > (1u << 26)) return false;
+    }
+  }
+
+  bool run() {
+    bool last = false;
+    while (!last) {
+      last = bits(1) != 0;
+      uint32_t type = bits(2);
+      if (!ok) return false;
+      if (type == 0) {
+        bit_buf = 0;
+        bit_cnt = 0;
+        if (pos + 4 > size) return false;
+        size_t len = data[pos] | (data[pos + 1] << 8);
+        pos += 4;
+        if (pos + len > size) return false;
+        out.append(reinterpret_cast<const char*>(data + pos), len);
+        pos += len;
+      } else if (type == 1) {
+        uint8_t l[288];
+        for (int i = 0; i < 144; ++i) l[i] = 8;
+        for (int i = 144; i < 256; ++i) l[i] = 9;
+        for (int i = 256; i < 280; ++i) l[i] = 7;
+        for (int i = 280; i < 288; ++i) l[i] = 8;
+        Huffman lit, dist;
+        build(lit, l, 288);
+        uint8_t d[30];
+        for (int i = 0; i < 30; ++i) d[i] = 5;
+        build(dist, d, 30);
+        if (!codes(lit, dist)) return false;
+      } else if (type == 2) {
+        size_t nlen = bits(5) + 257, ndist = bits(5) + 1, ncode = bits(4) + 4;
+        if (!ok || nlen > 286 || ndist > 30) return false;
+        static const uint8_t order[19] = {16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15};
+        uint8_t l[320];
+        std::fill(l, l + 320, static_cast<uint8_t>(0));
+        for (size_t i = 0; i < ncode; ++i) l[order[i]] = static_cast<uint8_t>(bits(3));
+        if (!ok) return false;
+        Huffman lencode;
+        build(lencode, l, 19);
+        uint8_t all[320];
+        std::fill(all, all + 320, static_cast<uint8_t>(0));
+        size_t idx = 0;
+        while (idx < nlen + ndist) {
+          int sym = decode(lencode);
+          if (!ok || sym < 0) return false;
+          if (sym < 16) {
+            all[idx++] = static_cast<uint8_t>(sym);
+          } else {
+            uint8_t prev = 0;
+            size_t rep = 0;
+            if (sym == 16) {
+              if (idx == 0) return false;
+              prev = all[idx - 1];
+              rep = 3 + bits(2);
+            } else if (sym == 17) {
+              rep = 3 + bits(3);
+            } else {
+              rep = 11 + bits(7);
+            }
+            if (!ok || idx + rep > nlen + ndist) return false;
+            while (rep-- > 0) all[idx++] = prev;
+          }
+        }
+        Huffman lit, dist;
+        build(lit, all, nlen);
+        build(dist, all + nlen, ndist);
+        if (!codes(lit, dist)) return false;
+      } else {
+        return false;
+      }
+    }
+    return ok;
+  }
+};
+
+// the content of a file in a zip archive, empty if it is not found or not readable
+inline std::string xls_zip_entry(const std::string& zip, const std::string& name) {
+  if (zip.size() < 22) return std::string();
+  size_t eocd = std::string::npos;
+  for (size_t i = zip.size() - 22 + 1; i-- > 0;) {
+    if (zip.compare(i, 4, "PK\x05\x06", 4) == 0) {
+      eocd = i;
+      break;
+    }
+  }
+  if (eocd == std::string::npos) return std::string();
+  size_t n_entries = xls_esc_u16(zip, eocd + 10);
+  size_t at = xls_esc_u32(zip, eocd + 16);
+  for (size_t k = 0; k < n_entries && at + 46 <= zip.size(); ++k) {
+    if (zip.compare(at, 4, "PK\x01\x02", 4) != 0) break;
+    uint32_t method = xls_esc_u16(zip, at + 10);
+    size_t csize = xls_esc_u32(zip, at + 20);
+    size_t nlen = xls_esc_u16(zip, at + 28), elen = xls_esc_u16(zip, at + 30), clen = xls_esc_u16(zip, at + 32);
+    size_t local = xls_esc_u32(zip, at + 42);
+    if (at + 46 + nlen > zip.size()) break;
+    if (zip.compare(at + 46, nlen, name) == 0 && local + 30 <= zip.size()) {
+      size_t start = local + 30 + xls_esc_u16(zip, local + 26) + xls_esc_u16(zip, local + 28);
+      if (start + csize > zip.size()) return std::string();
+      if (method == 0) return zip.substr(start, csize);
+      if (method == 8) {
+        XlsInflater inf(reinterpret_cast<const uint8_t*>(zip.data()) + start, csize);
+        if (inf.run()) return inf.out;
+      }
+      return std::string();
+    }
+    at += 46 + nlen + elen + clen;
+  }
+  return std::string();
+}
+
 // A shape of a sheet, together with the position
 struct XlsShape {
   bool group = false;
+  bool patriarch = false;  // the group of the sheet, it has no object
+  bool flip_h = false, flip_v = false;
   uint16_t shape_type = 0;
   uint32_t spid = 0;
   uint32_t blip = 0;  // number of the picture, counting from 1
   std::string fill, line;  // colors as RRGGBB, empty if not set
   uint32_t line_width = 0;  // EMU, 0 if not set
+  int fill_on = -1, line_on = -1;  // -1 if not set
+  uint32_t fill_alpha = 0;  // 1/1000 of a percent, 0 if not set
+  uint32_t line_dash = 0, arrow_start = 0, arrow_end = 0, connector_style = 0;
+  int32_t rotation = 0;  // 1/65536 degree
+  std::string shape_xml;  // the shape as DrawingML, kept by Excel
   bool has_anchor = false;
   // anchor: column, offset in 1/1024 of the cell, row, offset in 1/256 of the cell
   uint16_t col1 = 0, dx1 = 0, row1 = 0, dy1 = 0, col2 = 0, dx2 = 0, row2 = 0, dy2 = 0;
+  bool has_child_anchor = false;
+  int32_t child[4] = {0, 0, 0, 0};   // left, top, right, bottom in the coordinates of the group
+  bool has_bounds = false;
+  int32_t bounds[4] = {0, 0, 0, 0};  // coordinates the children of a group use
 };
+
+inline int32_t xls_esc_i32(const std::string& d, size_t at) { return static_cast<int32_t>(xls_esc_u32(d, at)); }
 
 inline std::vector<XlsShape> xls_shapes(const std::string& dg) {
   std::vector<XlsShape> shapes;
@@ -154,14 +362,40 @@ inline std::vector<XlsShape> xls_shapes(const std::string& dg) {
     if (r.type == 0xF00A && r.len >= 8) {
       s.shape_type = r.inst;
       s.spid = xls_esc_u32(dg, r.body);
-      s.group = (xls_esc_u32(dg, r.body + 4) & 0x01u) != 0;
-    } else if (r.type == 0xF00B) {
+      uint32_t flags = xls_esc_u32(dg, r.body + 4);
+      s.group = (flags & 0x01u) != 0;
+      s.patriarch = (flags & 0x04u) != 0;
+      s.flip_h = (flags & 0x40u) != 0;
+      s.flip_v = (flags & 0x80u) != 0;
+    } else if (r.type == 0xF009 && r.len >= 16) {
+      s.has_bounds = true;
+      for (size_t k = 0; k < 4; ++k) s.bounds[k] = xls_esc_i32(dg, r.body + 4 * k);
+    } else if (r.type == 0xF00F && r.len >= 16) {
+      s.has_child_anchor = true;
+      for (size_t k = 0; k < 4; ++k) s.child[k] = xls_esc_i32(dg, r.body + 4 * k);
+    } else if (r.type == 0xF00B || r.type == 0xF121 || r.type == 0xF122) {
       // properties: id (14 bits, then a flag for a picture and one for data after the table) and a value
+      size_t complex_at = r.body + static_cast<size_t>(r.inst) * 6;
       for (size_t i = 0; i < r.inst && (i + 1) * 6 <= r.len; ++i) {
         uint32_t id = xls_esc_u16(dg, r.body + i * 6);
         uint32_t val = xls_esc_u32(dg, r.body + i * 6 + 2);
         uint32_t pid = id & 0x3FFFu;
-        if (pid == 0x0104 && !(id & 0x8000u)) s.blip = val;
+        if (id & 0x8000u) {
+          // the data follows the table, one after the other
+          if (pid == 0x03A9 && complex_at + val <= r.body + r.len) {
+            std::string x = xls_zip_entry(dg.substr(complex_at, val), "drs/shapexml.xml");
+            size_t from = x.find("<xdr:anchor");
+            size_t to = x.rfind("</xdr:anchor>");
+            if (from != std::string::npos && to != std::string::npos) {
+              from = x.find('>', from);
+              if (from != std::string::npos && from + 1 < to) s.shape_xml = x.substr(from + 1, to - from - 1);
+            }
+          }
+          complex_at += val;
+          continue;
+        }
+        if (r.type != 0xF00B) continue;
+        if (pid == 0x0104) s.blip = val;
         // colors: red, green, blue and flags. Scheme and system colors are indexes.
         auto color = [&](uint32_t v) {
           if (v & 0x18000000u) return std::string();
@@ -174,9 +408,17 @@ inline std::vector<XlsShape> xls_shapes(const std::string& dg) {
           }
           return c;
         };
+        if (pid == 0x0004) s.rotation = static_cast<int32_t>(val);
         if (pid == 0x0181) s.fill = color(val);
+        if (pid == 0x0182) s.fill_alpha = static_cast<uint32_t>(static_cast<double>(val) / 65536.0 * 100000.0);
+        if (pid == 0x01BF) s.fill_on = (val & 0x00100000u) ? ((val & 0x10u) ? 1 : 0) : -1;
         if (pid == 0x01C0) s.line = color(val);
         if (pid == 0x01CB) s.line_width = val;
+        if (pid == 0x01CE) s.line_dash = val;
+        if (pid == 0x01D0) s.arrow_start = val;
+        if (pid == 0x01D1) s.arrow_end = val;
+        if (pid == 0x01FF) s.line_on = (val & 0x00080000u) ? ((val & 0x08u) ? 1 : 0) : -1;
+        if (pid == 0x0303) s.connector_style = val;
       }
     } else if (r.type == 0xF010 && r.len >= 18) {
       s.has_anchor = true;
@@ -193,64 +435,54 @@ inline std::vector<XlsShape> xls_shapes(const std::string& dg) {
   return shapes;
 }
 
-// preset geometry of DrawingML for the shape types of Office 97 (msosptXXX)
+// preset geometry of DrawingML for the shape types of Office (msosptXXX)
 inline std::string xls_preset_geometry(uint16_t type) {
+  static const char* const names[] = {
+      "rect", "rect", "roundRect", "ellipse", "diamond", "triangle", "rtTriangle", "parallelogram", "trapezoid", "hexagon",  // 0 - 9
+      "octagon", "plus", "star5", "rightArrow", "rightArrow", "homePlate", "cube", "wedgeRoundRectCallout", "star16", "arc",  // 10 - 19
+      "line", "plaque", "can", "donut", "rect", "rect", "rect", "rect", "rect", "rect",  // 20 - 29
+      "rect", "rect", "straightConnector1", "bentConnector2", "bentConnector3", "bentConnector4", "bentConnector5",
+      "curvedConnector2", "curvedConnector3", "curvedConnector4",  // 30 - 39
+      "curvedConnector5", "callout1", "callout2", "callout3", "accentCallout1", "accentCallout2", "accentCallout3",
+      "borderCallout1", "borderCallout2", "borderCallout3",  // 40 - 49
+      "accentBorderCallout1", "accentBorderCallout2", "accentBorderCallout3", "ribbon2", "ribbon", "chevron", "pentagon",
+      "noSmoking", "star8", "star16",  // 50 - 59
+      "star32", "wedgeRectCallout", "wedgeRoundRectCallout", "wedgeEllipseCallout", "wave", "foldedCorner", "leftArrow",
+      "downArrow", "upArrow", "leftRightArrow",  // 60 - 69
+      "upDownArrow", "irregularSeal1", "irregularSeal2", "lightningBolt", "heart", "frame", "quadArrow", "leftArrowCallout",
+      "rightArrowCallout", "upArrowCallout",  // 70 - 79
+      "downArrowCallout", "leftRightArrowCallout", "upDownArrowCallout", "quadArrowCallout", "bevel", "leftBracket",
+      "rightBracket", "leftBrace", "rightBrace", "leftUpArrow",  // 80 - 89
+      "bentUpArrow", "bentArrow", "star24", "stripedRightArrow", "notchedRightArrow", "blockArc", "smileyFace",
+      "verticalScroll", "horizontalScroll", "circularArrow",  // 90 - 99
+      "rect", "uturnArrow", "curvedRightArrow", "curvedLeftArrow", "curvedUpArrow", "curvedDownArrow", "cloudCallout",
+      "ellipseRibbon2", "ellipseRibbon", "flowChartProcess",  // 100 - 109
+      "flowChartDecision", "flowChartInputOutput", "flowChartPredefinedProcess", "flowChartInternalStorage", "flowChartDocument",
+      "flowChartMultidocument", "flowChartTerminator", "flowChartPreparation", "flowChartManualInput", "flowChartManualOperation",  // 110 - 119
+      "flowChartConnector", "flowChartPunchedCard", "flowChartPunchedTape", "flowChartSummingJunction", "flowChartOr",
+      "flowChartCollate", "flowChartSort", "flowChartExtract", "flowChartMerge", "flowChartOfflineStorage",  // 120 - 129
+      "flowChartOnlineStorage", "flowChartMagneticTape", "flowChartMagneticDisk", "flowChartMagneticDrum", "flowChartDisplay",
+      "flowChartDelay"};  // 130 - 135
+  if (type < sizeof(names) / sizeof(names[0])) return names[type];
   switch (type) {
-    case 1: return "rect";
-    case 2: return "roundRect";
-    case 3: return "ellipse";
-    case 4: return "diamond";
-    case 5: return "triangle";
-    case 6: return "rtTriangle";
-    case 7: return "parallelogram";
-    case 8: return "trapezoid";
-    case 9: return "hexagon";
-    case 10: return "octagon";
-    case 11: return "plus";
-    case 12: return "star5";
-    case 13: return "rightArrow";
-    case 15: return "homePlate";
-    case 16: return "cube";
-    case 20: return "line";
-    case 21: return "plaque";
-    case 22: return "can";
-    case 23: return "donut";
-    case 56: return "pentagon";
-    case 55: return "chevron";
-    case 63: return "star8";
-    case 67: return "star16";
-    case 66: return "star24";
-    case 68: return "star32";
-    case 71: return "wedgeRectCallout";
-    case 72: return "wedgeRoundRectCallout";
-    case 74: return "rect";
-    case 84: return "leftArrow";
-    case 85: return "upArrow";
-    case 86: return "downArrow";
-    case 87: return "leftRightArrow";
-    case 88: return "upDownArrow";
-    case 89: return "bentArrow";
-    case 91: return "curvedRightArrow";
-    case 92: return "stripedRightArrow";
-    case 93: return "notchedRightArrow";
-    case 94: return "bevel";
-    case 95: return "foldedCorner";
-    case 96: return "smileyFace";
-    case 97: return "noSmoking";
-    case 98: return "flowChartProcess";
-    case 119: return "flowChartTerminator";
-    case 120: return "flowChartDecision";
-    case 121: return "flowChartInputOutput";
     case 183: return "sun";
     case 184: return "moon";
     case 185: return "bracketPair";
     case 186: return "bracePair";
     case 187: return "star4";
     case 188: return "doubleWave";
-    case 189: return "blockArc";
-    case 190: return "heart";
-    case 191: return "lightningBolt";
-    case 192: return "star6";
+    case 189: return "actionButtonBlank";
+    case 190: return "actionButtonHome";
+    case 191: return "actionButtonHelp";
+    case 192: return "actionButtonInformation";
+    case 193: return "actionButtonForwardNext";
+    case 194: return "actionButtonBackPrevious";
+    case 195: return "actionButtonEnd";
+    case 196: return "actionButtonBeginning";
+    case 197: return "actionButtonReturn";
+    case 198: return "actionButtonDocument";
+    case 199: return "actionButtonSound";
+    case 200: return "actionButtonMovie";
     default: return "rect";
   }
 }

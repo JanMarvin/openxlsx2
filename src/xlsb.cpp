@@ -4874,6 +4874,7 @@ int32_t pivottable_bin(std::string filePath, std::string outPath, bool debug) {
         XlsPivotField f;
         f.axis = static_cast<uint16_t>(xls_pv_u32(d, 0) & 0x0F);
         f.default_subtotal = d.size() > 1 && (d[1] & 0x01) != 0;
+        f.subtotals = static_cast<uint16_t>((xls_pv_u32(d, 0) >> 8) & 0x0FFFu);
         f.numfmt = xls_pv_u32(d, 4);
         f.multi = d.size() > 10 && (d[10] & 0x08) != 0;
         f.sort = d.size() > 9 ? static_cast<uint8_t>((d[9] & 0x30) == 0x30 ? 1 : ((d[9] & 0x30) == 0x10 ? 2 : 0)) : static_cast<uint8_t>(0);
@@ -4931,7 +4932,9 @@ int32_t pivottable_bin(std::string filePath, std::string outPath, bool debug) {
 
       case BrtBeginISXVIs:
         if (line_axis >= 0 && !v.lines[line_axis].empty()) {
-          for (size_t k = 0; k + 4 <= d.size(); k += 4) v.lines[line_axis].back().x.push_back(xls_pv_u32(d, k));
+          // the entries of the previous line that are repeated come first
+          XlsPivotLine& l = v.lines[line_axis].back();
+          for (size_t k = 4 * static_cast<size_t>(l.reuse); k + 4 <= d.size(); k += 4) l.x.push_back(xls_pv_u32(d, k));
         }
         break;
 

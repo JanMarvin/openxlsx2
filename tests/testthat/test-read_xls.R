@@ -569,6 +569,14 @@ test_that("xls files created from the xls_cov2 workbooks are imported", {
   wb <- wb_load(testfile_path("xls_cov2_pivots.xls"))
   expect_equal(wb$get_sheet_names(escape = TRUE)[1:3], c("src", "functions", "functions2"), ignore_attr = TRUE)
   expect_true(length(wb$pivotTables) >= 20)
+  expect_true(any(grepl("defaultSubtotal=\"0\"", wb$pivotTables, fixed = TRUE)))
+  # a table with column fields only has no row fields
+  expect_true(any(grepl("<colFields", wb$pivotTables, fixed = TRUE) & !grepl("<rowFields", wb$pivotTables, fixed = TRUE)))
+  # the lines of the table match the area of the table
+  expect_true(any(grepl("<rowItems count=\"11\">", wb$pivotTables, fixed = TRUE)))
+  # data fields on the axis are numbered, dates of the cache are kept
+  expect_true(any(grepl("<i i=\"3\">", wb$pivotTables, fixed = TRUE)))
+  expect_true(any(grepl("<d v=\"2024-01-01T00:00:00\"/>", wb$pivotDefinitions, fixed = TRUE)))
   tmp <- tempfile(fileext = ".xlsx")
   wb$save(tmp)
   expect_equal(length(wb_load(tmp)$pivotTables), length(wb$pivotTables))
@@ -588,4 +596,8 @@ test_that("xls files created from the xls_cov2 workbooks are imported", {
   wb <- wb_load(testfile_path("xls_cov2_shapes.xls"))
   expect_equal(wb$get_sheet_names(escape = TRUE), c("shapes", "textboxes", "connectors"), ignore_attr = TRUE)
   expect_true(sum(lengths(regmatches(wb$drawings, gregexpr("<xdr:sp[ >]", wb$drawings)))) > 70)
+  expect_equal(sum(lengths(regmatches(wb$drawings, gregexpr("<xdr:cxnSp", wb$drawings)))), 6L)
+  expect_equal(sum(lengths(regmatches(wb$drawings, gregexpr("<xdr:grpSp>", wb$drawings)))), 6L)
+  expect_true(any(grepl("plain text box", wb$drawings, fixed = TRUE)))
+  expect_true(any(grepl("<a:prstDash val=\"sysDot\"/>", wb$drawings, fixed = TRUE)))
 })

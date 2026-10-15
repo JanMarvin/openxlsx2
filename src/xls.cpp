@@ -1727,9 +1727,15 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
       std::string chart_xml;
       bool chart_done = false;
       bool autoshape = false;
+      bool group = false, child = false;
+      std::vector<size_t> kids;  // the shapes of a group
       uint32_t blip = 0;
       XlsShape shape;
+      uint16_t text_opts = 0;
+      std::u16string text;
+      std::vector<std::pair<uint16_t, uint16_t> > runs;  // start of the run and font
     };
+    int last_item = -1, current_group = -1;
     std::vector<XlsShape> pending_shapes;
     std::vector<DrawingItem> items;
     std::vector<XlsChartRecord> chart_recs;
@@ -2298,6 +2304,7 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
           case XlsSxvd:
           case XlsSXVI:
           case XlsSxIvd:
+          case XlsSXLI:
           case XlsSXPI:
           case XlsSXDI:
           case XlsSXAddl:
@@ -3006,7 +3013,7 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
           }
           std::vector<XlsShape> shapes = xls_shapes(dg);
           for (size_t i = 0; i < shapes.size(); ++i)
-            if (!shapes[i].group) pending_shapes.push_back(shapes[i]);
+            if (!shapes[i].patriarch) pending_shapes.push_back(shapes[i]);
           break;
         }
 
@@ -3015,6 +3022,7 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
           std::vector<uint8_t> rec(rsize);
           bin.read(reinterpret_cast<char*>(rec.data()), rsize);
           last_note_object = -1;
+          last_item = -1;
           if (rsize >= 8 && rec[0] == 0x15 && rec[1] == 0x00) {
             uint16_t type = static_cast<uint16_t>(rec[4] | (rec[5] << 8));
             uint16_t id = static_cast<uint16_t>(rec[6] | (rec[7] << 8));
@@ -3025,13 +3033,20 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
               XlsShape shape = pending_shapes.front();
               pending_shapes.erase(pending_shapes.begin());
               if (type == 0x19 && shape.has_anchor) note_shapes[id] = shape;
+              bool is_group = type == 0x00;
               bool is_shape = type == 0x01 || type == 0x02 || type == 0x03 || type == 0x04 || type == 0x06 || type == 0x09 || type == 0x1E;
-              if (shape.has_anchor && ((type == 0x08 && shape.blip > 0) || type == 0x05 || is_shape)) {
+              bool in_group = shape.has_child_anchor && !shape.has_anchor && current_group >= 0;
+              if ((shape.has_anchor || in_group) && ((type == 0x08 && shape.blip > 0) || type == 0x05 || is_shape || is_group)) {
                 DrawingItem item;
                 item.chart = type == 0x05;
                 item.autoshape = is_shape;
+                item.group = is_group;
+                item.child = in_group;
                 item.blip = shape.blip;
                 item.shape = shape;
+                if (in_group) items[static_cast<size_t>(current_group)].kids.push_back(items.size());
+                else current_group = is_group ? static_cast<int>(items.size()) : -1;
+                last_item = static_cast<int>(items.size());
                 items.push_back(item);
               }
             }
@@ -3059,7 +3074,7 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
           }
           std::vector<XlsShape> shapes = xls_shapes(dg);
           for (size_t i = 0; i < shapes.size(); ++i)
-            if (!shapes[i].group) pending_shapes.push_back(shapes[i]);
+            if (!shapes[i].patriarch) pending_shapes.push_back(shapes[i]);
           break;
         }
 
@@ -3067,20 +3082,26 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
           // options, rotation, 6 bytes we do not use, length of the text, length
           // of the formatting. The text is in the CONTINUE record that follows, then
           // the formatting: a run of 8 bytes for every change of the font.
-          uint16_t cch = 0, cb_runs = 0;
-          bin.seekg(10, std::ios_base::cur);
+          uint16_t cch = 0, cb_runs = 0, topts = 0;
+          topts = readbin(topts, bin, swapit);
+          bin.seekg(8, std::ios_base::cur);
           cch = readbin(cch, bin, swapit);
           cb_runs = readbin(cb_runs, bin, swapit);
 
-          if (last_note_object >= 0 && cch > 0) {
+          if ((last_note_object >= 0 || last_item >= 0) && cch > 0) {
             bin.seekg(next, std::ios_base::beg);
             uint16_t crid = 0, crsize = 0;
-            if (!XLS_RECORD(crid, crsize, bin, swapit) || crid != XlsContinue) Rcpp::stop("xls: text of a comment is missing");
+            if (!XLS_RECORD(crid, crsize, bin, swapit) || crid != XlsContinue) {
+              if (last_note_object >= 0) Rcpp::stop("xls: text of a comment is missing");
+              last_item = -1;
+              break;
+            }
             std::streampos text_end = bin.tellg() + std::streamoff(crsize);
             uint8_t flags = 0;
             flags = readbin(flags, bin, swapit);
             uint16_t note_id = static_cast<uint16_t>(last_note_object);
-            note_text[note_id] = xls_chars(bin, swapit, cch, (flags & 0x01) != 0, text_end);
+            std::u16string chars = xls_chars(bin, swapit, cch, (flags & 0x01) != 0, text_end);
+            std::vector<std::pair<uint16_t, uint16_t> > run_list;
 
             bin.seekg(text_end, std::ios_base::beg);
             if (cb_runs >= 8 && XLS_RECORD(crid, crsize, bin, swapit) && crid == XlsContinue) {
@@ -3090,11 +3111,21 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
                 ich = readbin(ich, bin, swapit);
                 ifnt = readbin(ifnt, bin, swapit);
                 reserved = readbin(reserved, bin, swapit);
-                note_runs[note_id].push_back(std::make_pair(ich, ifnt));
+                run_list.push_back(std::make_pair(ich, ifnt));
               }
+            }
+            if (last_note_object >= 0) {
+              note_text[note_id] = chars;
+              note_runs[note_id] = run_list;
+            } else {
+              DrawingItem& di = items[static_cast<size_t>(last_item)];
+              di.text = chars;
+              di.runs = run_list;
+              di.text_opts = topts;
             }
           }
           last_note_object = -1;
+          last_item = -1;
           break;
         }
 
@@ -3344,7 +3375,34 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
           if (pv_views.empty()) break;
           std::vector<uint16_t> axis;
           for (size_t i = 0; i + 2 <= rec.size(); i += 2) axis.push_back(static_cast<uint16_t>(xls_pv_u16(rec, i)));
-          pv_views.back().axes.push_back(axis);
+          // a view without row fields has no record for them
+          XlsPivotView& pv = pv_views.back();
+          pv.axes.resize(2);
+          size_t slot = (pv.n_row > 0 && pv.axes_seen == 0) ? 0 : 1;
+          pv.axes[slot] = axis;
+          ++pv.axes_seen;
+          break;
+        }
+
+        case XlsSXLI: {
+          // the lines of the table: for rows if the view has any, then for columns
+          std::vector<uint8_t> rec(rsize);
+          bin.read(reinterpret_cast<char*>(rec.data()), rsize);
+          if (pv_views.empty()) break;
+          XlsPivotView& pv = pv_views.back();
+          size_t slot = (pv.n_line_row > 0 && pv.lines_seen == 0) ? 0 : 1;
+          ++pv.lines_seen;
+          size_t n_x = slot < pv.axes.size() ? pv.axes[slot].size() : 0;
+          size_t width = 8 + 2 * n_x;
+          for (size_t at = 0; n_x > 0 && at + width <= rec.size(); at += width) {
+            XlsPivotLine l;
+            l.reuse = static_cast<uint16_t>(xls_pv_u16(rec, at));
+            l.type = static_cast<uint8_t>(xls_pv_u16(rec, at + 2) & 0x1F);
+            size_t n = xls_pv_u16(rec, at + 4);
+            l.data = (xls_pv_u16(rec, at + 6) & 0xFF) >> 1;
+            for (size_t k = l.reuse; k < n && k < n_x; ++k) l.x.push_back(xls_pv_u16(rec, at + 8 + 2 * k));
+            pv.lines[slot].push_back(l);
+          }
           break;
         }
 
@@ -3722,9 +3780,181 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
          << "xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\" "
          << "xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\">" << std::endl;
       size_t shape_no = 1;
+
+      auto emu_of = [](double v) { return static_cast<long long>(std::floor(v)); };
+      auto anchor_xml = [&](const XlsShape& sh) {
+        std::ostringstream a;
+        a << "<xdr:twoCellAnchor><xdr:from><xdr:col>" << sh.col1 << "</xdr:col><xdr:colOff>" << emu_of(sh.dx1 / 1024.0 * col_emu(sh.col1))
+          << "</xdr:colOff><xdr:row>" << sh.row1 << "</xdr:row><xdr:rowOff>" << emu_of(sh.dy1 / 256.0 * row_emu(sh.row1))
+          << "</xdr:rowOff></xdr:from><xdr:to><xdr:col>" << sh.col2 << "</xdr:col><xdr:colOff>" << emu_of(sh.dx2 / 1024.0 * col_emu(sh.col2))
+          << "</xdr:colOff><xdr:row>" << sh.row2 << "</xdr:row><xdr:rowOff>" << emu_of(sh.dy2 / 256.0 * row_emu(sh.row2))
+          << "</xdr:rowOff></xdr:to>";
+        return a.str();
+      };
+      // distance of a point in a cell from the first cell, in EMU
+      auto abs_x = [&](uint16_t c, uint16_t d) {
+        double x = 0.0;
+        for (uint16_t k = 0; k < c; ++k) x += col_emu(k);
+        return x + d / 1024.0 * col_emu(c);
+      };
+      auto abs_y = [&](uint16_t r, uint16_t d) {
+        double y = 0.0;
+        for (uint16_t k = 0; k < r; ++k) y += row_emu(k);
+        return y + d / 256.0 * row_emu(r);
+      };
+
+      // the text of a shape
+      auto text_body = [&](const DrawingItem& it) {
+        if (it.text.empty()) return std::string();
+        static const char* const horizontal[] = {"", "l", "ctr", "r", "just", "", "", "dist"};
+        static const char* const vertical[] = {"", "t", "ctr", "b", "just", "", "", "dist"};
+        unsigned h = (it.text_opts >> 1) & 0x07, v = (it.text_opts >> 4) & 0x07;
+        std::string body = "<xdr:txBody><a:bodyPr";
+        if (vertical[v][0] != '\0') body += std::string(" anchor=\"") + vertical[v] + "\"";
+        body += "/><a:lstStyle/>";
+        auto run_props = [&](size_t font_id) {
+          if (font_id > 4) --font_id;
+          if (font_id >= note_fonts.size()) return std::string("<a:rPr lang=\"en-US\"/>");
+          const XlsFontInfo& f = note_fonts[font_id];
+          std::string rp = "<a:rPr lang=\"en-US\" sz=\"" + std::to_string(static_cast<int>(f.dyHeight) * 5) + "\"";
+          if (f.bls >= 700) rp += " b=\"1\"";
+          if (f.grbit & 0x0002) rp += " i=\"1\"";
+          if (f.grbit & 0x0008) rp += " strike=\"sngStrike\"";
+          if (f.uls == 0x01 || f.uls == 0x21) rp += " u=\"sng\"";
+          if (f.uls == 0x02 || f.uls == 0x22) rp += " u=\"dbl\"";
+          rp += ">";
+          if (f.icv != 0x7FFF && f.icv != 64) rp += "<a:solidFill><a:srgbClr val=\"" + xls_argb(note_palette, f.icv).substr(2) + "\"/></a:solidFill>";
+          if (!f.name.empty()) rp += "<a:latin typeface=\"" + escape_xml(f.name) + "\"/>";
+          return rp + "</a:rPr>";
+        };
+        // runs: the first character and the font. The last run only marks the end of the text
+        std::vector<std::pair<uint16_t, uint16_t> > runs = it.runs;
+        if (runs.size() < 2) {
+          runs.clear();
+          runs.push_back(std::make_pair(static_cast<uint16_t>(0), static_cast<uint16_t>(0)));
+          runs.push_back(std::make_pair(static_cast<uint16_t>(it.text.size()), static_cast<uint16_t>(0)));
+        }
+        std::string para = "<a:p>";
+        if (horizontal[h][0] != '\0') para += std::string("<a:pPr algn=\"") + horizontal[h] + "\"/>";
+        for (size_t k = 0; k + 1 < runs.size(); ++k) {
+          size_t from = std::min<size_t>(runs[k].first, it.text.size());
+          size_t to = k + 2 == runs.size() ? it.text.size() : std::min<size_t>(runs[k + 1].first, it.text.size());
+          size_t start = from;
+          for (size_t p = from; p <= to; ++p) {
+            bool end_of_line = p == to || it.text[p] == u'\n' || it.text[p] == u'\r';
+            if (!end_of_line) continue;
+            if (p > start) {
+              para += "<a:r>" + run_props(runs[k].second) + "<a:t>" + escape_xml(to_utf8(it.text.substr(start, p - start))) + "</a:t></a:r>";
+            }
+            if (p < to) {
+              para += "</a:p><a:p>";
+              if (horizontal[h][0] != '\0') para += std::string("<a:pPr algn=\"") + horizontal[h] + "\"/>";
+            }
+            start = p + 1;
+          }
+        }
+        return body + para + "</a:p></xdr:txBody>";
+      };
+
+      // the fill and the line of a shape
+      auto shape_style = [&](const XlsShape& sh, bool is_line) {
+        std::string st;
+        if (!is_line) {
+          if (sh.fill_on == 0) st += "<a:noFill/>";
+          else if (!sh.fill.empty()) {
+            st += "<a:solidFill><a:srgbClr val=\"" + sh.fill + "\"";
+            if (sh.fill_alpha > 0 && sh.fill_alpha < 100000) st += "><a:alpha val=\"" + std::to_string(sh.fill_alpha) + "\"/></a:srgbClr></a:solidFill>";
+            else st += "/></a:solidFill>";
+          }
+        }
+        if (sh.line_on == 0) {
+          st += "<a:ln><a:noFill/></a:ln>";
+        } else if (sh.line_on == 1 || !sh.line.empty() || sh.line_width > 0) {
+          static const char* const dash[] = {"solid", "sysDash", "sysDot", "sysDashDot", "sysDashDotDot", "dot", "dash", "lgDash", "dashDot", "lgDashDot", "lgDashDotDot"};
+          static const char* const arrow[] = {"none", "triangle", "stealth", "diamond", "oval", "arrow"};
+          st += "<a:ln";
+          if (sh.line_width > 0) st += " w=\"" + std::to_string(sh.line_width) + "\"";
+          st += "><a:solidFill><a:srgbClr val=\"" + (sh.line.empty() ? std::string("000000") : sh.line) + "\"/></a:solidFill>";
+          if (sh.line_dash > 0 && sh.line_dash < 11) st += std::string("<a:prstDash val=\"") + dash[sh.line_dash] + "\"/>";
+          if (sh.arrow_start > 0 && sh.arrow_start < 6) st += std::string("<a:headEnd type=\"") + arrow[sh.arrow_start] + "\"/>";
+          if (sh.arrow_end > 0 && sh.arrow_end < 6) st += std::string("<a:tailEnd type=\"") + arrow[sh.arrow_end] + "\"/>";
+          st += "</a:ln>";
+        }
+        return st;
+      };
+
+      // a shape, a connector or a group without its anchor
+      std::function<std::string(const DrawingItem&)> shape_element = [&](const DrawingItem& it) {
+        const XlsShape& sh = it.shape;
+        ++shape_no;
+        std::ostringstream x;
+        // inside of a group the position is in the coordinates of the group
+        auto xfrm = [&](const char* extra) {
+          std::ostringstream t;
+          std::string rot, flip;
+          if (sh.rotation != 0) {
+            double deg = std::fmod(static_cast<double>(sh.rotation) / 65536.0, 360.0);
+            if (deg < 0) deg += 360.0;
+            rot = " rot=\"" + std::to_string(static_cast<long long>(std::llround(deg * 60000.0))) + "\"";
+          }
+          if (sh.flip_h) flip += " flipH=\"1\"";
+          if (sh.flip_v) flip += " flipV=\"1\"";
+          t << "<a:xfrm" << rot << flip << ">";
+          if (it.child) {
+            t << "<a:off x=\"" << sh.child[0] << "\" y=\"" << sh.child[1] << "\"/><a:ext cx=\"" << sh.child[2] - sh.child[0] << "\" cy=\""
+              << sh.child[3] - sh.child[1] << "\"/>";
+          } else {
+            t << "<a:off x=\"0\" y=\"0\"/><a:ext cx=\"0\" cy=\"0\"/>";
+          }
+          t << extra << "</a:xfrm>";
+          return t.str();
+        };
+
+        if (it.group) {
+          long long x1 = emu_of(abs_x(sh.col1, sh.dx1)), y1 = emu_of(abs_y(sh.row1, sh.dy1));
+          long long x2 = emu_of(abs_x(sh.col2, sh.dx2)), y2 = emu_of(abs_y(sh.row2, sh.dy2));
+          long long cx = sh.has_bounds ? sh.bounds[0] : x1, cy = sh.has_bounds ? sh.bounds[1] : y1;
+          long long cw = sh.has_bounds ? static_cast<long long>(sh.bounds[2]) - sh.bounds[0] : x2 - x1;
+          long long ch = sh.has_bounds ? static_cast<long long>(sh.bounds[3]) - sh.bounds[1] : y2 - y1;
+          x << "<xdr:grpSp><xdr:nvGrpSpPr><xdr:cNvPr id=\"" << shape_no << "\" name=\"Group " << shape_no - 1
+            << "\"/><xdr:cNvGrpSpPr/></xdr:nvGrpSpPr><xdr:grpSpPr><a:xfrm><a:off x=\"" << x1 << "\" y=\"" << y1 << "\"/><a:ext cx=\"" << x2 - x1
+            << "\" cy=\"" << y2 - y1 << "\"/><a:chOff x=\"" << cx << "\" y=\"" << cy << "\"/><a:chExt cx=\"" << cw << "\" cy=\"" << ch
+            << "\"/></a:xfrm></xdr:grpSpPr>";
+          for (size_t k = 0; k < it.kids.size(); ++k) x << shape_element(items[it.kids[k]]);
+          x << "</xdr:grpSp>";
+          return x.str();
+        }
+
+        bool connector = sh.shape_type == 20 || (sh.shape_type >= 32 && sh.shape_type <= 40);
+        if (connector) {
+          x << "<xdr:cxnSp macro=\"\"><xdr:nvCxnSpPr><xdr:cNvPr id=\"" << shape_no << "\" name=\"Connector " << shape_no - 1
+            << "\"/><xdr:cNvCxnSpPr/></xdr:nvCxnSpPr><xdr:spPr>" << xfrm("") << "<a:prstGeom prst=\"" << xls_preset_geometry(sh.shape_type)
+            << "\"><a:avLst/></a:prstGeom>" << shape_style(sh, true) << "</xdr:spPr></xdr:cxnSp>";
+          return x.str();
+        }
+        x << "<xdr:sp macro=\"\" textlink=\"\"><xdr:nvSpPr><xdr:cNvPr id=\"" << shape_no << "\" name=\"Shape " << shape_no - 1 << "\"/><xdr:cNvSpPr"
+          << (sh.shape_type == 202 ? " txBox=\"1\"" : "") << "/></xdr:nvSpPr><xdr:spPr>" << xfrm("") << "<a:prstGeom prst=\""
+          << xls_preset_geometry(sh.shape_type) << "\"><a:avLst/></a:prstGeom>" << shape_style(sh, false) << "</xdr:spPr>" << text_body(it) << "</xdr:sp>";
+        return x.str();
+      };
+
+      // the shape as it is stored by Excel, only the number of the shape is new
+      auto shape_anchor = [&](const DrawingItem& it) {
+        const XlsShape& sh = it.shape;
+        if (!sh.shape_xml.empty()) {
+          std::string xml = sh.shape_xml;
+          size_t at = xml.find("<xdr:cNvPr id=\"");
+          size_t end = at == std::string::npos ? at : xml.find('"', at + 15);
+          if (end != std::string::npos) xml.replace(at + 15, end - at - 15, std::to_string(++shape_no));
+          return xml;
+        }
+        return anchor_xml(sh) + shape_element(it) + "<xdr:clientData/></xdr:twoCellAnchor>";
+      };
+
       for (size_t i = 0; i < items.size(); ++i) {
         const DrawingItem& item = items[i];
         const XlsShape& sh = item.shape;
+        if (item.child) continue;
         auto emu = [](double v) { return static_cast<long long>(std::floor(v)); };
         if (item.chart) {
           if (item.chart_xml.empty()) continue;
@@ -3747,26 +3977,8 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
              << "\"/></a:graphicData></a:graphic></xdr:graphicFrame><xdr:clientData/></xdr:twoCellAnchor>" << std::endl;
           continue;
         }
-        if (item.autoshape) {
-          ++shape_no;
-          std::string fill = sh.fill.empty() ? "" : "<a:solidFill><a:srgbClr val=\"" + sh.fill + "\"/></a:solidFill>";
-          std::string ln;
-          if (!sh.line.empty() || sh.line_width > 0) {
-            ln = "<a:ln";
-            if (sh.line_width > 0) ln += " w=\"" + std::to_string(sh.line_width) + "\"";
-            ln += ">";
-            if (!sh.line.empty()) ln += "<a:solidFill><a:srgbClr val=\"" + sh.line + "\"/></a:solidFill>";
-            ln += "</a:ln>";
-          }
-          dr << "<xdr:twoCellAnchor><xdr:from><xdr:col>" << sh.col1 << "</xdr:col><xdr:colOff>"
-             << emu(sh.dx1 / 1024.0 * col_emu(sh.col1)) << "</xdr:colOff><xdr:row>" << sh.row1 << "</xdr:row><xdr:rowOff>"
-             << emu(sh.dy1 / 256.0 * row_emu(sh.row1)) << "</xdr:rowOff></xdr:from><xdr:to><xdr:col>" << sh.col2 << "</xdr:col><xdr:colOff>"
-             << emu(sh.dx2 / 1024.0 * col_emu(sh.col2)) << "</xdr:colOff><xdr:row>" << sh.row2 << "</xdr:row><xdr:rowOff>"
-             << emu(sh.dy2 / 256.0 * row_emu(sh.row2)) << "</xdr:rowOff></xdr:to>"
-             << "<xdr:sp macro=\"\" textlink=\"\"><xdr:nvSpPr><xdr:cNvPr id=\"" << shape_no << "\" name=\"Shape " << shape_no - 1
-             << "\"/><xdr:cNvSpPr/></xdr:nvSpPr><xdr:spPr><a:xfrm><a:off x=\"0\" y=\"0\"/><a:ext cx=\"0\" cy=\"0\"/></a:xfrm>"
-             << "<a:prstGeom prst=\"" << xls_preset_geometry(sh.shape_type) << "\"><a:avLst/></a:prstGeom>" << fill << ln
-             << "</xdr:spPr></xdr:sp><xdr:clientData/></xdr:twoCellAnchor>" << std::endl;
+        if (item.group || item.autoshape) {
+          dr << shape_anchor(item) << std::endl;
           continue;
         }
         R_xlen_t blip = static_cast<R_xlen_t>(item.blip);
