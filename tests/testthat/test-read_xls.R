@@ -561,3 +561,31 @@ test_that("xls files created from the xls_cov workbooks are imported", {
   expect_true(length(wb$charts) > 0)
   expect_true(length(wb$media) > 0)
 })
+
+test_that("xls files created from the xls_cov2 workbooks are imported", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
+  skip_on_cran()
+
+  wb <- wb_load(testfile_path("xls_cov2_pivots.xls"))
+  expect_equal(wb$get_sheet_names(escape = TRUE)[1:3], c("src", "functions", "functions2"), ignore_attr = TRUE)
+  expect_true(length(wb$pivotTables) >= 20)
+  tmp <- tempfile(fileext = ".xlsx")
+  wb$save(tmp)
+  expect_equal(length(wb_load(tmp)$pivotTables), length(wb$pivotTables))
+  unlink(tmp)
+
+  wb <- wb_load(testfile_path("xls_cov2_values.xls"))
+  expect_equal(wb$get_sheet_names(escape = TRUE), c("errors", "numfmts", "numbers", "colors", "fonts"), ignore_attr = TRUE)
+  cc <- wb$worksheets[[1]]$sheet_data$cc
+  errs <- cc$v[cc$c_t == "e"]
+  expect_true(all(c("#N/A", "#DIV/0!", "#VALUE!", "#NUM!", "#NAME?", "#NULL!", "#REF!") %in% errs))
+  expect_equal(nrow(wb_to_df(wb, sheet = "numfmts", col_names = FALSE)), 32L)
+
+  wb <- wb_load(testfile_path("xls_cov2_names.xls"))
+  expect_equal(wb$get_sheet_names(escape = TRUE), c("a", "b", "c with space"), ignore_attr = TRUE)
+  expect_true(nrow(wb_get_named_regions(wb)) > 10)
+
+  wb <- wb_load(testfile_path("xls_cov2_shapes.xls"))
+  expect_equal(wb$get_sheet_names(escape = TRUE), c("shapes", "textboxes", "connectors"), ignore_attr = TRUE)
+  expect_true(sum(lengths(regmatches(wb$drawings, gregexpr("<xdr:sp[ >]", wb$drawings)))) > 70)
+})

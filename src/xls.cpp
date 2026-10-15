@@ -2228,7 +2228,7 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
       std::streampos next = bin.tellg() + std::streamoff(rsize);
       if (debug) Rcpp::Rcout << "sheet: " << std::hex << rid << std::dec << ": " << rsize << std::endl;
 
-      if (rid != XlsContinue && rid != XlsObj) after_obj = false;
+      if (rid != XlsContinue && rid != XlsObj && rid != XlsTxO && rid != XlsMsoDrawing) after_obj = false;
 
       if (rid != XlsString && rid != XlsShrFmla && rid != XlsArray && rid != XlsTable && rid != XlsContinue)
         finish_pending();
@@ -3025,7 +3025,7 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
               XlsShape shape = pending_shapes.front();
               pending_shapes.erase(pending_shapes.begin());
               if (type == 0x19 && shape.has_anchor) note_shapes[id] = shape;
-              bool is_shape = type == 0x01 || type == 0x02 || type == 0x03 || type == 0x04 || type == 0x09 || type == 0x1E;
+              bool is_shape = type == 0x01 || type == 0x02 || type == 0x03 || type == 0x04 || type == 0x06 || type == 0x09 || type == 0x1E;
               if (shape.has_anchor && ((type == 0x08 && shape.blip > 0) || type == 0x05 || is_shape)) {
                 DrawingItem item;
                 item.chart = type == 0x05;
