@@ -645,7 +645,6 @@ test_that("single sheets of xls files keep their strings, dates and names", {
 test_that("xls_cov_values with comments is imported", {
   skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
   skip_on_cran()
-  skip_if_not(l10n_info()[["UTF-8"]], "comments with non ASCII text need a UTF-8 locale")
 
   fl <- testfile_path("xls_cov_values.xls")
 

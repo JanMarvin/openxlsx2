@@ -13,12 +13,17 @@
 #define R_PATH_MAX PATH_MAX
 #endif
 
-//' Check if path is to long to be an R file path
+//' Check if path is to long to be an R file path or if it is xml
 //' @param path the file path used in file.exists()
 //' @noRd
 // [[Rcpp::export]]
 bool to_long(std::string path) {
-  return path.size() > R_PATH_MAX;
+  if (path.size() > R_PATH_MAX) return true;
+
+  // xml input is not a path. Skipping file.exists() avoids encoding warnings
+  // in non UTF-8 locales
+  size_t pos = path.find_first_not_of(" \t\r\n");
+  return pos != std::string::npos && path[pos] == '<';
 }
 
 // [[Rcpp::export]]
