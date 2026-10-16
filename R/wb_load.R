@@ -119,7 +119,7 @@ wb_load <- function(
     if (.Platform$endian == "big")
       stop("XLS is not supported on big endian.", call. = FALSE)
 
-    xmlFiles <- xls_unpack(path.expand(file), xmlDir, data_only, debug)
+    xmlFiles <- xls_unpack(path.expand(file), xmlDir, data_only, debug, if (missing(sheet)) NULL else sheet, !missing(sheet))
   } else {
     ## Unzip files to temp directory
     xmlFiles <- withCallingHandlers(

@@ -10,9 +10,12 @@
 #' @param xmlDir temporary directory the parts are written to
 #' @param data_only skip everything that is not needed to read cell values
 #' @param debug print the records while reading
+#' @param sheet sheets (index or name) to convert. Used if `select` is `TRUE`
+#'   and `data_only` is `TRUE`. All other sheets are written empty.
+#' @param select use `sheet`
 #' @return the paths of the files in `xmlDir`
 #' @noRd
-xls_unpack <- function(file, xmlDir, data_only = FALSE, debug = FALSE) {
+xls_unpack <- function(file, xmlDir, data_only = FALSE, debug = FALSE, sheet = NULL, select = FALSE) {
 
   for (dir in c("_rels", "xl/_rels", "xl/worksheets", "xl/worksheets/_rels", "xl/chartsheets", "xl/chartsheets/_rels", "xl/tables", "xl/drawings", "xl/drawings/_rels", "xl/charts", "xl/media", "xl/externalLinks/_rels", "xl/pivotTables/_rels", "xl/pivotCache/_rels", "docProps")) {
     dir.create(file.path(xmlDir, dir), recursive = TRUE)
@@ -84,7 +87,24 @@ xls_unpack <- function(file, xmlDir, data_only = FALSE, debug = FALSE) {
   ncharts <- 0L
   npivots <- 0L
   cache_ids <- integer()
+  keep <- seq_len(nsheets)
+  if (data_only && select) {
+    wb_head <- paste(readLines(path("xl", "workbook.xml"), warn = FALSE, encoding = "UTF-8"), collapse = "")
+    head_tags <- regmatches(wb_head, gregexpr("<sheet [^>]*/>", wb_head))[[1]]
+    head_names <- sub(".*name=\"([^\"]*)\".*", "\\1", head_tags)
+    head_names <- gsub("&lt;", "<", gsub("&gt;", ">", gsub("&quot;", "\"", gsub("&apos;", "'", head_names, fixed = TRUE), fixed = TRUE), fixed = TRUE), fixed = TRUE)
+    head_names <- gsub("&amp;", "&", head_names, fixed = TRUE)
+    keep <- if (is.numeric(sheet)) as.integer(sheet) else match(sheet, head_names)
+    keep <- keep[!is.na(keep) & keep >= 1L & keep <= nsheets]
+  }
   for (i in seq_len(nsheets)) {
+    if (!i %in% keep) {
+      writeLines(
+        c(xml_decl, '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData/></worksheet>'),
+        path("xl", kind[i], sprintf("sheet%d.xml", i))
+      )
+      next
+    }
     n <- worksheet_xls(
       stream, i,
       path("xl", kind[i], sprintf("sheet%d.xml", i)),

@@ -601,3 +601,49 @@ test_that("xls files created from the xls_cov2 workbooks are imported", {
   expect_true(any(grepl("plain text box", wb$drawings, fixed = TRUE)))
   expect_true(any(grepl("<a:prstDash val=\"sysDot\"/>", wb$drawings, fixed = TRUE)))
 })
+
+test_that("a single sheet of an xls file can be read without converting the others", {
+  fl <- testfile_path("xls_cov2_values.xls")
+  skip_if(fl == "" || !file.exists(fl))
+
+  full <- wb_load(fl)
+  nms <- full$get_sheet_names()
+
+  wb <- wb_load(fl, sheet = 3, data_only = TRUE)
+  expect_equal(wb_to_df(wb, sheet = 3), wb_to_df(full, sheet = 3))
+  expect_null(suppressMessages(suppressWarnings(wb_to_df(wb, sheet = 1))))
+
+  wb <- wb_load(fl, sheet = names(nms)[2], data_only = TRUE)
+  expect_equal(wb_to_df(wb, sheet = 2), wb_to_df(full, sheet = 2))
+
+  expect_error(wb_load(fl, sheet = "nope", data_only = TRUE), "No such sheet")
+})
+
+test_that("single sheets of xls files keep their strings, dates and names", {
+  for (file in c("xls_values.xls", "xls_cov2_values.xls", "xls_cov_values.xls", "loadExample.xls")) {
+    fl <- testfile_path(file)
+    skip_if(fl == "" || !file.exists(fl))
+
+    full <- wb_load(fl)
+    nms <- full$get_sheet_names()
+
+    for (i in seq_along(nms)) {
+      if (full$is_chartsheet[i]) next
+      expected <- wb_to_df(full, sheet = i)
+
+      by_index <- wb_load(fl, sheet = i, data_only = TRUE)
+      expect_equal(wb_to_df(by_index, sheet = i), expected)
+
+      by_name <- wb_load(fl, sheet = names(nms)[i], data_only = TRUE)
+      expect_equal(wb_to_df(by_name, sheet = i), expected)
+
+      expect_equal(by_index$get_sheet_names(), nms)
+    }
+  }
+
+  fl <- testfile_path("xls_cov2_values.xls")
+  skip_if(fl == "" || !file.exists(fl))
+  df <- wb_to_df(wb_load(fl, sheet = 3, data_only = TRUE), sheet = 3)
+  expect_true(any(vapply(df, is.character, NA)))
+  expect_true(any(vapply(df, inherits, NA, c("Date", "POSIXct"))))
+})
