@@ -3781,7 +3781,7 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
          << "xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\">" << std::endl;
       size_t shape_no = 1;
 
-      auto emu_of = [](double v) { return static_cast<long long>(std::floor(v)); };
+      auto emu_of = [](double v) { return static_cast<int64_t>(std::floor(v)); };
       auto anchor_xml = [&](const XlsShape& sh) {
         std::ostringstream a;
         a << "<xdr:twoCellAnchor><xdr:from><xdr:col>" << sh.col1 << "</xdr:col><xdr:colOff>" << emu_of(sh.dx1 / 1024.0 * col_emu(sh.col1))
@@ -3895,7 +3895,7 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
           if (sh.rotation != 0) {
             double deg = std::fmod(static_cast<double>(sh.rotation) / 65536.0, 360.0);
             if (deg < 0) deg += 360.0;
-            rot = " rot=\"" + std::to_string(static_cast<long long>(std::llround(deg * 60000.0))) + "\"";
+            rot = " rot=\"" + std::to_string(static_cast<int64_t>(std::llround(deg * 60000.0))) + "\"";
           }
           if (sh.flip_h) flip += " flipH=\"1\"";
           if (sh.flip_v) flip += " flipV=\"1\"";
@@ -3911,11 +3911,11 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
         };
 
         if (it.group) {
-          long long x1 = emu_of(abs_x(sh.col1, sh.dx1)), y1 = emu_of(abs_y(sh.row1, sh.dy1));
-          long long x2 = emu_of(abs_x(sh.col2, sh.dx2)), y2 = emu_of(abs_y(sh.row2, sh.dy2));
-          long long cx = sh.has_bounds ? sh.bounds[0] : x1, cy = sh.has_bounds ? sh.bounds[1] : y1;
-          long long cw = sh.has_bounds ? static_cast<long long>(sh.bounds[2]) - sh.bounds[0] : x2 - x1;
-          long long ch = sh.has_bounds ? static_cast<long long>(sh.bounds[3]) - sh.bounds[1] : y2 - y1;
+          int64_t x1 = emu_of(abs_x(sh.col1, sh.dx1)), y1 = emu_of(abs_y(sh.row1, sh.dy1));
+          int64_t x2 = emu_of(abs_x(sh.col2, sh.dx2)), y2 = emu_of(abs_y(sh.row2, sh.dy2));
+          int64_t cx = sh.has_bounds ? sh.bounds[0] : x1, cy = sh.has_bounds ? sh.bounds[1] : y1;
+          int64_t cw = sh.has_bounds ? static_cast<int64_t>(sh.bounds[2]) - sh.bounds[0] : x2 - x1;
+          int64_t ch = sh.has_bounds ? static_cast<int64_t>(sh.bounds[3]) - sh.bounds[1] : y2 - y1;
           x << "<xdr:grpSp><xdr:nvGrpSpPr><xdr:cNvPr id=\"" << shape_no << "\" name=\"Group " << shape_no - 1
             << "\"/><xdr:cNvGrpSpPr/></xdr:nvGrpSpPr><xdr:grpSpPr><a:xfrm><a:off x=\"" << x1 << "\" y=\"" << y1 << "\"/><a:ext cx=\"" << x2 - x1
             << "\" cy=\"" << y2 - y1 << "\"/><a:chOff x=\"" << cx << "\" y=\"" << cy << "\"/><a:chExt cx=\"" << cw << "\" cy=\"" << ch
@@ -3955,7 +3955,7 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
         const DrawingItem& item = items[i];
         const XlsShape& sh = item.shape;
         if (item.child) continue;
-        auto emu = [](double v) { return static_cast<long long>(std::floor(v)); };
+        auto emu = [](double v) { return static_cast<int64_t>(std::floor(v)); };
         if (item.chart) {
           if (item.chart_xml.empty()) continue;
           ++nchart;

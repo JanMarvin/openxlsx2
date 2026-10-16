@@ -664,7 +664,7 @@ inline bool xls_dxfn(const std::vector<uint8_t>& rec, size_t& pos, const std::ve
   std::string font, num, fill, border;
   auto full_color = [&](uint16_t type, const std::string& palette_attr) {
     if (ext != nullptr) {
-      auto it = ext->find(type);
+      std::map<uint16_t, XlsCfColor>::const_iterator it = ext->find(type);
       if (it != ext->end()) {
         std::string attr = xls_color_attr(it->second, palette);
         if (!attr.empty()) return attr;
@@ -698,7 +698,7 @@ inline bool xls_dxfn(const std::vector<uint8_t>& rec, size_t& pos, const std::ve
       pos += 2;
       if (!((flags >> 19) & 1)) {
         std::string code;
-        auto it = formats.find(static_cast<uint16_t>(ifmt));
+        std::map<uint16_t, std::string>::const_iterator it = formats.find(static_cast<uint16_t>(ifmt));
         if (it != formats.end()) code = it->second;
         else if (xls_builtin_format(ifmt) != nullptr) code = xls_builtin_format(ifmt);
         if (!code.empty()) num = "<numFmt numFmtId=\"" + std::to_string(ifmt) + "\" formatCode=\"" + escape_xml(code) + "\"/>";
