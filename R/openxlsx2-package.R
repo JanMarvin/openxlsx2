@@ -204,6 +204,7 @@
 #'   `wb_add_data()` and `wb_add_data_table()`.
 #' * `options("openxlsx2.zip_flags")` custom zip flags passed to `utils::zip()` required when using a custom zip tool
 #' * `options("openxlsx2.compression_level" = 6)` compression level for the output file. Increasing compression and time consumed from 1-9.
+#' * `options("openxlsx2.pivot_refresh" = FALSE)` if `TRUE`, `wb_load()` leaves the pivot caches of `xlsb` files empty to be refreshed on open
 #' @name openxlsx2_options
 NULL
 # matches enum celltype

@@ -2,7 +2,12 @@
 #define XLSB_FUNS_H
 
 #include <cstdint>
+#include <cstdio>
 #include <fstream>
+#include <iomanip>
+#include <map>
+#include <sstream>
+#include <vector>
 #include <string>
 #include <type_traits>
 #include "xlsb_flags.h"
@@ -14,7 +19,7 @@
 
 // detect if we need to swap. assuming that there is no big endian xlsb format,
 // we only need to swap little endian xlsb files on big endian systems
-bool is_big_endian() {
+inline bool is_big_endian() {
   uint32_t num = 1;
   uint8_t* bytePtr = reinterpret_cast<uint8_t*>(&num);
   return bytePtr[0] == 0;
@@ -116,7 +121,7 @@ inline std::string readstring(std::string& mystring, T& sas) {
   return (mystring);
 }
 
-std::string escape_quote(const std::string& input) {
+inline std::string escape_quote(const std::string& input) {
   std::string result;
   result.reserve(input.length());
 
@@ -137,7 +142,7 @@ std::string escape_quote(const std::string& input) {
   return result;
 }
 
-std::string escape_xml(const std::string& input) {
+inline std::string escape_xml(const std::string& input) {
   std::string result;
   result.reserve(input.length());
 
@@ -159,7 +164,14 @@ std::string escape_xml(const std::string& input) {
         result += "&gt;";
         break;
       default:
-        result += c;
+        if (static_cast<unsigned char>(c) < 0x20 && c != '\t' && c != '\n' && c != '\r') {
+          // not allowed in XML, written the way Excel writes it
+          char code[8];
+          std::snprintf(code, sizeof(code), "_x%04X_", static_cast<unsigned>(static_cast<unsigned char>(c)));
+          result += code;
+        } else {
+          result += c;
+        }
         break;
     }
   }
@@ -167,7 +179,7 @@ std::string escape_xml(const std::string& input) {
   return result;
 }
 
-std::string wrap_xml(const std::string& str) {
+inline std::string wrap_xml(const std::string& str) {
   if (!str.empty() && isspace(str[0])) {
     return "<t xml:space=\"preserve\">" + str + "</t>";
   } else {
@@ -175,7 +187,7 @@ std::string wrap_xml(const std::string& str) {
   }
 }
 
-std::string to_utf8(const std::u16string& u16str) {
+inline std::string to_utf8(const std::u16string& u16str) {
   std::string utf8str;
   utf8str.reserve(u16str.length() * 3);  // Reserve enough space for UTF-8 characters
 
@@ -223,7 +235,7 @@ std::string to_utf8(const std::u16string& u16str) {
   return utf8str;
 }
 
-std::string read_xlwidestring(std::string& mystring, std::istream& sas) {
+inline std::string read_xlwidestring(std::string& mystring, std::istream& sas) {
   size_t size = mystring.size();
   std::u16string str;
   str.resize(size);
@@ -237,7 +249,7 @@ std::string read_xlwidestring(std::string& mystring, std::istream& sas) {
   return (outstr);
 }
 
-void check_len(std::istream& sas, uint64_t need_bytes) {
+inline void check_len(std::istream& sas, uint64_t need_bytes) {
   if (need_bytes < 0x10000) return;
   std::streampos cur = sas.tellg();
   if (cur == std::streampos(-1)) return;
@@ -249,7 +261,7 @@ void check_len(std::istream& sas, uint64_t need_bytes) {
     Rcpp::stop("corrupt file: string length exceeds remaining data");
 }
 
-std::string PtrStr(std::istream& sas, bool swapit) {
+inline std::string PtrStr(std::istream& sas, bool swapit) {
   uint16_t len = 0;
   len = readbin(len, sas, swapit);
   check_len(sas, static_cast<uint64_t>(len) * 2);
@@ -257,7 +269,7 @@ std::string PtrStr(std::istream& sas, bool swapit) {
   return read_xlwidestring(str, sas);
 }
 
-std::string LPWideString(std::istream& sas, bool swapit) {
+inline std::string LPWideString(std::istream& sas, bool swapit) {
   uint16_t len = 0;
   len = readbin(len, sas, swapit);
   check_len(sas, static_cast<uint64_t>(len) * 2);
@@ -265,7 +277,7 @@ std::string LPWideString(std::istream& sas, bool swapit) {
   return read_xlwidestring(str, sas);
 }
 
-std::string XLWideString(std::istream& sas, bool swapit) {
+inline std::string XLWideString(std::istream& sas, bool swapit) {
   uint32_t len = 0;
   len = readbin(len, sas, swapit);
   if (len == 0xFFFFFFFF || len == 0) return "";
@@ -275,7 +287,7 @@ std::string XLWideString(std::istream& sas, bool swapit) {
 }
 
 // same, but can be NULL
-std::string XLNullableWideString(std::istream& sas, bool swapit) {
+inline std::string XLNullableWideString(std::istream& sas, bool swapit) {
   uint32_t len = 0;
   len = readbin(len, sas, swapit);
   if (len == 0xFFFFFFFF) {
@@ -294,7 +306,7 @@ std::string XLNullableWideString(std::istream& sas, bool swapit) {
 // bits 5-7 from uint8_t
 // bit 8 from uint8_t
 
-int32_t RECORD_ID(std::istream& sas, bool swapit) {
+inline int32_t RECORD_ID(std::istream& sas, bool swapit) {
   uint8_t var1 = 0, var2 = 0;
   var1 = readbin(var1, sas, swapit);
 
@@ -316,7 +328,7 @@ int32_t RECORD_ID(std::istream& sas, bool swapit) {
   return -1;
 }
 
-int32_t RECORD_SIZE(std::istream& sas, bool swapit) {
+inline int32_t RECORD_SIZE(std::istream& sas, bool swapit) {
   int8_t sar1 = 0, sar2 = 0, sar3 = 0, sar4 = 0;
 
   sar1 = readbin(sar1, sas, swapit);
@@ -351,7 +363,7 @@ int32_t RECORD_SIZE(std::istream& sas, bool swapit) {
   return -1;
 }
 
-int32_t RECORD(int32_t& rid, int32_t& rsize, std::istream& sas, bool swapit) {
+inline int32_t RECORD(int32_t& rid, int32_t& rsize, std::istream& sas, bool swapit) {
   /* Record ID ---------------------------------------------------------------*/
   rid = RECORD_ID(sas, swapit);
 
@@ -361,7 +373,7 @@ int32_t RECORD(int32_t& rid, int32_t& rsize, std::istream& sas, bool swapit) {
   return 0;
 }
 
-std::string cell_style(int32_t style) {
+inline std::string cell_style(int32_t style) {
   std::string out = "";
   if (style > 0) {
     out = out + " s=\"" + std::to_string(style) + "\"";
@@ -369,7 +381,7 @@ std::string cell_style(int32_t style) {
   return out;
 }
 
-std::string halign(int32_t style) {
+inline std::string halign(int32_t style) {
   std::string out = "";
   std::string hali = "";
   if (style > 0) {
@@ -379,7 +391,7 @@ std::string halign(int32_t style) {
     if (style == 3) hali = "right";
     if (style == 4) hali = "fill";
     if (style == 5) hali = "justify";
-    if (style == 6) hali = "center-across";
+    if (style == 6) hali = "centerContinuous";
     if (style == 7) hali = "distributed";
 
     out = out + " horizontal=\"" + hali + "\"";
@@ -387,7 +399,7 @@ std::string halign(int32_t style) {
   return out;
 }
 
-std::string to_iconset(uint32_t style) {
+inline std::string to_iconset(uint32_t style) {
   std::string out = "";
   if (style != 0xFFFFFFFF) {
     if (style == 0) out = "3Arrows";
@@ -419,7 +431,7 @@ std::string to_iconset(uint32_t style) {
   return out;
 }
 
-std::string valign(int32_t style) {
+inline std::string valign(int32_t style) {
   std::string out = "";
   std::string vali = "";
   if (style >= 0) {
@@ -434,7 +446,7 @@ std::string valign(int32_t style) {
   return out;
 }
 
-std::vector<std::pair<int, int>> StrRun(std::istream& sas, uint32_t dwSizeStrRun, bool swapit) {
+inline std::vector<std::pair<int, int>> StrRun(std::istream& sas, uint32_t dwSizeStrRun, bool swapit) {
   uint16_t ich = 0, ifnt = 0;
 
   // something?
@@ -450,7 +462,7 @@ std::vector<std::pair<int, int>> StrRun(std::istream& sas, uint32_t dwSizeStrRun
 }
 
 // Function to get a safe substring from a UTF-8 string
-std::string utf8_substr(const std::string& str, int32_t start, int32_t length) {
+inline std::string utf8_substr(const std::string& str, int32_t start, int32_t length) {
   size_t byte_pos = 0;  // Byte position in the original string
   size_t char_pos = 0;  // Character position
 
@@ -499,7 +511,7 @@ std::string utf8_substr(const std::string& str, int32_t start, int32_t length) {
   return str.substr(start_byte_pos, byte_pos - start_byte_pos);
 }
 
-std::string to_rich_text(const std::string& str, const std::vector<std::pair<int, int>>& str_runs) {
+inline std::string to_rich_text(const std::string& str, const std::vector<std::pair<int, int>>& str_runs) {
   std::string result;
   int32_t start = 0, len = 0;
 
@@ -527,7 +539,7 @@ std::string to_rich_text(const std::string& str, const std::vector<std::pair<int
   return result;
 }
 
-void PhRun(std::istream& sas, uint32_t dwPhoneticRun, bool swapit) {
+inline void PhRun(std::istream& sas, uint32_t dwPhoneticRun, bool swapit) {
   uint16_t ichFirst = 0, ichMom = 0, cchMom = 0, ifnt = 0, AB = 0;
   // uint32_t phrun = 0;
   for (uint8_t i = 0; i < dwPhoneticRun; ++i) {
@@ -539,7 +551,7 @@ void PhRun(std::istream& sas, uint32_t dwPhoneticRun, bool swapit) {
   }
 }
 
-std::string RichStr(std::istream& sas, bool swapit) {
+inline std::string RichStr(std::istream& sas, bool swapit) {
   uint8_t AB = 0;  // , unk = 0
   bool A = 0, B = 0;
   AB = readbin(AB, sas, swapit);
@@ -581,7 +593,7 @@ std::string RichStr(std::istream& sas, bool swapit) {
   return (str);
 }
 
-void ProductVersion(std::istream& sas, bool swapit, bool debug, bool frt) {
+inline void ProductVersion(std::istream& sas, bool swapit, bool debug, bool frt) {
   uint16_t version = 0, flags = 0;
   version = readbin(version, sas, swapit);  // 3586 - x14?
   flags = readbin(flags, sas, swapit);      // 0
@@ -592,7 +604,7 @@ void ProductVersion(std::istream& sas, bool swapit, bool debug, bool frt) {
   if (debug) Rprintf("ProductVersion: %d: %d: %d\n", version, (int32_t)view_flags.product(), (int32_t)view_flags.reserved());
 }
 
-std::vector<int32_t> UncheckedRfX(std::istream& sas, bool swapit) {
+inline std::vector<int32_t> UncheckedRfX(std::istream& sas, bool swapit) {
   std::vector<int32_t> out;
   int32_t rwFirst = 0, rwLast = 0, colFirst = 0, colLast = 0;
 
@@ -604,7 +616,7 @@ std::vector<int32_t> UncheckedRfX(std::istream& sas, bool swapit) {
   return (out);
 }
 
-std::vector<int32_t> UncheckedSqRfX(std::istream& sas, bool swapit) {
+inline std::vector<int32_t> UncheckedSqRfX(std::istream& sas, bool swapit) {
   std::vector<int32_t> out;
   int32_t crfx = 0;
   crfx = readbin(crfx, sas, swapit);
@@ -618,7 +630,7 @@ std::vector<int32_t> UncheckedSqRfX(std::istream& sas, bool swapit) {
   return out;
 }
 
-int32_t UncheckedCol(std::istream& sas, bool swapit) {
+inline int32_t UncheckedCol(std::istream& sas, bool swapit) {
   int32_t col = 0;
   col = readbin(col, sas, swapit);
   if (col >= 0 && col <= 16383)
@@ -627,7 +639,7 @@ int32_t UncheckedCol(std::istream& sas, bool swapit) {
     Rcpp::stop("col size bad: %d @ %d", col, sas.tellg());
 }
 
-int32_t UncheckedRw(std::istream& sas, bool swapit) {
+inline int32_t UncheckedRw(std::istream& sas, bool swapit) {
   int32_t row = 0;
   row = readbin(row, sas, swapit);
   if (row >= 0 && row <= 1048575)
@@ -636,16 +648,16 @@ int32_t UncheckedRw(std::istream& sas, bool swapit) {
     Rcpp::stop("row size bad: %d @ %d", row, sas.tellg());
 }
 
-uint16_t ColShort(std::istream& sas, bool swapit) {
+inline uint16_t ColShort(std::istream& sas, bool swapit) {
   uint16_t col = 0;
   col = readbin(col, sas, swapit);
-  if (col >= 0 && col <= 16383)
+  if (col <= 16383)
     return col;
   else
     Rcpp::stop("col size bad: %d @ %d", col, sas.tellg());
 }
 
-std::vector<int32_t> ColRelShort(std::istream& sas, bool swapit) {
+inline std::vector<int32_t> ColRelShort(std::istream& sas, bool swapit) {
   uint16_t tmp = 0;
   tmp = readbin(tmp, sas, swapit);
 
@@ -659,7 +671,7 @@ std::vector<int32_t> ColRelShort(std::istream& sas, bool swapit) {
   return out;
 }
 
-std::string Loc(std::istream& sas, bool swapit) {
+inline std::string Loc(std::istream& sas, bool swapit) {
   std::vector<int32_t> col;
   int32_t row = 0;
   row = UncheckedRw(sas, swapit);
@@ -680,7 +692,7 @@ std::string Loc(std::istream& sas, bool swapit) {
 }
 
 // RgceLocRel
-std::string LocRel(std::istream& sas, bool swapit, int32_t col, int32_t row) {
+inline std::string LocRel(std::istream& sas, bool swapit, int32_t col, int32_t row) {
   std::vector<int32_t> col_rel;
   int32_t row_rel = 0;
   row_rel = readbin(row_rel, sas, swapit);
@@ -718,7 +730,7 @@ std::string LocRel(std::istream& sas, bool swapit, int32_t col, int32_t row) {
   return out;
 }
 
-std::string Area(std::istream& sas, bool swapit) {
+inline std::string Area(std::istream& sas, bool swapit) {
   std::vector<int32_t> col0(3), col1(3);
   int32_t row0 = 0, row1 = 0;
   row0 = UncheckedRw(sas, swapit);  // rowFirst
@@ -768,7 +780,7 @@ std::string Area(std::istream& sas, bool swapit) {
   return out;
 }
 
-std::string AreaRel(std::istream& sas, bool swapit, int32_t col, int32_t row) {
+inline std::string AreaRel(std::istream& sas, bool swapit, int32_t col, int32_t row) {
   std::vector<int32_t> col_rel0(3), col_rel1(3);
   int32_t row_rel0 = 0, row_rel1 = 0;
   row_rel0 = UncheckedRw(sas, swapit);  // rowFirst
@@ -857,7 +869,7 @@ std::string AreaRel(std::istream& sas, bool swapit, int32_t col, int32_t row) {
   return out;
 }
 
-std::vector<int32_t> Cell(std::istream& sas, bool swapit) {
+inline std::vector<int32_t> Cell(std::istream& sas, bool swapit) {
   std::vector<int32_t> out(3);
 
   out[0] = UncheckedCol(sas, swapit);
@@ -872,7 +884,7 @@ std::vector<int32_t> Cell(std::istream& sas, bool swapit) {
   return (out);
 }
 
-std::vector<std::string> dims_to_cells(int32_t firstRow, int32_t lastRow, int32_t firstCol, int32_t lastCol) {
+inline std::vector<std::string> dims_to_cells(int32_t firstRow, int32_t lastRow, int32_t firstCol, int32_t lastCol) {
   std::vector<int32_t> cols, rows;
   for (int32_t i = firstCol; i <= lastCol; ++i) {
     cols.push_back(i);
@@ -892,7 +904,7 @@ std::vector<std::string> dims_to_cells(int32_t firstRow, int32_t lastRow, int32_
   return cells;
 }
 
-std::vector<int32_t> brtColor(std::istream& sas, bool swapit) {
+inline std::vector<int32_t> brtColor(std::istream& sas, bool swapit) {
   uint8_t AB = 0, xColorType = 0, index = 0, bRed = 0, bGreen = 0, bBlue = 0, bAlpha = 0;
   int16_t nTintAndShade = 0;
 
@@ -918,10 +930,6 @@ std::vector<int32_t> brtColor(std::istream& sas, bool swapit) {
   bBlue  = readbin(bBlue, sas, swapit);
   bAlpha = readbin(bAlpha, sas, swapit);
 
-  if (bRed > 255 || bGreen > 255 || bBlue > 255 || bAlpha > 255) {
-    Rcpp::stop("invalid color");
-  }
-
   std::vector<int32_t> out(7);
   out[0] = xColorType;
   out[1] = index;
@@ -934,7 +942,7 @@ std::vector<int32_t> brtColor(std::istream& sas, bool swapit) {
   return out;
 }
 
-std::string as_border_style(int32_t style) {
+inline std::string as_border_style(int32_t style) {
   if (style == 0) return "none";
   if (style == 1) return "thin";
   if (style == 2) return "medium";
@@ -952,7 +960,7 @@ std::string as_border_style(int32_t style) {
   return "";
 }
 
-std::string to_argb(int32_t a, int32_t r, int32_t g, int32_t b) {
+inline std::string to_argb(int32_t a, int32_t r, int32_t g, int32_t b) {
   std::stringstream out;
   out << std::uppercase << std::hex <<
     std::setw(2) << std::setfill('0') << (int32_t)a <<
@@ -962,7 +970,7 @@ std::string to_argb(int32_t a, int32_t r, int32_t g, int32_t b) {
   return out.str();
 }
 
-std::string brtBorder(std::string type, std::istream& sas, bool swapit) {
+inline std::string brtBorder(std::string type, std::istream& sas, bool swapit) {
   uint8_t dg = 0, reserved = 0;
 
   dg = readbin(dg, sas, swapit);
@@ -985,7 +993,7 @@ std::string brtBorder(std::string type, std::istream& sas, bool swapit) {
     if (color[0] == 0x01)
       out << "><color indexed=\"" << color[1] << "\" />";
     if (color[0] == 0x02)
-      out << "><color hex=\"" << to_argb(color[6], color[3], color[4], color[5]) << "\" />";
+      out << "><color rgb=\"" << to_argb(color[6], color[3], color[4], color[5]) << "\" />";
     if (color[0] == 0x03)
       out << "><color theme=\"" << color[1] << "\" tint=\"" << stream.str() << "\" />";
 
@@ -997,13 +1005,13 @@ std::string brtBorder(std::string type, std::istream& sas, bool swapit) {
   return out.str();
 }
 
-static double Xnum(std::istream& sas, bool swapit) {
+inline double Xnum(std::istream& sas, bool swapit) {
   double out = 0;
   out = readbin(out, sas, swapit);
   return out;
 }
 
-static double RkNumber(int32_t val) {
+inline double RkNumber(int32_t val) {
   double out;
   if (val & 0x02) {  // integer
     int32_t tmp = val >> 2;
@@ -1020,7 +1028,7 @@ static double RkNumber(int32_t val) {
   return out;
 }
 
-std::string BErr(std::istream& sas, bool swapit) {
+inline std::string BErr(std::istream& sas, bool swapit) {
   uint8_t error = 0;
   error = readbin(error, sas, swapit);
 
@@ -1036,7 +1044,7 @@ std::string BErr(std::istream& sas, bool swapit) {
   return "unknown_ERROR";
 }
 
-std::string valType(uint8_t type) {
+inline std::string valType(uint8_t type) {
 
   if (type == 0x0) return "none";
   if (type == 0x1) return "whole";
@@ -1050,7 +1058,7 @@ std::string valType(uint8_t type) {
   return "unknown_type";
 }
 
-std::string typOperator(uint8_t oprtr) {
+inline std::string typOperator(uint8_t oprtr) {
   if (oprtr == 0x0) return "between";
   if (oprtr == 0x1) return "notBetween";
   if (oprtr == 0x2) return "equal";
@@ -1063,7 +1071,7 @@ std::string typOperator(uint8_t oprtr) {
   return "unknown_operator";
 }
 
-std::string grbitSgnOperator(int8_t oprtr) {
+inline std::string grbitSgnOperator(int8_t oprtr) {
   if (oprtr == 0x01) return "lessThan";
   if (oprtr == 0x02) return "equal";
   if (oprtr == 0x03) return "lessThanOrEqual";
@@ -1074,7 +1082,7 @@ std::string grbitSgnOperator(int8_t oprtr) {
   return "unknown_operator";
 }
 
-std::vector<int32_t> Xti(std::istream& sas, bool swapit) {
+inline std::vector<int32_t> Xti(std::istream& sas, bool swapit) {
   int32_t firstSheet = 0, lastSheet = 0;
   int32_t externalLink = 0;  // TODO actually uint32?
   externalLink = readbin(externalLink, sas, swapit);
@@ -1095,7 +1103,7 @@ std::vector<int32_t> Xti(std::istream& sas, bool swapit) {
 }
 
 // first half little endian, second half big endian
-std::string guid_str(const std::vector<int32_t>& guid_ints) {
+inline std::string guid_str(const std::vector<int32_t>& guid_ints) {
   std::ostringstream guidStream;
 
   guidStream << std::uppercase << std::hex << std::setfill('0');
@@ -1132,7 +1140,7 @@ std::string guid_str(const std::vector<int32_t>& guid_ints) {
 //     token == "#" || token == "@";
 // }
 
-std::string array_elements(const std::vector<std::string>& elements, int32_t n, int32_t k) {
+inline std::string array_elements(const std::vector<std::string>& elements, int32_t n, int32_t k) {
   std::stringstream ss;
   ss << "{";
   for (int32_t i = 0; i < n; ++i) {
@@ -1155,7 +1163,7 @@ std::string array_elements(const std::vector<std::string>& elements, int32_t n, 
 #include <stack>
 
 // undo the newline escaping
-std::string replaceXmlEscapesWithNewline(const std::string& input) {
+inline std::string replaceXmlEscapesWithNewline(const std::string& input) {
   std::string output = input;
   std::string search1 = "&#xA;";
   std::string search2 = "&amp;#xA;";
@@ -1180,7 +1188,7 @@ std::string replaceXmlEscapesWithNewline(const std::string& input) {
   return output;
 }
 
-std::string parseRPN(const std::string& expression) {
+inline std::string parseRPN(const std::string& expression) {
   std::istringstream iss(expression);
   std::string line;
   std::stack<std::string> formulaStack;
@@ -1224,7 +1232,7 @@ std::string parseRPN(const std::string& expression) {
   return replaceXmlEscapesWithNewline(parsedFormula);
 }
 
-std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug, int32_t col, int32_t row, int32_t &sharedFml, bool has_revision_record, std::streampos pos, std::vector<int32_t> &ptgextra) {
+inline std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug, int32_t col, int32_t row, int32_t &sharedFml, bool has_revision_record, std::streampos pos, std::vector<int32_t> &ptgextra) {
 
   int8_t val1 = 0;
   // std::vector<int32_t> ptgextra;
@@ -2104,7 +2112,7 @@ std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug
   return fml_out;
 }
 
-std::string rgcb(std::string fml_out, std::istream& sas, bool swapit, bool debug, int32_t row, std::streampos pos, std::vector<int32_t> &ptgextra) {
+inline std::string rgcb(std::string fml_out, std::istream& sas, bool swapit, bool debug, int32_t row, std::streampos pos, std::vector<int32_t> &ptgextra) {
 
   int8_t val1 = 0;
   // std::vector<int32_t> ptgextra;
@@ -2294,7 +2302,7 @@ std::string rgcb(std::string fml_out, std::istream& sas, bool swapit, bool debug
   return fml_out;
 }
 
-std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int32_t col, int32_t row, int32_t &sharedFml, bool has_revision_record) {
+inline std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int32_t col, int32_t row, int32_t &sharedFml, bool has_revision_record) {
   // bool ptg_extra_array = false;
   uint32_t cce = 0, cb = 0;
   std::vector<int32_t> ptgextra;
@@ -2342,7 +2350,7 @@ std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int32_
   return inflix;
 }
 
-std::string FRTParsedFormula(std::istream& sas, bool swapit, bool debug, int32_t col, int32_t row, int32_t &sharedFml, bool has_revision_record) {
+inline std::string FRTParsedFormula(std::istream& sas, bool swapit, bool debug, int32_t col, int32_t row, int32_t &sharedFml, bool has_revision_record) {
   // bool ptg_extra_array = false;
   uint32_t cce = 0, cb = 0;
   std::vector<int32_t> ptgextra;
@@ -2384,6 +2392,159 @@ std::string FRTParsedFormula(std::istream& sas, bool swapit, bool debug, int32_t
   std::string inflix = parseRPN(fml_out);
 
   return inflix;
+}
+
+// XFPropColor and BrtColor: flags with the type of the color (7 bits), index, tint and RGBA
+inline std::string xlsb_color_attr(const std::vector<uint8_t>& d, size_t at) {
+  if (at + 8 > d.size()) return std::string();
+  unsigned type = (d[at] >> 1) & 0x7Fu;
+  unsigned icv = d[at + 1];
+  int tint = static_cast<int16_t>(static_cast<uint16_t>(d[at + 2] | (d[at + 3] << 8)));
+
+  std::string x;
+  if (type == 0) {
+    return " auto=\"1\"";
+  } else if (type == 1) {
+    return " indexed=\"" + std::to_string(icv) + "\"";
+  } else if (type == 2) {
+    char hex[16];
+    std::snprintf(hex, sizeof(hex), "%02X%02X%02X%02X", d[at + 7], d[at + 4], d[at + 5], d[at + 6]);
+    x = std::string(" rgb=\"") + hex + "\"";
+  } else if (type == 3) {
+    x = " theme=\"" + std::to_string(icv) + "\"";
+  } else {
+    return std::string();
+  }
+  if (tint != 0) {
+    std::stringstream stream;
+    stream << std::setprecision(16) << (static_cast<double>(tint) / 32767.0);
+    x += " tint=\"" + stream.str() + "\"";
+  }
+  return x;
+}
+
+// BrtDXF: flags, reserved and the number of XFProps, then the XFProps (type, size and data)
+inline std::string xlsb_dxf(const std::vector<uint8_t>& d) {
+  std::map<unsigned, size_t> props;
+  if (d.size() >= 6) {
+    unsigned count = d[4] | (d[5] << 8);
+    size_t pos = 6;
+    for (unsigned i = 0; i < count && pos + 4 <= d.size(); ++i) {
+      unsigned type = d[pos] | (d[pos + 1] << 8);
+      size_t cb = static_cast<size_t>(d[pos + 2] | (d[pos + 3] << 8));
+      if (cb < 4 || pos + cb > d.size()) break;
+      props[type] = pos + 4;
+      pos += cb;
+    }
+  }
+
+  auto u8 = [&](unsigned type, unsigned &val) {
+    auto it = props.find(type);
+    if (it == props.end() || it->second >= d.size()) return false;
+    val = d[it->second];
+    return true;
+  };
+  auto u16 = [&](unsigned type, unsigned &val) {
+    auto it = props.find(type);
+    if (it == props.end() || it->second + 2 > d.size()) return false;
+    val = d[it->second] | (d[it->second + 1] << 8);
+    return true;
+  };
+
+  unsigned v = 0;
+  std::string font, numfmt, fill, border;
+
+  if (u16(0x19, v)) font += v >= 600 ? "<b/>" : "<b val=\"0\"/>";
+  if (u8(0x1C, v)) font += v ? "<i/>" : "<i val=\"0\"/>";
+  if (u8(0x1D, v)) font += v ? "<strike/>" : "<strike val=\"0\"/>";
+  if (u8(0x1E, v) && v) font += "<outline/>";
+  if (u8(0x1F, v) && v) font += "<shadow/>";
+  if (u8(0x20, v) && v) font += "<condense/>";
+  if (u8(0x21, v) && v) font += "<extend/>";
+  if (u16(0x1A, v)) {
+    if (v == 0) font += "<u val=\"none\"/>";
+    else if (v == 1) font += "<u/>";
+    else if (v == 2) font += "<u val=\"double\"/>";
+    else if (v == 0x21) font += "<u val=\"singleAccounting\"/>";
+    else if (v == 0x22) font += "<u val=\"doubleAccounting\"/>";
+  }
+  if (u16(0x1B, v)) {
+    if (v == 0) font += "<vertAlign val=\"baseline\"/>";
+    else if (v == 1) font += "<vertAlign val=\"superscript\"/>";
+    else if (v == 2) font += "<vertAlign val=\"subscript\"/>";
+  }
+  if (props.count(0x24) && props[0x24] + 4 <= d.size()) {
+    size_t at = props[0x24];
+    unsigned twips = d[at] | (d[at + 1] << 8) | (d[at + 2] << 16);
+    font += "<sz val=\"" + std::to_string(twips / 20) + (twips % 20 ? ".5" : "") + "\"/>";
+  }
+  if (props.count(0x05)) {
+    std::string attr = xlsb_color_attr(d, props[0x05]);
+    if (!attr.empty()) font += "<color" + attr + "/>";
+  }
+  if (props.count(0x18) && props[0x18] + 2 <= d.size()) {
+    size_t at = props[0x18];
+    size_t cch = static_cast<size_t>(d[at] | (d[at + 1] << 8));
+    std::u16string name;
+    for (size_t i = 0; i < cch && at + 4 + 2 * i <= d.size(); ++i)
+      name.push_back(static_cast<char16_t>(d[at + 2 + 2 * i] | (d[at + 3 + 2 * i] << 8)));
+    if (!name.empty()) font += "<name val=\"" + escape_xml(to_utf8(name)) + "\"/>";
+  }
+
+  if (props.count(0x26) && props[0x26] + 2 <= d.size()) {
+    size_t at = props[0x26];
+    size_t cch = static_cast<size_t>(d[at] | (d[at + 1] << 8));
+    std::u16string code;
+    for (size_t i = 0; i < cch && at + 4 + 2 * i <= d.size(); ++i)
+      code.push_back(static_cast<char16_t>(d[at + 2 + 2 * i] | (d[at + 3 + 2 * i] << 8)));
+    unsigned ifmt = 0;
+    if (!u16(0x29, ifmt)) ifmt = 164;
+    numfmt = "<numFmt numFmtId=\"" + std::to_string(ifmt) + "\" formatCode=\"" + escape_xml(to_utf8(code)) + "\"/>";
+  }
+
+  static const char* const patterns[19] = {"none", "solid", "mediumGray", "darkGray", "lightGray", "darkHorizontal",
+                                           "darkVertical", "darkDown", "darkUp", "darkGrid", "darkTrellis",
+                                           "lightHorizontal", "lightVertical", "lightDown", "lightUp", "lightGrid",
+                                           "lightTrellis", "gray125", "gray0625"};
+  std::string pattern, colors;
+  if (u8(0x00, v) && v < 19) pattern = std::string(" patternType=\"") + patterns[v] + "\"";
+  if (props.count(0x01)) {
+    std::string attr = xlsb_color_attr(d, props[0x01]);
+    if (!attr.empty()) colors += "<fgColor" + attr + "/>";
+  }
+  if (props.count(0x02)) {
+    std::string attr = xlsb_color_attr(d, props[0x02]);
+    if (!attr.empty()) colors += "<bgColor" + attr + "/>";
+  }
+  if (!pattern.empty() || !colors.empty()) fill = "<fill><patternFill" + pattern + ">" + colors + "</patternFill></fill>";
+
+  static const char* const styles[14] = {"", "thin", "medium", "dashed", "dotted", "thick", "double", "hair",
+                                         "mediumDashed", "dashDot", "mediumDashDot", "dashDotDot", "mediumDashDotDot",
+                                         "slantDashDot"};
+  static const unsigned side_type[7] = {0x08, 0x09, 0x06, 0x07, 0x0A, 0x0B, 0x0C};
+  static const char* const side_name[7] = {"left", "right", "top", "bottom", "diagonal", "vertical", "horizontal"};
+  for (size_t k = 0; k < 7; ++k) {
+    auto it = props.find(side_type[k]);
+    if (it == props.end() || it->second + 10 > d.size()) continue;
+    unsigned style = d[it->second + 8] | (d[it->second + 9] << 8);
+    border += std::string("<") + side_name[k];
+    if (style == 0 || style >= 14) {
+      border += "/>";
+    } else {
+      border += std::string(" style=\"") + styles[style] + "\"";
+      std::string attr = xlsb_color_attr(d, it->second);
+      border += attr.empty() ? "/>" : "><color" + attr + "/></" + side_name[k] + ">";
+    }
+  }
+  std::string border_attr;
+  if (u8(0x0D, v) && v) border_attr += " diagonalUp=\"1\"";
+  if (u8(0x0E, v) && v) border_attr += " diagonalDown=\"1\"";
+  if (!border.empty()) border = "<border" + border_attr + ">" + border + "</border>";
+
+  std::string dxf = "<dxf>";
+  if (!font.empty()) dxf += "<font>" + font + "</font>";
+  dxf += numfmt + fill + border + "</dxf>";
+  return dxf;
 }
 
 #endif

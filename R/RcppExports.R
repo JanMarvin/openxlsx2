@@ -318,6 +318,46 @@ write_xmlPtr <- function(doc, fl) {
     invisible(.Call(`_openxlsx2_write_xmlPtr`, doc, fl))
 }
 
+xls_extract <- function(filePath, outPath, debug) {
+    .Call(`_openxlsx2_xls_extract`, filePath, outPath, debug)
+}
+
+docprops_xls <- function(filePath, corePath, appPath) {
+    .Call(`_openxlsx2_docprops_xls`, filePath, corePath, appPath)
+}
+
+workbook_xls <- function(filePath, outPath, debug) {
+    .Call(`_openxlsx2_workbook_xls`, filePath, outPath, debug)
+}
+
+externallinks_xls <- function(filePath, outDir, debug) {
+    .Call(`_openxlsx2_externallinks_xls`, filePath, outDir, debug)
+}
+
+theme_xls <- function(filePath, outPath, debug) {
+    .Call(`_openxlsx2_theme_xls`, filePath, outPath, debug)
+}
+
+media_xls <- function(filePath, outDir, debug) {
+    .Call(`_openxlsx2_media_xls`, filePath, outDir, debug)
+}
+
+sharedstrings_xls <- function(filePath, outPath, debug) {
+    .Call(`_openxlsx2_sharedstrings_xls`, filePath, outPath, debug)
+}
+
+styles_xls <- function(filePath, outPath, debug) {
+    .Call(`_openxlsx2_styles_xls`, filePath, outPath, debug)
+}
+
+sheettypes_xls <- function(filePath) {
+    .Call(`_openxlsx2_sheettypes_xls`, filePath)
+}
+
+worksheet_xls <- function(filePath, sheet, outPath, relsPath, commentsPath, vmlPath, comment_file, tablesDir, table_file, media, drawingPath, drawingRelsPath, drawing_file, chartsDir, chart_file, xlDir, xlsPath, pivot_file, known_caches, data_only, debug) {
+    .Call(`_openxlsx2_worksheet_xls`, filePath, sheet, outPath, relsPath, commentsPath, vmlPath, comment_file, tablesDir, table_file, media, drawingPath, drawingRelsPath, drawing_file, chartsDir, chart_file, xlDir, xlsPath, pivot_file, known_caches, data_only, debug)
+}
+
 styles_bin <- function(filePath, outPath, debug) {
     .Call(`_openxlsx2_styles_bin`, filePath, outPath, debug)
 }
@@ -344,5 +384,21 @@ workbook_bin <- function(filePath, outPath, debug) {
 
 worksheet_bin <- function(filePath, chartsheet, outPath, debug) {
     .Call(`_openxlsx2_worksheet_bin`, filePath, chartsheet, outPath, debug)
+}
+
+pivotcache_bin <- function(filePath, outPath, recordsPath, recordsOut, debug) {
+    .Call(`_openxlsx2_pivotcache_bin`, filePath, outPath, recordsPath, recordsOut, debug)
+}
+
+pivottable_bin <- function(filePath, outPath, debug) {
+    .Call(`_openxlsx2_pivottable_bin`, filePath, outPath, debug)
+}
+
+slicer_bin <- function(filePath, outPath, debug) {
+    .Call(`_openxlsx2_slicer_bin`, filePath, outPath, debug)
+}
+
+slicercache_bin <- function(filePath, outPath, debug) {
+    .Call(`_openxlsx2_slicercache_bin`, filePath, outPath, debug)
 }
 

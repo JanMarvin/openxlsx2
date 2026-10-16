@@ -2,12 +2,12 @@
 % Please edit documentation in R/wb_load.R
 \name{wb_load}
 \alias{wb_load}
-\title{Load an existing .xlsx, .xlsm or .xlsb file}
+\title{Load an existing .xlsx, .xlsm, .xlsb or .xls file}
 \usage{
 wb_load(file, sheet, data_only = FALSE, ...)
 }
 \arguments{
-\item{file}{A path to an existing .xlsx, .xlsm or .xlsb file}
+\item{file}{A path to an existing .xlsx, .xlsm, .xlsb or .xls file}
 
 \item{sheet}{optional sheet parameter. if this is applied, only the selected
 sheet will be loaded. This can be a numeric, a string or \code{NULL}.}
@@ -64,9 +64,22 @@ can import. Therefore, once imported, it is possible to interact with the
 file as if it had been provided in xlsx file format in the first place. This
 parsing into pseudo xml files is of course slower than reading directly from
 the binary file. Our implementation is also still missing some functions:
-some array formulas are not yet correct, conditional formatting and data
-validation are not implemented, nor are pivot tables and slicers. Support is
-limited to little endian platforms.
+some array formulas are not yet correct and data validation is not
+implemented. Conditional formatting, pivot tables based on a worksheet and
+their slicers are imported. The records of the pivot caches are imported, see
+\code{options("openxlsx2.pivot_refresh")}. Support is limited to little endian
+platforms.
+
+Legacy binary files (\code{xls}, Excel 97 to 2003) are read the same way: the
+file is parsed into pseudo-openxml files. Values, formulas, styles, merged
+cells, hyperlinks, comments, data validation, tables, simple conditional
+formatting, color scales, data bars, icon sets, external references and page
+settings, images, charts (bar, line, area, pie, scatter, bubble, radar, 3D
+and combination charts), chart sheets and pivot tables based on a worksheet
+are imported. The pivot caches are refreshed when the file is opened in a
+spreadsheet software. Files from Excel 95 or earlier are not supported, nor
+are encrypted files.
+Support is limited to little endian platforms.
 
 The loaded workbook provides a finalizer that will be invoked after the first
 \code{gc()} call and will cause removal of a loaded temporary files. These files

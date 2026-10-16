@@ -37,5 +37,6 @@ will be converted. \code{"1"} will be written as \code{1}
 \code{wb_add_data()} and \code{wb_add_data_table()}.
 \item \code{options("openxlsx2.zip_flags")} custom zip flags passed to \code{utils::zip()} required when using a custom zip tool
 \item \code{options("openxlsx2.compression_level" = 6)} compression level for the output file. Increasing compression and time consumed from 1-9.
+\item \code{options("openxlsx2.pivot_refresh" = FALSE)} if \code{TRUE}, \code{wb_load()} leaves the pivot caches of \code{xlsb} files empty to be refreshed on open
 }
 }

@@ -210,7 +210,7 @@ test_that("xlsb formula line breaks are handled", {
   warns <- capture_warnings(wb <- wb_load(fl))
 
   unhandled_warns <- grep("Worksheet contains unhandled conditional formatting", warns, value = TRUE)
-  expect_length(unhandled_warns, 12)
+  expect_length(unhandled_warns, 0)
   expect_equal(length(wb$get_sheet_names()), 3L)
 
   exp <- c("Align: left", "Align: center", "Align: right")
@@ -226,4 +226,102 @@ test_that("xlsb formula line breaks are handled", {
   got <- cc$f[cc$r %in% paste0("D", 1:4)]
   expect_equal(got, exp)
 
+})
+
+test_that("pivot tables are imported from xlsb", {
+
+  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_online_checks()
+
+  wb <- wb_load(testfile_path("loadExample.xlsb"))
+
+  expect_length(wb$pivotTables, 2L)
+  expect_length(wb$pivotDefinitions, 2L)
+  expect_match(wb$workbook$pivotCaches, "<pivotCache cacheId=\"24\"", fixed = TRUE)
+
+  expect_match(wb$pivotTables[[1]], "<dataField name=\"Sum of Sepal Length\" fld=\"0\"", fixed = TRUE)
+  expect_match(wb$pivotTables[[1]], "<location ref=\"G2:K6\"", fixed = TRUE)
+  expect_match(wb$pivotTables[[2]], "subtotal=\"average\"", fixed = TRUE)
+  expect_match(wb$pivotTables[[1]], "outline=\"1\"", fixed = TRUE)
+  expect_match(wb$pivotTables[[1]], "<rowItems count=", fixed = TRUE)
+  expect_match(wb$pivotDefinitions[[1]], "<worksheetSource name=\"Table2\"/>", fixed = TRUE)
+  expect_match(wb$pivotDefinitions[[1]], "<s v=\"virginica\"/><s v=\"setosa\"/><s v=\"versicolor\"/>", fixed = TRUE)
+
+  expect_match(wb$slicers, "<slicer name=\"Species\" cache=\"Slicer_Species\" caption=\"Species\"", fixed = TRUE)
+  expect_match(wb$slicerCaches, "<pivotTable tabId=\"1\" name=\"PivotTable1\"/>", fixed = TRUE)
+  expect_match(wb$slicerCaches, "<tabular pivotCacheId=\"2\"><items count=\"3\">", fixed = TRUE)
+  expect_match(wb$pivotDefinitions[[1]], "<x14:pivotCacheDefinition pivotCacheId=\"2\"/>", fixed = TRUE)
+  expect_match(wb$worksheets[[1]]$extLst, "<x14:slicerList><x14:slicer r:id=\"rId5\"/>", fixed = TRUE, all = FALSE)
+
+  tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+  wb$save(tmp)
+  wb2 <- wb_load(tmp)
+  expect_length(wb2$pivotTables, 2L)
+  expect_length(wb2$slicers, 1L)
+})
+
+test_that("conditional formatting is imported from xlsb", {
+
+  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_online_checks()
+
+  wb <- wb_load(testfile_path("loadExample.xlsb"))
+  expect_equal(wb$worksheets[[2]]$conditionalFormatting$sqref, "I2:N5")
+  expect_match(
+    wb$worksheets[[2]]$conditionalFormatting$cf,
+    "<cfRule type=\"cellIs\" operator=\"greaterThan\" dxfId=\"0\" priority=\"1\"><formula>0.5</formula></cfRule>",
+    fixed = TRUE
+  )
+  expect_equal(
+    wb$styles_mgr$styles$dxfs[1],
+    "<dxf><font><color rgb=\"FF9C0006\"/></font><fill><patternFill><bgColor rgb=\"FFFFC7CE\"/></patternFill></fill></dxf>"
+  )
+
+  wb <- wb_load(testfile_path("test_coverage.xlsb"))
+  expect_match(wb$worksheets[[1]]$conditionalFormatting$cf[1], "<iconSet iconSet=\"5Arrows\"><cfvo type=\"num\" val=\"-67\"/>", fixed = TRUE)
+})
+
+test_that("pivot cache records are imported from xlsb unless the cache is refreshed", {
+
+  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_online_checks()
+
+  wb <- wb_load(testfile_path("loadExample.xlsb"))
+  expect_false(grepl("refreshOnLoad", wb$pivotDefinitions[[1]], fixed = TRUE))
+  expect_match(wb$pivotRecords[[1]], "<r><n v=\"", fixed = TRUE)
+  expect_match(wb$pivotRecords[[1]], "<x v=\"", fixed = TRUE)
+
+  tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+  wb$save(tmp)
+  wb2 <- wb_load(tmp)
+  expect_length(wb2$pivotTables, 2L)
+  expect_match(wb2$pivotRecords[[1]], "<r>", fixed = TRUE)
+
+  op <- options("openxlsx2.pivot_refresh" = TRUE)
+  on.exit(options(op), add = TRUE)
+
+  wb <- wb_load(testfile_path("loadExample.xlsb"))
+  expect_match(wb$pivotDefinitions[[1]], "refreshOnLoad=\"1\"", fixed = TRUE)
+  expect_match(wb$pivotRecords[[1]], "count=\"0\"", fixed = TRUE)
+})
+
+test_that("default column width is imported from xlsb", {
+  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_on_cran()
+  wb <- wb_load(testfile_path("loadExample.xlsb"))
+  expect_match(wb$worksheets[[1]]$sheetFormatPr, "defaultColWidth=\"8.832", fixed = TRUE)
+})
+
+test_that("xlsb styles use documented attribute values", {
+  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_on_cran()
+  wb <- wb_load(testfile_path("test_coverage.xlsb"))
+  expect_true(any(grepl("horizontal=\"centerContinuous\"", wb$styles_mgr$styles$cellXfs, fixed = TRUE)))
+  expect_false(any(grepl("center-across", wb$styles_mgr$styles$cellXfs, fixed = TRUE)))
+
+  wb <- wb_load(testfile_path("nhs-core-standards-for-eprr-v6.1.xlsb"))
+  expect_false(any(grepl("<color hex=", wb$styles_mgr$styles$borders, fixed = TRUE)))
+  expect_true(any(grepl("<color rgb=", wb$styles_mgr$styles$borders, fixed = TRUE)))
 })
