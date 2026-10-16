@@ -517,7 +517,6 @@ test_that("xls files created from the xls_cov workbooks are imported", {
     xls_cov_views = c("freeze", "freeze_row", "freeze_col", "split", "hidden_outline", "protected", "very_hidden"),
     xls_cov_features = c("filter", "merge_val", "cf", "links", "page", "fit"),
     xls_cov_names_formulas = c("data", "calc"),
-    xls_cov_values = "values",
     xls_cov_drawings = c("img", "chart", "chartsheet"),
     xls_cov_pivot_external = c("src", "pivot", "pivot2", "ext")
   )
@@ -551,11 +550,6 @@ test_that("xls files created from the xls_cov workbooks are imported", {
   expect_true(nrow(wb_get_named_regions(wb)) > 0)
   fml <- wb_to_df(wb, sheet = "calc", col_names = FALSE, show_formula = TRUE)
   expect_true(sum(grepl("^[A-Z]", unlist(fml[[3]]))) > 50)
-
-  wb <- wb_load(testfile_path("xls_cov_values.xls"))
-  df <- wb_to_df(wb, sheet = "values")
-  expect_true(nrow(df) >= 9)
-  expect_equal(nchar(df[[1]][3]), 32767L)
 
   wb <- wb_load(testfile_path("xls_cov_drawings.xls"))
   expect_true(length(wb$charts) > 0)
@@ -620,7 +614,7 @@ test_that("a single sheet of an xls file can be read without converting the othe
 })
 
 test_that("single sheets of xls files keep their strings, dates and names", {
-  for (file in c("xls_values.xls", "xls_cov2_values.xls", "xls_cov_values.xls", "loadExample.xls")) {
+  for (file in c("xls_values.xls", "xls_cov2_values.xls", "loadExample.xls")) {
     fl <- testfile_path(file)
     skip_if(fl == "" || !file.exists(fl))
 
@@ -646,4 +640,20 @@ test_that("single sheets of xls files keep their strings, dates and names", {
   df <- wb_to_df(wb_load(fl, sheet = 3, data_only = TRUE), sheet = 3)
   expect_true(any(vapply(df, is.character, NA)))
   expect_true(any(vapply(df, inherits, NA, c("Date", "POSIXct"))))
+})
+
+test_that("xls_cov_values with comments is imported", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
+  skip_on_cran()
+
+  fl <- testfile_path("xls_cov_values.xls")
+
+  wb <- wb_load(fl)
+  expect_equal(wb$get_sheet_names(escape = TRUE), "values", ignore_attr = TRUE)
+  df <- wb_to_df(wb, sheet = "values")
+  expect_true(nrow(df) >= 9)
+  expect_equal(nchar(df[[1]][3]), 32767L)
+
+  wb2 <- wb_load(fl, sheet = 1, data_only = TRUE)
+  expect_equal(wb_to_df(wb2, sheet = 1), df)
 })

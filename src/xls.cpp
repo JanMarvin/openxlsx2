@@ -991,13 +991,14 @@ Rcpp::CharacterVector media_xls(std::string filePath, std::string outDir, bool d
   std::vector<XlsBlip> blips = xls_blips(group);
   Rcpp::CharacterVector names(blips.size());
   Rcpp::NumericVector usize(blips.size());
-  for (size_t i = 0; i < blips.size(); ++i) {
-    usize[i] = static_cast<double>(blips[i].size);
-    if (blips[i].ext.empty()) {
+  for (R_xlen_t i = 0; i < static_cast<R_xlen_t>(blips.size()); ++i) {
+    const XlsBlip &blip = blips[static_cast<size_t>(i)];
+    usize[i] = static_cast<double>(blip.size);
+    if (blip.ext.empty()) {
       names[i] = "";
       continue;
     }
-    std::string data = blips[i].data, ext = blips[i].ext;
+    std::string data = blip.data, ext = blip.ext;
     if (ext == "dib") {
       data = xls_dib_to_bmp(data);
       ext = "bmp";
@@ -1006,7 +1007,7 @@ Rcpp::CharacterVector media_xls(std::string filePath, std::string outDir, bool d
       names[i] = "";
       continue;
     }
-    std::string name = "image" + std::to_string(i + 1) + "." + ext + (blips[i].deflated ? ".zlib" : "");
+    std::string name = "image" + std::to_string(i + 1) + "." + ext + (blip.deflated ? ".zlib" : "");
     std::ofstream out(outDir + "/" + name, std::ios::binary);
     out.write(data.data(), static_cast<std::streamsize>(data.size()));
     names[i] = name;
@@ -2086,8 +2087,8 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
               unsigned icv = rec[16] & 0x7Fu;
               if (rec.size() >= 40) {
                 XlsCfColor c;
-                c.type = static_cast<uint32_t>(rec[24] | (rec[25] << 8) | (rec[26] << 16) | (static_cast<uint32_t>(rec[27]) << 24));
-                c.value = static_cast<uint32_t>(rec[28] | (rec[29] << 8) | (rec[30] << 16) | (static_cast<uint32_t>(rec[31]) << 24));
+                c.type = static_cast<uint32_t>(rec[24]) | (static_cast<uint32_t>(rec[25]) << 8) | (static_cast<uint32_t>(rec[26]) << 16) | (static_cast<uint32_t>(rec[27]) << 24);
+                c.value = static_cast<uint32_t>(rec[28]) | (static_cast<uint32_t>(rec[29]) << 8) | (static_cast<uint32_t>(rec[30]) << 16) | (static_cast<uint32_t>(rec[31]) << 24);
                 if (c.type == 2 || c.type == 3) tab_color = xls_color_attr(c, pal);
               }
               if (tab_color.empty() && icv >= 8 && icv <= 0x3F) tab_color = " rgb=\"" + xls_argb(pal, icv) + "\"";
