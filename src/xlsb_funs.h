@@ -2427,10 +2427,10 @@ inline std::string xlsb_color_attr(const std::vector<uint8_t>& d, size_t at) {
 inline std::string xlsb_dxf(const std::vector<uint8_t>& d) {
   std::map<unsigned, size_t> props;
   if (d.size() >= 6) {
-    unsigned count = d[4] | (d[5] << 8);
+    unsigned count = static_cast<unsigned>(d[4] | (d[5] << 8));
     size_t pos = 6;
     for (unsigned i = 0; i < count && pos + 4 <= d.size(); ++i) {
-      unsigned type = d[pos] | (d[pos + 1] << 8);
+      unsigned type = static_cast<unsigned>(d[pos] | (d[pos + 1] << 8));
       size_t cb = static_cast<size_t>(d[pos + 2] | (d[pos + 3] << 8));
       if (cb < 4 || pos + cb > d.size()) break;
       props[type] = pos + 4;
@@ -2447,7 +2447,7 @@ inline std::string xlsb_dxf(const std::vector<uint8_t>& d) {
   auto u16 = [&](unsigned type, unsigned &val) {
     auto it = props.find(type);
     if (it == props.end() || it->second + 2 > d.size()) return false;
-    val = d[it->second] | (d[it->second + 1] << 8);
+    val = static_cast<unsigned>(d[it->second] | (d[it->second + 1] << 8));
     return true;
   };
 
@@ -2475,7 +2475,7 @@ inline std::string xlsb_dxf(const std::vector<uint8_t>& d) {
   }
   if (props.count(0x24) && props[0x24] + 4 <= d.size()) {
     size_t at = props[0x24];
-    unsigned twips = d[at] | (d[at + 1] << 8) | (d[at + 2] << 16);
+    unsigned twips = static_cast<unsigned>(d[at] | (d[at + 1] << 8) | (d[at + 2] << 16));
     font += "<sz val=\"" + std::to_string(twips / 20) + (twips % 20 ? ".5" : "") + "\"/>";
   }
   if (props.count(0x05)) {
@@ -2526,7 +2526,7 @@ inline std::string xlsb_dxf(const std::vector<uint8_t>& d) {
   for (size_t k = 0; k < 7; ++k) {
     auto it = props.find(side_type[k]);
     if (it == props.end() || it->second + 10 > d.size()) continue;
-    unsigned style = d[it->second + 8] | (d[it->second + 9] << 8);
+    unsigned style = static_cast<unsigned>(d[it->second + 8] | (d[it->second + 9] << 8));
     border += std::string("<") + side_name[k];
     if (style == 0 || style >= 14) {
       border += "/>";

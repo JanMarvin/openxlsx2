@@ -284,7 +284,7 @@ inline std::string xls_area(std::istream& sas, bool swapit, bool relative_to_cel
 inline std::string xls_rgce(const XlsRgce& rgce, XlsFormulaContext& ctx, bool swapit, bool debug) {
   std::istringstream sas(std::string(rgce.data.begin(), rgce.data.end()), std::ios::in | std::ios::binary);
   std::string out;
-  std::streampos end = static_cast<std::streampos>(rgce.cce);
+  std::streampos end = static_cast<std::streampos>(static_cast<std::streamoff>(rgce.cce));
   // the data of arrays follows the tokens, one array after the other
   std::streampos array_data = end;
 

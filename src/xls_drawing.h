@@ -226,7 +226,7 @@ struct XlsInflater {
         bit_buf = 0;
         bit_cnt = 0;
         if (pos + 4 > size) return false;
-        size_t len = data[pos] | (data[pos + 1] << 8);
+        size_t len = static_cast<size_t>(data[pos] | (data[pos + 1] << 8));
         pos += 4;
         if (pos + len > size) return false;
         out.append(reinterpret_cast<const char*>(data + pos), len);
@@ -1395,7 +1395,7 @@ inline std::string xls_chart_xml(const std::vector<XlsChartRecord>& recs, XlsFor
             } else if (rec.id == XlsLabel) {
               c.is_string = true;
               uint32_t cch = u16(d, 6);
-              std::vector<uint8_t> sd(d.begin() + std::min<size_t>(d.size(), 8), d.end());
+              std::vector<uint8_t> sd(d.begin() + static_cast<std::ptrdiff_t>(std::min<size_t>(d.size(), 8)), d.end());
               // XLUnicodeString: the flags follow the 2 bytes of the length
               std::vector<uint8_t> tmp;
               tmp.push_back(static_cast<uint8_t>(cch & 0xFF));
