@@ -5,7 +5,7 @@ date_to_unix <- function(x, origin = "1900-01-01", datetime = TRUE) {
     .Call(`_openxlsx2_date_to_unix`, x, origin, datetime)
 }
 
-#' Check if path is to long to be an R file path
+#' Check if path is to long to be an R file path or if it is xml
 #' @param path the file path used in file.exists()
 #' @noRd
 to_long <- function(path) {

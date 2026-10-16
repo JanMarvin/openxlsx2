@@ -148,7 +148,7 @@ testfile_path <- function(x, replace = FALSE) {
   if (!file.exists(fl) || replace) {
     url <- paste0("https://github.com/JanMarvin/openxlsx-data/raw/main/", x)
     tryCatch({
-      download.file(url, destfile = fl, quiet = TRUE, mode = "wb")
+      suppressWarnings(download.file(url, destfile = fl, quiet = TRUE, mode = "wb"))
     }, error = function(e) NULL)
   }
 
