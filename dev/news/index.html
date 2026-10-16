@@ -50,6 +50,11 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="openxlsx2-development-version">openxlsx2 (development version)<a class="anchor" aria-label="anchor" href="#openxlsx2-development-version"></a></h2>
 <div class="section level3">
+<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<ul><li>Initial support for <code>xls</code> parsing. This is similar to how we handle <code>xlsb</code> files. We create some pseudo XML from the binary file and import this with <code><a href="../reference/wb_load.html">wb_load()</a></code> as if the input was provided as <code>xlsx</code>/<code>xlsm</code> file.</li>
+<li>Pivot caches of <code>xlsb</code> files are imported with their records. <code>options("openxlsx2.pivot_refresh" = TRUE)</code> leaves them empty to be refreshed on open.</li>
+</ul></div>
+<div class="section level3">
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
 <ul><li>
 <code>wb_add_data_table(..., total_row = ...)</code> checked for max column length instead of max row length and refused to write anything beyond the maximum number of columns. <a href="https://github.com/JanMarvin/openxlsx2/pull/1700" class="external-link">#1700</a>

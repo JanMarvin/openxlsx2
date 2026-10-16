@@ -21,7 +21,7 @@ Write tabular data frame(s) to file with options
 Load and interact with an existing workbook
 
 - [`wb_load()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_load.md)
-  : Load an existing .xlsx, .xlsm or .xlsb file
+  : Load an existing .xlsx, .xlsm, .xlsb or .xls file
 - [`wbWorkbook`](https://janmarvin.github.io/openxlsx2/dev/reference/wbWorkbook.md)
   : Workbook class
 

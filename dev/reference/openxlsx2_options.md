@@ -68,3 +68,7 @@ options. Typically, this is done in the `.Rprofile` startup file
 
 - `options("openxlsx2.compression_level" = 6)` compression level for the
   output file. Increasing compression and time consumed from 1-9.
+
+- `options("openxlsx2.pivot_refresh" = FALSE)` if `TRUE`,
+  [`wb_load()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_load.md)
+  leaves the pivot caches of `xlsb` files empty to be refreshed on open
