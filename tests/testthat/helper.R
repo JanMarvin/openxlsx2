@@ -178,7 +178,7 @@ testsetup <- function() {
 
 #' @param host character; host to ping
 dns_lookup <- function(host = "captive.apple.com") {
-  con <- try(socketConnection(host, port = 80, open = "r+", timeout = 2), silent = TRUE)
+  con <- try(suppressWarnings(socketConnection(host, port = 80, open = "r+", timeout = 2)), silent = TRUE)
   if (inherits(con, "connection")) {
     on.exit(close(con))
     return(TRUE)
