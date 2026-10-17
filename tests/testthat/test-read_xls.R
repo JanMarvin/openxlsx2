@@ -657,3 +657,36 @@ test_that("xls_cov_values with comments is imported", {
   wb2 <- wb_load(fl, sheet = 1, data_only = TRUE)
   expect_equal(wb_to_df(wb2, sheet = 1), df)
 })
+
+test_that("xls files created from the xls_cov3 and xls_cov4 workbooks are imported", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
+  skip_on_cran()
+
+  for (nm in c("xls_cov3_cf", "xls_cov4_misc")) {
+    wb_s <- suppressWarnings(wb_load(testfile_path(paste0(nm, ".xls"))))
+    wb_x <- wb_load(testfile_path(paste0(nm, ".xlsx")))
+    expect_equal(wb_s$get_sheet_names(), wb_x$get_sheet_names(), info = nm)
+    expect_equal(length(wb_s$tables$tab_xml), length(wb_x$tables$tab_xml), info = nm)
+
+    tmp <- tempfile(fileext = ".xlsx")
+    suppressWarnings(wb_s$save(tmp))
+    expect_equal(length(wb_load(tmp)$worksheets), length(wb_x$worksheets), info = nm)
+    unlink(tmp)
+  }
+
+  wb_s <- wb_load(testfile_path("xls_cov4_misc.xls"))
+  expect_length(wb_s$externalLinks, 1L)
+
+  tab <- wb_s$tables$tab_xml
+  expect_match(tab, "<filter val=\"alpha\"/>", fixed = TRUE)
+  expect_match(tab, "<customFilter operator=\"greaterThan\" val=\"10\"/>", fixed = TRUE)
+  expect_match(tab, "<dynamicFilter type=\"aboveAverage\" val=\"50\"/>", fixed = TRUE)
+  expect_match(tab, "<colorFilter dxfId=\"0\" cellColor=\"1\"/>", fixed = TRUE)
+  expect_match(tab, "<iconFilter iconSet=\"3TrafficLights1\" iconId=\"0\"/>", fixed = TRUE)
+  expect_match(wb_s$styles_mgr$styles$dxfs[1], "FFFF0000", fixed = TRUE)
+
+  af <- wb_s$worksheets[[2]]$autoFilter
+  expect_match(af, "<filters blank=\"1\"><filter val=\"3\"/><filter val=\"7\"/></filters>", fixed = TRUE)
+  expect_match(af, "<dateGroupItem year=\"2020\" month=\"3\" day=\"5\" dateTimeGrouping=\"day\"/>", fixed = TRUE)
+  expect_match(af, "<dynamicFilter type=\"belowAverage\" val=\"10.5\"/>", fixed = TRUE)
+})
