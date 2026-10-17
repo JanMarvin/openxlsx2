@@ -202,7 +202,9 @@ XlsGlobals xls_globals(std::istream& bin, bool swapit, bool debug) {
       }
 
       case XlsFilePass: {
+        // #nocov start: encrypted files are rejected
         Rcpp::stop("xls: encrypted files are not supported");
+        // #nocov end
         break;
       }
 
@@ -576,13 +578,17 @@ int32_t xls_extract(std::string filePath, std::string outPath, bool debug) {
   std::vector<uint8_t> workbook = cfb_stream(file, "Workbook");
   if (workbook.empty()) {
     // Excel 5 and 95 files call it Book. They have a different record layout
+    // #nocov start: file without a Workbook stream
     if (!cfb_stream(file, "Book").empty()) Rcpp::stop("xls: only Excel 97-2003 files are supported");
     Rcpp::stop("xls: file has no Workbook stream");
+    // #nocov end
   }
 
   // the stream starts with a BOF record, version 0x0600 is BIFF8
+  // #nocov start: not a BIFF8 workbook
   if (workbook.size() < 8 || cfb_u16(workbook, 0) != XlsBOF || cfb_u16(workbook, 4) != 0x0600)
     Rcpp::stop("xls: only Excel 97-2003 files are supported");
+  // #nocov end
 
   if (xls_has_vba_code(file))
     Rcpp::warning("The xls file contains VBA code. Macros are not imported.");
@@ -1103,8 +1109,10 @@ int32_t sharedstrings_xls(std::string filePath, std::string outPath, bool debug)
         for (uint32_t i = 0; i < cstUnique; ++i) {
           if (bin.tellg() >= rec_end) {
             uint16_t crid = 0, crsize = 0;
+            // #nocov start: corrupt shared string table
             if (!XLS_RECORD(crid, crsize, bin, swapit) || crid != XlsContinue)
               Rcpp::stop("xls: shared strings are cut off");
+            // #nocov end
             rec_end = bin.tellg() + std::streamoff(crsize);
           }
           std::vector<std::pair<uint16_t, uint16_t> > runs;
@@ -1567,6 +1575,15 @@ int32_t styles_xls(std::string filePath, std::string outPath, bool debug) {
           }
         }
       }
+      if (rid == XlsAutoFilter12 && rsize >= 66) {
+        std::vector<uint8_t> rec(rsize);
+        bin.read(reinterpret_cast<char*>(rec.data()), rsize);
+        if (rec[18] == 1 || rec[18] == 2) {
+          std::string filter_dxf;
+          dxfs.push_back(xls_autofilter12_dxf(rec, palette, formats, filter_dxf) ? filter_dxf : "<dxf/>");
+          cf_recs.emplace_back();
+        }
+      }
       if (rid == XlsCF12) {
         std::vector<uint8_t> rec(rsize);
         bin.read(reinterpret_cast<char*>(rec.data()), rsize);
@@ -1777,11 +1794,35 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
     std::vector<Selection> selections;
     bool h_center = false, v_center = false, print_grid = false, print_headers = false;
     std::map<uint16_t, std::string> filter_columns;
+    std::vector<uint8_t> af12_rec;
+    std::vector<std::vector<uint8_t>> af12_cont;
+    uint32_t af12_expect = 0;
+    int32_t af12_dxf = -1;
     uint32_t af_row_first = 0, af_row_last = 0, af_col_first = 0, af_entries = 0;
     bool have_autofilter = false, protect_sheet = false, protect_objects = false, protect_scenarios = false;
     uint16_t password = 0;
     std::vector<uint16_t> row_breaks, col_breaks;
     std::vector<XlsListTable> tables;
+
+    auto finish_af12 = [&]() {
+      uint16_t first_col = static_cast<uint16_t>(af12_rec[8] | (af12_rec[9] << 8));
+      uint16_t entry = static_cast<uint16_t>(af12_rec[12] | (af12_rec[13] << 8));
+      uint32_t id_list = static_cast<uint32_t>(af12_rec[40]) | (static_cast<uint32_t>(af12_rec[41]) << 8) |
+                         (static_cast<uint32_t>(af12_rec[42]) << 16) | (static_cast<uint32_t>(af12_rec[43]) << 24);
+      af12_expect = 0;
+      if (id_list == 0xFFFFFFFFu) {
+        std::string x = xls_autofilter12_column(af12_rec, af12_cont, entry, af12_dxf);
+        if (!x.empty()) filter_columns[entry] = x;
+        return;
+      }
+      for (size_t i = 0; i < tables.size(); ++i) {
+        uint32_t abs_col = static_cast<uint32_t>(first_col) + entry;
+        if (tables[i].id != id_list || abs_col < tables[i].col1) continue;
+        uint16_t col = static_cast<uint16_t>(abs_col - tables[i].col1);
+        std::string x = xls_autofilter12_column(af12_rec, af12_cont, col, af12_dxf);
+        if (!x.empty()) tables[i].filters[col] = x;
+      }
+    };
     std::vector<std::string> validations;
 
     // conditional formats: CondFmt has the ranges and how many CF records follow
@@ -1996,6 +2037,12 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
       while (bin.tellg() < sheet_start && XLS_RECORD(crid, crsize, bin, swapit)) {
         std::streampos cnext = bin.tellg() + std::streamoff(crsize);
         if (crid == XlsCF) ++dxf_id;
+        if (crid == XlsAutoFilter12 && crsize >= 66) {
+          bin.seekg(18, std::ios::cur);
+          uint8_t aft = 0;
+          aft = readbin(aft, bin, swapit);
+          if (aft == 1 || aft == 2) ++dxf_id;
+        }
         if (crid == XlsCF12 && crsize > 12) {
           uint8_t ct = 0;
           bin.seekg(12, std::ios::cur);
@@ -2661,110 +2708,28 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
         }
 
         case XlsAutoFilter: {
-          // column, options, two operands of 10 bytes: type, comparison and 8 bytes of value.
-          // The text of a string operand follows after both of them.
           std::vector<uint8_t> rec(rsize);
           bin.read(reinterpret_cast<char*>(rec.data()), rsize);
           if (rsize < 24) break;
-          auto u16 = [&](size_t at) -> uint32_t { return static_cast<uint32_t>(rec[at] | (rec[at + 1] << 8)); };
-          uint16_t col = static_cast<uint16_t>(u16(0));
-          uint32_t opt = u16(2);
-          bool join_or = (opt & 0x0003) != 0;
-          bool top_n = (opt & 0x0010) != 0;
+          uint16_t col = static_cast<uint16_t>(rec[0] | (rec[1] << 8));
+          std::string x = xls_autofilter_column(rec, col);
+          if (!x.empty()) filter_columns[col] = x;
+          break;
+        }
 
-          if (top_n) {
-            filter_columns[col] = std::string("<filterColumn colId=\"") + std::to_string(col) + "\"><top10" +
-                                  ((opt & 0x0020) ? " top=\"1\"" : " top=\"0\"") + ((opt & 0x0040) ? " percent=\"1\"" : "") +
-                                  " val=\"" + std::to_string(opt >> 7) + "\"/></filterColumn>";
-            break;
+        case XlsAutoFilter12: {
+          af12_rec.resize(rsize);
+          bin.read(reinterpret_cast<char*>(af12_rec.data()), rsize);
+          af12_cont.clear();
+          af12_expect = 0;
+          if (rsize < 60) break;
+          uint32_t ft = af12_rec[18];
+          if (ft == 0) {
+            af12_expect = static_cast<uint32_t>(af12_rec[26] | (af12_rec[27] << 8)) + static_cast<uint32_t>(af12_rec[30] | (af12_rec[31] << 8));
           }
-
-          static const char* const comparison[7] = {"", "lessThan", "equal", "lessThanOrEqual", "greaterThan", "notEqual",
-                                                    "greaterThanOrEqual"};
-          size_t text_at = 24;
-          struct Operand {
-            bool valid = false, blank = false, nonblank = false;
-            std::string comparison, value;
-            bool is_equal = false;
-          } ops[2];
-          for (size_t k = 0; k < 2; ++k) {
-            size_t at = 4 + k * 10;
-            uint8_t vt = rec[at], sign = rec[at + 1];
-            Operand& o = ops[k];
-            if (sign >= 1 && sign <= 6) o.comparison = comparison[sign];
-            o.is_equal = sign == 2;
-            if (vt == 0x02) {
-              uint32_t rk = u16(at + 2) | (u16(at + 4) << 16);
-              double d = 0;
-              if (rk & 2) {
-                d = static_cast<double>(static_cast<int32_t>(rk) >> 2);
-              } else {
-                uint64_t bits = static_cast<uint64_t>(rk & 0xFFFFFFFCu) << 32;
-                std::memcpy(&d, &bits, sizeof(d));
-              }
-              if (rk & 1) d /= 100.0;
-              o.value = xls_num(d);
-              o.valid = true;
-            } else if (vt == 0x04) {
-              uint64_t bits = 0;
-              for (size_t b = 0; b < 8; ++b) bits |= static_cast<uint64_t>(rec[at + 2 + b]) << (8 * b);
-              double d = 0;
-              std::memcpy(&d, &bits, sizeof(d));
-              o.value = xls_num(d);
-              o.valid = true;
-            } else if (vt == 0x06) {
-              size_t cch = rec[at + 6];
-              if (text_at >= rec.size()) continue;
-              bool wide = (rec[text_at] & 1) != 0;
-              ++text_at;
-              std::u16string txt;
-              for (size_t b = 0; b < cch; ++b) {
-                if (wide && text_at + 1 < rec.size()) {
-                  txt.push_back(static_cast<char16_t>(u16(text_at)));
-                  text_at += 2;
-                } else if (!wide && text_at < rec.size()) {
-                  txt.push_back(static_cast<char16_t>(rec[text_at++]));
-                }
-              }
-              o.value = to_utf8(txt);
-              o.valid = true;
-            } else if (vt == 0x08) {
-              o.value = rec[at + 2] ? "TRUE" : "FALSE";
-              o.valid = true;
-            } else if (vt == 0x0C) {
-              o.blank = true;
-              o.valid = true;
-            } else if (vt == 0x0E) {
-              o.nonblank = true;
-              o.valid = true;
-            }
-          }
-
-          std::string x = "<filterColumn colId=\"" + std::to_string(col) + "\">";
-          bool both = ops[0].valid && ops[1].valid;
-          if (ops[0].valid && !both && ops[0].blank) {
-            x += "<filters blank=\"1\"/>";
-          } else if (ops[0].valid && ((!both && ops[0].is_equal) || (both && join_or && ops[0].is_equal && ops[1].is_equal)) &&
-                     !ops[0].blank && !ops[0].nonblank) {
-            x += "<filters>";
-            for (size_t k = 0; k < (both ? 2u : 1u); ++k) x += "<filter val=\"" + escape_xml(ops[k].value) + "\"/>";
-            x += "</filters>";
-          } else {
-            x += std::string("<customFilters") + (both && !join_or ? " and=\"1\"" : "") + ">";
-            for (size_t k = 0; k < 2; ++k) {
-              if (!ops[k].valid) continue;
-              if (ops[k].blank) x += "<customFilter operator=\"equal\" val=\"\"/>";
-              else if (ops[k].nonblank) x += "<customFilter operator=\"notEqual\" val=\" \"/>";
-              else {
-                x += "<customFilter";
-                if (!ops[k].comparison.empty() && ops[k].comparison != "equal") x += " operator=\"" + ops[k].comparison + "\"";
-                x += " val=\"" + escape_xml(ops[k].value) + "\"/>";
-              }
-            }
-            x += "</customFilters>";
-          }
-          x += "</filterColumn>";
-          filter_columns[col] = x;
+          af12_dxf = -1;
+          if ((ft == 1 || ft == 2) && rsize >= 66) af12_dxf = dxf_id++;
+          if (af12_expect == 0) finish_af12();
           break;
         }
 
@@ -2831,6 +2796,12 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
         }
 
         case XlsContinueFrt12: {
+          if (af12_expect > 0 && af12_cont.size() < af12_expect) {
+            af12_cont.emplace_back(rsize);
+            bin.read(reinterpret_cast<char*>(af12_cont.back().data()), rsize);
+            if (af12_cont.size() == af12_expect) finish_af12();
+            break;
+          }
           if (sort_pending == 0) break;
           std::vector<uint8_t> rec(rsize);
           bin.read(reinterpret_cast<char*>(rec.data()), rsize);
@@ -3549,7 +3520,16 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
       if (!t.header) tab << " headerRowCount=\"0\"";
       if (t.totals) tab << " totalsRowCount=\"1\"";
       tab << ">" << std::endl;
-      if (t.auto_filter && t.header) tab << "<autoFilter ref=\"" << first << ":" << filter_last << "\"/>" << std::endl;
+      if (t.auto_filter && t.header) {
+        if (t.filters.empty()) {
+          tab << "<autoFilter ref=\"" << first << ":" << filter_last << "\"/>" << std::endl;
+        } else {
+          tab << "<autoFilter ref=\"" << first << ":" << filter_last << "\">" << std::endl;
+          for (std::map<uint16_t, std::string>::const_iterator it = t.filters.begin(); it != t.filters.end(); ++it)
+            tab << it->second << std::endl;
+          tab << "</autoFilter>" << std::endl;
+        }
+      }
 
       static const char* functions[] = {"", "average", "count", "countNums", "max", "min", "sum", "stdDev", "var"};
       tab << "<tableColumns count=\"" << t.columns.size() << "\">" << std::endl;

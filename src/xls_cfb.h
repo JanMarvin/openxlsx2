@@ -31,8 +31,10 @@ inline std::vector<uint8_t> cfb_chain(const std::vector<uint8_t>& file, const st
   size_t steps = 0;
   while (sec < 0xFFFFFFFAu) {
     size_t off = (static_cast<size_t>(sec) + 1) * sec_size;
+    // #nocov start: corrupt file
     if (sec >= fat.size() || ++steps > file.size() / sec_size || off + sec_size > file.size())
       Rcpp::stop("xls: corrupt sector chain");
+    // #nocov end
     out.insert(out.end(), file.begin() + static_cast<std::ptrdiff_t>(off),
                file.begin() + static_cast<std::ptrdiff_t>(off + sec_size));
     sec = fat[sec];
@@ -43,13 +45,17 @@ inline std::vector<uint8_t> cfb_chain(const std::vector<uint8_t>& file, const st
 // return the content of the stream with the given name, empty if it does not exist
 inline std::vector<uint8_t> cfb_stream(const std::vector<uint8_t>& file, const std::string& name) {
   static const uint8_t magic[8] = {0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1};
+  // #nocov start: not an OLE2 file
   if (file.size() < 512 || !std::equal(magic, magic + 8, file.begin()))
     Rcpp::stop("xls: not an OLE2 compound file");
+  // #nocov end
 
   uint32_t sec_shift = cfb_u16(file, 0x1E);
   uint32_t mini_shift = cfb_u16(file, 0x20);
+  // #nocov start: corrupt file
   if (sec_shift < 7 || sec_shift > 16 || mini_shift < 1 || mini_shift > sec_shift)
     Rcpp::stop("xls: invalid compound file header");
+  // #nocov end
   size_t sec_size = static_cast<size_t>(1) << sec_shift;
   size_t mini_size = static_cast<size_t>(1) << mini_shift;
 
@@ -129,8 +135,10 @@ inline std::vector<uint8_t> cfb_stream(const std::vector<uint8_t>& file, const s
   size_t steps = 0;
   while (sec < 0xFFFFFFFAu) {
     size_t off = static_cast<size_t>(sec) * mini_size;
+    // #nocov start: corrupt file
     if (sec >= minifat.size() || ++steps > mini_stream.size() / mini_size || off + mini_size > mini_stream.size())
       Rcpp::stop("xls: corrupt mini sector chain");
+    // #nocov end
     out.insert(out.end(), mini_stream.begin() + static_cast<std::ptrdiff_t>(off),
                mini_stream.begin() + static_cast<std::ptrdiff_t>(off + mini_size));
     sec = minifat[sec];

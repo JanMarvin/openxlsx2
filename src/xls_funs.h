@@ -1110,6 +1110,241 @@ inline XlsHyperlink xls_hlink(const std::vector<uint8_t>& rec) {
 }
 
 // ---------------------------------------------------------------------------
+// autofilter
+// ---------------------------------------------------------------------------
+
+// An AFDOper (MS-XLS 2.5.12): type, comparison and 8 bytes of value. The text of a
+// string is not part of it, the callers read it.
+struct XlsFilterOperand {
+  bool valid = false, blank = false, nonblank = false, is_equal = false;
+  uint8_t vt = 0;
+  std::string comparison, value;
+};
+
+inline XlsFilterOperand xls_filter_operand(const std::vector<uint8_t>& rec, size_t at) {
+  static const char* const comparison[7] = {"", "lessThan", "equal", "lessThanOrEqual", "greaterThan", "notEqual",
+                                            "greaterThanOrEqual"};
+  XlsFilterOperand o;
+  o.vt = rec[at];
+  uint8_t sign = rec[at + 1];
+  if (sign >= 1 && sign <= 6) o.comparison = comparison[sign];
+  o.is_equal = sign == 2;
+  if (o.vt == 0x02) {
+    uint32_t rk = static_cast<uint32_t>(rec[at + 2] | (rec[at + 3] << 8)) | (static_cast<uint32_t>(rec[at + 4] | (rec[at + 5] << 8)) << 16);
+    double d = 0;
+    if (rk & 2) {
+      d = static_cast<double>(static_cast<int32_t>(rk) >> 2);
+    } else {
+      uint64_t bits = static_cast<uint64_t>(rk & 0xFFFFFFFCu) << 32;
+      std::memcpy(&d, &bits, sizeof(d));
+    }
+    if (rk & 1) d /= 100.0;
+    o.value = xls_num(d);
+    o.valid = true;
+  } else if (o.vt == 0x04) {
+    uint64_t bits = 0;
+    for (size_t b = 0; b < 8; ++b) bits |= static_cast<uint64_t>(rec[at + 2 + b]) << (8 * b);
+    double d = 0;
+    std::memcpy(&d, &bits, sizeof(d));
+    o.value = xls_num(d);
+    o.valid = true;
+  } else if (o.vt == 0x08) {
+    o.value = rec[at + 2] ? "TRUE" : "FALSE";
+    o.valid = true;
+  } else if (o.vt == 0x0C) {
+    o.blank = true;
+    o.valid = true;
+  } else if (o.vt == 0x0E) {
+    o.nonblank = true;
+    o.valid = true;
+  }
+  return o;
+}
+
+// The body of an AutoFilter record (MS-XLS 2.4.8), also stored in the columns of a table:
+// column, options, two operands of 10 bytes. The text of a string operand follows after both of them.
+inline std::string xls_autofilter_column(const std::vector<uint8_t>& rec, uint16_t col) {
+  if (rec.size() < 24) return "";
+  auto u16 = [&](size_t at) -> uint32_t { return static_cast<uint32_t>(rec[at] | (rec[at + 1] << 8)); };
+  uint32_t opt = u16(2);
+  bool join_or = (opt & 0x0003) != 0;
+  bool top_n = (opt & 0x0010) != 0;
+
+  if (top_n) {
+    return std::string("<filterColumn colId=\"") + std::to_string(col) + "\"><top10" +
+           ((opt & 0x0020) ? " top=\"1\"" : " top=\"0\"") + ((opt & 0x0040) ? " percent=\"1\"" : "") +
+           " val=\"" + std::to_string(opt >> 7) + "\"/></filterColumn>";
+  }
+
+  size_t text_at = 24;
+  XlsFilterOperand ops[2];
+  for (size_t k = 0; k < 2; ++k) {
+    size_t at = 4 + k * 10;
+    ops[k] = xls_filter_operand(rec, at);
+    if (ops[k].vt == 0x06) {
+      size_t cch = rec[at + 6];
+      if (text_at >= rec.size()) continue;
+      bool wide = (rec[text_at] & 1) != 0;
+      ++text_at;
+      std::u16string txt;
+      for (size_t b = 0; b < cch; ++b) {
+        if (wide && text_at + 1 < rec.size()) {
+          txt.push_back(static_cast<char16_t>(u16(text_at)));
+          text_at += 2;
+        } else if (!wide && text_at < rec.size()) {
+          txt.push_back(static_cast<char16_t>(rec[text_at++]));
+        }
+      }
+      ops[k].value = to_utf8(txt);
+      ops[k].valid = true;
+    }
+  }
+  if (!ops[0].valid && !ops[1].valid) return "";
+
+  std::string x = "<filterColumn colId=\"" + std::to_string(col) + "\">";
+  bool both = ops[0].valid && ops[1].valid;
+  for (size_t k = 0; k < 2; ++k) {
+    // a wildcard or a boolean is a comparison, not a value of a list
+    if (ops[k].vt == 0x08 || (ops[k].vt == 0x06 && ops[k].value.find_first_of("*?") != std::string::npos)) ops[k].is_equal = false;
+  }
+  if (ops[0].valid && !both && ops[0].blank) {
+    x += "<filters blank=\"1\"/>";
+  } else if (ops[0].valid && ((!both && ops[0].is_equal) || (both && join_or && ops[0].is_equal && ops[1].is_equal)) &&
+             !ops[0].blank && !ops[0].nonblank) {
+    x += "<filters>";
+    for (size_t k = 0; k < (both ? 2u : 1u); ++k) x += "<filter val=\"" + escape_xml(ops[k].value) + "\"/>";
+    x += "</filters>";
+  } else {
+    x += std::string("<customFilters") + (both && !join_or ? " and=\"1\"" : "") + ">";
+    for (size_t k = 0; k < 2; ++k) {
+      if (!ops[k].valid) continue;
+      if (ops[k].blank) x += "<customFilter operator=\"equal\" val=\"\"/>";
+      else if (ops[k].nonblank) x += "<customFilter operator=\"notEqual\" val=\" \"/>";
+      else {
+        x += "<customFilter";
+        if (!ops[k].comparison.empty() && ops[k].comparison != "equal") x += " operator=\"" + ops[k].comparison + "\"";
+        x += " val=\"" + escape_xml(ops[k].value) + "\"/>";
+      }
+    }
+    x += "</customFilters>";
+  }
+  x += "</filterColumn>";
+  return x;
+}
+
+// The dxf of a color or font filter of an AutoFilter12 record (MS-XLS 2.4.9): a DXFN12NoCB follows
+// the fixed part of 60 bytes. Returns false for the other kinds of filters.
+inline bool xls_autofilter12_dxf(const std::vector<uint8_t>& rec, const std::vector<uint32_t>& palette,
+                                 const std::map<uint16_t, std::string>& formats, std::string& dxf) {
+  if (rec.size() < 66) return false;
+  uint32_t ft = static_cast<uint32_t>(rec[18]);
+  if (ft != 1 && ft != 2) return false;
+  size_t at = 60;
+  if (!xls_dxfn(rec, at, palette, formats, 164, dxf)) return false;
+  if (at + 8 <= rec.size()) {
+    std::map<uint16_t, XlsCfColor> colors;
+    uint16_t indent = 0;
+    size_t count = static_cast<size_t>(rec[at + 6] | (rec[at + 7] << 8));
+    xls_extprops(rec, at + 8, count, colors, indent);
+    size_t again = 60;
+    if (!colors.empty()) xls_dxfn(rec, again, palette, formats, 164, dxf, &colors);
+  }
+  return true;
+}
+
+// An AutoFilter12 record with the ContinueFrt12 records that follow it, one for each
+// criterion and each date grouping. dxf_id is the format of a color or font filter.
+// An empty result means: nothing that can be written, the filter of the AutoFilter record stays.
+inline std::string xls_autofilter12_column(const std::vector<uint8_t>& rec, const std::vector<std::vector<uint8_t>>& cont,
+                                           uint16_t col, int32_t dxf_id) {
+  if (rec.size() < 60) return "";
+  auto u32 = [&](const std::vector<uint8_t>& r, size_t at) -> uint32_t {
+    return static_cast<uint32_t>(r[at]) | (static_cast<uint32_t>(r[at + 1]) << 8) | (static_cast<uint32_t>(r[at + 2]) << 16) |
+           (static_cast<uint32_t>(r[at + 3]) << 24);
+  };
+  auto u16 = [&](const std::vector<uint8_t>& r, size_t at) -> uint32_t { return static_cast<uint32_t>(r[at] | (r[at + 1] << 8)); };
+
+  uint32_t ft = u32(rec, 18), cft = u32(rec, 22), n_crit = u32(rec, 26), n_date = u32(rec, 30);
+  std::string head = "<filterColumn colId=\"" + std::to_string(col) + "\">";
+
+  if (ft == 1 || ft == 2) {
+    if (dxf_id < 0) return "";
+    return head + "<colorFilter dxfId=\"" + std::to_string(dxf_id) + "\"" + (ft == 1 ? " cellColor=\"1\"" : " cellColor=\"0\"") +
+           "/></filterColumn>";
+  }
+  if (ft == 3) {
+    if (rec.size() < 68) return "";
+    std::string icon = to_iconset(u32(rec, 60));
+    if (icon.empty()) return "";
+    return head + "<iconFilter iconSet=\"" + icon + "\" iconId=\"" + std::to_string(u32(rec, 64)) + "\"/></filterColumn>";
+  }
+  if (ft != 0) return "";
+
+  // the criteria of a list of values start with the first record, each date grouping follows after them
+  auto operand = [&](const std::vector<uint8_t>& r, XlsFilterOperand& o) {
+    if (r.size() < 22) return false;
+    o = xls_filter_operand(r, 12);
+    if (o.vt == 0x06) {
+      std::u16string txt;
+      if (r.size() > 22) {
+        bool wide = (r[22] & 1) != 0;
+        for (size_t at = 23; at < r.size(); at += wide ? 2 : 1) {
+          if (wide && at + 1 < r.size()) txt.push_back(static_cast<char16_t>(u16(r, at)));
+          else if (!wide) txt.push_back(static_cast<char16_t>(r[at]));
+        }
+      }
+      o.value = to_utf8(txt);
+      o.valid = true;
+    }
+    return o.valid;
+  };
+
+  if (cft == 1 || cft == 2) {
+    XlsFilterOperand o;
+    if (cont.empty() || !operand(cont[0], o) || o.vt != 0x04) return "";
+    return head + "<dynamicFilter type=\"" + (cft == 1 ? "aboveAverage" : "belowAverage") + "\" val=\"" + o.value + "\"/></filterColumn>";
+  }
+  if (cft >= 0x08 && cft <= 0x27) {
+    static const char* const types[32] = {"tomorrow", "today", "yesterday", "nextWeek", "thisWeek", "lastWeek", "nextMonth",
+                                          "thisMonth", "lastMonth", "nextQuarter", "thisQuarter", "lastQuarter", "nextYear",
+                                          "thisYear", "lastYear", "yearToDate", "Q1", "Q2", "Q3", "Q4", "M1", "M2", "M3", "M4",
+                                          "M5", "M6", "M7", "M8", "M9", "M10", "M11", "M12"};
+    return head + "<dynamicFilter type=\"" + types[cft - 0x08] + "\"/></filterColumn>";
+  }
+  if (cft != 0 || cont.size() < static_cast<size_t>(n_crit) + n_date) return "";
+
+  std::string items;
+  bool blank = false;
+  for (uint32_t k = 0; k < n_crit; ++k) {
+    XlsFilterOperand o;
+    if (!operand(cont[k], o)) return "";
+    if (o.blank) {
+      blank = true;
+    } else if (o.nonblank || !o.is_equal) {
+      return "";
+    } else {
+      items += "<filter val=\"" + escape_xml(o.value) + "\"/>";
+    }
+  }
+  static const char* const groupings[6] = {"year", "month", "day", "hour", "minute", "second"};
+  for (uint32_t k = 0; k < n_date; ++k) {
+    const std::vector<uint8_t>& r = cont[n_crit + k];
+    if (r.size() < 36) return "";
+    uint32_t node = u32(r, 32);
+    if (node > 5) return "";
+    items += "<dateGroupItem year=\"" + std::to_string(u16(r, 12)) + "\"";
+    if (node >= 1) items += " month=\"" + std::to_string(u16(r, 14)) + "\"";
+    if (node >= 2) items += " day=\"" + std::to_string(u32(r, 16)) + "\"";
+    if (node >= 3) items += " hour=\"" + std::to_string(u16(r, 20)) + "\"";
+    if (node >= 4) items += " minute=\"" + std::to_string(u16(r, 22)) + "\"";
+    if (node >= 5) items += " second=\"" + std::to_string(u16(r, 24)) + "\"";
+    items += std::string(" dateTimeGrouping=\"") + groupings[node] + "\"/>";
+  }
+  if (items.empty() && !blank) return "";
+  return head + (blank ? "<filters blank=\"1\">" : "<filters>") + items + "</filters></filterColumn>";
+}
+
+// ---------------------------------------------------------------------------
 // tables
 // ---------------------------------------------------------------------------
 
@@ -1129,6 +1364,7 @@ struct XlsListTable {
   bool totals = false;
   bool auto_filter = false;
   std::vector<XlsTableColumn> columns;
+  std::map<uint16_t, std::string> filters;
 
   // List12 record, table style
   std::string style;
@@ -1248,7 +1484,13 @@ inline bool xls_table(const std::vector<uint8_t>& rec, XlsListTable& t) {
 
     if (t.auto_filter) {
       uint32_t cb_filter = get32();
+      size_t filter_at = pos + 2;
       pos += 2 + cb_filter;
+      if (ok && cb_filter >= 24 && pos <= rec.size()) {
+        std::vector<uint8_t> af(rec.begin() + static_cast<std::ptrdiff_t>(filter_at), rec.begin() + static_cast<std::ptrdiff_t>(pos));
+        std::string x = xls_autofilter_column(af, i);
+        if (!x.empty()) t.filters[i] = x;
+      }
     }
 
     // a mapping to XML or a total row with a formula is not read
