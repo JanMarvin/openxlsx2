@@ -279,7 +279,7 @@ test_that("conditional formatting is imported from xlsb", {
   )
 
   wb <- wb_load(testfile_path("test_coverage.xlsb"))
-  expect_match(wb$worksheets[[1]]$conditionalFormatting$cf[1], "<iconSet iconSet=\"5Arrows\"><cfvo type=\"num\" val=\"-67\"/>", fixed = TRUE)
+  expect_match(wb$worksheets[[1]]$conditionalFormatting$cf[1], "<iconSet iconSet=\"5Arrows\" reverse=\"1\"><cfvo type=\"num\" val=\"-67\"/>", fixed = TRUE)
 })
 
 test_that("pivot cache records are imported from xlsb unless the cache is refreshed", {
@@ -324,4 +324,101 @@ test_that("xlsb styles use documented attribute values", {
   wb <- wb_load(testfile_path("nhs-core-standards-for-eprr-v6.1.xlsb"))
   expect_false(any(grepl("<color hex=", wb$styles_mgr$styles$borders, fixed = TRUE)))
   expect_true(any(grepl("<color rgb=", wb$styles_mgr$styles$borders, fixed = TRUE)))
+})
+
+test_that("xlsb files created from the xls_cov workbooks match their xlsx", {
+  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_on_cran()
+
+  files <- c(
+    "xls_cov_views", "xls_cov_features", "xls_cov_names_formulas",
+    "xls_cov_drawings", "xls_cov_pivot_external", "xls_cov_values",
+    "xls_cov2_values", "xls_cov2_names", "xls_cov2_shapes", "xls_cov2_pivots"
+  )
+
+  for (nm in files) {
+    xlsb <- testfile_path(paste0(nm, ".xlsb"))
+    xlsx <- testfile_path(paste0(nm, ".xlsx"))
+    wb_b <- suppressWarnings(wb_load(xlsb))
+    wb_x <- wb_load(xlsx)
+    expect_equal(wb_b$get_sheet_names(), wb_x$get_sheet_names(), info = nm)
+
+    tmp <- tempfile(fileext = ".xlsx")
+    suppressWarnings(wb_b$save(tmp))
+    expect_equal(length(wb_load(tmp)$worksheets), length(wb_x$worksheets), info = nm)
+    unlink(tmp)
+  }
+
+  for (nm in c("xls_cov2_values", "xls_cov2_shapes")) {
+    wb_b <- wb_load(testfile_path(paste0(nm, ".xlsb")))
+    wb_x <- wb_load(testfile_path(paste0(nm, ".xlsx")))
+    for (i in seq_along(wb_x$worksheets)) {
+      if (wb_x$is_chartsheet[i]) next
+      for (fml in c(FALSE, TRUE)) {
+        expect_equal(
+          suppressMessages(wb_to_df(wb_b, sheet = i, col_names = FALSE, show_formula = fml)),
+          suppressMessages(wb_to_df(wb_x, sheet = i, col_names = FALSE, show_formula = fml)),
+          ignore_attr = TRUE, info = paste(nm, i, fml)
+        )
+      }
+    }
+  }
+})
+
+test_that("xlsb formulas, names and page breaks are imported", {
+  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_on_cran()
+
+  wb_b <- suppressWarnings(wb_load(testfile_path("xls_cov_values.xlsb")))
+  wb_x <- wb_load(testfile_path("xls_cov_values.xlsx"))
+  expect_equal(wb_b$styles_mgr$styles$fills[grepl("gradientFill", wb_b$styles_mgr$styles$fills)],
+               wb_x$styles_mgr$styles$fills[grepl("gradientFill", wb_x$styles_mgr$styles$fills)])
+  expect_equal(unlist(wb_b$worksheets[[1]]$rowBreaks), unlist(wb_x$worksheets[[1]]$rowBreaks))
+  expect_equal(unlist(wb_b$worksheets[[1]]$colBreaks), unlist(wb_x$worksheets[[1]]$colBreaks))
+
+  fb <- wb_to_df(wb_b, col_names = FALSE, show_formula = TRUE)
+  fx <- wb_to_df(wb_x, col_names = FALSE, show_formula = TRUE)
+  expect_equal(fb[[3]], fx[[3]])
+
+  nb <- wb_get_named_regions(wb_load(testfile_path("xls_cov_names_formulas.xlsb")))
+  nx <- wb_get_named_regions(wb_load(testfile_path("xls_cov_names_formulas.xlsx")))
+  expect_true(all(nx$name %in% nb$name))
+  m <- match(nx$name, nb$name)
+  expect_equal(gsub("'", "", nb$value[m]), gsub("'", "", nx$value))
+
+  wb_b <- suppressWarnings(wb_load(testfile_path("xls_cov_features.xlsb")))
+  wb_x <- wb_load(testfile_path("xls_cov_features.xlsx"))
+  types <- function(wb) {
+    cf <- unlist(wb$worksheets[[3]]$conditionalFormatting)
+    sort(unname(unlist(regmatches(cf, gregexpr('type="[A-Za-z0-9]+"', cf)))))
+  }
+  expect_equal(types(wb_b), types(wb_x))
+})
+
+test_that("xlsb conditional formatting rule types match the xlsx", {
+  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_on_cran()
+
+  wb_b <- suppressWarnings(wb_load(testfile_path("xls_cov3_cf.xlsb")))
+  wb_x <- wb_load(testfile_path("xls_cov3_cf.xlsx"))
+
+  rules <- function(wb, i) {
+    cf <- wb$worksheets[[i]]$conditionalFormatting$cf
+    r <- unlist(regmatches(cf, gregexpr("<cfRule [^>]*>", cf)))
+    r <- gsub(" (dxfId|priority)=\"[0-9]+\"", "", r)
+    r <- gsub(" aboveAverage=\"1\"|/?>$", "", r)
+    vapply(strsplit(r, " "), function(x) paste(sort(x), collapse = " "), "")
+  }
+
+  for (i in 1:5) {
+    expect_equal(sort(rules(wb_b, i)), sort(rules(wb_x, i)), info = i)
+  }
+})
+
+test_that("xlsb top10 autofilter is imported", {
+  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_on_cran()
+
+  wb <- suppressWarnings(wb_load(testfile_path("xls_cov_features.xlsb")))
+  expect_match(wb$worksheets[[1]]$autoFilter, '<top10 top="1" val="5" filterVal="230"/>', fixed = TRUE)
 })

@@ -1811,9 +1811,6 @@ inline std::string rgce(std::string fml_out, std::istream& sas, bool swapit, boo
         cce = readbin(cce, sas, swapit);
         // number of bytes for PtgExtraMem section?
 
-        fml_out += "@mem@";
-        fml_out += "\n";
-
         break;
       }
 

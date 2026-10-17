@@ -1459,14 +1459,14 @@ inline std::string Ftab(const uint16_t val) {
     case 0x0025 : return "OR";
     case 0x0026 : return "NOT(%s)";
     case 0x0027 : return "MOD(%s,%s)";
-    case 0x0028 : return "DCOUNT";
-    case 0x0029 : return "DSUM";
-    case 0x002A : return "DAVERAGE";
-    case 0x002B : return "DMIN";
-    case 0x002C : return "DMAX";
-    case 0x002D : return "DSTDEV";
+    case 0x0028 : return "DCOUNT(%s,%s,%s)";
+    case 0x0029 : return "DSUM(%s,%s,%s)";
+    case 0x002A : return "DAVERAGE(%s,%s,%s)";
+    case 0x002B : return "DMIN(%s,%s,%s)";
+    case 0x002C : return "DMAX(%s,%s,%s)";
+    case 0x002D : return "DSTDEV(%s,%s,%s)";
     case 0x002E : return "VAR";
-    case 0x002F : return "DVAR";
+    case 0x002F : return "DVAR(%s,%s,%s)";
     case 0x0030 : return "TEXT(%s,%s)";
     case 0x0031 : return "LINEST";
     case 0x0032 : return "TREND";
@@ -1480,7 +1480,7 @@ inline std::string Ftab(const uint16_t val) {
     case 0x003A : return "NPER";
     case 0x003B : return "PMT";
     case 0x003C : return "RATE";
-    case 0x003D : return "MIRR";
+    case 0x003D : return "MIRR(%s,%s,%s)";
     case 0x003E : return "IRR";
     case 0x003F : return "RAND()";
     case 0x0040 : return "MATCH";
@@ -1494,7 +1494,7 @@ inline std::string Ftab(const uint16_t val) {
     case 0x0048 : return "MINUTE(%s)";
     case 0x0049 : return "SECOND(%s)";
     case 0x004A : return "NOW()";
-    case 0x004B : return "AREAS";
+    case 0x004B : return "AREAS(%s)";
     case 0x004C : return "ROWS(%s)"; // array
     case 0x004D : return "COLUMNS(%s)"; // array
     case 0x004E : return "OFFSET";
@@ -1536,7 +1536,7 @@ inline std::string Ftab(const uint16_t val) {
     case 0x0072 : return "PROPER(%s)";
     case 0x0073 : return "LEFT";
     case 0x0074 : return "RIGHT";
-    case 0x0075 : return "EXACT";
+    case 0x0075 : return "EXACT(%s,%s)";
     case 0x0076 : return "TRIM(%s)";
     case 0x0077 : return "REPLACE(%s,%s,%s,%s)";
     case 0x0078 : return "SUBSTITUTE";
@@ -1608,7 +1608,7 @@ inline std::string Ftab(const uint16_t val) {
     case 0x00BA : return "GET.WORKSPACE(%s)";
     case 0x00BB : return "GET.WINDOW";
     case 0x00BC : return "GET.DOCUMENT";
-    case 0x00BD : return "DPRODUCT";
+    case 0x00BD : return "DPRODUCT(%s,%s,%s)";
     case 0x00BE : return "ISNONTEXT(%s)";
     case 0x00BF : return "GET.NOTE";
     case 0x00C0 : return "NOTE";
@@ -1628,7 +1628,7 @@ inline std::string Ftab(const uint16_t val) {
     case 0x00D0 : return "LEFTB";
     case 0x00D1 : return "RIGHTB";
     case 0x00D2 : return "MIDB(%s,%s,%s)";
-    case 0x00D3 : return "LENB(%s,%s,%s)";
+    case 0x00D3 : return "LENB(%s)";
     case 0x00D4 : return "ROUNDUP(%s,%s)";
     case 0x00D5 : return "ROUNDDOWN(%s,%s)";
     case 0x00D6 : return "ASC(%s)";
@@ -1665,7 +1665,7 @@ inline std::string Ftab(const uint16_t val) {
     case 0x00F7 : return "DB";
     case 0x00F8 : return "PAUSE";
     case 0x00FB : return "RESUME";
-    case 0x00FC : return "FREQUENCY";
+    case 0x00FC : return "FREQUENCY(%s,%s)";
     case 0x00FD : return "ADD.TOOLBAR";
     case 0x00FE : return "DELETE.TOOLBAR(%s)";
     case 0x00FF : return "User_Defined_Function";
@@ -1842,7 +1842,7 @@ inline std::string Ftab(const uint16_t val) {
     case 0x01AB : return "BESSELY(%s,%s)";
     case 0x01AC : return "BESSELI(%s,%s)";
     case 0x01AD : return "XIRR(%s,%s,%s)";
-    case 0x01AE : return "XNPV";
+    case 0x01AE : return "XNPV(%s,%s,%s)";
     case 0x01AF : return "PRICEMAT";
     case 0x01B0 : return "YIELDMAT";
     case 0x01B1 : return "INTRATE";
@@ -1880,6 +1880,7 @@ inline std::string Ftab(const uint16_t val) {
     case 0x01D1 : return "WEEKNUM";
     case 0x01D2 : return "AMORDEGRC";
     case 0x01D3 : return "AMORLINC";
+    case 0x01D4 : return "CONVERT(%s,%s,%s)";
     case 0x01D5 : return "ACCRINT";
     case 0x01D6 : return "ACCRINTM";
     case 0x01D7 : return "WORKDAY";

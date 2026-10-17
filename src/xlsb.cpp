@@ -224,9 +224,11 @@ int32_t styles_bin(std::string filePath, std::string outPath, bool debug) {
             xnumFillToRight = 0.0,
             xnumFillToTop = 0.0,
             xnumFillToBottom = 0.0,
-            aPos = 0.0 // not used
+            aPos = 0.0
           ;
-          std::vector<int32_t> aColor;  // not used
+          std::vector<int32_t> aColor;
+          std::vector<std::vector<int32_t>> stopColors;
+          std::vector<double> stopPositions;
 
           fls = readbin(fls, bin, swapit);
           std::vector<int32_t> fgColor = brtColor(bin, swapit);
@@ -250,9 +252,11 @@ int32_t styles_bin(std::string filePath, std::string outPath, bool debug) {
             // gradient fill colors and positions
             aColor = brtColor(bin, swapit);
             aPos   = Xnum(bin, swapit);
+            stopColors.push_back(aColor);
+            stopPositions.push_back(aPos);
             if (debug) {  // #nocov start
-              Rcpp::Rcout << "unused gradient Colors: " <<
-                to_argb(fgColor[6], fgColor[3], fgColor[4], fgColor[5]) <<
+              Rcpp::Rcout << "gradient Colors: " <<
+                to_argb(aColor[6], aColor[3], aColor[4], aColor[5]) <<
                   ": " << aPos << std::endl;
             }  // #nocov end
           }
@@ -313,7 +317,39 @@ int32_t styles_bin(std::string filePath, std::string outPath, bool debug) {
             out << "</patternFill>" << std::endl;
             out << "</fill>" << std::endl;
           } else {
-            Rcpp::Rcout << "gradient fill not implemented" << std::endl;
+            out << "<gradientFill";
+            if (iGradientType == 1) {
+              out << " type=\"path\"";
+              out << " left=\"" << xnumFillToLeft << "\"";
+              out << " right=\"" << xnumFillToRight << "\"";
+              out << " top=\"" << xnumFillToTop << "\"";
+              out << " bottom=\"" << xnumFillToBottom << "\"";
+            } else {
+              out << " degree=\"" << xnumDegree << "\"";
+            }
+            out << ">" << std::endl;
+
+            for (size_t i = 0; i < stopColors.size(); ++i) {
+              const std::vector<int32_t> &sc = stopColors[i];
+              double stoptint = 0.0;
+              if (sc[2] != 0) stoptint = static_cast<double>(sc[2]) / 32767;
+              std::stringstream stopstream;
+              stopstream << std::setprecision(16) << stoptint;
+
+              out << "<stop position=\"" << stopPositions[i] << "\">";
+              if (sc[0] == 0x00)
+                out << "<color auto=\"1\"/>";
+              if (sc[0] == 0x01)
+                out << "<color indexed=\"" << sc[1] << "\"/>";
+              if (sc[0] == 0x02)
+                out << "<color rgb=\"" << to_argb(sc[6], sc[3], sc[4], sc[5]) << "\"/>";
+              if (sc[0] == 0x03)
+                out << "<color theme=\"" << sc[1] << "\" tint=\"" << stopstream.str() << "\"/>";
+              out << "</stop>" << std::endl;
+            }
+
+            out << "</gradientFill>" << std::endl;
+            out << "</fill>" << std::endl;
           }
 
           break;
@@ -2043,6 +2079,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
     };
     bool has_revision_record = false;
     std::string fml_type;
+    std::string brk_tag;
 
     int32_t row = 0;
     int32_t col = 0;
@@ -3676,6 +3713,25 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           break;
         }
 
+        case BrtTop10Filter: {
+          if (debug) Rcpp::Rcout << "BrtTop10Filter" << std::endl;
+
+          uint8_t top10_flags = 0;
+          double fVal = 0, fFilterVal = 0;
+          top10_flags = readbin(top10_flags, bin, swapit);
+          fVal = Xnum(bin, swapit);
+          fFilterVal = Xnum(bin, swapit);
+
+          out << "<top10";
+          if (top10_flags & 0x01) out << " top=\"1\"";
+          if (top10_flags & 0x02) out << " percent=\"1\"";
+          out << " val=\"" << fVal << "\"";
+          if (fFilterVal != 0) out << " filterVal=\"" << fFilterVal << "\"";
+          out << "/>" << std::endl;
+
+          break;
+        }
+
         case BrtEndFilterColumn: {
           if (debug) Rcpp::Rcout << "BrtEndFilterColumn" << std::endl;
           out << "</filterColumn>" << std::endl;
@@ -4052,6 +4108,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           uint16_t flags = 0;
           uint32_t iType = 0, iTemplate = 0, dxfId = 0, iPri = 0, iParam = 0, reserved1 = 0, reserved2 = 0;
           uint32_t cbFmla1 = 0, cbFmla2 = 0, cbFmla3 = 0;
+          
 
           iType = readbin(iType, bin, swapit);
           iTemplate = readbin(iTemplate, bin, swapit);
@@ -4096,25 +4153,25 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
             has_dxf = true;
           } else if (iType == 2) {
             has_dxf = true;
-            if (iTemplate == 2) cfRule << " type=\"uniqueValues\"";
-            else if (iTemplate == 3) {
+            if (iTemplate == 7) cfRule << " type=\"uniqueValues\"";
+            else if (iTemplate == 8) {
               uint32_t k = iParam < 4 ? iParam : 0;
               cfRule << " type=\"" << text_types[k] << "\" operator=\"" << text_operators[k] << "\" text=\"" << escape_xml(strParam) << "\"";
             }
-            else if (iTemplate == 4) cfRule << " type=\"containsBlanks\"";
-            else if (iTemplate == 5) cfRule << " type=\"notContainsBlanks\"";
-            else if (iTemplate == 6) cfRule << " type=\"containsErrors\"";
-            else if (iTemplate == 7) cfRule << " type=\"notContainsErrors\"";
-            else if (iTemplate >= 8 && iTemplate <= 17) cfRule << " type=\"timePeriod\" timePeriod=\"" << periods[iTemplate - 8] << "\"";
-            else if (iTemplate >= 18 && iTemplate <= 19) {
+            else if (iTemplate == 9) cfRule << " type=\"containsBlanks\"";
+            else if (iTemplate == 10) cfRule << " type=\"notContainsBlanks\"";
+            else if (iTemplate == 11) cfRule << " type=\"containsErrors\"";
+            else if (iTemplate == 12) cfRule << " type=\"notContainsErrors\"";
+            else if (iTemplate >= 15 && iTemplate <= 24) cfRule << " type=\"timePeriod\" timePeriod=\"" << periods[iTemplate - 15] << "\"";
+            else if (iTemplate >= 25 && iTemplate <= 26) {
               cfRule << " type=\"aboveAverage\"";
-              if (iTemplate == 19) cfRule << " aboveAverage=\"0\"";
+              if (iTemplate == 26) cfRule << " aboveAverage=\"0\"";
               if (iParam > 0) cfRule << " stdDev=\"" << iParam << "\"";
             }
-            else if (iTemplate == 20) cfRule << " type=\"duplicateValues\"";
-            else if (iTemplate >= 21 && iTemplate <= 22) {
+            else if (iTemplate == 27) cfRule << " type=\"duplicateValues\"";
+            else if (iTemplate >= 29 && iTemplate <= 30) {
               cfRule << " type=\"aboveAverage\"";
-              if (iTemplate == 22) cfRule << " aboveAverage=\"0\"";
+              if (iTemplate == 30) cfRule << " aboveAverage=\"0\"";
               cfRule << " equalAverage=\"1\"";
               if (iParam > 0) cfRule << " stdDev=\"" << iParam << "\"";
             }
@@ -4125,7 +4182,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
             cfRule << " type=\"dataBar\"";
           } else if (iType == 5) {
             cfRule << " type=\"top10\" rank=\"" << iParam << "\"";
-            if (flags & 0x10) cfRule << " percent=\"1\"";
+            cfRule << (flags & 0x10 ? " percent=\"1\"" : " percent=\"0\"");
             if (flags & 0x08) cfRule << " bottom=\"1\"";
             has_dxf = true;
           } else if (iType == 6) {
@@ -4188,7 +4245,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           icon_flags = readbin(icon_flags, bin, swapit);
           out << "<iconSet iconSet=\"" << icons[iSet < 17 ? iSet : 0] << "\"";
           if (icon_flags & 0x02) out << " showValue=\"0\"";
-          if (!(icon_flags & 0x04)) out << " reverse=\"1\"";
+          if (icon_flags & 0x04) out << " reverse=\"1\"";
           out << ">" << std::endl;
           cf_iconset = true;
           bin.seekg(size - 6, bin.cur);
@@ -4281,7 +4338,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           break;
         }
 
-        // unhandled page breaks. differentiates in column and row breaks
+        // page breaks. differentiates in column and row breaks
         case BrtBeginColBrk:
         case BrtBeginRwBrk: {
 
@@ -4291,6 +4348,9 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           ibrkMac = readbin(ibrkMac, bin, swapit);
           if (ibrkMac > 1024) Rcpp::stop("ibrkMac to big");
           ibrkManMac = readbin(ibrkManMac, bin, swapit);
+
+          brk_tag = (x == BrtBeginColBrk) ? "colBreaks" : "rowBreaks";
+          out << "<" << brk_tag << " count=\"" << ibrkMac << "\" manualBreakCount=\"" << ibrkManMac << "\">" << std::endl;
 
           break;
         }
@@ -4306,6 +4366,13 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           fMan        = readbin(fMan, bin, swapit);
           fPivot      = readbin(fPivot, bin, swapit);
 
+          out << "<brk id=\"" << unRwCol << "\"";
+          if (unColRwStrt) out << " min=\"" << unColRwStrt << "\"";
+          out << " max=\"" << unColRwEnd << "\"";
+          out << " man=\"" << (fMan & 0x01) << "\"";
+          if (fPivot & 0x01) out << " pt=\"1\"";
+          out << "/>" << std::endl;
+
           break;
         }
 
@@ -4313,9 +4380,11 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
         case BrtEndRwBrk: {
           if (debug) Rcpp::Rcout << "<BrtEnd..Brk>" << std::endl;
 
+          out << "</" << brk_tag << ">" << std::endl;
+
           break;
         }
-          // end unhandled page breaks
+          // end page breaks
 
         case BrtFRTBegin: {
           if (debug) Rcpp::Rcout << "BrtFRTBegin" << std::endl;
@@ -4439,12 +4508,26 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           break;
         }
 
-        default: {
-          // if (debug) {
-            Rcpp::Rcout << "Unhandled: " << std::to_string(x) <<
+        // known records that are not imported (x14 conditional formatting)
+        case BrtCFVO14:
+        case BrtBeginDatabar14:
+        case BrtEndDatabar14:
+        case BrtColor14:
+        case BrtCFRuleExt:
+        {
+          if (debug) {  // #nocov start
+            Rcpp::Rcout << "Skipped record: " << std::to_string(x) <<
               ": " << std::to_string(size) <<
                 " @ " << bin.tellg() << std::endl;
-          // }
+          }  // #nocov end
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+        default: {
+          Rcpp::Rcout << "Unhandled: " << std::to_string(x) <<
+            ": " << std::to_string(size) <<
+              " @ " << bin.tellg() << std::endl;
           bin.seekg(size, bin.cur);
           break;
         }
