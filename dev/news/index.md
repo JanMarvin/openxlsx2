@@ -9,6 +9,8 @@
   import this with
   [`wb_load()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_load.md)
   as if the input was provided as `xlsx`/`xlsm` file.
+  [\#1698](https://github.com/JanMarvin/openxlsx2/pull/1698)
+  [\#1701](https://github.com/JanMarvin/openxlsx2/pull/1701)
 - Pivot caches of `xlsb` files are imported with their records.
   `options("openxlsx2.pivot_refresh" = TRUE)` leaves them empty to be
   refreshed on open.
@@ -19,6 +21,9 @@
   length instead of max row length and refused to write anything beyond
   the maximum number of columns.
   [\#1700](https://github.com/JanMarvin/openxlsx2/pull/1700)
+- Several improvements to `xlsb` imports. This includes new features and
+  some minor bugfixes.
+  [\#1702](https://github.com/JanMarvin/openxlsx2/pull/1702)
 
 ------------------------------------------------------------------------
 
