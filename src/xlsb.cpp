@@ -434,9 +434,11 @@ int32_t styles_bin(std::string filePath, std::string outPath, bool debug) {
           trot = readbin(trot, bin, swapit);
           indent = readbin(indent, bin, swapit);
 
+          // #nocov start: corrupt file
           if (indent > 250) {
             Rcpp::stop("indent to big");
           }
+          // #nocov end
 
           if (ixfeParent == 0xFFFF) {
             // is_cell_style_xf = true;
@@ -1756,8 +1758,10 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
           // fFutureFunction - future function
           // reserved        - 0
 
+          // #nocov start: corrupt file
           if (view_flags2.reserved() != 0)
             Rcpp::stop("reserved not 0");
+          // #nocov end
 
           if (debug) {  // #nocov start
             Rprintf(
@@ -1816,10 +1820,12 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
             std::string unusedstring2 = XLNullableWideString(bin, swapit);
           }
 
+          // #nocov start: corrupt file
           if (bin.tellg() != end_pos) {
             Rprintf("%d: %d", (int)bin.tellg(), (int)end_pos);
             Rcpp::stop("repositioning");
           }
+          // #nocov end
 
           if (view_flags.fBuiltin()) {
             // add the builtin xl name namespace
@@ -2711,9 +2717,11 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
           rw = readbin(rw, bin, swapit);
 
+          // #nocov start: corrupt file
           if (rw > 0x00100000 || rw < row) {
             Rcpp::stop("row either decreasing or to large");
           }
+          // #nocov end
 
           ixfe = readbin(ixfe, bin, swapit);
           miyRw = readbin(miyRw, bin, swapit);
@@ -3597,12 +3605,16 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           guids[3] = readbin(guid3, bin, 0);
 
           iTabId = readbin(iTabId, bin, swapit);
+          // #nocov start: corrupt file
           if (iTabId < 1 || iTabId > 65535)
             Rcpp::stop("iTabId out of range");
+          // #nocov end
 
           dwScale = readbin(dwScale, bin, swapit);
+          // #nocov start: corrupt file
           if (dwScale < 0 || dwScale > 400)  // dialog sheet 0 else 10
             Rcpp::stop("dwScale out of range");
+          // #nocov end
 
           flags = readbin(flags, bin, swapit);
           // hsState
@@ -3630,16 +3642,22 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           guids[3] = readbin(guid3, bin, 0);
 
           iTabId = readbin(iTabId, bin, swapit);
+          // #nocov start: corrupt file
           if (iTabId < 1 || iTabId > 65535)
             Rcpp::stop("iTabId out of range");
+          // #nocov end
 
           dwScale = readbin(dwScale, bin, swapit);
+          // #nocov start: corrupt file
           if (dwScale < 0 || dwScale > 400)  // dialog sheet 0 else 10
             Rcpp::stop("dwScale out of range");
+          // #nocov end
 
           icv = readbin(icv, bin, swapit);
+          // #nocov start: corrupt file
           if (icv > 64)
             Rcpp::stop("icv out of range");
+          // #nocov end
 
           flags = readbin(flags, bin, swapit);
 

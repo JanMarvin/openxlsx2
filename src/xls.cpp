@@ -202,7 +202,9 @@ XlsGlobals xls_globals(std::istream& bin, bool swapit, bool debug) {
       }
 
       case XlsFilePass: {
+        // #nocov start: encrypted files are rejected
         Rcpp::stop("xls: encrypted files are not supported");
+        // #nocov end
         break;
       }
 
@@ -576,13 +578,17 @@ int32_t xls_extract(std::string filePath, std::string outPath, bool debug) {
   std::vector<uint8_t> workbook = cfb_stream(file, "Workbook");
   if (workbook.empty()) {
     // Excel 5 and 95 files call it Book. They have a different record layout
+    // #nocov start: file without a Workbook stream
     if (!cfb_stream(file, "Book").empty()) Rcpp::stop("xls: only Excel 97-2003 files are supported");
     Rcpp::stop("xls: file has no Workbook stream");
+    // #nocov end
   }
 
   // the stream starts with a BOF record, version 0x0600 is BIFF8
+  // #nocov start: not a BIFF8 workbook
   if (workbook.size() < 8 || cfb_u16(workbook, 0) != XlsBOF || cfb_u16(workbook, 4) != 0x0600)
     Rcpp::stop("xls: only Excel 97-2003 files are supported");
+  // #nocov end
 
   if (xls_has_vba_code(file))
     Rcpp::warning("The xls file contains VBA code. Macros are not imported.");
@@ -1103,8 +1109,10 @@ int32_t sharedstrings_xls(std::string filePath, std::string outPath, bool debug)
         for (uint32_t i = 0; i < cstUnique; ++i) {
           if (bin.tellg() >= rec_end) {
             uint16_t crid = 0, crsize = 0;
+            // #nocov start: corrupt shared string table
             if (!XLS_RECORD(crid, crsize, bin, swapit) || crid != XlsContinue)
               Rcpp::stop("xls: shared strings are cut off");
+            // #nocov end
             rec_end = bin.tellg() + std::streamoff(crsize);
           }
           std::vector<std::pair<uint16_t, uint16_t> > runs;
