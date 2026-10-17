@@ -786,8 +786,7 @@ int32_t table_bin(std::string filePath, std::string outPath, bool debug) {
         case BrtBeginCustomRichFilters: {
           int32_t fAnd = 0;
 
-          // in xlsb it is flipped
-          fAnd = readbin(fAnd, bin, swapit) ^ 1;
+          fAnd = readbin(fAnd, bin, swapit);
 
           out << "<customFilters" << std::endl;
           if (fAnd) out << " and=\"" << fAnd << "\"";  // and="1"
@@ -812,13 +811,12 @@ int32_t table_bin(std::string filePath, std::string outPath, bool debug) {
             // a bool
             int8_t boolean = 0;
             boolean = readbin(boolean, bin, swapit);
-            union_val = static_cast<double>(readbin(boolean, bin, swapit));
+            union_val = static_cast<double>(boolean);
             for (int8_t blk = 0; blk < 7; ++blk) {
               readbin(boolean, bin, swapit);
             }
           } else {
             // ignore
-            readbin(union_val, bin, swapit);
             readbin(union_val, bin, swapit);
           }
 
@@ -844,8 +842,22 @@ int32_t table_bin(std::string filePath, std::string outPath, bool debug) {
         }
 
         case BrtDynamicFilter: {
-          Rcpp::warning("Dynamic Filter found. This is not handled.");
-          bin.seekg(size, bin.cur);
+          std::streampos dyn_end = bin.tellg() + static_cast<std::streamoff>(size);
+          uint32_t iDynFilterType = 0;
+          uint8_t dyn_flag = 0;
+          double dyn_val = 0;
+          iDynFilterType = readbin(iDynFilterType, bin, swapit);
+          dyn_flag = readbin(dyn_flag, bin, swapit);
+          dyn_val = Xnum(bin, swapit);
+
+          // only the average filters are known, other types remain unhandled
+          if (iDynFilterType == 1 || iDynFilterType == 2) {
+            out << "<dynamicFilter type=\"" << (iDynFilterType == 1 ? "aboveAverage" : "belowAverage")
+                << "\" val=\"" << dyn_val << "\"/>" << std::endl;
+          } else {
+            Rcpp::warning("Dynamic Filter found. This type is not handled.");
+          }
+          bin.seekg(dyn_end);
           break;
         }
 
@@ -860,6 +872,31 @@ int32_t table_bin(std::string filePath, std::string outPath, bool debug) {
 
           out << "<iconFilter iconSet=\"" << iconSet << "\" iconId=\"" << iIcon << "\"/>" << std::endl;
 
+          break;
+        }
+
+        case BrtAFilterDateGroupItem: {
+          uint16_t dg_year = 0, dg_month = 0, dg_day = 0, dg_hour = 0, dg_minute = 0, dg_second = 0;
+          std::streampos dg_end = bin.tellg() + static_cast<std::streamoff>(size);
+          dg_year = readbin(dg_year, bin, swapit);
+          dg_month = readbin(dg_month, bin, swapit);
+          dg_day = readbin(dg_day, bin, swapit);
+          dg_hour = readbin(dg_hour, bin, swapit);
+          dg_minute = readbin(dg_minute, bin, swapit);
+          dg_second = readbin(dg_second, bin, swapit);
+          bin.seekg(dg_end - static_cast<std::streamoff>(4));
+          uint32_t dateTimeGrouping = 0;
+          dateTimeGrouping = readbin(dateTimeGrouping, bin, swapit);
+
+          static const char* const groupings[6] = {"year", "month", "day", "hour", "minute", "second"};
+          out << "<dateGroupItem year=\"" << dg_year << "\"";
+          if (dateTimeGrouping >= 1) out << " month=\"" << dg_month << "\"";
+          if (dateTimeGrouping >= 2) out << " day=\"" << dg_day << "\"";
+          if (dateTimeGrouping >= 3) out << " hour=\"" << dg_hour << "\"";
+          if (dateTimeGrouping >= 4) out << " minute=\"" << dg_minute << "\"";
+          if (dateTimeGrouping >= 5) out << " second=\"" << dg_second << "\"";
+          out << " dateTimeGrouping=\"" << groupings[dateTimeGrouping < 6 ? dateTimeGrouping : 0] << "\"/>" << std::endl;
+          bin.seekg(dg_end);
           break;
         }
 
@@ -3486,8 +3523,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
         case BrtBeginCustomRichFilters: {
           int32_t fAnd = 0;
 
-          // in xlsb it is flipped
-          fAnd = readbin(fAnd, bin, swapit) ^ 1;
+          fAnd = readbin(fAnd, bin, swapit);
 
           out << "<customFilters" << std::endl;
           if (fAnd) out << " and=\"" << fAnd << "\"";  // and="1"
@@ -3512,13 +3548,12 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
             // a bool
             int8_t boolean = 0;
             boolean = readbin(boolean, bin, swapit);
-            union_val = static_cast<double>(readbin(boolean, bin, swapit));
+            union_val = static_cast<double>(boolean);
             for (int8_t blk = 0; blk < 7; ++blk) {
               readbin(boolean, bin, swapit);
             }
           } else {
             // ignore
-            readbin(union_val, bin, swapit);
             readbin(union_val, bin, swapit);
           }
 
@@ -3693,8 +3728,22 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
         case BrtDynamicFilter: {
           if (debug) Rcpp::Rcout << "BrtDynamicFilter" << std::endl;
-          Rcpp::warning("Dynamic Filter found. This is not handled.");
-          bin.seekg(size, bin.cur);
+          std::streampos dyn_end = bin.tellg() + static_cast<std::streamoff>(size);
+          uint32_t iDynFilterType = 0;
+          uint8_t dyn_flag = 0;
+          double dyn_val = 0;
+          iDynFilterType = readbin(iDynFilterType, bin, swapit);
+          dyn_flag = readbin(dyn_flag, bin, swapit);
+          dyn_val = Xnum(bin, swapit);
+
+          // only the average filters are known, other types remain unhandled
+          if (iDynFilterType == 1 || iDynFilterType == 2) {
+            out << "<dynamicFilter type=\"" << (iDynFilterType == 1 ? "aboveAverage" : "belowAverage")
+                << "\" val=\"" << dyn_val << "\"/>" << std::endl;
+          } else {
+            Rcpp::warning("Dynamic Filter found. This type is not handled.");
+          }
+          bin.seekg(dyn_end);
           break;
         }
 
@@ -3713,6 +3762,31 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           break;
         }
 
+        case BrtAFilterDateGroupItem: {
+          uint16_t dg_year = 0, dg_month = 0, dg_day = 0, dg_hour = 0, dg_minute = 0, dg_second = 0;
+          std::streampos dg_end = bin.tellg() + static_cast<std::streamoff>(size);
+          dg_year = readbin(dg_year, bin, swapit);
+          dg_month = readbin(dg_month, bin, swapit);
+          dg_day = readbin(dg_day, bin, swapit);
+          dg_hour = readbin(dg_hour, bin, swapit);
+          dg_minute = readbin(dg_minute, bin, swapit);
+          dg_second = readbin(dg_second, bin, swapit);
+          bin.seekg(dg_end - static_cast<std::streamoff>(4));
+          uint32_t dateTimeGrouping = 0;
+          dateTimeGrouping = readbin(dateTimeGrouping, bin, swapit);
+
+          static const char* const groupings[6] = {"year", "month", "day", "hour", "minute", "second"};
+          out << "<dateGroupItem year=\"" << dg_year << "\"";
+          if (dateTimeGrouping >= 1) out << " month=\"" << dg_month << "\"";
+          if (dateTimeGrouping >= 2) out << " day=\"" << dg_day << "\"";
+          if (dateTimeGrouping >= 3) out << " hour=\"" << dg_hour << "\"";
+          if (dateTimeGrouping >= 4) out << " minute=\"" << dg_minute << "\"";
+          if (dateTimeGrouping >= 5) out << " second=\"" << dg_second << "\"";
+          out << " dateTimeGrouping=\"" << groupings[dateTimeGrouping < 6 ? dateTimeGrouping : 0] << "\"/>" << std::endl;
+          bin.seekg(dg_end);
+          break;
+        }
+
         case BrtTop10Filter: {
           if (debug) Rcpp::Rcout << "BrtTop10Filter" << std::endl;
 
@@ -3723,7 +3797,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           fFilterVal = Xnum(bin, swapit);
 
           out << "<top10";
-          if (top10_flags & 0x01) out << " top=\"1\"";
+          out << (top10_flags & 0x01 ? " top=\"1\"" : " top=\"0\"");
           if (top10_flags & 0x02) out << " percent=\"1\"";
           out << " val=\"" << fVal << "\"";
           if (fFilterVal != 0) out << " filterVal=\"" << fFilterVal << "\"";

@@ -168,7 +168,7 @@ test_that("loading custom sheet view in xlsb files works", {
 
   wb <- wb_load(fl)
 
-  exp <- "<customSheetViews><customSheetView guid=\"{101E93B2-5AEC-EA4B-A037-FE6837BBF571}\" view=\"pageLayout\"><selection pane=\"topLeft\" activeCell=\"E23\" sqref=\"E23\"/><pageMargins left=\"0.7\" right=\"0.7\" top=\"0.75\" bottom=\"0.75\" header=\"0.3\" footer=\"0.3\"/><printOptions gridLines=\"1\"/><pageSetup copies=\"1\" firstPageNumber=\"1\" fitToHeight=\"1\" fitToWidth=\"1\" horizontalDpi=\"300\" paperSize=\"9\" scale=\"100\" verticalDpi=\"300\"/></customSheetView><customSheetView guid=\"{29911425-4959-8744-A301-8A3516CFBBC5}\" view=\"pageLayout\"><selection pane=\"topLeft\" activeCell=\"A1\" sqref=\"A1\"/><pageMargins left=\"0.7\" right=\"0.7\" top=\"0.75\" bottom=\"0.75\" header=\"0.3\" footer=\"0.3\"/><printOptions gridLines=\"1\"/><pageSetup copies=\"1\" firstPageNumber=\"1\" fitToHeight=\"1\" fitToWidth=\"1\" horizontalDpi=\"300\" paperSize=\"9\" scale=\"100\" verticalDpi=\"300\"/></customSheetView><customSheetView guid=\"{E70FF13A-F852-294B-B121-766AE66F850F}\"><selection pane=\"topLeft\" activeCell=\"A1\" sqref=\"A1\"/><pageMargins left=\"0.7\" right=\"0.7\" top=\"0.75\" bottom=\"0.75\" header=\"0.3\" footer=\"0.3\"/><printOptions gridLines=\"1\"/><pageSetup copies=\"1\" firstPageNumber=\"1\" fitToHeight=\"1\" fitToWidth=\"1\" horizontalDpi=\"300\" paperSize=\"9\" scale=\"100\" verticalDpi=\"300\"/></customSheetView><customSheetView guid=\"{F233A099-1241-ED48-AE78-14CEAAA87C95}\" hiddenColumns=\"1\"><selection pane=\"topLeft\" activeCell=\"F1\" sqref=\"F1:K1048576\"/><pageMargins left=\"0.7\" right=\"0.7\" top=\"0.75\" bottom=\"0.75\" header=\"0.3\" footer=\"0.3\"/><printOptions gridLines=\"1\"/><pageSetup copies=\"1\" firstPageNumber=\"1\" fitToHeight=\"1\" fitToWidth=\"1\" horizontalDpi=\"300\" paperSize=\"9\" scale=\"100\" verticalDpi=\"300\"/></customSheetView><customSheetView guid=\"{16591214-8D55-8A47-82DC-2F7E1C7FCAA3}\" filter=\"1\" showAutoFilter=\"1\" hiddenColumns=\"1\"><selection pane=\"topLeft\" activeCell=\"A1\" sqref=\"A1\"/><pageMargins left=\"0.7\" right=\"0.7\" top=\"0.75\" bottom=\"0.75\" header=\"0.3\" footer=\"0.3\"/><printOptions gridLines=\"1\"/><pageSetup copies=\"1\" firstPageNumber=\"1\" fitToHeight=\"1\" fitToWidth=\"1\" horizontalDpi=\"300\" paperSize=\"9\" scale=\"100\" verticalDpi=\"300\"/><autoFilter ref=\"A1:K33\"><filterColumn colId=\"0\"><customFilters and=\"1\"><customFilter operator=\"greaterThan\" val=\"15\"/></customFilters></filterColumn></autoFilter></customSheetView><customSheetView guid=\"{AB8C9049-5EEE-4D41-AFBB-D05935ABA15C}\" filter=\"1\" showAutoFilter=\"1\" hiddenColumns=\"1\"><selection pane=\"topLeft\" activeCell=\"A1\" sqref=\"A1\"/><pageMargins left=\"0.7\" right=\"0.7\" top=\"0.75\" bottom=\"0.75\" header=\"0.3\" footer=\"0.3\"/><printOptions gridLines=\"1\"/><pageSetup copies=\"1\" firstPageNumber=\"1\" fitToHeight=\"1\" fitToWidth=\"1\" horizontalDpi=\"300\" paperSize=\"9\" scale=\"100\" verticalDpi=\"300\"/><autoFilter ref=\"A1:K33\"><filterColumn colId=\"1\"><filters blank=\"0\"><filter val=\"4\"/></filters></filterColumn></autoFilter></customSheetView></customSheetViews>"
+  exp <- "<customSheetViews><customSheetView guid=\"{101E93B2-5AEC-EA4B-A037-FE6837BBF571}\" view=\"pageLayout\"><selection pane=\"topLeft\" activeCell=\"E23\" sqref=\"E23\"/><pageMargins left=\"0.7\" right=\"0.7\" top=\"0.75\" bottom=\"0.75\" header=\"0.3\" footer=\"0.3\"/><printOptions gridLines=\"1\"/><pageSetup copies=\"1\" firstPageNumber=\"1\" fitToHeight=\"1\" fitToWidth=\"1\" horizontalDpi=\"300\" paperSize=\"9\" scale=\"100\" verticalDpi=\"300\"/></customSheetView><customSheetView guid=\"{29911425-4959-8744-A301-8A3516CFBBC5}\" view=\"pageLayout\"><selection pane=\"topLeft\" activeCell=\"A1\" sqref=\"A1\"/><pageMargins left=\"0.7\" right=\"0.7\" top=\"0.75\" bottom=\"0.75\" header=\"0.3\" footer=\"0.3\"/><printOptions gridLines=\"1\"/><pageSetup copies=\"1\" firstPageNumber=\"1\" fitToHeight=\"1\" fitToWidth=\"1\" horizontalDpi=\"300\" paperSize=\"9\" scale=\"100\" verticalDpi=\"300\"/></customSheetView><customSheetView guid=\"{E70FF13A-F852-294B-B121-766AE66F850F}\"><selection pane=\"topLeft\" activeCell=\"A1\" sqref=\"A1\"/><pageMargins left=\"0.7\" right=\"0.7\" top=\"0.75\" bottom=\"0.75\" header=\"0.3\" footer=\"0.3\"/><printOptions gridLines=\"1\"/><pageSetup copies=\"1\" firstPageNumber=\"1\" fitToHeight=\"1\" fitToWidth=\"1\" horizontalDpi=\"300\" paperSize=\"9\" scale=\"100\" verticalDpi=\"300\"/></customSheetView><customSheetView guid=\"{F233A099-1241-ED48-AE78-14CEAAA87C95}\" hiddenColumns=\"1\"><selection pane=\"topLeft\" activeCell=\"F1\" sqref=\"F1:K1048576\"/><pageMargins left=\"0.7\" right=\"0.7\" top=\"0.75\" bottom=\"0.75\" header=\"0.3\" footer=\"0.3\"/><printOptions gridLines=\"1\"/><pageSetup copies=\"1\" firstPageNumber=\"1\" fitToHeight=\"1\" fitToWidth=\"1\" horizontalDpi=\"300\" paperSize=\"9\" scale=\"100\" verticalDpi=\"300\"/></customSheetView><customSheetView guid=\"{16591214-8D55-8A47-82DC-2F7E1C7FCAA3}\" filter=\"1\" showAutoFilter=\"1\" hiddenColumns=\"1\"><selection pane=\"topLeft\" activeCell=\"A1\" sqref=\"A1\"/><pageMargins left=\"0.7\" right=\"0.7\" top=\"0.75\" bottom=\"0.75\" header=\"0.3\" footer=\"0.3\"/><printOptions gridLines=\"1\"/><pageSetup copies=\"1\" firstPageNumber=\"1\" fitToHeight=\"1\" fitToWidth=\"1\" horizontalDpi=\"300\" paperSize=\"9\" scale=\"100\" verticalDpi=\"300\"/><autoFilter ref=\"A1:K33\"><filterColumn colId=\"0\"><customFilters><customFilter operator=\"greaterThan\" val=\"15\"/></customFilters></filterColumn></autoFilter></customSheetView><customSheetView guid=\"{AB8C9049-5EEE-4D41-AFBB-D05935ABA15C}\" filter=\"1\" showAutoFilter=\"1\" hiddenColumns=\"1\"><selection pane=\"topLeft\" activeCell=\"A1\" sqref=\"A1\"/><pageMargins left=\"0.7\" right=\"0.7\" top=\"0.75\" bottom=\"0.75\" header=\"0.3\" footer=\"0.3\"/><printOptions gridLines=\"1\"/><pageSetup copies=\"1\" firstPageNumber=\"1\" fitToHeight=\"1\" fitToWidth=\"1\" horizontalDpi=\"300\" paperSize=\"9\" scale=\"100\" verticalDpi=\"300\"/><autoFilter ref=\"A1:K33\"><filterColumn colId=\"1\"><filters blank=\"0\"><filter val=\"4\"/></filters></filterColumn></autoFilter></customSheetView></customSheetViews>"
   got <- wb$worksheets[[1]]$customSheetViews
   expect_equal(exp, got)
 })
@@ -421,4 +421,42 @@ test_that("xlsb top10 autofilter is imported", {
 
   wb <- suppressWarnings(wb_load(testfile_path("xls_cov_features.xlsb")))
   expect_match(wb$worksheets[[1]]$autoFilter, '<top10 top="1" val="5" filterVal="230"/>', fixed = TRUE)
+})
+
+test_that("xlsb filters, strings and error formulas of xls_cov4_misc are imported", {
+  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_on_cran()
+
+  wb_b <- suppressWarnings(wb_load(testfile_path("xls_cov4_misc.xlsb")))
+  wb_x <- wb_load(testfile_path("xls_cov4_misc.xlsx"))
+
+  expect_equal(wb_b$get_sheet_names(), wb_x$get_sheet_names())
+
+  tab <- wb_b$tables$tab_xml
+  expect_match(tab, '<customFilter operator="equal" val="a*"/>', fixed = TRUE)
+  expect_match(tab, '<colorFilter dxfId="0" cellColor="1"/>', fixed = TRUE)
+  expect_match(tab, '<iconFilter iconSet="3TrafficLights1" iconId="0"/>', fixed = TRUE)
+  expect_match(tab, '<dynamicFilter type="aboveAverage" val="50"/>', fixed = TRUE)
+
+  af <- wb_b$worksheets[[2]]$autoFilter
+  expect_match(af, '<dateGroupItem year="2020" month="1" dateTimeGrouping="month"/>', fixed = TRUE)
+  expect_match(af, '<dateGroupItem year="2020" month="3" day="5" dateTimeGrouping="day"/>', fixed = TRUE)
+  expect_match(af, '<top10 top="0" percent="1" val="20" filterVal="16"/>', fixed = TRUE)
+  expect_match(af, '<dynamicFilter type="belowAverage" val="10.5"/>', fixed = TRUE)
+  expect_match(af, '<customFilters><customFilter operator="notEqual" val="x"/>', fixed = TRUE)
+  expect_match(af, '<customFilters and="1"><customFilter operator="notEqual" val="Fiat"/>', fixed = TRUE)
+
+  for (i in c(3, 5, 6)) {
+    for (fml in c(FALSE, TRUE)) {
+      expect_equal(
+        wb_to_df(wb_b, sheet = i, col_names = FALSE, show_formula = fml),
+        wb_to_df(wb_x, sheet = i, col_names = FALSE, show_formula = fml),
+        ignore_attr = TRUE, info = paste(i, fml)
+      )
+    }
+  }
+
+  expect_length(wb_b$externalLinks, 1L)
+
+  expect_match(wb_b$worksheets[[7]]$autoFilter, '<filter val="TRUE"/>', fixed = TRUE)
 })
