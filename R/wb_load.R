@@ -1820,15 +1820,17 @@ wb_load <- function(
             if (want %in% seq_along(sheets)) {
 
               sheetName <- sheets[[want]]
+              need_quote <- grepl("[^A-Za-z0-9]", sheetName)
               if (xti$firstSheet[sel][i] < xti$lastSheet[sel][i]) {
                 want <- xti$lastSheet[sel][i]
+                need_quote <- need_quote || grepl("[^A-Za-z0-9]", sheets[[want]])
                 sheetName <- paste0(sheetName, ":", sheets[[want]])
               }
 
               # should be a single reference now
               val <- sheetName
 
-              if (grepl("[^A-Za-z0-9]", val))
+              if (need_quote)
                 val <- shQuote(val, type = "sh")
 
               if (length(val)) xti$sheets[sel][i] <- val
@@ -2031,6 +2033,56 @@ wb_load <- function(
           rm(cc)
         }
       }
+    }
+
+    # references to defined names are written as placeholders in defined names
+    # and formulas. This is independent of xti entries, and therefore does not
+    # require any
+    if (length(wb$workbook$definedNames)) {
+      nri         <- wb$get_named_regions()
+      nri$name_id <- paste0("openxlsx2defnam_", sprintf("%012d", as.integer(nri$id)))
+
+      wb$workbook$definedNames <-
+        stringi::stri_replace_all_fixed(
+          wb$workbook$definedNames,
+          nri$name_id,
+          nri$name,
+          vectorize_all = FALSE
+        )
+
+      for (j in seq_along(wb$worksheets)) {
+        cc <- wb$worksheets[[j]]$sheet_data$cc
+        if (any(sel <- grepl("openxlsx2defnam_", cc$f, fixed = TRUE))) {
+          cc$f[sel] <- stringi::stri_replace_all_fixed(
+            cc$f[sel],
+            nri$name_id,
+            nri$name,
+            vectorize_all = FALSE
+          )
+          wb$worksheets[[j]]$sheet_data$cc <- cc
+        }
+        rm(cc)
+      }
+    }
+
+    # functions not known to the file format are stored as user defined
+    # functions with the function name as first argument
+    for (j in seq_along(wb$worksheets)) {
+      cc <- wb$worksheets[[j]]$sheet_data$cc
+      if (any(sel <- grepl("User_Defined_Function(", cc$f, fixed = TRUE))) {
+        cc$f[sel] <- stringi::stri_replace_all_regex(
+          cc$f[sel],
+          "User_Defined_Function\\(([^,()]+)\\)",
+          "$1()"
+        )
+        cc$f[sel] <- stringi::stri_replace_all_regex(
+          cc$f[sel],
+          "User_Defined_Function\\(([^,()]+),",
+          "$1("
+        )
+        wb$worksheets[[j]]$sheet_data$cc <- cc
+      }
+      rm(cc)
     }
 
     # remove defined names without value. these are not valid and are probably

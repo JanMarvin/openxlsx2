@@ -2,12 +2,13 @@
 
 ## New features
 
-* Initial support for `xls` parsing. This is similar to how we handle `xlsb` files. We create some pseudo XML from the binary file and import this with `wb_load()` as if the input was provided as `xlsx`/`xlsm` file.
+* Initial support for `xls` parsing. This is similar to how we handle `xlsb` files. We create some pseudo XML from the binary file and import this with `wb_load()` as if the input was provided as `xlsx`/`xlsm` file. [#1698](https://github.com/JanMarvin/openxlsx2/pull/1698) [#1701](https://github.com/JanMarvin/openxlsx2/pull/1701)
 * Pivot caches of `xlsb` files are imported with their records. `options("openxlsx2.pivot_refresh" = TRUE)` leaves them empty to be refreshed on open.
 
 ## Fixes
 
 * `wb_add_data_table(..., total_row = ...)` checked for max column length instead of max row length and refused to write anything beyond the maximum number of columns. [#1700](https://github.com/JanMarvin/openxlsx2/pull/1700)
+* Several improvements to `xlsb` imports. This includes new features and some minor bugfixes. [#1702](https://github.com/JanMarvin/openxlsx2/pull/1702)
 
 
 ***************************************************************************
