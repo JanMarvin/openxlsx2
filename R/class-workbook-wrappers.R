@@ -371,8 +371,7 @@ wb_add_data <- function(
 #'   add_data_table(
 #'     x = as.data.frame(USPersonalExpenditure),
 #'     row_names = TRUE,
-#'     total_row = c(text = "Total", "none", "sum", "sum", "sum", "SUM"),
-#'     stringsAsFactors = FALSE
+#'     total_row = c(text = "Total", "none", "sum", "sum", "sum", "SUM")
 #'   )
 #' @export
 wb_add_data_table <- function(

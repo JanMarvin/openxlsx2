@@ -152,7 +152,7 @@ wb$add_fill(dims = dims_cyl, color = wb_color("pink"))
 
 # Mark a full column as important(with the column name too)
 wb_dims_vs <- wb_dims(x = mtcars, cols = "vs", select = "x")
-wb$add_fill(dims = wb_dims_vs, fill = wb_color("yellow"))
+wb$add_fill(dims = wb_dims_vs, color = wb_color("yellow"))
 wb$add_conditional_formatting(dims = wb_dims(x = mtcars, cols = "mpg"), type = "dataBar")
 # wb_open(wb)
 
