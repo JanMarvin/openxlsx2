@@ -2138,6 +2138,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
     // auto itr = 0;
     R_xlen_t idx = 0;
+    bool in_frt = false;
     while (!end_of_worksheet) {
       checkInterrupt(idx);
 
@@ -2149,6 +2150,12 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
       RECORD(x, size, bin, swapit);
       if (debug) Rcpp::Rcout << x << ": " << size << std::endl;
+
+      // sheetData is not part of an FRT block, a cell or row record in it is skipped
+      if (in_frt && x >= BrtRowHdr && x <= 19) {
+        bin.seekg(size, bin.cur);
+        continue;
+      }
 
       switch(x) {
 
@@ -4482,6 +4489,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           if (debug) Rcpp::Rcout << "BrtFRTBegin" << std::endl;
 
           ProductVersion(bin, swapit, debug, true);
+          in_frt = true;
 
           break;
         }
@@ -4522,6 +4530,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
         case BrtFRTEnd: {
           if (debug) Rcpp::Rcout << "BrtFRTEnd" << std::endl;
+          in_frt = false;
           if (ext_open) out << "</ext>" << std::endl;
           ext_open = false;
           bin.seekg(size, bin.cur);

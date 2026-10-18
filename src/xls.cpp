@@ -1104,6 +1104,9 @@ int32_t sharedstrings_xls(std::string filePath, std::string outPath, bool debug)
         cstUnique = readbin(cstUnique, bin, swapit);
         if (debug) Rcpp::Rcout << "SST: " << cstTotal << " strings, " << cstUnique << " unique" << std::endl;
 
+        // Excel writes a random unique count when the table is empty
+        if (cstTotal == 0) cstUnique = 0;
+
         // the strings go on in Continue records
         std::streampos rec_end = next;
         for (uint32_t i = 0; i < cstUnique; ++i) {
