@@ -1,8 +1,14 @@
-# Files of the Apache POI project (Apache License 2.0), fetched from GitHub on a full run only.
+# Files of the Apache POI project (Apache License 2.0), fetched from GitHub.
 # They are downloaded once into the testfiles folder and not shipped with the package.
+# Like the other test files they are skipped on CRAN and on CI, unless openxlsx2_testthat_fullrun is set.
 poi_file <- function(x) {
-  testthat::skip_on_cran()
-  if (Sys.getenv("openxlsx2_testthat_fullrun") == "") testthat::skip("Only run in a full run")
+  if (Sys.getenv("openxlsx2_testthat_fullrun") == "") {
+    if (isTRUE(as.logical(Sys.getenv("CI", "false")))) # on_ci()
+      return(testthat::skip("Skip on CI"))
+
+    if (!interactive() && !isTRUE(as.logical(Sys.getenv("NOT_CRAN", "false")))) # on_cran()
+      return(testthat::skip("Skip on CRAN"))
+  }
 
   test_dir <- testthat::test_path("testfiles")
   if (!dir.exists(test_dir)) dir.create(test_dir, recursive = TRUE)
