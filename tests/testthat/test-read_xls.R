@@ -544,6 +544,9 @@ test_that("xls files created from the xls_cov workbooks are imported", {
   expect_true(length(wb$worksheets[[2]]$mergeCells) > 0)
   expect_true(length(wb$worksheets[[2]]$dataValidations) > 0)
   expect_true(length(wb$worksheets[[3]]$conditionalFormatting) > 0)
+  cf_txt <- unlist(wb$worksheets[[3]]$conditionalFormatting)
+  expect_match(cf_txt, 'type="containsText" operator="containsText" text="Mazda"', fixed = TRUE, all = FALSE)
+  expect_match(cf_txt, 'type="endsWith" operator="endsWith" text="4"', fixed = TRUE, all = FALSE)
   expect_true(length(wb$worksheets[[4]]$hyperlinks) > 0)
 
   wb <- wb_load(testfile_path("xls_cov_names_formulas.xls"))
@@ -676,6 +679,15 @@ test_that("xls files created from the xls_cov3 and xls_cov4 workbooks are import
 
   wb_s <- wb_load(testfile_path("xls_cov4_misc.xls"))
   expect_length(wb_s$externalLinks, 1L)
+
+  cf <- function(f, i) paste(unlist(suppressWarnings(wb_load(testfile_path(f)))$worksheets[[i]]$conditionalFormatting[2]), collapse = "")
+  cf_s <- vapply(1:5, function(i) cf("xls_cov3_cf.xls", i), "")
+  expect_match(cf_s[1], "type=\"timePeriod\" timePeriod=\"lastWeek\"", fixed = TRUE)
+  expect_match(cf_s[2], "type=\"aboveAverage\" equalAverage=\"1\"", fixed = TRUE)
+  expect_match(cf_s[2], "stdDev=\"3\"", fixed = TRUE)
+  expect_match(cf_s[3], "iconSet=\"3TrafficLights2\" reverse=\"1\"", fixed = TRUE)
+  expect_match(cf_s[5], "type=\"top10\" rank=\"3\" percent=\"0\" bottom=\"1\"", fixed = TRUE)
+  expect_match(cf_s[5], "stopIfTrue=\"1\"", fixed = TRUE)
 
   tab <- wb_s$tables$tab_xml
   expect_match(tab, "<filter val=\"alpha\"/>", fixed = TRUE)

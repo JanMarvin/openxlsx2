@@ -413,6 +413,13 @@ test_that("xlsb conditional formatting rule types match the xlsx", {
   for (i in 1:5) {
     expect_equal(sort(rules(wb_b, i)), sort(rules(wb_x, i)), info = i)
   }
+
+  icons <- function(wb) {
+    cf <- wb$worksheets[[3]]$conditionalFormatting$cf
+    unlist(regmatches(cf, gregexpr("<iconSet iconSet=\"[^\"]+\"( reverse=\"1\")?", cf)))
+  }
+  expect_equal(icons(wb_b), icons(wb_x))
+  expect_true(any(grepl("3TrafficLights2", icons(wb_b), fixed = TRUE)))
 })
 
 test_that("xlsb top10 autofilter is imported", {

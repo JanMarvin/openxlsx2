@@ -1829,10 +1829,18 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
     std::vector<std::string> validations;
 
     // conditional formats: CondFmt has the ranges and how many CF records follow
+    struct CfExInfo {
+      uint8_t templ = 0, param0 = 0, param1 = 0;
+      bool stop_if_true = false;
+    };
+    std::map<std::pair<uint16_t, uint16_t>, CfExInfo> cfex_infos;
+
     struct CondFmt {
       std::string sqref;
       uint32_t row = 0, col = 0;  // top left cell, formulas are relative to it
       size_t pending = 0;         // CF records still to come
+      uint16_t nid = 0;
+      size_t total = 0;           // CF records of the range
       std::string xml;
       std::string x14;
     };
@@ -2053,6 +2061,37 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
           if (ct == 1 || ct == 2) ++dxf_id;
         }
         bin.seekg(cnext, std::ios_base::beg);
+      }
+    }
+
+    // The CFEx records follow after the rules of the sheet. They tell the template of a CF rule.
+    {
+      bin.clear();
+      bin.seekg(static_cast<std::streamoff>(g.sheets[static_cast<size_t>(sheet) - 1].offset), std::ios_base::beg);
+      uint16_t xrid = 0, xrsize = 0;
+      int32_t depth = 0;
+      while (XLS_RECORD(xrid, xrsize, bin, swapit)) {
+        std::streampos xnext = bin.tellg() + std::streamoff(xrsize);
+        if (xrid == XlsBOF) ++depth;
+        if (xrid == XlsEOF && --depth <= 0) break;
+        if (xrid == XlsCFEx && xrsize >= 26) {
+          std::vector<uint8_t> xrec(xrsize);
+          bin.read(reinterpret_cast<char*>(xrec.data()), xrsize);
+          auto xu16 = [&](size_t at) -> size_t { return static_cast<size_t>(xrec[at] | (xrec[at + 1] << 8)); };
+          if (xu16(12) == 0 && xu16(14) == 0) {
+            size_t at = 26;
+            if (xrec[25] == 1) at = 30 + (xu16(26) | (xu16(28) << 16));
+            CfExInfo info;
+            info.templ = xrec[21];
+            info.stop_if_true = (xrec[24] & 0x02) != 0;
+            if (at + 3 <= xrec.size() && xrec[at] == 16) {
+              info.param0 = xrec[at + 1];
+              info.param1 = xrec[at + 2];
+            }
+            cfex_infos[std::make_pair(static_cast<uint16_t>(xu16(16)), static_cast<uint16_t>(xu16(18)))] = info;
+          }
+        }
+        bin.seekg(xnext, std::ios_base::beg);
       }
     }
 
@@ -3133,7 +3172,10 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
           uint16_t ccf = 0, cref = 0;
           if (rid == XlsCondFmt12) bin.seekg(12, std::ios::cur);
           ccf = readbin(ccf, bin, swapit);
-          bin.seekg(10, std::ios_base::cur);
+          uint16_t cf_flags = 0;
+          cf_flags = readbin(cf_flags, bin, swapit);
+          c.nid = static_cast<uint16_t>(cf_flags >> 1);
+          bin.seekg(8, std::ios_base::cur);
           cref = readbin(cref, bin, swapit);
           for (uint16_t i = 0; i < cref; ++i) {
             uint16_t row1 = 0, row2 = 0, col1 = 0, col2 = 0;
@@ -3151,6 +3193,7 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
             c.sqref += a == b ? a : a + ":" + b;
           }
           c.pending = ccf;
+          c.total = ccf;
           cond_fmts.push_back(c);
           break;
         }
@@ -3161,6 +3204,7 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
           int32_t this_dxf = dxf_id++;
           if (cond_fmts.empty() || cond_fmts.back().pending == 0) break;
           CondFmt& c = cond_fmts.back();
+          uint16_t icf = static_cast<uint16_t>(c.total - c.pending);
           --c.pending;
 
           std::vector<uint32_t> default_palette(XlsDefaultPalette, XlsDefaultPalette + 56);
@@ -3179,17 +3223,83 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
 
           static const char* const operators[9] = {"", "between", "notBetween", "equal", "notEqual", "greaterThan", "lessThan",
                                                    "greaterThanOrEqual", "lessThanOrEqual"};
+          // The template of the rule is in the CFEx record, Excel writes the rules of the templates as formulas.
+          static const char* const periods[10] = {"today", "tomorrow", "yesterday", "last7Days", "lastMonth",
+                                                  "nextMonth", "thisWeek", "nextWeek", "lastWeek", "thisMonth"};
+          CfExInfo ex;
+          std::map<std::pair<uint16_t, uint16_t>, CfExInfo>::const_iterator ex_it = cfex_infos.find(std::make_pair(c.nid, icf));
+          if (ex_it != cfex_infos.end()) ex = ex_it->second;
+
+          bool keep_formula = true;
           std::string rule = "<cfRule";
           if (cf.type == 1 && cf.comparison >= 1 && cf.comparison <= 8) {
             rule += std::string(" type=\"cellIs\" operator=\"") + operators[cf.comparison] + "\"";
           } else if (cf.type == 2) {
-            rule += " type=\"expression\"";
+            std::string attrs;
+            if (ex.templ == 5) {
+              attrs = std::string(" type=\"top10\" rank=\"") + std::to_string(ex.param1) + "\" percent=\"" +
+                      ((ex.param0 & 0x02) ? "1" : "0") + "\"" + ((ex.param0 & 0x01) ? "" : " bottom=\"1\"");
+              keep_formula = false;
+            } else if (ex.templ == 7 || ex.templ == 27) {
+              attrs = ex.templ == 7 ? " type=\"uniqueValues\"" : " type=\"duplicateValues\"";
+              keep_formula = false;
+            } else if (ex.templ == 9) {
+              attrs = " type=\"containsBlanks\"";
+            } else if (ex.templ == 10) {
+              attrs = " type=\"notContainsBlanks\"";
+            } else if (ex.templ == 11) {
+              attrs = " type=\"containsErrors\"";
+            } else if (ex.templ == 12) {
+              attrs = " type=\"notContainsErrors\"";
+            } else if (ex.templ >= 15 && ex.templ <= 24) {
+              attrs = std::string(" type=\"timePeriod\" timePeriod=\"") + periods[ex.templ - 15] + "\"";
+            } else if (ex.templ == 25 || ex.templ == 26 || ex.templ == 29 || ex.templ == 30) {
+              attrs = " type=\"aboveAverage\"";
+              if (ex.templ == 26 || ex.templ == 30) attrs += " aboveAverage=\"0\"";
+              if (ex.templ >= 29) attrs += " equalAverage=\"1\"";
+              if (ex.param0 > 0) attrs += " stdDev=\"" + std::to_string(ex.param0) + "\"";
+              keep_formula = false;
+            } else {
+              attrs = " type=\"expression\"";
+              if (ex.templ == 8) {
+                struct TextRule { const char* type; const char* op; const char* head; const char* tail; };
+                static const TextRule kinds[4] = {
+                  {"containsText", "containsText", "NOT(ISERROR(SEARCH(\"", "\","},
+                  {"notContainsText", "notContains", "ISERROR(SEARCH(\"", "\","},
+                  {"beginsWith", "beginsWith", "LEFT(", ",LEN(\""},
+                  {"endsWith", "endsWith", "RIGHT(", ",LEN(\""}
+                };
+                for (size_t k = 0; k < 4; ++k) {
+                  const std::string head = kinds[k].head;
+                  std::string text;
+                  if (k < 2) {
+                    if (f1.compare(0, head.size(), head) != 0) continue;
+                    size_t end = f1.find(kinds[k].tail, head.size());
+                    if (end == std::string::npos) continue;
+                    text = f1.substr(head.size(), end - head.size());
+                  } else {
+                    size_t lp = f1.find(kinds[k].tail);
+                    size_t q = f1.find("))=\"", lp == std::string::npos ? 0 : lp);
+                    if (f1.compare(0, head.size(), head) != 0 || lp == std::string::npos || q == std::string::npos) continue;
+                    size_t b = lp + std::string(kinds[k].tail).size();
+                    text = f1.substr(b, f1.find("\"", b) - b);
+                  }
+                  attrs = std::string(" type=\"") + kinds[k].type + "\" operator=\"" + kinds[k].op + "\" text=\"" + escape_xml(text) + "\"";
+                  break;
+                }
+              }
+            }
+            rule += attrs;
           } else {
             break;
           }
-          rule += " dxfId=\"" + std::to_string(this_dxf) + "\" priority=\"" + std::to_string(++cf_priority) + "\">";
-          rule += "<formula>" + escape_xml(f1) + "</formula>";
-          if (!f2.empty()) rule += "<formula>" + escape_xml(f2) + "</formula>";
+          rule += " dxfId=\"" + std::to_string(this_dxf) + "\" priority=\"" + std::to_string(++cf_priority) + "\"";
+          if (ex.stop_if_true) rule += " stopIfTrue=\"1\"";
+          rule += ">";
+          if (keep_formula) {
+            rule += "<formula>" + escape_xml(f1) + "</formula>";
+            if (!f2.empty()) rule += "<formula>" + escape_xml(f2) + "</formula>";
+          }
           rule += "</cfRule>";
           c.xml += rule;
           break;
@@ -3261,8 +3371,8 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
             }
             rule += "</cfRule>";
           } else if (cf.type == 6 && !cf.cfvos.empty()) {
-            static const char* const icons[17] = {"3Arrows", "3ArrowsGray", "3Flags", "3TrafficLights1", "3Signs",
-                                                  "3TrafficLights2", "3Symbols", "3Symbols2", "4Arrows", "4ArrowsGray",
+            static const char* const icons[17] = {"3Arrows", "3ArrowsGray", "3Flags", "3TrafficLights1", "3TrafficLights2",
+                                                  "3Signs", "3Symbols", "3Symbols2", "4Arrows", "4ArrowsGray",
                                                   "4RedToBlack", "4Rating", "4TrafficLights", "5Arrows", "5ArrowsGray",
                                                   "5Rating", "5Quarters"};
             rule = "<cfRule type=\"iconSet\" priority=\"" + std::to_string(++cf_priority) + "\"><iconSet";

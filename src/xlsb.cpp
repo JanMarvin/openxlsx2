@@ -4334,8 +4334,8 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
         }
 
         case BrtBeginIconSet: {
-          static const char* const icons[17] = {"3Arrows", "3ArrowsGray", "3Flags", "3TrafficLights1", "3Signs",
-                                                "3TrafficLights2", "3Symbols", "3Symbols2", "4Arrows", "4ArrowsGray",
+          static const char* const icons[17] = {"3Arrows", "3ArrowsGray", "3Flags", "3TrafficLights1", "3TrafficLights2",
+                                                "3Signs", "3Symbols", "3Symbols2", "4Arrows", "4ArrowsGray",
                                                 "4RedToBlack", "4Rating", "4TrafficLights", "5Arrows", "5ArrowsGray",
                                                 "5Rating", "5Quarters"};
           uint32_t iSet = 0;
