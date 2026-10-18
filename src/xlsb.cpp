@@ -852,10 +852,12 @@ int32_t table_bin(std::string filePath, std::string outPath, bool debug) {
           dyn_flag = readbin(dyn_flag, bin, swapit);
           dyn_val = Xnum(bin, swapit);
 
-          // only the average filters are known, other types remain unhandled
+          std::string dyn_type = to_dynamic_filter(iDynFilterType);
           if (iDynFilterType == 1 || iDynFilterType == 2) {
             out << "<dynamicFilter type=\"" << (iDynFilterType == 1 ? "aboveAverage" : "belowAverage")
                 << "\" val=\"" << dyn_val << "\"/>" << std::endl;
+          } else if (!dyn_type.empty()) {
+            out << "<dynamicFilter type=\"" << dyn_type << "\"/>" << std::endl;
           } else {
             Rcpp::warning("Dynamic Filter found. This type is not handled.");
           }
@@ -2113,7 +2115,10 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
     bool in_sheet_data = false;
     bool end_of_worksheet = false;
     bool extlst_open = false, ext_open = false;
-    bool cf_iconset = false;
+    bool cf_iconset = false, x14_skip = false;
+    std::string x14_sqref;
+    std::vector<std::string> x14_colors;
+    uint8_t x14_flags = 0, x14_axis = 0;
     int32_t cf_row = 0, cf_col = 0;
     auto open_ext = [&](const char *uri) {
       if (!extlst_open) out << "<extLst>";
@@ -2149,6 +2154,12 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
       RECORD(x, size, bin, swapit);
       if (debug) Rcpp::Rcout << x << ": " << size << std::endl;
+
+      // cell and row records are only valid inside of sheetData, e.g. a stray cell in a FRT block is skipped
+      if (!in_sheet_data && x >= BrtRowHdr && x <= BrtFmlaError) {
+        bin.seekg(size, bin.cur);
+        continue;
+      }
 
       switch(x) {
 
@@ -2685,8 +2696,6 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
         case BrtRowHdr: {
           if (debug) Rcpp::Rcout << "<row/>: " << bin.tellg() << std::endl;
-
-          if (!in_sheet_data) bin.seekg(size, bin.cur);
 
           // close open rows
           if (!first_row) {
@@ -3754,10 +3763,12 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           dyn_flag = readbin(dyn_flag, bin, swapit);
           dyn_val = Xnum(bin, swapit);
 
-          // only the average filters are known, other types remain unhandled
+          std::string dyn_type = to_dynamic_filter(iDynFilterType);
           if (iDynFilterType == 1 || iDynFilterType == 2) {
             out << "<dynamicFilter type=\"" << (iDynFilterType == 1 ? "aboveAverage" : "belowAverage")
                 << "\" val=\"" << dyn_val << "\"/>" << std::endl;
+          } else if (!dyn_type.empty()) {
+            out << "<dynamicFilter type=\"" << dyn_type << "\"/>" << std::endl;
           } else {
             Rcpp::warning("Dynamic Filter found. This type is not handled.");
           }
@@ -4154,12 +4165,157 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           break;
         }
 
-        case BrtBeginConditionalFormattings:
-        case BrtBeginConditionalFormatting14: {
-          if (debug) Rcpp::Rcout << "BrtBeginConditionalFormattings" << std::endl;
-
-          Rcpp::warning("Worksheet contains unhandled conditional formatting.");
+        case BrtBeginConditionalFormattings: {
+          if (debug) Rcpp::Rcout << "<x14:conditionalFormattings>" << std::endl;
+          open_ext("{78C0D931-6437-407d-A8EE-F0AAD7539E65}");
+          out << "<x14:conditionalFormattings xmlns:xm=\"http://schemas.microsoft.com/office/excel/2006/main\">" << std::endl;
           bin.seekg(size, bin.cur);
+          break;
+        }
+
+        case BrtBeginConditionalFormatting14: {
+          std::streampos rec_end = bin.tellg() + static_cast<std::streamoff>(size);
+          bin.seekg(12, bin.cur);
+          std::vector<int32_t> sqrfx = UncheckedSqRfX(bin, swapit);
+          x14_sqref.clear();
+          for (int32_t k = 0; k < sqrfx[0]; ++k) {
+            size_t at = 1 + 4 * static_cast<size_t>(k);
+            std::string lref = int_to_col(sqrfx[at + 2] + 1) + std::to_string(sqrfx[at] + 1);
+            std::string rref = int_to_col(sqrfx[at + 3] + 1) + std::to_string(sqrfx[at + 1] + 1);
+            if (k > 0) x14_sqref += " ";
+            x14_sqref += lref == rref ? lref : lref + ":" + rref;
+          }
+          if (sqrfx[0] > 0) {
+            cf_row = sqrfx[1];
+            cf_col = sqrfx[3];
+          }
+          out << "<x14:conditionalFormatting>" << std::endl;
+          bin.seekg(rec_end);
+          break;
+        }
+
+        case BrtEndConditionalFormatting14: {
+          out << "<xm:sqref>" << x14_sqref << "</xm:sqref></x14:conditionalFormatting>" << std::endl;
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+        case BrtBeginCFRule14: {
+          std::vector<uint8_t> rule(static_cast<size_t>(size));
+          bin.read(reinterpret_cast<char*>(rule.data()), size);
+          x14_skip = true;
+          if (rule.size() >= 24 && rule[4] == 4) {
+            char guid[40];
+            const uint8_t* g = rule.data() + rule.size() - 20;
+            std::snprintf(guid, sizeof(guid), "{%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X}",
+                          g[3], g[2], g[1], g[0], g[5], g[4], g[7], g[6], g[8], g[9], g[10], g[11], g[12], g[13], g[14], g[15]);
+            out << "<x14:cfRule type=\"dataBar\" id=\"" << guid << "\">" << std::endl;
+            x14_skip = false;
+          } else {
+            Rcpp::warning("Worksheet contains unhandled conditional formatting.");
+          }
+          break;
+        }
+
+        case BrtEndCFRule14: {
+          if (!x14_skip) out << "</x14:cfRule>" << std::endl;
+          x14_skip = false;
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+        case BrtBeginDatabar14: {
+          std::vector<uint8_t> db(static_cast<size_t>(size));
+          bin.read(reinterpret_cast<char*>(db.data()), size);
+          x14_colors.clear();
+          if (x14_skip || db.size() < 11) break;
+          x14_flags = static_cast<uint8_t>(db[9]);
+          x14_axis = db[8];
+          out << "<x14:dataBar minLength=\"" << static_cast<unsigned>(db[4]) << "\" maxLength=\"" << static_cast<unsigned>(db[5]) << "\"";
+          if (!db[6]) out << " showValue=\"0\"";
+          if (x14_flags & 0x01) out << " border=\"1\"";
+          if (!(x14_flags & 0x02)) out << " gradient=\"0\"";
+          if (db[7] == 1) out << " direction=\"leftToRight\"";
+          if (db[7] == 2) out << " direction=\"rightToLeft\"";
+          if (db[8] == 1) out << " axisPosition=\"middle\"";
+          if (db[8] == 2) out << " axisPosition=\"none\"";
+          if (!(x14_flags & 0x04)) out << " negativeBarColorSameAsPositive=\"1\"";
+          out << " negativeBarBorderColorSameAsPositive=\"" << ((x14_flags & 0x08) ? "0" : "1") << "\">" << std::endl;
+          break;
+        }
+
+        case BrtEndDatabar14: {
+          if (!x14_skip) {
+            size_t x14_pos = 0;
+            auto next_color = [&](const char* tag) {
+              if (x14_pos < x14_colors.size()) out << "<x14:" << tag << x14_colors[x14_pos++] << "/>";
+            };
+            if (x14_flags & 0x01) next_color("borderColor");
+            if (x14_flags & 0x04) next_color("negativeFillColor");
+            if ((x14_flags & 0x01) && (x14_flags & 0x08)) next_color("negativeBorderColor");
+            if (x14_axis != 2) next_color("axisColor");
+            out << "</x14:dataBar>" << std::endl;
+          }
+          bin.seekg(size, bin.cur);
+          break;
+        }
+
+        case BrtColor14: {
+          std::vector<uint8_t> color(static_cast<size_t>(size));
+          bin.read(reinterpret_cast<char*>(color.data()), size);
+          if (x14_skip || color.size() < 12) break;
+          color.erase(color.begin(), color.begin() + 4);
+          std::string attr = xlsb_color_attr(color, 0);
+          x14_colors.push_back(attr.empty() ? " auto=\"1\"" : attr);
+          break;
+        }
+
+        case BrtCFVO14: {
+          std::streampos rec_end = bin.tellg() + static_cast<std::streamoff>(size);
+          bin.seekg(4, bin.cur);
+          uint32_t iType = 0, fSaveGTE = 0, fGTE = 0, cbFmla = 0;
+          double numParam = 0;
+          iType = readbin(iType, bin, swapit);
+          numParam = readbin(numParam, bin, swapit);
+          fSaveGTE = readbin(fSaveGTE, bin, swapit);
+          fGTE = readbin(fGTE, bin, swapit);
+          cbFmla = readbin(cbFmla, bin, swapit);
+
+          std::string fml;
+          if (cbFmla != 0) {
+            int32_t sharedFormula = false;
+            fml = CellParsedFormula(bin, swapit, debug, cf_col, cf_row, sharedFormula, has_revision_record);
+          }
+
+          if (!x14_skip) {
+            static const char* const names[10] = {"num", "num", "min", "max", "percent", "percentile", "num", "formula", "autoMin", "autoMax"};
+            const char* type = names[iType < 10 ? iType : 0];
+            if (iType == 8 || iType == 9) {
+              out << "<x14:cfvo type=\"" << type << "\"/>" << std::endl;
+            } else if (iType == 2 || iType == 3) {
+              out << "<x14:cfvo type=\"" << type << "\"/>" << std::endl;
+            } else {
+              std::stringstream num;
+              num << std::setprecision(15) << numParam;
+              out << "<x14:cfvo type=\"" << type << "\"><xm:f>" << (fml.empty() ? num.str() : escape_xml(fml)) << "</xm:f></x14:cfvo>" << std::endl;
+            }
+          }
+
+          bin.seekg(rec_end);
+          break;
+        }
+
+        case BrtCFRuleExt: {
+          std::vector<uint8_t> ext(static_cast<size_t>(size));
+          bin.read(reinterpret_cast<char*>(ext.data()), size);
+          if (ext.size() >= 20) {
+            char guid[40];
+            const uint8_t* g = ext.data() + 4;
+            std::snprintf(guid, sizeof(guid), "{%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X}",
+                          g[3], g[2], g[1], g[0], g[5], g[4], g[7], g[6], g[8], g[9], g[10], g[11], g[12], g[13], g[14], g[15]);
+            out << "<extLst><ext uri=\"{B025F937-C7B1-47D3-B67F-A62EFF666E3E}\" "
+                   "xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\"><x14:id>" << guid << "</x14:id></ext></extLst>" << std::endl;
+          }
           break;
         }
 
@@ -4327,8 +4483,8 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
         }
 
         case BrtBeginIconSet: {
-          static const char* const icons[17] = {"3Arrows", "3ArrowsGray", "3Flags", "3TrafficLights1", "3Signs",
-                                                "3TrafficLights2", "3Symbols", "3Symbols2", "4Arrows", "4ArrowsGray",
+          static const char* const icons[17] = {"3Arrows", "3ArrowsGray", "3Flags", "3TrafficLights1", "3TrafficLights2",
+                                                "3Signs", "3Symbols", "3Symbols2", "4Arrows", "4ArrowsGray",
                                                 "4RedToBlack", "4Rating", "4TrafficLights", "5Arrows", "5ArrowsGray",
                                                 "5Rating", "5Quarters"};
           uint32_t iSet = 0;
@@ -4392,14 +4548,6 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           break;
         }
 
-        case BrtEndConditionalFormatting14:
-        case BrtBeginCFRule14:
-        case BrtEndCFRule14: {
-          if (debug) Rcpp::Rcout << "BrtBegin/EndDCon 14" << std::endl;
-          bin.seekg(size, bin.cur);
-          break;
-        }
-
         // dxf styles for conditional formatting can be (or is always?) embedded in the worksheet
         // the xlsx conversion creates <x14:dxf/>
         case BrtBeginDXFs:
@@ -4424,8 +4572,8 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
         }
 
         case BrtEndConditionalFormattings: {
-          // UNHANDLED
-          if (debug) Rcpp::Rcout << "</conditionalFormattings>" << std::endl;
+          if (debug) Rcpp::Rcout << "</x14:conditionalFormattings>" << std::endl;
+          out << "</x14:conditionalFormattings>" << std::endl;
           bin.seekg(size, bin.cur);
           break;
         }
@@ -4596,22 +4744,6 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           // uint32_t fLocked = 0, fObjects = 0;
           // unhandled
           if (debug) Rcpp::warning("Worksheet contains unhandled protection.");
-          bin.seekg(size, bin.cur);
-          break;
-        }
-
-        // known records that are not imported (x14 conditional formatting)
-        case BrtCFVO14:
-        case BrtBeginDatabar14:
-        case BrtEndDatabar14:
-        case BrtColor14:
-        case BrtCFRuleExt:
-        {
-          if (debug) {  // #nocov start
-            Rcpp::Rcout << "Skipped record: " << std::to_string(x) <<
-              ": " << std::to_string(size) <<
-                " @ " << bin.tellg() << std::endl;
-          }  // #nocov end
           bin.seekg(size, bin.cur);
           break;
         }

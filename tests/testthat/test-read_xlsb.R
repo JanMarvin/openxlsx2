@@ -1,6 +1,5 @@
 test_that("reading xlsb works", {
-
-  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_if_big_endian("XLSB")
   skip_online_checks()
 
   xlsxFile <- testfile_path("openxlsx2_example.xlsb")
@@ -21,8 +20,7 @@ test_that("reading xlsb works", {
 })
 
 test_that("reading complex xlsb works", {
-
-  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_if_big_endian("XLSB")
   skip_online_checks()
 
   xlsxFile <- testfile_path("hyperlink.xlsb")
@@ -61,8 +59,7 @@ test_that("reading complex xlsb works", {
 })
 
 test_that("worksheets with real world formulas", {
-
-  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_if_big_endian("XLSB")
   skip_online_checks()
 
   xlsxFile <- testfile_path("nhs-core-standards-for-eprr-v6.1.xlsb")
@@ -121,8 +118,7 @@ test_that("worksheets with real world formulas", {
 })
 
 test_that("xlsb formulas", {
-
-  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_if_big_endian("XLSB")
   fl <- testfile_path("formula_checks.xlsb")
   wb <- wb_load(fl)
 
@@ -144,8 +140,7 @@ test_that("xlsb formulas", {
 })
 
 test_that("shared formulas are detected correctly", {
-
-  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_if_big_endian("XLSB")
   xlsb <- testfile_path("formula_checks.xlsb")
   xlsx <- testfile_path("formula_checks.xlsx")
 
@@ -160,8 +155,7 @@ test_that("shared formulas are detected correctly", {
 })
 
 test_that("loading custom sheet view in xlsb files works", {
-
-  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_if_big_endian("XLSB")
   skip_online_checks()
 
   fl <- testfile_path("custom_sheet_view.xlsb")
@@ -174,8 +168,7 @@ test_that("loading custom sheet view in xlsb files works", {
 })
 
 test_that("xlsb formula line breaks are handled", {
-
-  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_if_big_endian("XLSB")
   skip_online_checks()
 
   fl <- testfile_path("line_break.xlsb")
@@ -200,8 +193,7 @@ test_that("xlsb formula line breaks are handled", {
 
 
 test_that("xlsb formula line breaks are handled", {
-
-  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_if_big_endian("XLSB")
   skip_online_checks()
 
   ## increase the testing a bit more, for now this only checks that the file
@@ -229,8 +221,7 @@ test_that("xlsb formula line breaks are handled", {
 })
 
 test_that("pivot tables are imported from xlsb", {
-
-  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_if_big_endian("XLSB")
   skip_online_checks()
 
   wb <- wb_load(testfile_path("loadExample.xlsb"))
@@ -262,8 +253,7 @@ test_that("pivot tables are imported from xlsb", {
 })
 
 test_that("conditional formatting is imported from xlsb", {
-
-  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_if_big_endian("XLSB")
   skip_online_checks()
 
   wb <- wb_load(testfile_path("loadExample.xlsb"))
@@ -283,8 +273,7 @@ test_that("conditional formatting is imported from xlsb", {
 })
 
 test_that("pivot cache records are imported from xlsb unless the cache is refreshed", {
-
-  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_if_big_endian("XLSB")
   skip_online_checks()
 
   wb <- wb_load(testfile_path("loadExample.xlsb"))
@@ -308,14 +297,14 @@ test_that("pivot cache records are imported from xlsb unless the cache is refres
 })
 
 test_that("default column width is imported from xlsb", {
-  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_if_big_endian("XLSB")
   skip_on_cran()
   wb <- wb_load(testfile_path("loadExample.xlsb"))
   expect_match(wb$worksheets[[1]]$sheetFormatPr, "defaultColWidth=\"8.832", fixed = TRUE)
 })
 
 test_that("xlsb styles use documented attribute values", {
-  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_if_big_endian("XLSB")
   skip_on_cran()
   wb <- wb_load(testfile_path("test_coverage.xlsb"))
   expect_true(any(grepl("horizontal=\"centerContinuous\"", wb$styles_mgr$styles$cellXfs, fixed = TRUE)))
@@ -327,7 +316,7 @@ test_that("xlsb styles use documented attribute values", {
 })
 
 test_that("xlsb files created from the xls_cov workbooks match their xlsx", {
-  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_if_big_endian("XLSB")
   skip_on_cran()
 
   files <- c(
@@ -366,7 +355,7 @@ test_that("xlsb files created from the xls_cov workbooks match their xlsx", {
 })
 
 test_that("xlsb formulas, names and page breaks are imported", {
-  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_if_big_endian("XLSB")
   skip_on_cran()
 
   wb_b <- suppressWarnings(wb_load(testfile_path("xls_cov_values.xlsb")))
@@ -396,7 +385,7 @@ test_that("xlsb formulas, names and page breaks are imported", {
 })
 
 test_that("xlsb conditional formatting rule types match the xlsx", {
-  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_if_big_endian("XLSB")
   skip_on_cran()
 
   wb_b <- suppressWarnings(wb_load(testfile_path("xls_cov3_cf.xlsb")))
@@ -413,10 +402,37 @@ test_that("xlsb conditional formatting rule types match the xlsx", {
   for (i in 1:5) {
     expect_equal(sort(rules(wb_b, i)), sort(rules(wb_x, i)), info = i)
   }
+
+  icons <- function(wb) {
+    cf <- wb$worksheets[[3]]$conditionalFormatting$cf
+    unlist(regmatches(cf, gregexpr("<iconSet iconSet=\"[^\"]+\"( reverse=\"1\")?", cf)))
+  }
+  expect_equal(icons(wb_b), icons(wb_x))
+  expect_true(any(grepl("3TrafficLights2", icons(wb_b), fixed = TRUE)))
+})
+
+test_that("xlsb x14 data bars are imported", {
+  skip_if_big_endian("XLSB")
+  skip_on_cran()
+
+  ext <- function(wb, i) {
+    x <- gsub("\\s+", " ", unlist(wb$worksheets[[i]]$extLst))
+    sub("<ext xmlns:x14=\"([^\"]*)\" uri=\"([^\"]*)\"", "<ext uri=\"\\2\" xmlns:x14=\"\\1\"", x)
+  }
+
+  for (f in c("xls_cov3_cf", "xls_cov_features")) {
+    wb_b <- suppressWarnings(wb_load(testfile_path(paste0(f, ".xlsb"))))
+    wb_x <- wb_load(testfile_path(paste0(f, ".xlsx")))
+    for (i in seq_along(wb_x$worksheets)) {
+      expect_equal(ext(wb_b, i), ext(wb_x, i), info = paste(f, i))
+    }
+  }
+
+  expect_warning(wb_load(testfile_path("xls_cov3_cf.xlsb")), NA)
 })
 
 test_that("xlsb top10 autofilter is imported", {
-  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_if_big_endian("XLSB")
   skip_on_cran()
 
   wb <- suppressWarnings(wb_load(testfile_path("xls_cov_features.xlsb")))
@@ -424,7 +440,7 @@ test_that("xlsb top10 autofilter is imported", {
 })
 
 test_that("xlsb filters, strings and error formulas of xls_cov4_misc are imported", {
-  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_if_big_endian("XLSB")
   skip_on_cran()
 
   wb_b <- suppressWarnings(wb_load(testfile_path("xls_cov4_misc.xlsb")))

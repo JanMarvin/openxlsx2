@@ -399,6 +399,14 @@ inline std::string halign(int32_t style) {
   return out;
 }
 
+inline std::string to_dynamic_filter(uint32_t type) {
+  static const char* const names[35] = {"", "aboveAverage", "belowAverage", "tomorrow", "today", "yesterday", "nextWeek", "thisWeek",
+                                        "lastWeek", "nextMonth", "thisMonth", "lastMonth", "nextQuarter", "thisQuarter", "lastQuarter",
+                                        "nextYear", "thisYear", "lastYear", "yearToDate", "Q1", "Q2", "Q3", "Q4", "M1", "M2", "M3",
+                                        "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11", "M12"};
+  return type < 35 ? names[type] : "";
+}
+
 inline std::string to_iconset(uint32_t style) {
   std::string out = "";
   if (style != 0xFFFFFFFF) {
@@ -541,14 +549,15 @@ inline std::string to_rich_text(const std::string& str, const std::vector<std::p
 
 inline void PhRun(std::istream& sas, uint32_t dwPhoneticRun, bool swapit) {
   uint16_t ichFirst = 0, ichMom = 0, cchMom = 0, ifnt = 0, AB = 0;
-  // uint32_t phrun = 0;
-  for (uint8_t i = 0; i < dwPhoneticRun; ++i) {
+  // Files written by Excel have runs of 3 fields (ichFirst, ichMom, cchMom) followed by a single
+  // ifnt and phType/alcH. This differs from the 10 byte PhRun of MS-XLSB, but is identical for one run.
+  for (uint32_t i = 0; i < dwPhoneticRun; ++i) {
     ichFirst = readbin(ichFirst, sas, swapit);
     ichMom = readbin(ichMom, sas, swapit);
     cchMom = readbin(cchMom, sas, swapit);
-    ifnt = readbin(ifnt, sas, swapit);
-    AB = readbin(AB, sas, swapit);  // phType (2) alcH (2) unused (12)
   }
+  ifnt = readbin(ifnt, sas, swapit);
+  AB = readbin(AB, sas, swapit);
 }
 
 inline std::string RichStr(std::istream& sas, bool swapit) {
