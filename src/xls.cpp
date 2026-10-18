@@ -3342,6 +3342,14 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
             return x + "/>";
           };
 
+          auto x14_cfvo = [&](const XlsCfvo& v) {
+            static const char* const names[8] = {"", "num", "autoMin", "autoMax", "percent", "percentile", "", "formula"};
+            if (v.type == 2 || v.type == 3) return std::string("<x14:cfvo type=\"") + names[v.type] + "\"/>";
+            if (v.type < 1 || v.type > 7 || v.type == 6) return std::string("<x14:cfvo type=\"num\"><xm:f>0</xm:f></x14:cfvo>");
+            std::string val = v.rgce.empty() ? xls_num(v.num) : xls_rgce(XlsRgce(v.rgce), cctx, swapit, debug);
+            return std::string("<x14:cfvo type=\"") + names[v.type] + "\"><xm:f>" + escape_xml(val) + "</xm:f></x14:cfvo>";
+          };
+
           std::string rule;
           if (cf.type == 3 && !cf.cfvos.empty()) {
             rule = "<cfRule type=\"colorScale\" priority=\"" + std::to_string(++cf_priority) + "\"><colorScale>";
@@ -3350,7 +3358,7 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
             rule += "</colorScale></cfRule>";
           } else if (cf.type == 4 && cf.cfvos.size() == 2 && cf.colors.size() == 1) {
             std::string cfvo_min = cfvo(cf.cfvos[0]), cfvo_max = cfvo(cf.cfvos[1]);
-            bool modern = cf.min_length == 0 && cf.max_length == 100 && cfvo_min == "<cfvo type=\"min\"/>" && cfvo_max == "<cfvo type=\"max\"/>";
+            bool modern = cf.min_length == 0 && cf.max_length == 100;
             rule = "<cfRule type=\"dataBar\" priority=\"" + std::to_string(++cf_priority) + "\"><dataBar";
             if (!modern) rule += " minLength=\"" + std::to_string(cf.min_length) + "\" maxLength=\"" + std::to_string(cf.max_length) + "\"";
             if (!cf.show_value) rule += " showValue=\"0\"";
@@ -3365,8 +3373,8 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
               rule += std::string("<extLst><ext uri=\"{B025F937-C7B1-47D3-B67F-A62EFF666E3E}\" "
                                   "xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\"><x14:id>") + guid + "</x14:id></ext></extLst>";
               c.x14 += std::string("<x14:cfRule type=\"dataBar\" id=\"") + guid + "\"><x14:dataBar minLength=\"0\" maxLength=\"100\"" +
-                       (cf.show_value ? "" : " showValue=\"0\"") + " border=\"1\" negativeBarBorderColorSameAsPositive=\"0\">"
-                       "<x14:cfvo type=\"autoMin\"/><x14:cfvo type=\"autoMax\"/><x14:borderColor" + border_attr + "/>"
+                       (cf.show_value ? "" : " showValue=\"0\"") + " border=\"1\" negativeBarBorderColorSameAsPositive=\"0\">" +
+                       x14_cfvo(cf.cfvos[0]) + x14_cfvo(cf.cfvos[1]) + "<x14:borderColor" + border_attr + "/>" +
                        "<x14:negativeFillColor rgb=\"FFFF0000\"/><x14:negativeBorderColor rgb=\"FFFF0000\"/>"
                        "<x14:axisColor rgb=\"FF000000\"/></x14:dataBar></x14:cfRule>";
             }

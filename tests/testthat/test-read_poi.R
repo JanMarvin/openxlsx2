@@ -2,7 +2,7 @@
 # They are downloaded once into the testfiles folder and not shipped with the package.
 poi_file <- function(x) {
   testthat::skip_on_cran()
-  if (Sys.getenv("openxlsx2_testthat_fullrun") == "") skip("Only run in a full run")
+  if (Sys.getenv("openxlsx2_testthat_fullrun") == "") testthat::skip("Only run in a full run")
 
   test_dir <- testthat::test_path("testfiles")
   if (!dir.exists(test_dir)) dir.create(test_dir, recursive = TRUE)
@@ -18,7 +18,7 @@ poi_file <- function(x) {
     )
   }
 
-  if (!file.exists(fl)) skip(paste("Testfile", x, "could not be acquired."))
+  if (!file.exists(fl)) testthat::skip(paste("Testfile", x, "could not be acquired."))
   fl
 }
 

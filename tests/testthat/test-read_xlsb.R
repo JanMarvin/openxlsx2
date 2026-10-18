@@ -422,6 +422,26 @@ test_that("xlsb conditional formatting rule types match the xlsx", {
   expect_true(any(grepl("3TrafficLights2", icons(wb_b), fixed = TRUE)))
 })
 
+test_that("xlsb x14 data bars are imported", {
+  skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
+  skip_on_cran()
+
+  ext <- function(wb, i) {
+    x <- gsub("\\s+", " ", unlist(wb$worksheets[[i]]$extLst))
+    sub("<ext xmlns:x14=\"([^\"]*)\" uri=\"([^\"]*)\"", "<ext uri=\"\\2\" xmlns:x14=\"\\1\"", x)
+  }
+
+  for (f in c("xls_cov3_cf", "xls_cov_features")) {
+    wb_b <- suppressWarnings(wb_load(testfile_path(paste0(f, ".xlsb"))))
+    wb_x <- wb_load(testfile_path(paste0(f, ".xlsx")))
+    for (i in seq_along(wb_x$worksheets)) {
+      expect_equal(ext(wb_b, i), ext(wb_x, i), info = paste(f, i))
+    }
+  }
+
+  expect_warning(wb_load(testfile_path("xls_cov3_cf.xlsb")), NA)
+})
+
 test_that("xlsb top10 autofilter is imported", {
   skip_if(.Platform$endian == "big", "XLSB: skipping on big-endian system")
   skip_on_cran()
