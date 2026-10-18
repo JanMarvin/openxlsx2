@@ -399,6 +399,14 @@ inline std::string halign(int32_t style) {
   return out;
 }
 
+inline std::string to_dynamic_filter(uint32_t type) {
+  static const char* const names[35] = {"", "aboveAverage", "belowAverage", "tomorrow", "today", "yesterday", "nextWeek", "thisWeek",
+                                        "lastWeek", "nextMonth", "thisMonth", "lastMonth", "nextQuarter", "thisQuarter", "lastQuarter",
+                                        "nextYear", "thisYear", "lastYear", "yearToDate", "Q1", "Q2", "Q3", "Q4", "M1", "M2", "M3",
+                                        "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11", "M12"};
+  return type < 35 ? names[type] : "";
+}
+
 inline std::string to_iconset(uint32_t style) {
   std::string out = "";
   if (style != 0xFFFFFFFF) {

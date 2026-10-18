@@ -852,10 +852,12 @@ int32_t table_bin(std::string filePath, std::string outPath, bool debug) {
           dyn_flag = readbin(dyn_flag, bin, swapit);
           dyn_val = Xnum(bin, swapit);
 
-          // only the average filters are known, other types remain unhandled
+          std::string dyn_type = to_dynamic_filter(iDynFilterType);
           if (iDynFilterType == 1 || iDynFilterType == 2) {
             out << "<dynamicFilter type=\"" << (iDynFilterType == 1 ? "aboveAverage" : "belowAverage")
                 << "\" val=\"" << dyn_val << "\"/>" << std::endl;
+          } else if (!dyn_type.empty()) {
+            out << "<dynamicFilter type=\"" << dyn_type << "\"/>" << std::endl;
           } else {
             Rcpp::warning("Dynamic Filter found. This type is not handled.");
           }
@@ -3761,10 +3763,12 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           dyn_flag = readbin(dyn_flag, bin, swapit);
           dyn_val = Xnum(bin, swapit);
 
-          // only the average filters are known, other types remain unhandled
+          std::string dyn_type = to_dynamic_filter(iDynFilterType);
           if (iDynFilterType == 1 || iDynFilterType == 2) {
             out << "<dynamicFilter type=\"" << (iDynFilterType == 1 ? "aboveAverage" : "belowAverage")
                 << "\" val=\"" << dyn_val << "\"/>" << std::endl;
+          } else if (!dyn_type.empty()) {
+            out << "<dynamicFilter type=\"" << dyn_type << "\"/>" << std::endl;
           } else {
             Rcpp::warning("Dynamic Filter found. This type is not handled.");
           }
