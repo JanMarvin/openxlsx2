@@ -40,6 +40,7 @@ struct XlsPivotField {
   uint16_t subtotals = 0;
   uint32_t numfmt = 0;
   uint8_t sort = 0;
+  bool subtotal_top = true, drag_row = true, drag_col = true, drag_page = true;
 };
 
 struct XlsPivotDataField {
@@ -360,6 +361,10 @@ inline std::string xls_pivot_view_xml(const XlsPivotView& v, int32_t cache_numbe
     else if (f.axis & 0x02) out += " axis=\"axisCol\"";
     else if (f.axis & 0x04) out += " axis=\"axisPage\"";
     if (f.axis & 0x08) out += " dataField=\"1\"";
+    if (!f.subtotal_top) out += " subtotalTop=\"0\"";
+    if (!f.drag_row) out += " dragToRow=\"0\"";
+    if (!f.drag_col) out += " dragToCol=\"0\"";
+    if (!f.drag_page) out += " dragToPage=\"0\"";
     out += " showAll=\"0\"";
     bool has_hidden = false;
     for (size_t k = 0; k < f.items.size(); ++k)

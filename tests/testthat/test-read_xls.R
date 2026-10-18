@@ -425,6 +425,21 @@ test_that("pivot table style of xls is imported", {
   expect_equal(style(b), style(a))
 })
 
+test_that("pivot field options of xls are imported", {
+  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
+  skip_on_cran()
+  a <- wb_load(testfile_path("xls_cov2_pivots.xlsx"))
+  b <- wb_load(testfile_path("xls_cov2_pivots.xls"))
+  attrs <- function(wb, i, what) {
+    x <- unlist(regmatches(wb$pivotTables[i], gregexpr("<pivotField\\b[^>]*>", wb$pivotTables[i])))
+    sort(unlist(regmatches(x, gregexpr(paste0(what, '="[^"]*"'), x))))
+  }
+  for (i in 10:11) expect_equal(attrs(b, i, "sortType"), attrs(a, i, "sortType"))
+  expect_equal(attrs(b, 13, "subtotalTop"), attrs(a, 13, "subtotalTop"))
+  for (w in c("dragToRow", "dragToCol", "dragToPage")) expect_equal(attrs(b, 20, w), attrs(a, 20, w))
+  expect_length(attrs(b, 10, "sortType"), 3L)
+})
+
 test_that("shared string counts of xls are imported", {
   skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
   skip_on_cran()

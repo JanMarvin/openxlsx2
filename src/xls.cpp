@@ -2392,6 +2392,7 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
           case XlsHLinkTooltip:
           case XlsSxView:
           case XlsSxvd:
+          case XlsSXVDEx:
           case XlsSXVI:
           case XlsSxIvd:
           case XlsSXLI:
@@ -3441,6 +3442,20 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
           XlsPivotField f;
           xls_pv_field(rec, f);
           pv_views.back().fields.push_back(f);
+          break;
+        }
+
+        case XlsSXVDEx: {
+          std::vector<uint8_t> rec(rsize);
+          bin.read(reinterpret_cast<char*>(rec.data()), rsize);
+          if (pv_views.empty() || pv_views.back().fields.empty() || rec.size() < 4) break;
+          XlsPivotField& f = pv_views.back().fields.back();
+          uint32_t flags = xls_pv_u32(rec, 0);
+          f.drag_row = (flags & 0x02) != 0;
+          f.drag_col = (flags & 0x04) != 0;
+          f.drag_page = (flags & 0x08) != 0;
+          f.subtotal_top = (flags & 0x00800000u) != 0;
+          if (flags & 0x0200u) f.sort = (flags & 0x0400u) ? 1 : 2;
           break;
         }
 
