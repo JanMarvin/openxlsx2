@@ -23,6 +23,7 @@ poi_file <- function(x) {
 }
 
 test_that("xlsb with phonetic runs of several entries (poi 51519) is imported", {
+  skip_if_big_endian("XLSB")
   wb <- wb_load(poi_file("51519.xlsb"))
   expect_equal(wb$get_sheet_names(), c(Sheet1 = "Sheet1", Sheet2 = "Sheet2", Sheet3 = "Sheet3"))
 
@@ -36,6 +37,7 @@ test_that("xlsb with phonetic runs of several entries (poi 51519) is imported", 
 })
 
 test_that("xlsb with a cell record in a FRT block (poi 62815) is imported", {
+  skip_if_big_endian("XLSB")
   wb <- wb_load(poi_file("62815.xlsb"))
   expect_equal(wb$get_sheet_names(), c(RkNumber = "RkNumber"))
 
@@ -45,13 +47,14 @@ test_that("xlsb with a cell record in a FRT block (poi 62815) is imported", {
 })
 
 test_that("xls with an empty shared string table (poi 57456) is imported", {
-  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
+  skip_if_big_endian("XLS")
   wb <- wb_load(poi_file("57456.xls"))
   expect_equal(wb$get_sheet_names(), c(Sheet2 = "Sheet2"))
   expect_equal(wb$worksheets[[1]]$dimension, "<dimension ref=\"A1:U1047\"/>")
 })
 
 test_that("xlsb values, dates and formulas of poi files are imported", {
+  skip_if_big_endian("XLSB")
   wb <- wb_load(poi_file("sample.xlsb"))
   expect_equal(wb$get_sheet_names(), c(Sheet1 = "Sheet1", `rich test` = "rich test", Sheet3 = "Sheet3"))
   df <- wb_to_df(wb, col_names = FALSE)
@@ -78,6 +81,7 @@ test_that("xlsb values, dates and formulas of poi files are imported", {
 })
 
 test_that("xlsb comments and hyperlinks of poi files are imported", {
+  skip_if_big_endian("XLSB")
   wb <- wb_load(poi_file("comments.xlsb"))
   cmt <- wb_get_comment(wb, sheet = 1)
   expect_equal(cmt$ref, c("A1", "A2", "A3", "A4"))
@@ -95,7 +99,7 @@ poi_xls <- function(x, sheet = 1) {
 }
 
 test_that("xls files of poi with merged cells and many strings are imported", {
-  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
+  skip_if_big_endian("XLS")
 
   x <- poi_xls("31749.xls")
   expect_equal(unname(x$wb$get_sheet_names()), "_Proj")
@@ -118,7 +122,7 @@ test_that("xls files of poi with merged cells and many strings are imported", {
 })
 
 test_that("xls files of poi with double byte characters are imported", {
-  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
+  skip_if_big_endian("XLS")
 
   x <- poi_xls("12843-1.xls")
   nms <- unname(x$wb$get_sheet_names())
@@ -138,7 +142,7 @@ test_that("xls files of poi with double byte characters are imported", {
 })
 
 test_that("xls files of poi with charts, arrays and formulas are imported", {
-  skip_if(.Platform$endian == "big", "XLS: skipping on big-endian system")
+  skip_if_big_endian("XLS")
 
   x <- poi_xls("49581.xls")
   expect_equal(unname(x$wb$get_sheet_names()), c("TestSheet001", "TestSheet002", "TestSheet003"))

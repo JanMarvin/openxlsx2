@@ -193,3 +193,7 @@ skip_online_checks <- function() {
     testthat::skip("Offline: DNS lookup failed")
   }
 }
+
+skip_if_big_endian <- function(format) {
+  testthat::skip_if(.Platform$endian == "big", paste0(format, ": skipping on big-endian system"))
+}
