@@ -173,3 +173,10 @@ test_that("xls files of poi with charts, arrays and formulas are imported", {
   x <- poi_xls("45565.xls")
   expect_equal(unname(x$wb$get_sheet_names()), c("Sheet1", "Sheet2", "Sheet3"))
 })
+
+test_that("xls with VBA code warns unless only data is imported (poi SimpleMacro)", {
+  skip_if_big_endian("XLS")
+  fl <- poi_file("SimpleMacro.xls")
+  expect_warning(wb_load(fl), "VBA code")
+  expect_no_warning(wb_load(fl, data_only = TRUE))
+})
