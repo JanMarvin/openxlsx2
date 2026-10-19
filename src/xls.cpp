@@ -567,7 +567,7 @@ bool xls_has_vba_code(const std::vector<uint8_t>& file) {
 // The stream called Workbook inside of the xls file, saved to outPath. This is
 // what the other functions read.
 // [[Rcpp::export]]
-int32_t xls_extract(std::string filePath, std::string outPath, bool debug) {
+int32_t xls_extract(std::string filePath, std::string outPath, bool warn_vba, bool debug) {
   std::ifstream xls(filePath, std::ios::in | std::ios::binary | std::ios::ate);
   if (!xls) return -1;
 
@@ -590,7 +590,7 @@ int32_t xls_extract(std::string filePath, std::string outPath, bool debug) {
     Rcpp::stop("xls: only Excel 97-2003 files are supported");
   // #nocov end
 
-  if (xls_has_vba_code(file))
+  if (warn_vba && xls_has_vba_code(file))
     Rcpp::warning("The xls file contains VBA code. Macros are not imported.");
 
   if (debug) Rcpp::Rcout << "Workbook stream: " << workbook.size() << " bytes" << std::endl;

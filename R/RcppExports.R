@@ -318,8 +318,8 @@ write_xmlPtr <- function(doc, fl) {
     invisible(.Call(`_openxlsx2_write_xmlPtr`, doc, fl))
 }
 
-xls_extract <- function(filePath, outPath, debug) {
-    .Call(`_openxlsx2_xls_extract`, filePath, outPath, debug)
+xls_extract <- function(filePath, outPath, warn_vba, debug) {
+    .Call(`_openxlsx2_xls_extract`, filePath, outPath, warn_vba, debug)
 }
 
 docprops_xls <- function(filePath, corePath, appPath) {

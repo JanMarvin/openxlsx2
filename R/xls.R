@@ -25,7 +25,7 @@ xls_unpack <- function(file, xmlDir, data_only = FALSE, debug = FALSE, sheet = N
   path <- function(...) file.path(xmlDir, ...)
 
   stream <- path("xl", "workbook.xls")
-  xls_extract(file, stream, debug)
+  xls_extract(file, stream, !data_only, debug)
 
   nsheets <- workbook_xls(stream, path("xl", "workbook.xml"), debug)
   styles_xls(stream, path("xl", "styles.xml"), debug)

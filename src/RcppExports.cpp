@@ -757,15 +757,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // xls_extract
-int32_t xls_extract(std::string filePath, std::string outPath, bool debug);
-RcppExport SEXP _openxlsx2_xls_extract(SEXP filePathSEXP, SEXP outPathSEXP, SEXP debugSEXP) {
+int32_t xls_extract(std::string filePath, std::string outPath, bool warn_vba, bool debug);
+RcppExport SEXP _openxlsx2_xls_extract(SEXP filePathSEXP, SEXP outPathSEXP, SEXP warn_vbaSEXP, SEXP debugSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type filePath(filePathSEXP);
     Rcpp::traits::input_parameter< std::string >::type outPath(outPathSEXP);
+    Rcpp::traits::input_parameter< bool >::type warn_vba(warn_vbaSEXP);
     Rcpp::traits::input_parameter< bool >::type debug(debugSEXP);
-    rcpp_result_gen = Rcpp::wrap(xls_extract(filePath, outPath, debug));
+    rcpp_result_gen = Rcpp::wrap(xls_extract(filePath, outPath, warn_vba, debug));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1111,7 +1112,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_write_worksheet_slim", (DL_FUNC) &_openxlsx2_write_worksheet_slim, 4},
     {"_openxlsx2_write_worksheet", (DL_FUNC) &_openxlsx2_write_worksheet, 3},
     {"_openxlsx2_write_xmlPtr", (DL_FUNC) &_openxlsx2_write_xmlPtr, 2},
-    {"_openxlsx2_xls_extract", (DL_FUNC) &_openxlsx2_xls_extract, 3},
+    {"_openxlsx2_xls_extract", (DL_FUNC) &_openxlsx2_xls_extract, 4},
     {"_openxlsx2_docprops_xls", (DL_FUNC) &_openxlsx2_docprops_xls, 3},
     {"_openxlsx2_workbook_xls", (DL_FUNC) &_openxlsx2_workbook_xls, 3},
     {"_openxlsx2_externallinks_xls", (DL_FUNC) &_openxlsx2_externallinks_xls, 3},
