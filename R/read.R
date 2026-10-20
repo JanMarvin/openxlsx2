@@ -1055,6 +1055,8 @@ wb_read <- function(
 #' @param wb a workbook
 #' @param sheet a sheet in the workbook either name or index
 #' @param dims the dimensions
+#' @param header_rows number of rows at the top of `dims` that form the column
+#' header.
 #' @param ... additional arguments for `wb_to_df()`. Be aware that not every
 #' argument is valid.
 #' @returns A data frame of class `wb_data`.
@@ -1065,8 +1067,18 @@ wb_read <- function(
 #'  wb <- wb_add_data(wb, x = mtcars, dims = "B2")
 #'
 #'  wb_data(wb, 1, dims = "B2:E6")
+#'
+#'  # a header of two rows
+#'  wb <- wb_workbook()
+#'  wb <- wb_add_worksheet(wb)
+#'  wb <- wb_add_data(
+#'    wb,
+#'    x = matrix(c("A", NA, "B", NA, "x", "y", "x", "y", 1, 2, 3, 4), nrow = 3, byrow = TRUE),
+#'    col_names = FALSE
+#'  )
+#'  wb_data(wb, 1, dims = "A1:D3", header_rows = 2)
 #' @export
-wb_data <- function(wb, sheet = current_sheet(), dims, ...) {
+wb_data <- function(wb, sheet = current_sheet(), dims, header_rows = 1L, ...) {
   assert_workbook(wb)
   sheetno <- wb$clone()$.__enclos_env__$private$get_sheet_index(sheet)
   sheetname <- wb$get_sheet_names(escape = TRUE)[[sheetno]]
@@ -1075,8 +1087,53 @@ wb_data <- function(wb, sheet = current_sheet(), dims, ...) {
     dims <- unlist(xml_attr(wb$worksheets[[sheetno]]$dimension, "dimension"), use.names = FALSE)
   }
 
-  z <- wb_to_df(wb, sheet, dims = dims, ...)
-  attr(z, "dims")  <- dims_to_dataframe(dims, fill = TRUE, empty_rm = TRUE)
+  if (length(header_rows) != 1L || is.na(header_rows) || header_rows < 1L) {
+    stop("header_rows must be a single positive integer", call. = FALSE)
+  }
+  header_rows <- as.integer(header_rows)
+
+  if (header_rows == 1L) {
+    z <- wb_to_df(wb, sheet, dims = dims, ...)
+    attr(z, "dims")  <- dims_to_dataframe(dims, fill = TRUE, empty_rm = TRUE)
+  } else {
+    if (grepl(";", dims, fixed = TRUE)) {
+      stop("header_rows > 1 requires dims to be a single range", call. = FALSE)
+    }
+    dd <- dims_to_dataframe(dims, fill = TRUE, empty_rm = TRUE)
+    if (nrow(dd) <= header_rows) {
+      stop("dims must cover more rows than header_rows", call. = FALSE)
+    }
+
+    hdr_dims <- sprintf("%s:%s", dd[1, 1], dd[header_rows, ncol(dd)])
+    dat_dims <- sprintf("%s:%s", dd[header_rows + 1L, 1], dd[nrow(dd), ncol(dd)])
+
+    hdr_df <- wb_to_df(wb, sheet, dims = hdr_dims, col_names = FALSE, fill_merged_cells = TRUE)
+    hdr <- matrix(
+      unlist(lapply(hdr_df, as.character), use.names = FALSE),
+      nrow = header_rows,
+      ncol = ncol(dd)
+    )
+    hdr[!is.na(hdr) & !nzchar(hdr)] <- NA_character_
+
+    filled <- hdr
+    for (r in seq_len(header_rows - 1L)) {
+      for (cc in seq_len(ncol(filled))[-1]) {
+        if (is.na(filled[r, cc])) filled[r, cc] <- filled[r, cc - 1L]
+      }
+    }
+    nms <- vapply(
+      seq_len(ncol(filled)),
+      function(cc) paste(filled[!is.na(filled[, cc]), cc], collapse = " "),
+      character(1)
+    )
+
+    z <- wb_to_df(wb, sheet, dims = dat_dims, col_names = FALSE, ...)
+    names(z) <- nms
+
+    attr(z, "dims")        <- dd[header_rows:nrow(dd), , drop = FALSE]
+    attr(z, "header_dims") <- dd[seq_len(header_rows), , drop = FALSE]
+    attr(z, "header")      <- filled
+  }
   attr(z, "sheet") <- sheetname
 
   class(z) <- c("wb_data", "data.frame")
@@ -1095,6 +1152,8 @@ wb_data <- function(wb, sheet = current_sheet(), dims, ...) {
 
   sheet <- attr(x, "sheet")
   dd    <- attr(x, "dims")
+  hdr   <- attr(x, "header")
+  hdd   <- attr(x, "header_dims")
 
   class(x) <- "data.frame"
 
@@ -1128,6 +1187,8 @@ wb_data <- function(wb, sheet = current_sheet(), dims, ...) {
     dd <- dd[i, j, drop]
     attr(x, "dims")  <- dd
     attr(x, "sheet") <- sheet
+    if (!is.null(hdr)) attr(x, "header") <- hdr[, j, drop = FALSE]
+    if (!is.null(hdd)) attr(x, "header_dims") <- hdd[, j, drop = FALSE]
 
     class(x) <- c("wb_data", "data.frame")
   }

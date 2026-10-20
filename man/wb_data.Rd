@@ -5,7 +5,7 @@
 \alias{[.wb_data}
 \title{Add the \code{wb_data} attribute to a data frame in a worksheet}
 \usage{
-wb_data(wb, sheet = current_sheet(), dims, ...)
+wb_data(wb, sheet = current_sheet(), dims, header_rows = 1L, ...)
 
 \method{[}{wb_data}(
   x,
@@ -20,6 +20,9 @@ wb_data(wb, sheet = current_sheet(), dims, ...)
 \item{sheet}{a sheet in the workbook either name or index}
 
 \item{dims}{the dimensions}
+
+\item{header_rows}{number of rows at the top of \code{dims} that form the column
+header.}
 
 \item{...}{additional arguments for \code{wb_to_df()}. Be aware that not every
 argument is valid.}
@@ -44,6 +47,16 @@ provide wb_data object as mschart input
  wb <- wb_add_data(wb, x = mtcars, dims = "B2")
 
  wb_data(wb, 1, dims = "B2:E6")
+
+ # a header of two rows
+ wb <- wb_workbook()
+ wb <- wb_add_worksheet(wb)
+ wb <- wb_add_data(
+   wb,
+   x = matrix(c("A", NA, "B", NA, "x", "y", "x", "y", 1, 2, 3, 4), nrow = 3, byrow = TRUE),
+   col_names = FALSE
+ )
+ wb_data(wb, 1, dims = "A1:D3", header_rows = 2)
 }
 \seealso{
 \code{\link[=wb_to_df]{wb_to_df()}} \code{\link[=wb_add_mschart]{wb_add_mschart()}}, \code{\link[=wb_add_pivot_table]{wb_add_pivot_table()}}

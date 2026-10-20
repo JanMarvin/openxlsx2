@@ -1707,3 +1707,60 @@ test_that("updating app.xml works", {
   expect_equal(wb$app$TitlesOfParts, wb2$app$TitlesOfParts)
 
 })
+
+test_that("wb_data() reads a header of several rows", {
+  wb <- wb_workbook()$add_worksheet()
+  wb$add_data(
+    x = matrix(c("A", NA, "B", NA, "x", "y", "x", "y"), nrow = 2, byrow = TRUE),
+    col_names = FALSE,
+    dims = "B2"
+  )
+  wb$add_data(x = data.frame(1:2, 3:4, 5:6, 7:8), col_names = FALSE, dims = "B4")
+
+  default <- wb_data(wb, 1, dims = "B2:E5")
+  expect_null(attr(default, "header"))
+  expect_equal(nrow(attr(default, "dims")), nrow(default) + 1L)
+
+  dat <- wb_data(wb, 1, dims = "B2:E5", header_rows = 2)
+  expect_s3_class(dat, "wb_data")
+  expect_equal(names(dat), c("A x", "A y", "B x", "B y"))
+  expect_equal(unname(unlist(dat[1, ])), c(1, 3, 5, 7))
+  expect_equal(nrow(dat), 2L)
+  expect_equal(nrow(attr(dat, "dims")), 3L)
+  expect_equal(attr(dat, "dims")[1, 1], "B3")
+  expect_equal(attr(dat, "dims")[3, 1], "B5")
+  expect_equal(dim(attr(dat, "header_dims")), c(2L, 4L))
+  expect_equal(attr(dat, "header_dims")[, 1], c("B2", "B3"))
+  expect_equal(dim(attr(dat, "header")), c(2L, 4L))
+  expect_equal(attr(dat, "header")[, 3], c("B", "x"))
+  expect_equal(attr(dat, "header")[, 4], c("B", "y"))
+
+  sub <- dat[2, 3:4]
+  expect_equal(nrow(attr(sub, "dims")), 2L)
+  expect_equal(dim(attr(sub, "header")), c(2L, 2L))
+  expect_equal(dim(attr(sub, "header_dims")), c(2L, 2L))
+  expect_equal(names(sub), c("B x", "B y"))
+
+  expect_error(wb_data(wb, 1, dims = "B2:E5", header_rows = 0), "header_rows")
+  expect_error(wb_data(wb, 1, dims = "B2:E3", header_rows = 2), "more rows")
+  expect_error(wb_data(wb, 1, dims = "B2:E3;B5:E5", header_rows = 2), "single range")
+})
+
+test_that("wb_data() with several header rows is a valid single header object for others", {
+  skip_if_not_installed("mschart")
+
+  wb <- wb_workbook()$add_worksheet("S")
+  wb$add_data(x = "0-14", col_names = FALSE, dims = "B1")
+  wb$add_data(x = matrix(c("Region", "Male", "Female"), nrow = 1), col_names = FALSE, dims = "A2")
+  wb$add_data(x = data.frame(c("N", "S"), c(4, 6), c(5, 6)), col_names = FALSE, dims = "A3")
+  dat <- wb_data(wb, dims = "A1:C4", header_rows = 2)
+
+  ch <- mschart::ms_barchart(data = dat, x = "Region", y = "0-14 Male")
+  wb$add_mschart(dims = "E2:L18", graph = ch)
+  xml <- paste(wb$charts$chart, collapse = "")
+  expect_match(xml, "<c:f>S!$B$2:$B$2</c:f>", fixed = TRUE)
+  expect_match(xml, "<c:f>S!$A$3:$A$4</c:f>", fixed = TRUE)
+  expect_match(xml, "<c:f>S!$B$3:$B$4</c:f>", fixed = TRUE)
+
+  expect_error(wb$add_pivot_table(x = dat, rows = "Region", data = "0-14 Male"), "single header row")
+})
