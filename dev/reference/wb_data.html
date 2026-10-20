@@ -54,7 +54,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_data</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">dims</span>, <span class="va">...</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_data</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">dims</span>, header_rows <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'wb_data'</span></span>
 <span><span class="fu">`[`</span><span class="op">(</span></span>
@@ -79,6 +79,11 @@
 
 <dt id="arg-dims">dims<a class="anchor" aria-label="anchor" href="#arg-dims"></a></dt>
 <dd><p>the dimensions</p></dd>
+
+
+<dt id="arg-header-rows">header_rows<a class="anchor" aria-label="anchor" href="#arg-header-rows"></a></dt>
+<dd><p>number of rows at the top of <code>dims</code> that form the column
+header.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -123,6 +128,18 @@ argument is valid.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4 21.0   6  160 110</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5 22.8   4  108  93</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6 21.4   6  258 110</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span> <span class="co"># a header of two rows</span></span></span>
+<span class="r-in"><span> <span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_workbook.html">wb_workbook</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span> <span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_add_worksheet.html">wb_add_worksheet</a></span><span class="op">(</span><span class="va">wb</span><span class="op">)</span></span></span>
+<span class="r-in"><span> <span class="va">wb</span> <span class="op">&lt;-</span> <span class="fu"><a href="wb_add_data.html">wb_add_data</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>   <span class="va">wb</span>,</span></span>
+<span class="r-in"><span>   x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="cn">NA</span>, <span class="st">"B"</span>, <span class="cn">NA</span>, <span class="st">"x"</span>, <span class="st">"y"</span>, <span class="st">"x"</span>, <span class="st">"y"</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">3</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>   col_names <span class="op">=</span> <span class="cn">FALSE</span></span></span>
+<span class="r-in"><span> <span class="op">)</span></span></span>
+<span class="r-in"><span> <span class="fu">wb_data</span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A1:D3"</span>, header_rows <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   A x A y B x B y</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   1   2   3   4</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

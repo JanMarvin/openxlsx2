@@ -54,6 +54,9 @@
 <ul><li>Initial support for <code>xls</code> parsing. This is similar to how we handle <code>xlsb</code> files. We create some pseudo XML from the binary file and import this with <code><a href="../reference/wb_load.html">wb_load()</a></code> as if the input was provided as <code>xlsx</code>/<code>xlsm</code> file. <a href="https://github.com/JanMarvin/openxlsx2/pull/1698" class="external-link">#1698</a> <a href="https://github.com/JanMarvin/openxlsx2/pull/1701" class="external-link">#1701</a>
 </li>
 <li>Pivot caches of <code>xlsb</code> files are imported with their records. <code>options("openxlsx2.pivot_refresh" = TRUE)</code> leaves them empty to be refreshed on open.</li>
+<li>
+<code><a href="../reference/wb_data.html">wb_data()</a></code> gains <code>header_rows</code> to read a header that spans more than one row. The default is unchanged. <a href="https://github.com/JanMarvin/openxlsx2/pull/1706" class="external-link">#1706</a>
+</li>
 </ul></div>
 <div class="section level3">
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>

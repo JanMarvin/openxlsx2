@@ -14,6 +14,10 @@
 - Pivot caches of `xlsb` files are imported with their records.
   `options("openxlsx2.pivot_refresh" = TRUE)` leaves them empty to be
   refreshed on open.
+- [`wb_data()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_data.md)
+  gains `header_rows` to read a header that spans more than one row. The
+  default is unchanged.
+  [\#1706](https://github.com/JanMarvin/openxlsx2/pull/1706)
 
 ### Fixes
 
