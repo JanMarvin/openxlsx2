@@ -1682,6 +1682,9 @@ wbWorkbook <- R6::R6Class(
         stop("x cannot be missing in add_pivot_table")
 
       assert_class(x, "wb_data")
+      if (!is.null(attr(x, "header"))) {
+        stop("a pivot table needs a single header row, wb_data() objects with header_rows > 1 are not supported", call. = FALSE)
+      }
       add_sheet <- is_waiver(sheet) && sheet == "next_sheet"
       sheet <- private$get_sheet_index(sheet)
 
