@@ -13,6 +13,7 @@ table_ids <- function(wb) {
   if (!all(identical(unlist(wb$worksheets_rels), character()))) {
     relship <- rbindlist(xml_attr(unlist(wb$worksheets_rels), "Relationship"))
     relship$typ <- basename(relship$Type)
+    relship <- relship[relship$typ == "table", , drop = FALSE]
     relship$tid <- cdigit(relship$Target, as_integer = TRUE)
 
     z <- sort(relship$tid[relship$typ == "table"])
@@ -10442,10 +10443,10 @@ wbWorkbook <- R6::R6Class(
 
               relship <- rbindlist(xml_attr(ws_rels, "Relationship"))
               if (ncol(relship) && nrow(relship)) {
-                relship$typ <- basename(relship$Type)
-                relship$tid <- cdigit(relship$Target, as_integer = TRUE)
+                # relship$typ <- basename(relship$Type)
+                # relship$tid <- cdigit(relship$Target, as_integer = TRUE)
 
-                relship$typ <- relship$tid <- NULL
+                # relship$typ <- relship$tid <- NULL
                 if (is.null(relship$TargetMode)) relship$TargetMode <- ""
                 ws_rels <- df_to_xml("Relationship", df_col = relship[c("Id", "Type", "Target", "TargetMode")])
               }

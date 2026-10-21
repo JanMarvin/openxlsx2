@@ -41,6 +41,13 @@ jobs:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
 
+      - name: Use CRAN archive binaries only
+        if: matrix.config.r == '4.1'
+        shell: Rscript {0}
+        run: |
+          cat('options(repos = c(CRAN = "https://cran-archive.r-project.org"))\n',
+              file = file.path(R.home("etc"), "Rprofile.site"), append = TRUE)
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
@@ -51,4 +58,5 @@ jobs:
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
-          build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
+          build_args: ${{ (matrix.config.r == '4.1') && 'c("--no-manual","--no-build-vignettes")' || 'c("--no-manual","--compact-vignettes=gs+qpdf")' }}
+          args: ${{ (matrix.config.r == '4.1') && 'c("--no-manual","--ignore-vignettes")' || 'c("--no-manual","--as-cran")' }}
