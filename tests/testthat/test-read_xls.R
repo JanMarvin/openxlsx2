@@ -74,7 +74,7 @@ test_that("reading an xls saved by Excel works", {
   df <- wb_to_df(wb, sheet = 1)
   expect_equal(df$num, c(1, -5, 0.1, 123456.789, 1e20, 1 / 3))
   expect_equal(df$int, c(0L, 1L, -1L, 2147483647L, -2147483647L, 65536L))
-  expect_equal(df$chr[2:5], c("b & <c>", "d \"q\"", "  lead", "ü€"))
+  expect_equal(df$chr[2:5], c("b & <c>", "d \"q\"", "  lead", "\u00fc\u20ac"))
   expect_equal(df$lgl, c(TRUE, FALSE, TRUE, FALSE, TRUE, FALSE))
   expect_equal(df$date, as.Date("2024-02-28") + 0:5)
 
