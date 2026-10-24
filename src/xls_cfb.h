@@ -92,30 +92,59 @@ inline std::vector<uint8_t> cfb_stream(const std::vector<uint8_t>& file, const s
   // at 66 (2 stream, 5 root), first sector at 116, size at 120
   std::vector<uint8_t> dir = cfb_chain(file, fat, sec_size, dir_start);
 
-  uint32_t found_start = 0, found_size = 0;
-  bool found = false;
-  uint32_t root_start = 0, root_size = 0;
-  for (size_t off = 0; off + 128 <= dir.size(); off += 128) {
-    uint8_t type = dir[off + 66];
-    uint32_t start = cfb_u32(dir, off + 116);
-    uint32_t size = cfb_u32(dir, off + 120);
-    if (type == 5) {
-      root_start = start;
-      root_size = size;
-    }
-    if (type != 2) continue;
+  // the entries form a tree, entry 0 is the root. children are found through
+  // the child entry and the left and right siblings of it. Streams are looked
+  // up by their path, so a stream with the same name in an embedded object is
+  // not mistaken for it. Names are compared without regard to case.
+  size_t n_entries = dir.size() / 128;
+  std::vector<std::string> parts;
+  for (size_t at = 0; at <= name.size();) {
+    size_t slash = name.find('/', at);
+    if (slash == std::string::npos) slash = name.size();
+    parts.push_back(name.substr(at, slash - at));
+    at = slash + 1;
+  }
 
-    std::string entry;
-    size_t len = cfb_u16(dir, off + 64);
-    for (size_t i = 0; i + 2 <= len && i < 64 && dir[off + i] != 0; i += 2) entry.push_back(static_cast<char>(dir[off + i]));
-    if (entry == name) {
-      found = true;
-      found_start = start;
-      found_size = size;
-      break;
+  auto upper = [](std::string x) {
+    for (size_t i = 0; i < x.size(); ++i)
+      if (x[i] >= 'a' && x[i] <= 'z') x[i] = static_cast<char>(x[i] - 'a' + 'A');
+    return x;
+  };
+
+  uint32_t found_start = 0, found_size = 0;
+  bool found = n_entries > 0;
+  uint32_t root_start = 0, root_size = 0;
+  if (found) {
+    root_start = cfb_u32(dir, 116);
+    root_size = cfb_u32(dir, 120);
+  }
+  size_t current = 0;
+  for (size_t p = 0; found && p < parts.size(); ++p) {
+    std::vector<size_t> todo;
+    todo.push_back(cfb_u32(dir, current * 128 + 76));
+    size_t visited = 0;
+    found = false;
+    while (!todo.empty()) {
+      size_t id = todo.back();
+      todo.pop_back();
+      if (id >= n_entries || ++visited > n_entries) continue;
+      size_t off = id * 128;
+
+      std::string entry;
+      size_t len = cfb_u16(dir, off + 64);
+      for (size_t i = 0; i + 2 <= len && i < 64 && dir[off + i] != 0; i += 2) entry.push_back(static_cast<char>(dir[off + i]));
+      if (upper(entry) == upper(parts[p])) {
+        current = id;
+        found = dir[off + 66] == (p + 1 < parts.size() ? 1 : 2);
+        break;
+      }
+      todo.push_back(cfb_u32(dir, off + 68));
+      todo.push_back(cfb_u32(dir, off + 72));
     }
   }
   if (!found) return std::vector<uint8_t>();
+  found_start = cfb_u32(dir, current * 128 + 116);
+  found_size = cfb_u32(dir, current * 128 + 120);
 
   if (found_size >= mini_cutoff) {
     std::vector<uint8_t> out = cfb_chain(file, fat, sec_size, found_start);

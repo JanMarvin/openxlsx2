@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cmath>
+#include <cstdint>
 #include <cstring>
 #include <limits>
 #include <iomanip>
@@ -7,6 +8,7 @@
 #include <set>
 
 #include "openxlsx2.h"
+#include <R_ext/Riconv.h>
 #include "xlsb_defines.h"
 #include "xlsb_flags.h"
 #include "xlsb_funs.h"
@@ -482,11 +484,13 @@ namespace {
 // Source code is stored compressed in the stream of a VBA module (MS-OVBA 2.4.1):
 // a signature byte 1, then chunks with a 2 byte header (size, and a flag that tells
 // if the chunk is compressed) and tokens that are literals or copies of earlier bytes.
-std::string xls_vba_decompress(const std::vector<uint8_t>& in, size_t pos) {
+// A chunk unpacks to at most 4096 bytes. Only the start of the source is needed,
+// so at most max_out bytes are returned.
+std::string xls_vba_decompress(const std::vector<uint8_t>& in, size_t pos, size_t max_out) {
   std::string out;
   if (pos >= in.size() || in[pos] != 0x01) return out;
   ++pos;
-  while (pos + 2 <= in.size()) {
+  while (pos + 2 <= in.size() && out.size() < max_out) {
     uint16_t header = static_cast<uint16_t>(in[pos] | (in[pos + 1] << 8));
     if (((header >> 12) & 0x07) != 3) break;
     size_t end = std::min(in.size(), pos + static_cast<size_t>(header & 0x0FFF) + 3);
@@ -501,6 +505,7 @@ std::string xls_vba_decompress(const std::vector<uint8_t>& in, size_t pos) {
       uint8_t flags = in[pos++];
       for (int bit = 0; bit < 8 && pos < end; ++bit) {
         if (!(flags & (1 << bit))) {
+          if (out.size() - start >= 4096) return out;
           out.push_back(static_cast<char>(in[pos++]));
           continue;
         }
@@ -512,7 +517,7 @@ std::string xls_vba_decompress(const std::vector<uint8_t>& in, size_t pos) {
         while (bits < 12 && (static_cast<size_t>(1) << bits) < done) ++bits;
         size_t length = static_cast<size_t>(token & (0xFFFFu >> bits)) + 3;
         size_t offset = static_cast<size_t>(token >> (16 - bits)) + 1;
-        if (offset > done) return out;
+        if (offset > done || done + length > 4096) return out;
         for (size_t k = 0; k < length; ++k) out.push_back(out[out.size() - offset]);
       }
     }
@@ -526,8 +531,37 @@ std::string xls_vba_decompress(const std::vector<uint8_t>& in, size_t pos) {
 // modules and forms are counted as code, for the modules of the workbook and the
 // sheets the source is read and has to be more than the attributes Excel adds.
 bool xls_has_vba_code(const std::vector<uint8_t>& file) {
-  std::vector<uint8_t> project = cfb_stream(file, "PROJECT");
+  std::vector<uint8_t> project = cfb_stream(file, "_VBA_PROJECT_CUR/PROJECT");
   if (project.empty()) return false;
+
+  // dir stream (MS-OVBA 2.3.4.2): records of id, size and data; per module the name (0x19), stream (0x1A), source offset (0x31)
+  std::vector<uint8_t> dir_packed = cfb_stream(file, "_VBA_PROJECT_CUR/VBA/dir");
+  std::string dir = xls_vba_decompress(dir_packed, 0, 1u << 24);
+  std::map<std::string, std::pair<std::string, uint32_t> > modules;
+  std::string module_name, stream_name;
+  uint32_t module_offset = 0;
+  size_t pos = 0;
+  while (pos + 6 <= dir.size()) {
+    const uint8_t* r = reinterpret_cast<const uint8_t*>(dir.data()) + pos;
+    uint16_t id = static_cast<uint16_t>(r[0] | (r[1] << 8));
+    uint32_t size = static_cast<uint32_t>(r[2]) | (static_cast<uint32_t>(r[3]) << 8) |
+                    (static_cast<uint32_t>(r[4]) << 16) | (static_cast<uint32_t>(r[5]) << 24);
+    if (id == 0x0009) size = 6;
+    if (size > dir.size() - pos - 6) break;
+    std::string data = dir.substr(pos + 6, size);
+    if (id == 0x0019) module_name = data;
+    if (id == 0x001A) stream_name = data;
+    if (id == 0x0031 && size == 4)
+      module_offset = static_cast<uint32_t>(r[6]) | (static_cast<uint32_t>(r[7]) << 8) |
+                      (static_cast<uint32_t>(r[8]) << 16) | (static_cast<uint32_t>(r[9]) << 24);
+    if (id == 0x002B) {
+      modules[module_name] = std::make_pair(stream_name, module_offset);
+      module_name.clear();
+      stream_name.clear();
+      module_offset = 0;
+    }
+    pos += 6 + size;
+  }
 
   std::string text(project.begin(), project.end());
   size_t at = 0;
@@ -542,21 +576,19 @@ bool xls_has_vba_code(const std::vector<uint8_t>& file) {
     if (line.compare(0, 9, "Document=") != 0) continue;
 
     std::string name = line.substr(9, line.find('/') == std::string::npos ? std::string::npos : line.find('/') - 9);
-    std::vector<uint8_t> module = cfb_stream(file, name);
-    for (size_t i = 0; i < module.size(); ++i) {
-      if (module[i] != 0x01) continue;
-      std::string source = xls_vba_decompress(module, i);
-      if (source.compare(0, 9, "Attribute") != 0) continue;
-      size_t line_at = 0;
-      while (line_at < source.size()) {
-        size_t line_end = source.find_first_of("\r\n", line_at);
-        if (line_end == std::string::npos) line_end = source.size();
-        std::string src = source.substr(line_at, line_end - line_at);
-        line_at = line_end + 1;
-        while (!src.empty() && src.back() == ' ') src.pop_back();
-        if (!src.empty() && src.compare(0, 10, "Attribute ") != 0 && src != "Option Explicit") return true;
-      }
-      break;
+    std::map<std::string, std::pair<std::string, uint32_t> >::const_iterator mod = modules.find(name);
+    if (mod == modules.end()) continue;
+    std::vector<uint8_t> module = cfb_stream(file, "_VBA_PROJECT_CUR/VBA/" + mod->second.first);
+    std::string source = xls_vba_decompress(module, mod->second.second, 1u << 20);
+    if (source.size() >= (1u << 20)) return true;
+    size_t line_at = 0;
+    while (line_at < source.size()) {
+      size_t line_end = source.find_first_of("\r\n", line_at);
+      if (line_end == std::string::npos) line_end = source.size();
+      std::string src = source.substr(line_at, line_end - line_at);
+      line_at = line_end + 1;
+      while (!src.empty() && src.back() == ' ') src.pop_back();
+      if (!src.empty() && src.compare(0, 10, "Attribute ") != 0 && src != "Option Explicit") return true;
     }
   }
   return false;
@@ -631,7 +663,8 @@ void xls_utf8(std::string& s, uint32_t c) {
 }
 
 // text in the code page of the property set. UTF-8 is kept, the Windows and Mac
-// western code pages are converted, everything else is read as Latin 1.
+// western code pages are converted here, other code pages with iconv. If iconv
+// does not know the code page, the text is read as Latin 1.
 std::string xls_codepage_text(const uint8_t* p, size_t n, uint32_t codepage) {
   static const uint16_t mac[128] = {
       0x00C4, 0x00C5, 0x00C7, 0x00C9, 0x00D1, 0x00D6, 0x00DC, 0x00E1, 0x00E0, 0x00E2, 0x00E4, 0x00E3, 0x00E5, 0x00E7, 0x00E9, 0x00E8,
@@ -645,8 +678,27 @@ std::string xls_codepage_text(const uint8_t* p, size_t n, uint32_t codepage) {
   static const uint16_t win[32] = {0x20AC, 0x0081, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021, 0x02C6, 0x2030, 0x0160,
                                    0x2039, 0x0152, 0x008D, 0x017D, 0x008F, 0x0090, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022,
                                    0x2013, 0x2014, 0x02DC, 0x2122, 0x0161, 0x203A, 0x0153, 0x009D, 0x017E, 0x0178};
+  size_t len = 0;
+  while (len < n && p[len] != 0) ++len;
+  if (codepage != 65001 && codepage != 1252 && codepage != 10000 && len > 0) {
+    std::string name = "CP" + std::to_string(codepage);
+    void* cd = Riconv_open("UTF-8", name.c_str());
+    if (cd != reinterpret_cast<void*>(static_cast<uintptr_t>(-1))) {
+      std::string buf(len * 4, '\0');
+      const char* in = reinterpret_cast<const char*>(p);
+      char* to = &buf[0];
+      size_t in_left = len, out_left = buf.size();
+      size_t res = Riconv(cd, &in, &in_left, &to, &out_left);
+      Riconv_close(cd);
+      if (res != static_cast<size_t>(-1) && in_left == 0) {
+        buf.resize(buf.size() - out_left);
+        return buf;
+      }
+    }
+  }
+
   std::string out;
-  for (size_t i = 0; i < n && p[i] != 0; ++i) {
+  for (size_t i = 0; i < len; ++i) {
     uint32_t c = p[i];
     if (codepage == 65001) {
       out += static_cast<char>(c);
@@ -714,6 +766,17 @@ std::map<uint32_t, XlsProperty> xls_property_set(const std::vector<uint8_t>& d) 
         for (size_t k = 0; k < len && at + 8 + 2 * k + 2 <= d.size(); ++k) {
           uint32_t c = static_cast<uint32_t>(cfb_u16(d, at + 8 + 2 * k));
           if (c == 0) break;
+          // characters beyond U+FFFF are a pair of surrogates, a single one is replaced
+          if (c >= 0xD800 && c <= 0xDFFF) {
+            uint32_t low = 0;
+            if (c <= 0xDBFF && k + 1 < len && at + 8 + 2 * k + 4 <= d.size()) low = static_cast<uint32_t>(cfb_u16(d, at + 10 + 2 * k));
+            if (low >= 0xDC00 && low <= 0xDFFF) {
+              c = 0x10000 + ((c - 0xD800) << 10) + (low - 0xDC00);
+              ++k;
+            } else {
+              c = 0xFFFD;
+            }
+          }
           xls_utf8(prop.text, c);
         }
       } else if (type == 0x40) {
@@ -996,15 +1059,23 @@ Rcpp::CharacterVector media_xls(std::string filePath, std::string outDir, bool d
 
   std::vector<XlsBlip> blips = xls_blips(group);
   Rcpp::CharacterVector names(blips.size());
-  Rcpp::NumericVector usize(blips.size());
   for (R_xlen_t i = 0; i < static_cast<R_xlen_t>(blips.size()); ++i) {
     const XlsBlip &blip = blips[static_cast<size_t>(i)];
-    usize[i] = static_cast<double>(blip.size);
     if (blip.ext.empty()) {
       names[i] = "";
       continue;
     }
     std::string data = blip.data, ext = blip.ext;
+    // metafiles are a zlib stream: a header of 2 bytes, deflate data and a check sum.
+    // The size of the picture is known, a stream that does not give it is dropped.
+    if (blip.deflated) {
+      std::string inflated;
+      if (data.size() > 6 && blip.size > 0) {
+        XlsInflater inf(reinterpret_cast<const uint8_t*>(data.data()) + 2, data.size() - 2);
+        if (inf.run() && inf.out.size() == blip.size) inflated = inf.out;
+      }
+      data = inflated;
+    }
     if (ext == "dib") {
       data = xls_dib_to_bmp(data);
       ext = "bmp";
@@ -1013,13 +1084,12 @@ Rcpp::CharacterVector media_xls(std::string filePath, std::string outDir, bool d
       names[i] = "";
       continue;
     }
-    std::string name = "image" + std::to_string(i + 1) + "." + ext + (blip.deflated ? ".zlib" : "");
+    std::string name = "image" + std::to_string(i + 1) + "." + ext;
     std::ofstream out(outDir + "/" + name, std::ios::binary);
     out.write(data.data(), static_cast<std::streamsize>(data.size()));
     names[i] = name;
     if (debug) Rcpp::Rcout << "media: " << name << " (" << data.size() << " bytes)" << std::endl;
   }
-  names.attr("usize") = usize;
   return names;
 }
 
@@ -4150,7 +4220,7 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
         if (at == cache_ids.size()) {
           char stream_name[8];
           std::snprintf(stream_name, sizeof(stream_name), "%04X", v.source.id);
-          std::vector<uint8_t> cache = cfb_stream(xls_bytes, stream_name);
+          std::vector<uint8_t> cache = cfb_stream(xls_bytes, std::string("_SX_DB_CUR/") + stream_name);
           if (cache.empty()) {
             Rcpp::warning("xls: the cache of the pivot table %s on sheet %d is missing and the table is not imported.", v.name.c_str(), sheet);
             continue;

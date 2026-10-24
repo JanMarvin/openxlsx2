@@ -180,3 +180,20 @@ test_that("xls with VBA code warns unless only data is imported (poi SimpleMacro
   expect_warning(wb_load(fl), "VBA code")
   expect_no_warning(wb_load(fl, data_only = TRUE))
 })
+
+test_that("xls with the 1904 date system (poi 1904DateWindowing) is imported", {
+  skip_if_big_endian("XLS")
+  wb <- wb_load(poi_file("1904DateWindowing.xls"))
+  expect_match(wb$workbook$workbookPr, 'date1904="1"', fixed = TRUE)
+  df <- wb_to_df(wb, col_names = FALSE)
+  expect_equal(df$A, as.Date("2000-01-01"))
+  expect_equal(df$B, as.Date("2000-01-01"))
+  expect_equal(wb_to_df(wb, col_names = FALSE, detect_dates = FALSE)$A, 35064)
+})
+
+test_that("xls streams are found regardless of case (poi WORKBOOK_in_capitals)", {
+  skip_if_big_endian("XLS")
+  wb <- wb_load(poi_file("WORKBOOK_in_capitals.xls"))
+  expect_equal(wb$get_sheet_names(), c(Sheet1 = "Sheet1"))
+  expect_equal(dim(wb_to_df(wb, col_names = FALSE)), c(283L, 9L))
+})

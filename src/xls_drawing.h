@@ -11,6 +11,7 @@
 #include <utility>
 #include <vector>
 
+#include "pugixml.hpp"
 #include "xls_funs.h"
 
 // ---------------------------------------------------------------------------
@@ -127,6 +128,22 @@ inline std::string xls_dib_to_bmp(const std::string& dib) {
   out.append(4, '\0');
   for (int i = 0; i < 4; ++i) out.push_back(static_cast<char>((offset >> (8 * i)) & 0xFF));
   return out + dib;
+}
+
+// XML that Excel kept in the file is copied as it is. A damaged copy would break the
+// whole workbook, so it is only used if it is UTF-8 and well formed.
+inline bool xls_xml_ok(const std::string& x) {
+  for (size_t i = 0; i < x.size();) {
+    unsigned char c = static_cast<unsigned char>(x[i]);
+    size_t n = c < 0x80 ? 1 : (c >> 5) == 0x06 ? 2 : (c >> 4) == 0x0E ? 3 : (c >> 3) == 0x1E ? 4 : 0;
+    if (n == 0 || i + n > x.size()) return false;
+    if (c < 0x20 && c != '\t' && c != '\n' && c != '\r') return false;
+    for (size_t k = 1; k < n; ++k)
+      if ((static_cast<unsigned char>(x[i + k]) & 0xC0) != 0x80) return false;
+    i += n;
+  }
+  pugi::xml_document doc;
+  return static_cast<bool>(doc.load_buffer(x.data(), x.size(), pugi::parse_default | pugi::parse_fragment, pugi::encoding_utf8));
 }
 
 // Excel keeps the DrawingML of a shape in the file, as a zip archive in a property of the shape.
@@ -388,7 +405,10 @@ inline std::vector<XlsShape> xls_shapes(const std::string& dg) {
             size_t to = x.rfind("</xdr:anchor>");
             if (from != std::string::npos && to != std::string::npos) {
               from = x.find('>', from);
-              if (from != std::string::npos && from + 1 < to) s.shape_xml = x.substr(from + 1, to - from - 1);
+              if (from != std::string::npos && from + 1 < to) {
+                std::string shape_xml = x.substr(from + 1, to - from - 1);
+                if (xls_xml_ok(shape_xml)) s.shape_xml = shape_xml;
+              }
             }
           }
           complex_at += val;
@@ -603,6 +623,7 @@ inline std::string frt_xml(const std::vector<uint8_t>& d, const std::string& fro
   size_t close = x.rfind("</" + from + ">");
   if (close == std::string::npos) return "";
   x = "<" + to + x.substr(from.size() + 1, close - from.size() - 1) + "</" + to + ">";
+  if (!xls_xml_ok(x)) return "";
   return x;
 }
 
