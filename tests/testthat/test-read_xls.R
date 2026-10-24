@@ -74,7 +74,7 @@ test_that("reading an xls saved by Excel works", {
   df <- wb_to_df(wb, sheet = 1)
   expect_equal(df$num, c(1, -5, 0.1, 123456.789, 1e20, 1 / 3))
   expect_equal(df$int, c(0L, 1L, -1L, 2147483647L, -2147483647L, 65536L))
-  expect_equal(df$chr[2:5], c("b & <c>", "d \"q\"", "  lead", "ü€"))
+  expect_equal(df$chr[2:5], c("b & <c>", "d \"q\"", "  lead", "\u00fc\u20ac"))
   expect_equal(df$lgl, c(TRUE, FALSE, TRUE, FALSE, TRUE, FALSE))
   expect_equal(df$date, as.Date("2024-02-28") + 0:5)
 
@@ -720,4 +720,24 @@ test_that("xls files created from the xls_cov3 and xls_cov4 workbooks are import
   expect_match(af, "<filters blank=\"1\"><filter val=\"3\"/><filter val=\"7\"/></filters>", fixed = TRUE)
   expect_match(af, "<dateGroupItem year=\"2020\" month=\"3\" day=\"5\" dateTimeGrouping=\"day\"/>", fixed = TRUE)
   expect_match(af, "<dynamicFilter type=\"belowAverage\" val=\"10.5\"/>", fixed = TRUE)
+})
+
+test_that("sheet names with an apostrophe are quoted in the filter database name", {
+  skip_if_big_endian("XLS")
+  xml_dir <- tempfile()
+  dir.create(file.path(xml_dir, "xl", "worksheets"), recursive = TRUE)
+  on.exit(unlink(xml_dir, recursive = TRUE), add = TRUE)
+  writeLines(
+    paste0(
+      '<workbook><sheets><sheet name="O&apos;Brien &amp; Co" sheetId="1" r:id="rId1"/></sheets>',
+      '<calcPr calcId="1"/></workbook>'
+    ),
+    file.path(xml_dir, "xl", "workbook.xml")
+  )
+  writeLines('<worksheet><autoFilter ref="A1:C5"/></worksheet>', file.path(xml_dir, "xl", "worksheets", "sheet1.xml"))
+
+  openxlsx2:::xls_filter_names(xml_dir, 1L, 0L)
+
+  got <- paste(readLines(file.path(xml_dir, "xl", "workbook.xml"), warn = FALSE), collapse = "")
+  expect_match(got, "'O&apos;&apos;Brien &amp; Co'!$A$1:$C$5", fixed = TRUE)
 })

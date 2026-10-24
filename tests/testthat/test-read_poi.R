@@ -180,3 +180,46 @@ test_that("xls with VBA code warns unless only data is imported (poi SimpleMacro
   expect_warning(wb_load(fl), "VBA code")
   expect_no_warning(wb_load(fl, data_only = TRUE))
 })
+
+test_that("xls with the 1904 date system (poi 1904DateWindowing) is imported", {
+  skip_if_big_endian("XLS")
+  wb <- wb_load(poi_file("1904DateWindowing.xls"))
+  expect_match(wb$workbook$workbookPr, 'date1904="1"', fixed = TRUE)
+  df <- wb_to_df(wb, col_names = FALSE)
+  expect_equal(df$A, as.Date("2000-01-01"))
+  expect_equal(df$B, as.Date("2000-01-01"))
+  expect_equal(wb_to_df(wb, col_names = FALSE, detect_dates = FALSE)$A, 35064)
+})
+
+test_that("xls streams are found regardless of case (poi WORKBOOK_in_capitals)", {
+  skip_if_big_endian("XLS")
+  wb <- wb_load(poi_file("WORKBOOK_in_capitals.xls"))
+  expect_equal(wb$get_sheet_names(), c(Sheet1 = "Sheet1"))
+  expect_equal(dim(wb_to_df(wb, col_names = FALSE)), c(283L, 9L))
+})
+
+test_that("xls files without a full last sector are imported (poi 47251)", {
+  skip_if_big_endian("XLS")
+  wb <- wb_load(poi_file("47251.xls"))
+  expect_equal(wb_to_df(wb, col_names = FALSE, dims = "A5")[1, 1], "Auction Summary (Public Issues Only)")
+  expect_equal(wb_to_df(wb, col_names = FALSE, dims = "W34")[1, 1], "Failed")
+})
+
+test_that("long formula results in Continue records are read (poi StringContinueRecords)", {
+  skip_if_big_endian("XLS")
+  wb <- suppressWarnings(wb_load(poi_file("StringContinueRecords.xls")))
+  got <- wb_to_df(wb, sheet = "file load sequence", col_names = FALSE, dims = "AO143")[1, 1]
+  expect_equal(nchar(got), 24732L)
+  expect_false(grepl("_x0000_", got, fixed = TRUE))
+  expect_true(endsWith(got, "HE TEST PASK RESULTS ***** ]\n\n"))
+})
+
+test_that("document properties in other code pages are converted (poi 57925, 12843-1)", {
+  skip_if_big_endian("XLS")
+  wb <- wb_load(poi_file("57925.xls"))
+  exp <- "\u041f\u043e\u043d\u043e\u043c\u0430\u0440\u0435\u0432 \u0410\u043b\u0435\u043a\u0441\u0430\u043d\u0434\u0440 \u0421\u0435\u0440\u0433\u0435\u0435\u0432\u0438\u0447"
+  expect_equal(wb$get_properties()[["creator"]], exp)
+
+  wb <- suppressWarnings(wb_load(poi_file("12843-1.xls")))
+  expect_equal(wb$get_properties()[["creator"]], "\u674e\u4e16\u4ec1")
+})

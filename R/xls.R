@@ -34,9 +34,17 @@ xls_unpack <- function(file, xmlDir, data_only = FALSE, debug = FALSE, sheet = N
   has_theme <- FALSE
   if (!data_only && theme_xls(stream, path("xl", "theme.zip"), debug) > 0L) {
     exdir <- path("xl", "theme_zip")
-    files <- utils::unzip(path("xl", "theme.zip"), exdir = exdir)
+    files <- tryCatch(
+      utils::unzip(path("xl", "theme.zip"), exdir = exdir),
+      error = function(e) character(), warning = function(w) character()
+    )
     theme_file <- files[basename(files) == "theme1.xml"]
-    if (length(theme_file) == 1L) {
+    # a damaged theme is left out, the workbook then uses the default theme
+    theme_ok <- length(theme_file) == 1L && tryCatch({
+      read_xml(theme_file, pointer = FALSE)
+      all(validUTF8(readLines(theme_file, warn = FALSE, encoding = "UTF-8")))
+    }, error = function(e) FALSE, warning = function(w) FALSE)
+    if (theme_ok) {
       dir.create(path("xl", "theme"))
       file.copy(theme_file, path("xl", "theme", "theme1.xml"))
       has_theme <- TRUE
@@ -44,34 +52,6 @@ xls_unpack <- function(file, xmlDir, data_only = FALSE, debug = FALSE, sheet = N
     unlink(c(path("xl", "theme.zip"), exdir), recursive = TRUE)
   }
   media <- if (data_only) character() else media_xls(stream, path("xl", "media"), debug)
-  usize <- attr(media, "usize")
-  for (i in which(endsWith(media, ".zlib"))) {
-    packed <- path("xl", "media", media[i])
-    media[i] <- sub("\\.zlib$", "", media[i])
-    zlib <- readBin(packed, "raw", file.size(packed))
-    data <- NULL
-    if (usize[i] > 0 && usize[i] <= 2^28 && length(zlib) > 6L) {
-      # the zlib stream is read as gzip with a bounded size: a file that claims
-      # less than it holds can not fill the memory
-      gz <- c(as.raw(c(0x1f, 0x8b, 8, 0, 0, 0, 0, 0, 0, 255)), zlib[-c(1:2, length(zlib) - 3:0)], raw(8))
-      # the check sum of the made up gzip trailer fails and is reported on stderr
-      quiet <- file(if (.Platform$OS.type == "windows") "nul:" else "/dev/null", "w")
-      sink(quiet, type = "message")
-      con <- gzcon(rawConnection(gz))
-      data <- tryCatch(
-        readBin(con, "raw", usize[i]),
-        error = function(e) NULL,
-        finally = {
-          sink(type = "message")
-          close(quiet)
-          close(con)
-        }
-      )
-      if (length(data) != usize[i]) data <- NULL
-    }
-    if (is.null(data)) media[i] <- "" else writeBin(data, path("xl", "media", media[i]))
-    unlink(packed)
-  }
   props <- if (data_only) 0L else docprops_xls(file, path("docProps", "core.xml"), path("docProps", "app.xml"))
   has_core <- bitwAnd(props, 1L) > 0L
   has_app <- bitwAnd(props, 2L) > 0L
@@ -92,8 +72,7 @@ xls_unpack <- function(file, xmlDir, data_only = FALSE, debug = FALSE, sheet = N
     wb_head <- paste(readLines(path("xl", "workbook.xml"), warn = FALSE, encoding = "UTF-8"), collapse = "")
     head_tags <- regmatches(wb_head, gregexpr("<sheet [^>]*/>", wb_head))[[1]]
     head_names <- sub(".*name=\"([^\"]*)\".*", "\\1", head_tags)
-    head_names <- gsub("&lt;", "<", gsub("&gt;", ">", gsub("&quot;", "\"", gsub("&apos;", "'", head_names, fixed = TRUE), fixed = TRUE), fixed = TRUE), fixed = TRUE)
-    head_names <- gsub("&amp;", "&", head_names, fixed = TRUE)
+    head_names <- stringi::stri_replace_all_fixed(head_names, rev(legal_sub()[1:5]), rev(legal_chars()[1:5]), vectorize_all = FALSE)
     keep <- if (is.numeric(sheet)) as.integer(sheet) else match(sheet, head_names)
     keep <- keep[!is.na(keep) & keep >= 1L & keep <= nsheets]
   }
@@ -229,16 +208,7 @@ xls_chart_caches <- function(xmlDir) {
   if (!length(charts)) return(invisible(NULL))
 
   unescape <- function(x) {
-    x <- gsub("&lt;", "<", x, fixed = TRUE)
-    x <- gsub("&gt;", ">", x, fixed = TRUE)
-    x <- gsub("&quot;", "\"", x, fixed = TRUE)
-    x <- gsub("&apos;", "'", x, fixed = TRUE)
-    gsub("&amp;", "&", x, fixed = TRUE)
-  }
-  escape <- function(x) {
-    x <- gsub("&", "&amp;", x, fixed = TRUE)
-    x <- gsub("<", "&lt;", x, fixed = TRUE)
-    gsub(">", "&gt;", x, fixed = TRUE)
+    stringi::stri_replace_all_fixed(x, rev(legal_sub()[1:5]), rev(legal_chars()[1:5]), vectorize_all = FALSE)
   }
 
   wb_xml <- paste(readLines(file.path(xmlDir, "xl", "workbook.xml"), warn = FALSE, encoding = "UTF-8"), collapse = "")
@@ -252,36 +222,28 @@ xls_chart_caches <- function(xmlDir) {
     unescape(paste(sub("</t>$", "", sub("^<t[^>]*>", "", txt)), collapse = ""))
   }, character(1), USE.NAMES = FALSE)
 
-  col_number <- function(x) {
-    ch <- utf8ToInt(x) - 64L
-    Reduce(function(a, b) a * 26L + b, ch, 0L)
-  }
-
   sheets <- new.env() # nolint
   read_sheet <- function(i) {
     key <- as.character(i)
     if (!is.null(sheets[[key]])) return(sheets[[key]])
     file <- file.path(xmlDir, "xl", "worksheets", sprintf("sheet%d.xml", i))
-    cells <- list()
+    cells <- list(ref = character(), num = logical(), text = character())
     if (file.exists(file)) {
       xml <- paste(readLines(file, warn = FALSE, encoding = "UTF-8"), collapse = "")
       m <- regmatches(xml, gregexpr("<c r=\"[A-Z]+[0-9]+\"[^>]*?(/>|>.*?</c>)", xml))[[1]]
-      for (cell in m) {
-        ref <- sub("^<c r=\"([A-Z]+[0-9]+)\".*", "\\1", cell)
-        open_tag <- sub("^(<c [^>]*>).*", "\\1", cell)
-        type <- if (grepl(" t=\"", open_tag, fixed = TRUE)) sub(".* t=\"([a-zA-Z]+)\".*", "\\1", open_tag) else "n"
-        val <- if (grepl("<v>", cell, fixed = TRUE)) sub(".*<v>(.*?)</v>.*", "\\1", cell) else NA_character_
-        if (is.na(val)) next
-        if (type == "s") {
-          cells[[ref]] <- list(num = FALSE, text = sst[as.integer(val) + 1L])
-        } else if (type %in% c("str", "inlineStr", "e")) {
-          cells[[ref]] <- list(num = FALSE, text = unescape(val))
-        } else if (type == "b") {
-          cells[[ref]] <- list(num = FALSE, text = if (val == "1") "TRUE" else "FALSE")
-        } else {
-          cells[[ref]] <- list(num = TRUE, text = val)
-        }
-      }
+      m <- m[grepl("<v>", m, fixed = TRUE)]
+      ref <- sub("^<c r=\"([A-Z]+[0-9]+)\".*", "\\1", m)
+      open_tag <- sub("^(<c [^>]*>).*", "\\1", m)
+      type <- ifelse(grepl(" t=\"", open_tag, fixed = TRUE), sub(".* t=\"([a-zA-Z]+)\".*", "\\1", open_tag), "n")
+      val <- sub(".*<v>(.*?)</v>.*", "\\1", m)
+      is_s <- type == "s"
+      is_str <- type %in% c("str", "inlineStr", "e")
+      is_b <- type == "b"
+      text <- val
+      text[is_s] <- sst[as.integer(val[is_s]) + 1L]
+      text[is_str] <- unescape(val[is_str])
+      text[is_b] <- ifelse(val[is_b] == "1", "TRUE", "FALSE")
+      cells <- list(ref = ref, num = !(is_s | is_str | is_b), text = text)
     }
     sheets[[key]] <- cells
     cells
@@ -294,27 +256,17 @@ xls_chart_caches <- function(xmlDir) {
     name <- if (nzchar(m[2])) gsub("''", "'", m[2], fixed = TRUE) else m[3]
     sheet <- match(name, sheet_names)
     if (is.na(sheet)) return(NULL)
-    c1 <- col_number(m[4])
+    c1 <- col2int(m[4])
     r1 <- as.integer(m[5])
-    c2 <- if (nzchar(m[6])) col_number(m[6]) else c1
+    c2 <- if (nzchar(m[6])) col2int(m[6]) else c1
     r2 <- if (nzchar(m[7])) as.integer(m[7]) else r1
     cells <- read_sheet(sheet)
 
-    pts <- character()
-    nums <- logical()
-    for (r in r1:r2) {
-      for (cc in c1:c2) {
-        letters_ <- character()
-        n <- cc
-        while (n > 0L) {
-          letters_ <- c(LETTERS[(n - 1L) %% 26L + 1L], letters_)
-          n <- (n - 1L) %/% 26L
-        }
-        cell <- cells[[paste0(paste(letters_, collapse = ""), r)]]
-        pts <- c(pts, if (is.null(cell)) NA_character_ else cell$text)
-        nums <- c(nums, !is.null(cell) && cell$num)
-      }
-    }
+    rows <- r1:r2
+    cols <- int2col(c1:c2)
+    at <- match(paste0(rep(cols, times = length(rows)), rep(rows, each = length(cols))), cells$ref)
+    pts <- cells$text[at]
+    nums <- !is.na(at) & cells$num[at]
     list(pts = pts, numeric = all(nums[!is.na(pts)]))
   }
 
@@ -328,13 +280,13 @@ xls_chart_caches <- function(xmlDir) {
       if (is.null(got)) next
       idx <- which(!is.na(got$pts)) - 1L
       as_num <- got$numeric && !was_string
-      pt_xml <- sprintf("<c:pt idx=\"%d\"><c:v>%s</c:v></c:pt>", idx, escape(got$pts[idx + 1L]))
+      pt_xml <- sprintf("<c:pt idx=\"%d\"><c:v>%s</c:v></c:pt>", idx, replace_legal_chars(got$pts[idx + 1L]))
       new <- if (as_num) {
         sprintf("<c:numRef><c:f>%s</c:f><c:numCache><c:formatCode>General</c:formatCode><c:ptCount val=\"%d\"/>%s</c:numCache></c:numRef>",
-                escape(unescape(f)), length(got$pts), paste(pt_xml, collapse = ""))
+                replace_legal_chars(unescape(f)), length(got$pts), paste(pt_xml, collapse = ""))
       } else {
         sprintf("<c:strRef><c:f>%s</c:f><c:strCache><c:ptCount val=\"%d\"/>%s</c:strCache></c:strRef>",
-                escape(unescape(f)), length(got$pts), paste(pt_xml, collapse = ""))
+                replace_legal_chars(unescape(f)), length(got$pts), paste(pt_xml, collapse = ""))
       }
       xml <- gsub(ref, new, xml, fixed = TRUE)
     }
@@ -348,6 +300,7 @@ xls_filter_names <- function(xmlDir, nsheets, types) {
   wb_xml <- paste(readLines(wb_file, warn = FALSE, encoding = "UTF-8"), collapse = "\n")
   sheet_tags <- regmatches(wb_xml, gregexpr("<sheet [^>]*/>", wb_xml))[[1]]
   sheet_names <- sub(".*name=\"([^\"]*)\".*", "\\1", sheet_tags)
+  sheet_names <- stringi::stri_replace_all_fixed(sheet_names, rev(legal_sub()[1:5]), rev(legal_chars()[1:5]), vectorize_all = FALSE)
 
   new_names <- character()
   for (i in seq_len(nsheets)) {
@@ -359,9 +312,10 @@ xls_filter_names <- function(xmlDir, nsheets, types) {
     if (has_name) next
     cells <- strsplit(ref[2], ":", fixed = TRUE)[[1]]
     absolute <- sub("^([A-Z]+)([0-9]+)$", "$\\1$\\2", cells)
+    sheet_ref <- replace_legal_chars(gsub("'", "''", sheet_names[i], fixed = TRUE))
     new_names <- c(new_names, sprintf(
       "<definedName name=\"_xlnm._FilterDatabase\" localSheetId=\"%d\" hidden=\"1\">'%s'!%s</definedName>",
-      i - 1L, gsub("'", "''", sheet_names[i], fixed = TRUE), paste(absolute, collapse = ":")
+      i - 1L, sheet_ref, paste(absolute, collapse = ":")
     ))
   }
   if (!length(new_names)) return(invisible(NULL))
