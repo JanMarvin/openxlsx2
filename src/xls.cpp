@@ -534,7 +534,12 @@ bool xls_has_vba_code(const std::vector<uint8_t>& file) {
   std::vector<uint8_t> project = cfb_stream(file, "_VBA_PROJECT_CUR/PROJECT");
   if (project.empty()) return false;
 
-  // dir stream (MS-OVBA 2.3.4.2): records of id, size and data; per module the name (0x19), stream (0x1A), source offset (0x31)
+  // The dir stream (MS-OVBA 2.3.4.2) is a list of records: id (2 bytes), size (4
+  // bytes) and data. For each module it has the name (0x0019, in the code page of
+  // the project like the names in PROJECT), the name of the stream in UTF-16
+  // (0x0032) and where the source starts in the stream (0x0031), the module ends
+  // with 0x002B. PROJECTVERSION (0x0009) is the one record whose size is wrong: it
+  // says 4, but 6 bytes follow.
   std::vector<uint8_t> dir_packed = cfb_stream(file, "_VBA_PROJECT_CUR/VBA/dir");
   std::string dir = xls_vba_decompress(dir_packed, 0, 1u << 24);
   std::map<std::string, std::pair<std::string, uint32_t> > modules;
@@ -551,6 +556,12 @@ bool xls_has_vba_code(const std::vector<uint8_t>& file) {
     std::string data = dir.substr(pos + 6, size);
     if (id == 0x0019) module_name = data;
     if (id == 0x001A) stream_name = data;
+    if (id == 0x0032) {
+      std::u16string wide;
+      for (size_t k = 0; k + 2 <= data.size(); k += 2)
+        wide.push_back(static_cast<char16_t>(static_cast<uint8_t>(data[k]) | (static_cast<uint8_t>(data[k + 1]) << 8)));
+      stream_name = to_utf8(wide);
+    }
     if (id == 0x0031 && size == 4)
       module_offset = static_cast<uint32_t>(r[6]) | (static_cast<uint32_t>(r[7]) << 8) |
                       (static_cast<uint32_t>(r[8]) << 16) | (static_cast<uint32_t>(r[9]) << 24);
@@ -622,7 +633,14 @@ int32_t xls_extract(std::string filePath, std::string outPath, bool warn_vba, bo
     Rcpp::stop("xls: only Excel 97-2003 files are supported");
   // #nocov end
 
-  if (warn_vba && xls_has_vba_code(file))
+  // only used for a warning, a damaged project is handled like one without code
+  bool has_code = false;
+  try {
+    has_code = warn_vba && xls_has_vba_code(file);
+  } catch (const Rcpp::exception&) {
+    has_code = false;
+  }
+  if (has_code)
     Rcpp::warning("The xls file contains VBA code. Macros are not imported.");
 
   if (debug) Rcpp::Rcout << "Workbook stream: " << workbook.size() << " bytes" << std::endl;
@@ -802,9 +820,15 @@ int32_t docprops_xls(std::string filePath, std::string corePath, std::string app
 
   int32_t result = 0;
 
-  std::vector<uint8_t> summary = cfb_stream(file, "\005SummaryInformation");
+  // the properties are not needed for the workbook, damaged ones are left out
+  std::map<uint32_t, XlsProperty> summary;
+  try {
+    summary = xls_property_set(cfb_stream(file, "\005SummaryInformation"));
+  } catch (const Rcpp::exception&) {
+    summary.clear();
+  }
   if (!summary.empty()) {
-    std::map<uint32_t, XlsProperty> p = xls_property_set(summary);
+    std::map<uint32_t, XlsProperty>& p = summary;
     auto text = [&](uint32_t id) { return p.count(id) ? escape_xml(p[id].text) : std::string(); };
     std::ofstream out(corePath);
     out << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" << std::endl;
@@ -823,9 +847,14 @@ int32_t docprops_xls(std::string filePath, std::string corePath, std::string app
     result += 1;
   }
 
-  std::vector<uint8_t> doc_summary = cfb_stream(file, "\005DocumentSummaryInformation");
+  std::map<uint32_t, XlsProperty> doc_summary;
+  try {
+    doc_summary = xls_property_set(cfb_stream(file, "\005DocumentSummaryInformation"));
+  } catch (const Rcpp::exception&) {
+    doc_summary.clear();
+  }
   if (!doc_summary.empty()) {
-    std::map<uint32_t, XlsProperty> p = xls_property_set(doc_summary);
+    std::map<uint32_t, XlsProperty>& p = doc_summary;
     if (p.count(14) || p.count(15)) {
       std::ofstream out(appPath);
       out << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" << std::endl;
@@ -1182,10 +1211,9 @@ int32_t sharedstrings_xls(std::string filePath, std::string outPath, bool debug)
         for (uint32_t i = 0; i < cstUnique; ++i) {
           if (bin.tellg() >= rec_end) {
             uint16_t crid = 0, crsize = 0;
-            // #nocov start: corrupt shared string table
-            if (!XLS_RECORD(crid, crsize, bin, swapit) || crid != XlsContinue)
-              Rcpp::stop("xls: shared strings are cut off");
-            // #nocov end
+            // some writers claim more unique strings than they write, the table
+            // ends with the last Continue record
+            if (!XLS_RECORD(crid, crsize, bin, swapit) || crid != XlsContinue) break;
             rec_end = bin.tellg() + std::streamoff(crsize);
           }
           std::vector<std::pair<uint16_t, uint16_t> > runs;
@@ -2669,7 +2697,9 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
 
         case XlsString: {
           if (has_pending && pending.type == "str") {
-            std::string val = XLUnicodeString(bin, swapit, true);
+            // a long result goes on in Continue records
+            std::streampos rec_end = next;
+            std::string val = XLUnicodeString(bin, swapit, true, rec_end);
             pending.body = "<v>" + escape_xml(val) + "</v>";
           }
           break;
@@ -4220,7 +4250,13 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
         if (at == cache_ids.size()) {
           char stream_name[8];
           std::snprintf(stream_name, sizeof(stream_name), "%04X", v.source.id);
-          std::vector<uint8_t> cache = cfb_stream(xls_bytes, std::string("_SX_DB_CUR/") + stream_name);
+          std::vector<uint8_t> cache;
+          // a damaged cache is handled like a missing one
+          try {
+            cache = cfb_stream(xls_bytes, std::string("_SX_DB_CUR/") + stream_name);
+          } catch (const Rcpp::exception&) {
+            cache.clear();
+          }
           if (cache.empty()) {
             Rcpp::warning("xls: the cache of the pivot table %s on sheet %d is missing and the table is not imported.", v.name.c_str(), sheet);
             continue;

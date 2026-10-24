@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 
+#include "xlsb_funs.h"
+
 // An xls file is an OLE2 "compound file": a small file system inside a file.
 // The workbook is the stream called "Workbook". This is a minimal reader for it.
 //
@@ -23,7 +25,8 @@ inline uint32_t cfb_u32(const std::vector<uint8_t>& f, size_t pos) {
   return cfb_u16(f, pos) | (cfb_u16(f, pos + 2) << 16);
 }
 
-// follow a chain of sectors in the FAT and return their content
+// follow a chain of sectors in the FAT and return their content. Some writers do
+// not fill the last sector of the file, the missing bytes are zeros.
 inline std::vector<uint8_t> cfb_chain(const std::vector<uint8_t>& file, const std::vector<uint32_t>& fat,
                                       size_t sec_size, uint32_t start) {
   std::vector<uint8_t> out;
@@ -32,18 +35,59 @@ inline std::vector<uint8_t> cfb_chain(const std::vector<uint8_t>& file, const st
   while (sec < 0xFFFFFFFAu) {
     size_t off = (static_cast<size_t>(sec) + 1) * sec_size;
     // #nocov start: corrupt file
-    if (sec >= fat.size() || ++steps > file.size() / sec_size || off + sec_size > file.size())
+    if (sec >= fat.size() || ++steps > file.size() / sec_size + 1 || off >= file.size())
       Rcpp::stop("xls: corrupt sector chain");
     // #nocov end
+    size_t n = std::min(sec_size, file.size() - off);
     out.insert(out.end(), file.begin() + static_cast<std::ptrdiff_t>(off),
-               file.begin() + static_cast<std::ptrdiff_t>(off + sec_size));
+               file.begin() + static_cast<std::ptrdiff_t>(off + n));
+    out.resize(out.size() + sec_size - n, 0);
     sec = fat[sec];
   }
   return out;
 }
 
-// return the content of the stream with the given name, empty if it does not exist
-inline std::vector<uint8_t> cfb_stream(const std::vector<uint8_t>& file, const std::string& name) {
+// The entries of a storage are a tree: the storage points to one child (at 76),
+// every entry to a left (68) and a right (72) sibling. Names are UTF-16, they are
+// compared as UTF-8 and ignoring the case of ASCII letters. Returns the entry or
+// 0xFFFFFFFF.
+inline uint32_t cfb_child(const std::vector<uint8_t>& dir, uint32_t parent, const std::string& name) {
+  size_t n = dir.size() / 128;
+  std::vector<uint32_t> todo(1, cfb_u32(dir, static_cast<size_t>(parent) * 128 + 76));
+  size_t steps = 0;
+  while (!todo.empty()) {
+    uint32_t id = todo.back();
+    todo.pop_back();
+    if (id >= n) continue;
+    // #nocov start: corrupt file
+    if (++steps > n) Rcpp::stop("xls: corrupt directory");
+    // #nocov end
+    size_t off = static_cast<size_t>(id) * 128;
+    std::u16string wide;
+    size_t len = cfb_u16(dir, off + 64);
+    for (size_t i = 0; i + 2 <= len && i < 64; i += 2) {
+      char16_t c = static_cast<char16_t>(cfb_u16(dir, off + i));
+      if (c == 0) break;
+      wide.push_back(c);
+    }
+    std::string entry = to_utf8(wide);
+    bool same = entry.size() == name.size();
+    for (size_t i = 0; same && i < entry.size(); ++i) {
+      char a = entry[i], b = name[i];
+      if (a >= 'a' && a <= 'z') a = static_cast<char>(a - 'a' + 'A');
+      if (b >= 'a' && b <= 'z') b = static_cast<char>(b - 'a' + 'A');
+      same = a == b;
+    }
+    if (same) return id;
+    todo.push_back(cfb_u32(dir, off + 68));
+    todo.push_back(cfb_u32(dir, off + 72));
+  }
+  return 0xFFFFFFFFu;
+}
+
+// return the content of the stream at path ("Workbook", "_SX_DB_CUR/0001"), empty
+// if it does not exist
+inline std::vector<uint8_t> cfb_stream(const std::vector<uint8_t>& file, const std::string& path) {
   static const uint8_t magic[8] = {0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1};
   // #nocov start: not an OLE2 file
   if (file.size() < 512 || !std::equal(magic, magic + 8, file.begin()))
@@ -92,59 +136,25 @@ inline std::vector<uint8_t> cfb_stream(const std::vector<uint8_t>& file, const s
   // at 66 (2 stream, 5 root), first sector at 116, size at 120
   std::vector<uint8_t> dir = cfb_chain(file, fat, sec_size, dir_start);
 
-  // the entries form a tree, entry 0 is the root. children are found through
-  // the child entry and the left and right siblings of it. Streams are looked
-  // up by their path, so a stream with the same name in an embedded object is
-  // not mistaken for it. Names are compared without regard to case.
-  size_t n_entries = dir.size() / 128;
-  std::vector<std::string> parts;
-  for (size_t at = 0; at <= name.size();) {
-    size_t slash = name.find('/', at);
-    if (slash == std::string::npos) slash = name.size();
-    parts.push_back(name.substr(at, slash - at));
-    at = slash + 1;
-  }
+  // #nocov start: corrupt file
+  if (dir.size() < 128 || dir[66] != 5) Rcpp::stop("xls: corrupt directory");
+  // #nocov end
+  uint32_t root_start = cfb_u32(dir, 116);
+  uint32_t root_size = cfb_u32(dir, 120);
 
-  auto upper = [](std::string x) {
-    for (size_t i = 0; i < x.size(); ++i)
-      if (x[i] >= 'a' && x[i] <= 'z') x[i] = static_cast<char>(x[i] - 'a' + 'A');
-    return x;
-  };
-
-  uint32_t found_start = 0, found_size = 0;
-  bool found = n_entries > 0;
-  uint32_t root_start = 0, root_size = 0;
-  if (found) {
-    root_start = cfb_u32(dir, 116);
-    root_size = cfb_u32(dir, 120);
+  uint32_t id = 0;
+  size_t from = 0;
+  while (from <= path.size()) {
+    size_t to = path.find('/', from);
+    if (to == std::string::npos) to = path.size();
+    id = cfb_child(dir, id, path.substr(from, to - from));
+    if (id == 0xFFFFFFFFu) return std::vector<uint8_t>();
+    uint8_t type = dir[static_cast<size_t>(id) * 128 + 66];
+    if (to < path.size() ? type != 1 : type != 2) return std::vector<uint8_t>();
+    from = to + 1;
   }
-  size_t current = 0;
-  for (size_t p = 0; found && p < parts.size(); ++p) {
-    std::vector<size_t> todo;
-    todo.push_back(cfb_u32(dir, current * 128 + 76));
-    size_t visited = 0;
-    found = false;
-    while (!todo.empty()) {
-      size_t id = todo.back();
-      todo.pop_back();
-      if (id >= n_entries || ++visited > n_entries) continue;
-      size_t off = id * 128;
-
-      std::string entry;
-      size_t len = cfb_u16(dir, off + 64);
-      for (size_t i = 0; i + 2 <= len && i < 64 && dir[off + i] != 0; i += 2) entry.push_back(static_cast<char>(dir[off + i]));
-      if (upper(entry) == upper(parts[p])) {
-        current = id;
-        found = dir[off + 66] == (p + 1 < parts.size() ? 1 : 2);
-        break;
-      }
-      todo.push_back(cfb_u32(dir, off + 68));
-      todo.push_back(cfb_u32(dir, off + 72));
-    }
-  }
-  if (!found) return std::vector<uint8_t>();
-  found_start = cfb_u32(dir, current * 128 + 116);
-  found_size = cfb_u32(dir, current * 128 + 120);
+  uint32_t found_start = cfb_u32(dir, static_cast<size_t>(id) * 128 + 116);
+  uint32_t found_size = cfb_u32(dir, static_cast<size_t>(id) * 128 + 120);
 
   if (found_size >= mini_cutoff) {
     std::vector<uint8_t> out = cfb_chain(file, fat, sec_size, found_start);
