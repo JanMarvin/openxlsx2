@@ -5,6 +5,7 @@
 * Initial support for `xls` parsing. This is similar to how we handle `xlsb` files. We create some pseudo XML from the binary file and import this with `wb_load()` as if the input was provided as `xlsx`/`xlsm` file. [#1698](https://github.com/JanMarvin/openxlsx2/pull/1698) [#1701](https://github.com/JanMarvin/openxlsx2/pull/1701)
 * Pivot caches of `xlsb` files are imported with their records. `options("openxlsx2.pivot_refresh" = TRUE)` leaves them empty to be refreshed on open.
 * `wb_data()` gains `header_rows` to read a header that spans more than one row. The default is unchanged. [#1706](https://github.com/JanMarvin/openxlsx2/pull/1706)
+* `wb_clean_sheet()` gains a new attribute to fully remove tables from a sheet. [#1709](https://github.com/JanMarvin/openxlsx2/pull/1709)
 
 ## Fixes
 

@@ -3593,6 +3593,9 @@ wb_add_chart_xml <- function(
 #'   within `dims`).
 #' @param hyperlinks Logical; if `TRUE`, removes hyperlinks from the specified
 #'   region.
+#' @param tables Logical; if `TRUE`, removes tables from the sheet and any
+#'   intersecting region. `FALSE` leaves the table unaltered, but removes the
+#'   data from the sheet which will cause spreadsheet software to complain.
 #'
 #' @return The [wbWorkbook] object, invisibly.
 #'
@@ -3609,7 +3612,8 @@ wb_clean_sheet <- function(
     characters   = TRUE,
     styles       = TRUE,
     merged_cells = TRUE,
-    hyperlinks   = TRUE
+    hyperlinks   = TRUE,
+    tables       = TRUE
 ) {
   assert_workbook(wb)
   wb$clone(deep = TRUE)$clean_sheet(
@@ -3619,7 +3623,8 @@ wb_clean_sheet <- function(
     characters   = characters,
     styles       = styles,
     merged_cells = merged_cells,
-    hyperlinks   = hyperlinks
+    hyperlinks   = hyperlinks,
+    tables       = tables
   )
 }
 

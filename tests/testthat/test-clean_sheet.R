@@ -28,3 +28,22 @@ test_that("clean_sheet", {
   expect_identical(c("<mergeCell ref=\"B2:I2\"/>", "<mergeCell ref=\"H3:I3\"/>"), wb$worksheets[[1]]$mergeCells)
 
 })
+
+test_that("cleaning tables works", {
+  wb <- wb_workbook()$add_worksheet()$
+    add_data_table(x = head(cars), dims = "B2")$
+    add_data_table(x = head(cars), dims = "B10")
+
+  wb$clean_sheet()
+  got <- wb$get_tables()$tab_name
+  expect_equal(got, character())
+
+  # intersecting dims
+  wb <- wb_workbook()$add_worksheet()$
+    add_data_table(x = head(cars), dims = "B2")$
+    add_data_table(x = head(cars), dims = "B10")
+
+  wb$clean_sheet(sheet = "Sheet 1", dims = "C2")
+  got <- wb$get_tables()$tab_name
+  expect_equal(got, "Table2")
+})
