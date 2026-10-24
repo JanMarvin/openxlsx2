@@ -71,7 +71,8 @@ to reuse an existing sheet structure but replace the data or reset the styling.<
 <span>  characters <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  styles <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  merged_cells <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  hyperlinks <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  hyperlinks <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  tables <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -116,6 +117,12 @@ within <code>dims</code>).</p></dd>
 <dt id="arg-hyperlinks">hyperlinks<a class="anchor" aria-label="anchor" href="#arg-hyperlinks"></a></dt>
 <dd><p>Logical; if <code>TRUE</code>, removes hyperlinks from the specified
 region.</p></dd>
+
+
+<dt id="arg-tables">tables<a class="anchor" aria-label="anchor" href="#arg-tables"></a></dt>
+<dd><p>Logical; if <code>TRUE</code>, removes tables from the sheet and any
+intersecting region. <code>FALSE</code> leaves the table unaltered, but removes the
+data from the sheet which will cause spreadsheet software to complain.</p></dd>
 
 </dl></div>
     <div class="section level2">

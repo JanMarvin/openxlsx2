@@ -18,6 +18,9 @@
   gains `header_rows` to read a header that spans more than one row. The
   default is unchanged.
   [\#1706](https://github.com/JanMarvin/openxlsx2/pull/1706)
+- [`wb_clean_sheet()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_clean_sheet.md)
+  gains a new attribute to fully remove tables from a sheet.
+  [\#1709](https://github.com/JanMarvin/openxlsx2/pull/1709)
 
 ### Fixes
 

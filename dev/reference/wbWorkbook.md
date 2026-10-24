@@ -4308,7 +4308,8 @@ clean sheet (remove all values)
       characters = TRUE,
       styles = TRUE,
       merged_cells = TRUE,
-      hyperlinks = TRUE
+      hyperlinks = TRUE,
+      tables = TRUE
     )
 
 #### Arguments
@@ -4340,6 +4341,10 @@ clean sheet (remove all values)
 - `hyperlinks`:
 
   remove all hyperlinks
+
+- `tables`:
+
+  remove all tables
 
 #### Returns
 

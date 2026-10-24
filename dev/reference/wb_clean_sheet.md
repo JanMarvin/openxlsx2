@@ -17,7 +17,8 @@ wb_clean_sheet(
   characters = TRUE,
   styles = TRUE,
   merged_cells = TRUE,
-  hyperlinks = TRUE
+  hyperlinks = TRUE,
+  tables = TRUE
 )
 ```
 
@@ -61,6 +62,12 @@ wb_clean_sheet(
 - hyperlinks:
 
   Logical; if `TRUE`, removes hyperlinks from the specified region.
+
+- tables:
+
+  Logical; if `TRUE`, removes tables from the sheet and any intersecting
+  region. `FALSE` leaves the table unaltered, but removes the data from
+  the sheet which will cause spreadsheet software to complain.
 
 ## Value
 
