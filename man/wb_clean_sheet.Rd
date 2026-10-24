@@ -12,7 +12,8 @@ wb_clean_sheet(
   characters = TRUE,
   styles = TRUE,
   merged_cells = TRUE,
-  hyperlinks = TRUE
+  hyperlinks = TRUE,
+  tables = TRUE
 )
 }
 \arguments{
@@ -38,6 +39,10 @@ within \code{dims}).}
 
 \item{hyperlinks}{Logical; if \code{TRUE}, removes hyperlinks from the specified
 region.}
+
+\item{tables}{Logical; if \code{TRUE}, removes tables from the sheet and any
+intersecting region. \code{FALSE} leaves the table unaltered, but removes the
+data from the sheet which will cause spreadsheet software to complain.}
 }
 \value{
 The \link{wbWorkbook} object, invisibly.

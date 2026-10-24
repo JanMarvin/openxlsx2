@@ -8458,8 +8458,9 @@ wbWorkbook <- R6::R6Class(
         attr(self$worksheets[[sheet]]$tableParts, "tableName") <- worksheet_table_names[-to_remove]
 
         ## now delete data
+        # cannot remove tables here, because clean_sheet() recursively calls remove_tables()
         if (remove_data)
-          self$clean_sheet(sheet = sheet, dims = refs)
+          self$clean_sheet(sheet = sheet, dims = refs, tables = FALSE)
       }
 
       invisible(self)
@@ -8831,6 +8832,7 @@ wbWorkbook <- R6::R6Class(
     #' @param styles remove all styles
     #' @param merged_cells remove all merged_cells
     #' @param hyperlinks remove all hyperlinks
+    #' @param tables remove all tables
     #' @return The `wbWorksheetObject`, invisibly
     clean_sheet = function(
         sheet        = current_sheet(),
@@ -8839,7 +8841,8 @@ wbWorkbook <- R6::R6Class(
         characters   = TRUE,
         styles       = TRUE,
         merged_cells = TRUE,
-        hyperlinks   = TRUE
+        hyperlinks   = TRUE,
+        tables       = TRUE
     ) {
       sheet <- private$get_sheet_index(sheet)
       self$worksheets[[sheet]]$clean_sheet(
@@ -8855,6 +8858,33 @@ wbWorkbook <- R6::R6Class(
           sheet = sheet,
           dims  = dims
         )
+
+      if (tables) {
+        tbs <- self$get_named_regions(tables = TRUE)
+        tbs <- tbs[tbs$value == "table" & tbs$sheets == private$get_sheet_name(sheet), ]
+        if (NROW(tbs)) {
+          if (!is.null(dims))
+            ddims <- dims_to_dataframe(dims, fill = TRUE)
+
+          for (i in seq_len(nrow(tbs))) {
+            if (!is.null(dims)) {
+              tdims <- dims_to_dataframe(tbs$coords[i], fill = TRUE)
+              if (length(intersect(unlist(ddims), unlist(tdims))) == 0) next
+            }
+
+            self$remove_tables(
+              sheet = tbs$sheets[i],
+              table = tbs$name[i]
+            )
+          }
+        } else {
+          # TODO not implemented:
+          # https://github.com/JanMarvin/openxlsx2/issues/1687
+          # either
+          # * restore the header column in the sheet
+          # * or write default headers Column[1-9]+ to the sheet and and update_table()
+        }
+      }
 
       invisible(self)
     },

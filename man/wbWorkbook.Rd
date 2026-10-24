@@ -3092,7 +3092,8 @@ are removed.}
   characters = TRUE,
   styles = TRUE,
   merged_cells = TRUE,
-  hyperlinks = TRUE
+  hyperlinks = TRUE,
+  tables = TRUE
 )}
     \if{html}{\out{</div>}}
   }
@@ -3106,6 +3107,7 @@ are removed.}
       \item{\code{styles}}{remove all styles}
       \item{\code{merged_cells}}{remove all merged_cells}
       \item{\code{hyperlinks}}{remove all hyperlinks}
+      \item{\code{tables}}{remove all tables}
     }
     \if{html}{\out{</div>}}
   }
