@@ -1,13 +1,17 @@
 #ifndef XLS_FUNS_H
 #define XLS_FUNS_H
 
+#include <algorithm>
+#include <clocale>
 #include <cstdint>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <iomanip>
 #include <limits>
 #include <map>
 #include <sstream>
+#include <streambuf>
 #include <string>
 #include <utility>
 #include <vector>
@@ -18,6 +22,39 @@
 #include "xlsb_flags.h"
 #include "xlsb_funs.h"
 #include "xls_defines.h"
+
+// The Workbook stream is read from memory, but like a file: every record ends with
+// a seek, and in a file stream a seek drops the buffer and costs a system call.
+// Like in a file, a seek only moves the position, also past the end, where reading
+// fails. Damaged records can point past the end and the next record is found again.
+class XlsMemoryBuf : public std::streambuf {
+ public:
+  explicit XlsMemoryBuf(std::string data) : data_(std::move(data)) {
+    char* begin = &data_[0];
+    setg(begin, begin, begin + data_.size());
+  }
+
+ protected:
+  pos_type seekoff(off_type off, std::ios_base::seekdir dir, std::ios_base::openmode which) override {
+    off_type size = static_cast<off_type>(data_.size());
+    off_type now = static_cast<off_type>(gptr() - eback()) + past_end_;
+    off_type base = dir == std::ios_base::beg ? 0 : (dir == std::ios_base::end ? size : now);
+    return seekpos(pos_type(base + off), which);
+  }
+
+  pos_type seekpos(pos_type pos, std::ios_base::openmode) override {
+    off_type at = static_cast<off_type>(pos);
+    if (at < 0) return pos_type(off_type(-1));
+    off_type size = static_cast<off_type>(data_.size());
+    past_end_ = at > size ? at - size : 0;
+    setg(eback(), eback() + std::min(at, size), eback() + size);
+    return pos;
+  }
+
+ private:
+  std::string data_;
+  off_type past_end_ = 0;
+};
 
 // Every BIFF8 record is: id (2 bytes), size (2 bytes), data. Returns false at the
 // end of the stream. Padding of fewer than 4 bytes behind the last record is the end.
@@ -185,8 +222,18 @@ inline std::string xls_error(uint8_t code) {
   }
 }
 
-// number as text that reads back as the same double
+// number as text that reads back as the same double. snprintf() and strtod() are
+// several times faster than streams, but use the decimal point of the C locale.
+// R keeps that locale at "C", if it is not, the streams are used.
 inline std::string xls_num(double d) {
+  const char* point = std::localeconv()->decimal_point;
+  if (point[0] == '.' && point[1] == '\0') {
+    char buf[32];
+    std::snprintf(buf, sizeof(buf), "%.15g", d);
+    if (std::strtod(buf, nullptr) != d) std::snprintf(buf, sizeof(buf), "%.17g", d);
+    return std::string(buf);
+  }
+
   std::string s;
   for (int prec = 15; prec <= 17; prec += 2) {
     std::ostringstream os;

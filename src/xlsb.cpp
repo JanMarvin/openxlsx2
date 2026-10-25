@@ -2701,16 +2701,16 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           if (!first_row) {
 
             for (size_t i = 0; i < colvec.size(); ++i) {
-              out << "<c r=\"" << colvec[i].c_r << "\" s=\"" << colvec[i].c_s << "\" t=\""<< colvec[i].c_t << "\">" << std::endl;
-              out << "<v>" << escape_xml(colvec[i].v) << "</v>" << std::endl;
-              out << colvec[i].is  << std::endl;
-              out << "<f " << colvec[i].f_attr << ">" << colvec[i].f << "</f>" << std::endl;
-              out << "</c>" << std::endl;
+              out << "<c r=\"" << colvec[i].c_r << "\" s=\"" << colvec[i].c_s << "\" t=\""<< colvec[i].c_t << "\">\n";
+              out << "<v>" << escape_xml(colvec[i].v) << "</v>\n";
+              out << colvec[i].is  << "\n";
+              out << "<f " << colvec[i].f_attr << ">" << colvec[i].f << "</f>\n";
+              out << "</c>\n";
             }
 
             colvec.clear();
 
-            out << "</row>" <<std::endl;
+            out << "</row>\n";
           } else {
             first_row = false;
           }
@@ -3308,14 +3308,15 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
             // should be the last row
             for (size_t i = 0; i < colvec.size(); ++i) {
-              out << "<c r=\"" << colvec[i].c_r << "\" s=\"" << colvec[i].c_s << "\" t=\""<< colvec[i].c_t << "\">" << std::endl;
-              out << "<v>" << escape_xml(colvec[i].v) << "</v>" << std::endl;
-              out << "<f " << colvec[i].f_attr << " >" << colvec[i].f << "</f>" << std::endl;
-              out << "</c>" << std::endl;
+              out << "<c r=\"" << colvec[i].c_r << "\" s=\"" << colvec[i].c_s << "\" t=\""<< colvec[i].c_t << "\">\n";
+              out << "<v>" << escape_xml(colvec[i].v) << "</v>\n";
+              if (!colvec[i].is.empty()) out << colvec[i].is << "\n";
+              out << "<f " << colvec[i].f_attr << " >" << colvec[i].f << "</f>\n";
+              out << "</c>\n";
             }
 
             colvec.clear();
-            out << "</row>" << std::endl;
+            out << "</row>\n";
           }
           out << "</sheetData>" << std::endl;
 
