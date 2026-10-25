@@ -60,10 +60,15 @@ temp_xlsx <- function(name = "temp_xlsx", macros = FALSE) {
 #' @noRd
 temp_dir <- function(pattern = "file") {
 
-  base <- tempdir()
+  # the session tempdir may have been removed, e.g. by system cleanup
+  base <- tempdir(check = TRUE)
   repeat {
     path <- file.path(base, paste0(pattern, "_", basename(tempfile())))
     if (dir.create(path, showWarnings = FALSE)) return(path)
+    # only a name collision is resolved by trying another name
+    if (!file.exists(path)) {
+      stop("Unable to create temporary directory: ", path, call. = FALSE)
+    }
   }
 }
 

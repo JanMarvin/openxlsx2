@@ -508,6 +508,9 @@ test_that("temp_dir works", {
 
   expect_true(dir.exists(out))
 
+  # a directory that cannot be created is an error, not an endless loop
+  expect_error(temp_dir("does_not_exist/temp_dir"), "Unable to create temporary directory")
+
 })
 
 test_that("relship", {
