@@ -476,3 +476,11 @@ test_that("xlsb filters, strings and error formulas of xls_cov4_misc are importe
 
   expect_match(wb_b$worksheets[[7]]$autoFilter, '<filter val="TRUE"/>', fixed = TRUE)
 })
+
+test_that("inline strings in the last row of a sheet are imported", {
+  skip_if_big_endian("XLSB")
+  wb <- suppressWarnings(wb_load(testfile_path("test_coverage.xlsb")))
+  expect_equal(wb_to_df(wb, sheet = 1, col_names = FALSE, dims = "C13")[1, 1], "slantDashDot")
+  got <- unlist(wb_to_df(wb, sheet = 3, col_names = FALSE, dims = "A60:B60")[1, ], use.names = FALSE)
+  expect_equal(got, c("0x01E0", "IFERROR(1/0, 0)"))
+})
