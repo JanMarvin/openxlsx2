@@ -340,7 +340,10 @@ wb_load <- function(
       print(workbookBIN)
       print(workbookXML)
     }
-    workbook_bin(workbookBIN, workbookXML, debug)
+    # formulas refer to sheets, defined names and tables by their number. The
+    # texts for these numbers are read once and used by all parts with formulas.
+    xlsb_ctx <- xlsb_context(workbookBIN, extLinksBIN, tablesBIN)
+    workbook_bin(workbookBIN, workbookXML, xlsb_ctx, debug)
 
     if (length(stylesBIN)) {
       stylesXML <- gsub(".bin$", ".xml", stylesBIN)
@@ -359,7 +362,7 @@ wb_load <- function(
     if (!data_only && length(tablesBIN)) {
       tablesXML <- gsub(".bin$", ".xml", tablesBIN)
       for (i in seq_along(tablesXML))
-        table_bin(tablesBIN[i], tablesXML[i], debug)
+        table_bin(tablesBIN[i], tablesXML[i], xlsb_ctx, debug)
       # system(sprintf("cat %s", tablesXML))
       # system(sprintf("cp %s /tmp/tables.xml", tablesXML))
     }
@@ -716,10 +719,6 @@ wb_load <- function(
     wb$workbook$definedNames <-  xml_node(workbook_xml, "workbook", "definedNames", "definedName")
 
 
-    ## xti
-    if (length(workbookBIN))
-      wb$workbook$xti <-  xml_node(workbook_xml, "workbook", "xtis", "xti")
-
   }
 
   if (!data_only && calc_chain && length(calcChainXML)) {
@@ -996,7 +995,7 @@ wb_load <- function(
       xml_tmp <- gsub(".bin$", ".xml$", sheets$target[i])
 
       # message(sheets$target[i])
-      worksheet_bin(sheets$target[i], wb$is_chartsheet[i], xml_tmp, debug)
+      worksheet_bin(sheets$target[i], wb$is_chartsheet[i], xml_tmp, xlsb_ctx, debug)
       # system(sprintf("cat %s", xml_tmp))
       # system(sprintf("cp %s /tmp/ws.xml", xml_tmp))
       sheets$target[i] <- xml_tmp
@@ -1755,10 +1754,7 @@ wb_load <- function(
     wb$tables.xml.rels <- rep("", length(tablesXML))
   }
 
-  # xlsb files have references as index position stored. we have replaced the
-  # index position with "openxlsx2xlsb_" + indexpos. We have exported the xti
-  # references as custom xml node in the workbook. Now we have to create the
-  # correct sheet references and replace our replacement with it.
+  # final changes for xlsb files
   if (!data_only && length(workbookBIN)) {
 
     # we need to update the order of customSheetView children. Incorrect orders
@@ -1789,283 +1785,6 @@ wb_load <- function(
       cvs <- write_df2xml(cv[c(exp_attr, exp_nams)], "customSheetView", vec_attrs = exp_attr, vec_chlds = exp_nams)
 
       wb$worksheets[[sheet]]$customSheetViews <- xml_node_create("customSheetViews", xml_children = cvs)
-    }
-
-    if (length(wb$workbook$xti)) {
-      # create data frame containing sheet names for Xti entries
-      xti <- rbindlist(xml_attr(wb$workbook$xti, "xti"))
-      xti$name_id <- paste0("openxlsx2xlsb_", sprintf("%012d", as.integer(rownames(xti)) - 1L))
-      xti$firstSheet <- as.integer(xti$firstSheet) + 1L
-      xti$lastSheet <- as.integer(xti$lastSheet) + 1L
-
-      sheets <- wb$get_sheet_names(escape = TRUE)
-
-      xti$sheets <- "" # was NA_character_ but (in missing cases: all is <NA>)
-      # all id == 0 are local references, otherwise external references
-      # external references are written as "[0]sheetname!A1". Require
-      # handling of externalReferences.bin
-      if (debug) print(xti)
-
-      sel_deleted <- xti$firstSheet == 0
-      if (any(sel_deleted)) xti$sheets[sel_deleted] <- "#REF"
-
-      sel <- !grepl("^rId", xti$type) & xti$firstSheet >= 1
-
-      if (any(sel)) {
-
-          for (i in seq_len(nrow(xti[sel, ]))) {
-            want <- xti$firstSheet[sel][i]
-
-            # want can be zero
-            if (want %in% seq_along(sheets)) {
-
-              sheetName <- sheets[[want]]
-              need_quote <- grepl("[^A-Za-z0-9]", sheetName)
-              if (xti$firstSheet[sel][i] < xti$lastSheet[sel][i]) {
-                want <- xti$lastSheet[sel][i]
-                need_quote <- need_quote || grepl("[^A-Za-z0-9]", sheets[[want]])
-                sheetName <- paste0(sheetName, ":", sheets[[want]])
-              }
-
-              # should be a single reference now
-              val <- sheetName
-
-              if (need_quote)
-                val <- shQuote(val, type = "sh")
-
-              if (length(val)) xti$sheets[sel][i] <- val
-            }
-          }
-      }
-
-      collapse_double_ref <- function(x) {
-        x <- stringi::stri_replace_all_fixed(x, "#REF!#REF!", "#REF!")
-        stringi::stri_replace_all_regex(
-          x,
-          "#REF!(\\$?[A-Za-z]{1,3}\\$?[0-9]*|\\$?[0-9]+)(:(\\$?[A-Za-z]{1,3}\\$?[0-9]*|\\$?[0-9]+))?",
-          "#REF!"
-        )
-      }
-
-      for (i in seq_along(wb$tables$tab_xml)) {
-        wb$tables$tab_xml[i] <-
-          collapse_double_ref(stringi::stri_replace_all_fixed(
-            wb$tables$tab_xml[i],
-            xti$name_id,
-            xti$sheets,
-            vectorize_all = FALSE
-          ))
-      }
-
-      for (i in seq_along(wb$worksheets)) {
-        if (!wb$is_chartsheet[[i]])
-          wb$worksheets[[i]]$extLst <-
-            collapse_double_ref(stringi::stri_replace_all_fixed(
-              wb$worksheets[[i]]$extLst,
-              xti$name_id,
-              xti$sheets,
-              vectorize_all = FALSE
-            ))
-      }
-
-      ### for external references we need to get the required sheet names first
-      # For now this is all a little guess work
-
-      # This will return all sheets of the external reference.
-      extSheets <- lapply(wb$externalLinks, function(x) {
-        sheetNames <- xml_node(x, "externalLink", "externalBook", "sheetNames")
-        # assuming that all external links have some kind of vals
-        rbindlist(xml_attr(sheetNames, "sheetNames", "sheetName"))[["val"]]
-      })
-
-      # TODO: How are references to the same external link,
-      # but different sheet handled?
-      sel <- grepl("^rId", xti$type) & xti$firstSheet >= 1
-
-      if (any(sel)) {
-
-        xti$ext_id <- NA_integer_
-        xti$ext_id[sel] <- as.integer(as.factor(cdigit(xti$type[sel], as_integer = TRUE)))
-
-        # loop over it and create external link
-        for (i in seq_len(nrow(xti[sel, ]))) {
-          want <- xti$firstSheet[sel][i]
-          ref  <- xti$ext_id[sel][i]
-
-          # want can be zero
-          if (ref %in% seq_along(extSheets)) {
-
-            if (want == 0) next
-            if (!(want %in% seq_along(extSheets[[ref]]))) next
-            sheetName <- extSheets[[ref]][[want]]
-            if (xti$firstSheet[sel][i] < xti$lastSheet[sel][i]) {
-              want <- xti$lastSheet[sel][i]
-              if (!(want %in% seq_along(extSheets[[ref]]))) next
-              sheetName <- paste0(sheetName, ":", extSheets[[ref]][[want]])
-            }
-            # should be a single reference now
-
-            val <- sprintf("[%s]%s", xti$ext_id[sel][i], sheetName)
-
-            # non ascii or whitespace
-            if (grepl("[^A-Za-z0-9]", val))
-              val <- shQuote(val, type = "sh")
-
-            if (length(val)) xti$sheets[sel][i] <- val
-          }
-        }
-      }
-
-      if (debug)
-        print(xti)
-
-      if (nrow(xti)) {
-
-        if (length(wb$workbook$definedNames)) {
-
-          wb$workbook$definedNames <-
-            collapse_double_ref(stringi::stri_replace_all_fixed(
-              wb$workbook$definedNames,
-              xti$name_id,
-              xti$sheets,
-              vectorize_all = FALSE
-            ))
-
-          # replace named region in formulas
-          nri         <- wb$get_named_regions()
-          nri$name_id <- paste0("openxlsx2defnam_", sprintf("%012d", as.integer(nri$id)))
-
-          if (debug)
-            print(nri)
-
-          for (j in seq_along(wb$worksheets)) {
-            cc <- wb$worksheets[[j]]$sheet_data$cc
-            # all ids start with the same prefix, a fixed search for it is much
-            # faster than a pattern of all ids. Cells with the prefix but without
-            # an id are left as they are by the replacement.
-            if (any(sel <- grepl("openxlsx2defnam_", cc$f, fixed = TRUE))) {
-              cc$f[sel] <- stringi::stri_replace_all_fixed(
-                cc$f[sel],
-                nri$name_id,
-                nri$name,
-                vectorize_all = FALSE
-              )
-              wb$worksheets[[j]]$sheet_data$cc <- cc
-            }
-            rm(cc)
-
-
-            if (!wb$is_chartsheet[[j]])
-              wb$worksheets[[j]]$dataValidations <-
-                stringi::stri_replace_all_fixed(
-                  wb$worksheets[[j]]$dataValidations,
-                  nri$name_id,
-                  nri$name,
-                  vectorize_all = FALSE
-                )
-          }
-
-        }
-
-        if (length(wb$tables)) {
-          # replace named region in formulas
-          tri         <- wb$get_tables(sheet = NULL)
-          tri$id      <- as.integer(rbindlist(xml_attr(wb$tables$tab_xml, "table"))$id) # - 1L
-          tri$name_id <- paste0("openxlsx2tab_", sprintf("%012d", tri$id))
-          tri$vars    <- lapply(wb$tables$tab_xml, function(x) rbindlist(xml_attr(x, "table", "tableColumns", "tableColumn"))$name)
-
-          tri <- tri[order(tri$id), ]
-
-          if (debug)
-            print(tri)
-
-          for (j in seq_along(wb$worksheets)) {
-            cc <- wb$worksheets[[j]]$sheet_data$cc
-            if (any(sel <- grepl(paste0(tri$name_id, collapse = "|"), cc$f))) {
-
-              for (i in seq_len(nrow(tri))) {
-
-                sel <- grepl(paste0(tri$name_id, collapse = "|"), cc$f)
-
-                from_xlsb <- c(tri$name_id[i], paste0("[openxlsx2col_", tri$id[i], "_", seq_along(unlist(tri$vars[i])) - 1L, "]"))
-                to_xlsx   <- c(tri$tab_name[i], paste0("[", unlist(tri$vars[i]), "]"))
-
-                # always on all?
-                wb$tables$tab_xml <-
-                  stringi::stri_replace_all_fixed(
-                    wb$tables$tab_xml,
-                    from_xlsb,
-                    to_xlsx,
-                    vectorize_all = FALSE
-                  )
-
-                cc$f[sel] <- stringi::stri_replace_all_fixed(
-                  cc$f[sel],
-                  from_xlsb,
-                  to_xlsx,
-                  vectorize_all = FALSE
-                )
-
-                wb$workbook$definedNames <-
-                  stringi::stri_replace_all_fixed(
-                    wb$workbook$definedNames,
-                    from_xlsb,
-                    to_xlsx,
-                    vectorize_all = FALSE
-                  )
-              }
-              wb$worksheets[[j]]$sheet_data$cc <- cc
-            }
-            rm(cc)
-          }
-
-        }
-
-        # this might be terribly slow!
-        for (j in seq_along(wb$worksheets)) {
-          cc <- wb$worksheets[[j]]$sheet_data$cc
-          if (any(sel <- cc$f != "")) {
-            cc$f[sel] <- collapse_double_ref(stringi::stri_replace_all_fixed(
-              cc$f[sel],
-              xti$name_id,
-              xti$sheets,
-              vectorize_all = FALSE
-            ))
-            wb$worksheets[[j]]$sheet_data$cc <- cc
-          }
-          rm(cc)
-        }
-      }
-    }
-
-    # references to defined names are written as placeholders in defined names
-    # and formulas. This is independent of xti entries, and therefore does not
-    # require any
-    if (length(wb$workbook$definedNames)) {
-      nri         <- wb$get_named_regions()
-      nri$name_id <- paste0("openxlsx2defnam_", sprintf("%012d", as.integer(nri$id)))
-
-      wb$workbook$definedNames <-
-        stringi::stri_replace_all_fixed(
-          wb$workbook$definedNames,
-          nri$name_id,
-          nri$name,
-          vectorize_all = FALSE
-        )
-
-      for (j in seq_along(wb$worksheets)) {
-        cc <- wb$worksheets[[j]]$sheet_data$cc
-        if (any(sel <- grepl("openxlsx2defnam_", cc$f, fixed = TRUE))) {
-          cc$f[sel] <- stringi::stri_replace_all_fixed(
-            cc$f[sel],
-            nri$name_id,
-            nri$name,
-            vectorize_all = FALSE
-          )
-          wb$worksheets[[j]]$sheet_data$cc <- cc
-        }
-        rm(cc)
-      }
     }
 
     # functions not known to the file format are stored as user defined
@@ -2260,11 +1979,6 @@ wb_load <- function(
                 seq_named_sv
               )
     )
-  }
-
-  # final cleanup
-  if (length(workbookBIN)) {
-    wb$workbook$xti <- NULL
   }
 
   # prepare output

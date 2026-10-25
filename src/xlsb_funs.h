@@ -1247,7 +1247,41 @@ inline std::string parseRPN(const std::string& expression) {
   return replaceXmlEscapesWithNewline(parsedFormula);
 }
 
-inline std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug, int32_t col, int32_t row, int32_t &sharedFml, bool has_revision_record, std::streampos pos, std::vector<int32_t> &ptgextra) {
+// Formulas in xlsb files refer to sheets (through the XTI table of the workbook),
+// to defined names and to tables by their number. The texts for these numbers are
+// read before any formula, from the workbook, the external links and the tables,
+// and the formulas are written with them.
+struct XlsbTable {
+  std::string name;
+  std::vector<std::string> columns;
+};
+
+struct XlsbContext {
+  std::vector<std::string> xti;          // sheet part of a 3D reference, without "!". "#REF" for a deleted sheet
+  std::vector<std::string> names;        // defined names, PtgName counts from 1
+  std::map<uint32_t, XlsbTable> tables;  // tables by their id
+};
+
+// the context is created once in R and handed to every function that reads formulas
+inline XlsbContext xlsb_context_from_list(const Rcpp::List& x) {
+  XlsbContext ctx;
+  if (x.size() == 0) return ctx;
+  Rcpp::CharacterVector xti = x["xti"], names = x["names"], table_name = x["table_name"];
+  Rcpp::IntegerVector table_id = x["table_id"];
+  Rcpp::List table_columns = x["table_columns"];
+  for (R_xlen_t i = 0; i < xti.size(); ++i) ctx.xti.push_back(Rcpp::as<std::string>(xti[i]));
+  for (R_xlen_t i = 0; i < names.size(); ++i) ctx.names.push_back(Rcpp::as<std::string>(names[i]));
+  for (R_xlen_t i = 0; i < table_id.size(); ++i) {
+    XlsbTable t;
+    t.name = Rcpp::as<std::string>(table_name[i]);
+    Rcpp::CharacterVector cols = Rcpp::as<Rcpp::CharacterVector>(table_columns[i]);
+    for (R_xlen_t j = 0; j < cols.size(); ++j) t.columns.push_back(Rcpp::as<std::string>(cols[j]));
+    ctx.tables[static_cast<uint32_t>(table_id[i])] = t;
+  }
+  return ctx;
+}
+
+inline std::string rgce(std::string fml_out, std::istream& sas, bool swapit, bool debug, int32_t col, int32_t row, int32_t &sharedFml, bool has_revision_record, std::streampos pos, std::vector<int32_t> &ptgextra, const XlsbContext& ctx) {
 
   int8_t val1 = 0;
   // std::vector<int32_t> ptgextra;
@@ -1322,12 +1356,14 @@ inline std::string rgce(std::string fml_out, std::istream& sas, bool swapit, boo
             if (view_flags.nonresident())  // different workbook and invalid == 0
               ptgextra.push_back(typ);
 
-            std::stringstream paddedStr;
-            paddedStr << std::setw(12) << std::setfill('0') << listIndex;  // << ixti;
-
             // A1 notation cell
             // something like this: Table1[[#This Row],[a]]
-            fml_out += "openxlsx2tab_" + paddedStr.str();
+            std::map<uint32_t, XlsbTable>::const_iterator table = ctx.tables.find(listIndex);
+            if (table == ctx.tables.end()) {
+              fml_out += "#REF!\n";
+              break;
+            }
+            fml_out += table->second.name;
 
             bool no_row_type = view_flags.invalid() == 1 || view_flags.nonresident() == 1;
 
@@ -1359,20 +1395,15 @@ inline std::string rgce(std::string fml_out, std::istream& sas, bool swapit, boo
             if (!(view_flags.invalid() == 1 || view_flags.nonresident() == 1 || view_flags.columns() == 0)) {
               // Rcpp::Rcout << "colFirst" << std::endl;
               if (view_flags.columns() > 1 || view_flags.rowType() > data) fml_out += "[";
-              fml_out += "openxlsx2col_";
-              fml_out += std::to_string(listIndex);
-              fml_out += "_";
-              fml_out += std::to_string(colFirst);
+              fml_out += colFirst < table->second.columns.size() ? table->second.columns[colFirst] : std::string("#REF!");
               if (view_flags.columns() > 1 || view_flags.rowType() > data) fml_out  += "]";
             }
 
             // have to replace colLast with a variable name
             if ((colFirst < colLast) && !(view_flags.invalid() == 1 || view_flags.nonresident() == 1 || view_flags.columns() == 0)) {
               // Rcpp::Rcout << "colLast" << std::endl;
-              fml_out += ":[openxlsx2col_";
-              fml_out += std::to_string(listIndex);
-              fml_out += "_";
-              fml_out += std::to_string(colLast);
+              fml_out += ":[";
+              fml_out += colLast < table->second.columns.size() ? table->second.columns[colLast] : std::string("#REF!");
               if (view_flags.columns() > 1 || view_flags.rowType() > data) fml_out  += "]";
             }
 
@@ -1730,14 +1761,13 @@ inline std::string rgce(std::string fml_out, std::istream& sas, bool swapit, boo
         if (debug) Rprintf("XtiIndex: %d\n", ixti);
         ixti = readbin(ixti, sas, swapit);  // XtiIndex
 
-        if (ixti == 0xFFFF) {
+        // a reference to a deleted sheet is only #REF!, the cells are dropped
+        std::string cells = Loc(sas, swapit);
+        if (ixti == 0xFFFF || ixti >= ctx.xti.size() || ctx.xti[ixti] == "#REF") {
           fml_out += "#REF!";
         } else {
-          std::stringstream paddedStr;
-          paddedStr << std::setw(12) << std::setfill('0') << ixti;
-          fml_out += "openxlsx2xlsb_" + paddedStr.str() + "!";
+          fml_out += ctx.xti[ixti] + "!" + cells;
         }
-        fml_out += Loc(sas, swapit);
         fml_out += "\n";
 
         if (debug) Rcpp::Rcout << sas.tellg() << std::endl;
@@ -1784,14 +1814,13 @@ inline std::string rgce(std::string fml_out, std::istream& sas, bool swapit, boo
         ixti = readbin(ixti, sas, swapit);
         if (debug) Rprintf("ixti in PtgArea3d: %d\n", ixti);
 
-        if (ixti == 0xFFFF) {
+        // a reference to a deleted sheet is only #REF!, the cells are dropped
+        std::string cells = Area(sas, swapit);
+        if (ixti == 0xFFFF || ixti >= ctx.xti.size() || ctx.xti[ixti] == "#REF") {
           fml_out += "#REF!";
         } else {
-          std::stringstream paddedStr;
-          paddedStr << std::setw(12) << std::setfill('0') << ixti;
-          fml_out += "openxlsx2xlsb_" + paddedStr.str() + "!";
+          fml_out += ctx.xti[ixti] + "!" + cells;
         }
-        fml_out += Area(sas, swapit);
         fml_out += "\n";
 
         if (debug) Rcpp::Rcout << sas.tellg() << std::endl;
@@ -1844,10 +1873,10 @@ inline std::string rgce(std::string fml_out, std::istream& sas, bool swapit, boo
         // Rcpp::Rcout << nameindex << std::endl;
         // fml_out += std::to_string(nameindex);
 
-        std::stringstream paddedStr;
-        paddedStr << std::setw(12) << std::setfill('0') << nameindex;
-
-        fml_out += "openxlsx2defnam_" + paddedStr.str();
+        if (nameindex >= 1 && nameindex <= ctx.names.size())
+          fml_out += ctx.names[nameindex - 1];
+        else
+          fml_out += "#NAME?";
         fml_out += "\n";
 
         break;
@@ -1872,11 +1901,10 @@ inline std::string rgce(std::string fml_out, std::istream& sas, bool swapit, boo
         // fml_out += std::to_string(ixti);
         // fml_out += std::to_string(nameindex);
 
-        // copied from above, does this work?
-        std::stringstream paddedStr;
-        paddedStr << std::setw(12) << std::setfill('0') << nameindex;
-
-        fml_out += "openxlsx2defnam_" + paddedStr.str();
+        if (nameindex >= 1 && nameindex <= ctx.names.size())
+          fml_out += ctx.names[nameindex - 1];
+        else
+          fml_out += "#NAME?";
         fml_out += "\n";
 
         break;
@@ -1916,10 +1944,8 @@ inline std::string rgce(std::string fml_out, std::istream& sas, bool swapit, boo
         unused1 = readbin(unused1, sas, swapit);
         unused2 = readbin(unused2, sas, swapit);
 
-        if (ixti != 0xFFFF) {
-          std::stringstream paddedStr;
-          paddedStr << std::setw(12) << std::setfill('0') << ixti;
-          fml_out += "openxlsx2xlsb_" + paddedStr.str() + "!";
+        if (ixti != 0xFFFF && ixti < ctx.xti.size() && ctx.xti[ixti] != "#REF") {
+          fml_out += ctx.xti[ixti] + "!";
         }
         fml_out += "#REF!";
         fml_out += "\n";
@@ -1966,10 +1992,8 @@ inline std::string rgce(std::string fml_out, std::istream& sas, bool swapit, boo
         unused2 = readbin(unused2, sas, swapit);
         unused3 = readbin(unused3, sas, swapit);
 
-        if (ixti != 0xFFFF) {
-          std::stringstream paddedStr;
-          paddedStr << std::setw(12) << std::setfill('0') << ixti;
-          fml_out += "openxlsx2xlsb_" + paddedStr.str() + "!";
+        if (ixti != 0xFFFF && ixti < ctx.xti.size() && ctx.xti[ixti] != "#REF") {
+          fml_out += ctx.xti[ixti] + "!";
         }
         fml_out += "#REF!";
         fml_out += "\n";
@@ -2314,7 +2338,7 @@ inline std::string rgcb(std::string fml_out, std::istream& sas, bool swapit, boo
   return fml_out;
 }
 
-inline std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int32_t col, int32_t row, int32_t &sharedFml, bool has_revision_record) {
+inline std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug, int32_t col, int32_t row, int32_t &sharedFml, bool has_revision_record, const XlsbContext& ctx) {
   // bool ptg_extra_array = false;
   uint32_t cce = 0, cb = 0;
   std::vector<int32_t> ptgextra;
@@ -2331,7 +2355,7 @@ inline std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug,
 
   std::string fml_out;
 
-  fml_out = rgce(fml_out, sas, swapit, debug, col, row, sharedFml, has_revision_record, pos, ptgextra);
+  fml_out = rgce(fml_out, sas, swapit, debug, col, row, sharedFml, has_revision_record, pos, ptgextra, ctx);
 
   cb = readbin(cb, sas, swapit);  // is there a control bit, even if CB is empty?
 
@@ -2362,7 +2386,7 @@ inline std::string CellParsedFormula(std::istream& sas, bool swapit, bool debug,
   return inflix;
 }
 
-inline std::string FRTParsedFormula(std::istream& sas, bool swapit, bool debug, int32_t col, int32_t row, int32_t &sharedFml, bool has_revision_record) {
+inline std::string FRTParsedFormula(std::istream& sas, bool swapit, bool debug, int32_t col, int32_t row, int32_t &sharedFml, bool has_revision_record, const XlsbContext& ctx) {
   // bool ptg_extra_array = false;
   uint32_t cce = 0, cb = 0;
   std::vector<int32_t> ptgextra;
@@ -2380,7 +2404,7 @@ inline std::string FRTParsedFormula(std::istream& sas, bool swapit, bool debug, 
 
   std::string fml_out;
 
-  fml_out = rgce(fml_out, sas, swapit, debug, col, row, sharedFml, has_revision_record, pos, ptgextra);
+  fml_out = rgce(fml_out, sas, swapit, debug, col, row, sharedFml, has_revision_record, pos, ptgextra, ctx);
 
   if (debug) Rcpp::Rcout << "cb: " << cb << std::endl;
 

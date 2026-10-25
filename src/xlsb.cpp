@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iomanip>
 #include <iterator>
+#include <set>
 
 #include "openxlsx2.h"
 #include "xlsb_defines.h"
@@ -26,6 +27,181 @@
 //   The Open Packaging Conventions compare part names without regard to case, but
 //   parts are looked up by their usual names. Changing every lookup to ignore case
 //   for single files is not worth the risk for all other files.
+
+// The texts that formulas need for the numbers they store: the sheets of each XTI
+// entry, the defined names and the tables. They are read from the binary parts
+// before any of them is converted, so every formula is written complete.
+// [[Rcpp::export]]
+Rcpp::List xlsb_context(std::string workbookPath, Rcpp::CharacterVector extLinkPaths, Rcpp::CharacterVector tablePaths) {
+  bool swapit = is_big_endian();
+
+  // workbook: sheets, supporting books (internal or the relationship of an external
+  // link), the XTI entries and the names
+  std::vector<std::string> sheets, supbooks, names;
+  std::vector<std::vector<int32_t> > xtis;
+  std::ifstream wb(workbookPath, std::ios::in | std::ios::binary);
+  bool end_of_workbook = !wb;
+  R_xlen_t idx = 0;
+  while (!end_of_workbook) {
+    checkInterrupt(idx);
+    int32_t x = 0, size = 0;
+    RECORD(x, size, wb, swapit);
+    std::streampos rec_end = wb.tellg() + std::streamoff(size);
+
+    switch (x) {
+      case BrtBundleSh: {
+        // state and id of the sheet, then the relationship id
+        wb.seekg(8, std::ios_base::cur);
+        XLNullableWideString(wb, swapit);
+        sheets.push_back(escape_xml(XLWideString(wb, swapit)));
+        break;
+      }
+      case BrtSupSelf: supbooks.push_back("0"); break;
+      case BrtSupSame: supbooks.push_back("1"); break;
+      case BrtSupAddin: supbooks.push_back("2"); break;
+      case BrtSupBookSrc: supbooks.push_back(XLNullableWideString(wb, swapit)); break;
+      case BrtExternSheet: {
+        uint32_t cXti = 0;
+        cXti = readbin(cXti, wb, swapit);
+        if (cXti > 65535) Rcpp::stop("cXti to large");
+        for (uint32_t i = 0; i < cXti; ++i) xtis.push_back(Xti(wb, swapit));
+        break;
+      }
+      case BrtName: {
+        uint16_t flags = 0;
+        flags = readbin(flags, wb, swapit);
+        // more flags, the key and the sheet of a local name
+        wb.seekg(7, std::ios_base::cur);
+        std::string name = XLWideString(wb, swapit);
+        BrtNameFlags view_flags(flags);
+        if (view_flags.fBuiltin() && name.find("_xlnm.") == std::string::npos) name = "_xlnm." + name;
+        names.push_back(escape_xml(name));
+        break;
+      }
+      case BrtEndBook: end_of_workbook = true; break;
+      default: break;
+    }
+    wb.seekg(rec_end, std::ios_base::beg);
+  }
+
+  // external links: the names of the sheets in the other workbook
+  std::vector<std::vector<std::string> > ext_sheets;
+  for (R_xlen_t i = 0; i < extLinkPaths.size(); ++i) {
+    std::ifstream ext(Rcpp::as<std::string>(extLinkPaths[i]), std::ios::in | std::ios::binary);
+    std::vector<std::string> tabs;
+    while (ext && ext.peek() != std::char_traits<char>::eof()) {
+      int32_t x = 0, size = 0;
+      RECORD(x, size, ext, swapit);
+      std::streampos rec_end = ext.tellg() + std::streamoff(size);
+      if (x == BrtSupTabs) {
+        uint32_t cTab = 0;
+        cTab = readbin(cTab, ext, swapit);
+        if (cTab > 65535) Rcpp::stop("cTab to large");
+        for (uint32_t j = 0; j < cTab; ++j) tabs.push_back(escape_xml(XLWideString(ext, swapit)));
+        break;
+      }
+      ext.seekg(rec_end, std::ios_base::beg);
+    }
+    ext_sheets.push_back(tabs);
+  }
+
+  // XTI entries: own sheets, a range of sheets or the sheets of an external link.
+  // Sheets are counted from 0, -1 is a deleted sheet. External links are numbered
+  // in the order of the relationship ids of the links that are used.
+  std::set<int64_t> used_links;
+  for (size_t i = 0; i < xtis.size(); ++i) {
+    if (static_cast<size_t>(xtis[i][0]) >= supbooks.size()) continue;
+    const std::string& type = supbooks[static_cast<size_t>(xtis[i][0])];
+    if (type.compare(0, 3, "rId") != 0 || xtis[i][1] + 1 < 1) continue;
+    std::string digits;
+    for (char c : type) if (c >= '0' && c <= '9') digits += c;
+    if (!digits.empty()) used_links.insert(std::stoll(digits));
+  }
+
+  Rcpp::CharacterVector xti(xtis.size());
+  for (size_t i = 0; i < xtis.size(); ++i) {
+    int64_t first = static_cast<int64_t>(xtis[i][1]) + 1, last = static_cast<int64_t>(xtis[i][2]) + 1;
+    std::string text;
+    if (first == 0) {
+      text = "#REF";
+    } else if (first >= 1 && static_cast<size_t>(xtis[i][0]) < supbooks.size()) {
+      const std::string& type = supbooks[static_cast<size_t>(xtis[i][0])];
+      bool external = type.compare(0, 3, "rId") == 0;
+      const std::vector<std::string>* tabs = &sheets;
+      std::string prefix;
+      if (external) {
+        std::string digits;
+        for (char c : type) if (c >= '0' && c <= '9') digits += c;
+        int64_t link = digits.empty() ? 0 : static_cast<int64_t>(std::distance(used_links.begin(), used_links.find(std::stoll(digits)))) + 1;
+        tabs = (link >= 1 && static_cast<size_t>(link) <= ext_sheets.size()) ? &ext_sheets[static_cast<size_t>(link) - 1] : nullptr;
+        prefix = "[" + std::to_string(link) + "]";
+      }
+      if (tabs && static_cast<size_t>(first) <= tabs->size()) {
+        // a sheet name is quoted if it has anything but letters and digits, an
+        // external reference always
+        std::string name = (*tabs)[static_cast<size_t>(first) - 1];
+        bool ok = true;
+        if (first < last) {
+          if (static_cast<size_t>(last) <= tabs->size()) name += ":" + (*tabs)[static_cast<size_t>(last) - 1];
+          else ok = false;
+        }
+        bool quote = external;
+        for (char c : name) {
+          if (c != ':' && !((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9'))) quote = true;
+        }
+        if (ok) text = quote ? "'" + prefix + name + "'" : name;
+      }
+    }
+    xti[static_cast<R_xlen_t>(i)] = text;
+  }
+
+  // tables: id, name and the names of the columns
+  Rcpp::IntegerVector table_id;
+  Rcpp::CharacterVector table_name;
+  Rcpp::List table_columns;
+  for (R_xlen_t i = 0; i < tablePaths.size(); ++i) {
+    std::ifstream tab(Rcpp::as<std::string>(tablePaths[i]), std::ios::in | std::ios::binary);
+    bool in_table = false;
+    uint32_t idList = 0;
+    std::string display_name;
+    Rcpp::CharacterVector cols;
+    while (tab && tab.peek() != std::char_traits<char>::eof()) {
+      int32_t x = 0, size = 0;
+      RECORD(x, size, tab, swapit);
+      std::streampos rec_end = tab.tellg() + std::streamoff(size);
+      if (x == BrtBeginList) {
+        // range and type of the table
+        tab.seekg(20, std::ios_base::cur);
+        idList = readbin(idList, tab, swapit);
+        // header and total rows, flags, six dxfs and the connection id
+        tab.seekg(40, std::ios_base::cur);
+        XLNullableWideString(tab, swapit);
+        display_name = XLNullableWideString(tab, swapit);
+        in_table = true;
+      } else if (x == BrtBeginListCol && in_table) {
+        // id, function, three dxfs and the query table field, then the name
+        tab.seekg(24, std::ios_base::cur);
+        XLNullableWideString(tab, swapit);
+        cols.push_back(XLNullableWideString(tab, swapit));
+      } else if (x == BrtEndList) {
+        break;
+      }
+      tab.seekg(rec_end, std::ios_base::beg);
+    }
+    if (!in_table) continue;
+    table_id.push_back(static_cast<int32_t>(idList));
+    table_name.push_back(display_name);
+    table_columns.push_back(cols);
+  }
+
+  return Rcpp::List::create(
+    Rcpp::Named("xti") = xti,
+    Rcpp::Named("names") = Rcpp::wrap(names),
+    Rcpp::Named("table_id") = table_id,
+    Rcpp::Named("table_name") = table_name,
+    Rcpp::Named("table_columns") = table_columns
+  );
+}
 
 // [[Rcpp::export]]
 int32_t styles_bin(std::string filePath, std::string outPath, bool debug) {
@@ -641,7 +817,8 @@ int32_t styles_bin(std::string filePath, std::string outPath, bool debug) {
 }
 
 // [[Rcpp::export]]
-int32_t table_bin(std::string filePath, std::string outPath, bool debug) {
+int32_t table_bin(std::string filePath, std::string outPath, Rcpp::List context, bool debug) {
+  XlsbContext ctx = xlsb_context_from_list(context);
   std::ofstream out(outPath);
   std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
 
@@ -990,7 +1167,7 @@ int32_t table_bin(std::string filePath, std::string outPath, bool debug) {
           std::string fml;
           flags = readbin(flags, bin, swapit);
           int32_t sharedFormula = false;
-          fml = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record);
+          fml = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record, ctx);
 
           // need to write this formula somehwere
           // if (debug) Rcpp::Rcout << fml << std::endl;
@@ -1465,7 +1642,8 @@ int32_t sharedstrings_bin(std::string filePath, std::string outPath, bool debug)
 }
 
 // [[Rcpp::export]]
-int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
+int32_t workbook_bin(std::string filePath, std::string outPath, Rcpp::List context, bool debug) {
+  XlsbContext ctx = xlsb_context_from_list(context);
   std::ofstream out(outPath);
   std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
 
@@ -1478,9 +1656,8 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
     bool first_extern_sheet = true;
     bool has_revision_record = false;
 
-    std::vector<std::string> defNams, xtis, reference_type, customWorkbookView, pivotCaches;
+    std::vector<std::string> defNams, reference_type, customWorkbookView, pivotCaches;
     defNams.push_back("<definedNames>");
-    xtis.push_back("<xtis>");
 
     R_xlen_t idx = 0;
     while (!end_of_workbook) {
@@ -1812,7 +1989,7 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
           std::string fml = "", comment = "";
 
           int32_t sharedFormula = false;
-          fml = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record);
+          fml = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record, ctx);
 
           comment = XLNullableWideString(bin, swapit);
 
@@ -1955,18 +2132,10 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
           cXti = readbin(cXti, bin, swapit);
           if (cXti > 65535) Rcpp::stop("cXti to large");
 
-          std::vector<uint32_t> rgXti(cXti);
-          // Rcpp::Rcout << "reference_type: " << reference_type.size() << std::endl;
-          // Rcpp::Rcout << "reference_type: " << cXti << std::endl;
+          // the entries are part of the formula context, here they are only checked
           for (uint32_t i = 0; i < cXti; ++i) {
             std::vector<int32_t> xti = Xti(bin, swapit);
             if ((size_t)xti[0] >= reference_type.size()) Rcpp::stop("references do not match");
-            std::string tmp = "<xti id=\"" + std::to_string(xti[0]) +
-              "\" firstSheet=\"" + std::to_string(xti[1]) +
-              "\" lastSheet=\"" +  std::to_string(xti[2]) +
-              "\" type=\"" +  reference_type[static_cast<size_t>(xti[0])] +
-              "\" />";
-            xtis.push_back(tmp);
           }
 
           break;
@@ -2049,16 +2218,6 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
             }
           }
 
-          // custom xti output
-          if (xtis.size() > 1) {
-            xtis.push_back("</xtis>");
-
-            for (size_t i = 0; i < xtis.size(); ++i) {
-              if (debug) Rcpp::Rcout << xtis[i] << std::endl;
-              out << xtis[i] << std::endl;
-            }
-          }
-
           if (customWorkbookView.size()) {
             out << "<customWorkbookViews>" << std::endl;
             for (size_t i = 0; i < customWorkbookView.size(); ++i) {
@@ -2113,7 +2272,8 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
 }
 
 // [[Rcpp::export]]
-int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, bool debug) {
+int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, Rcpp::List context, bool debug) {
+  XlsbContext ctx = xlsb_context_from_list(context);
   std::ofstream out(outPath);
   std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
 
@@ -3050,7 +3210,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
           GrbitFmlaFlags view_flags(grbitFlags);
 
-          std::string fml = CellParsedFormula(bin, swapit, debug, 0, row, is_shared_formula, has_revision_record);
+          std::string fml = CellParsedFormula(bin, swapit, debug, 0, row, is_shared_formula, has_revision_record, ctx);
 
           xml_col column;
           column.v = std::to_string(static_cast<int32_t>(val != 0));
@@ -3098,7 +3258,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
           GrbitFmlaFlags view_flags(grbitFlags);
 
-          std::string fml = CellParsedFormula(bin, swapit, debug, 0, row, is_shared_formula, has_revision_record);
+          std::string fml = CellParsedFormula(bin, swapit, debug, 0, row, is_shared_formula, has_revision_record, ctx);
 
           xml_col column;
           column.v = fErr;
@@ -3146,7 +3306,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
           GrbitFmlaFlags view_flags(grbitFlags);
 
-          std::string fml = CellParsedFormula(bin, swapit, debug, 0, row, is_shared_formula, has_revision_record);
+          std::string fml = CellParsedFormula(bin, swapit, debug, 0, row, is_shared_formula, has_revision_record, ctx);
 
           std::stringstream stream;
           stream << std::setprecision(16) << xnum;
@@ -3198,7 +3358,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
           GrbitFmlaFlags view_flags(grbitFlags);
 
-          std::string fml = CellParsedFormula(bin, swapit, debug, 0, row, is_shared_formula, has_revision_record);
+          std::string fml = CellParsedFormula(bin, swapit, debug, 0, row, is_shared_formula, has_revision_record, ctx);
 
           std::string a0 = int_to_col(cell[0] + 1) + std::to_string(row);
           std::string a1 = int_to_col(cell[0] + 1) + std::to_string(row + 1);
@@ -3253,7 +3413,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
           flags = readbin(flags, bin, 0);
 
-          std::string fml = CellParsedFormula(bin, swapit, debug, col, row, is_shared_formula, has_revision_record);
+          std::string fml = CellParsedFormula(bin, swapit, debug, col, row, is_shared_formula, has_revision_record, ctx);
           if (debug) Rcpp::Rcout << "BrtArrFmla: " << fml << std::endl;
 
           // add to the last colvec element
@@ -3300,7 +3460,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
           if (debug) Rcpp::Rcout << "ref: " << ref << std::endl;
 
-          std::string fml = CellParsedFormula(bin, swapit, debug, col, row, is_shared_formula, has_revision_record);
+          std::string fml = CellParsedFormula(bin, swapit, debug, col, row, is_shared_formula, has_revision_record, ctx);
           if (debug) Rcpp::Rcout << "BrtShrFmla: " << fml << std::endl;
 
           fml_type = "shared";
@@ -3917,7 +4077,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           std::string strProgID = XLNullableWideString(bin, swapit);
 
           int32_t sharedFormula = false;
-          if (view_flags.fLinked()) std::string link = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record);
+          if (view_flags.fLinked()) std::string link = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record, ctx);
 
           std::string stRelID = XLNullableWideString(bin, swapit);
           out << "<oleObject progId=\"" << strProgID << "\" shapeId=\"" << shapeId << "\" r:id=\"" << stRelID << "\" />" << std::endl;
@@ -3968,8 +4128,8 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           strPrompt      = XLNullableWideString(bin, swapit);
 
           int32_t sharedFormula = false;
-          std::string formula1 = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record);
-          std::string formula2 = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record);
+          std::string formula1 = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record, ctx);
+          std::string formula2 = CellParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record, ctx);
 
           std::string lref = int_to_col(sqrfx[3] + 1) + std::to_string(sqrfx[1] + 1);
           std::string rref = int_to_col(sqrfx[4] + 1) + std::to_string(sqrfx[2] + 1);
@@ -4105,7 +4265,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
               uint32_t flags_cfml = 0;
               flags_cfml = readbin(flags_cfml, bin, swapit);
               int32_t sharedFormula = false;
-              std::string frt_fml = FRTParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record);
+              std::string frt_fml = FRTParsedFormula(bin, swapit, debug, 0, 0, sharedFormula, has_revision_record, ctx);
               frt_fmls.push_back(frt_fml);
               // Rcpp::Rcout << frt_fmls[cfml] << std::endl;
             }
@@ -4310,7 +4470,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           std::string fml;
           if (cbFmla != 0) {
             int32_t sharedFormula = false;
-            fml = CellParsedFormula(bin, swapit, debug, cf_col, cf_row, sharedFormula, has_revision_record);
+            fml = CellParsedFormula(bin, swapit, debug, cf_col, cf_row, sharedFormula, has_revision_record, ctx);
           }
 
           if (!x14_skip) {
@@ -4401,13 +4561,13 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           int32_t sharedFormula = false;
           std::string rgce1, rgce2, rgce3;
           if (cbFmla1 != 0x00000000) {
-            rgce1 = CellParsedFormula(bin, swapit, debug, cf_col, cf_row, sharedFormula, has_revision_record);
+            rgce1 = CellParsedFormula(bin, swapit, debug, cf_col, cf_row, sharedFormula, has_revision_record, ctx);
           }
           if (cbFmla2 != 0x00000000) {
-            rgce2 = CellParsedFormula(bin, swapit, debug, cf_col, cf_row, sharedFormula, has_revision_record);
+            rgce2 = CellParsedFormula(bin, swapit, debug, cf_col, cf_row, sharedFormula, has_revision_record, ctx);
           }
           if (cbFmla3 != 0x00000000) {
-            rgce3 = CellParsedFormula(bin, swapit, debug, cf_col, cf_row, sharedFormula, has_revision_record);
+            rgce3 = CellParsedFormula(bin, swapit, debug, cf_col, cf_row, sharedFormula, has_revision_record, ctx);
           }
 
           static const char* const operators[9] = {"", "between", "notBetween", "equal", "notEqual", "greaterThan",
@@ -4547,7 +4707,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           std::string fml;
           if (cbFmla != 0) {
             int32_t sharedFormula = false;
-            fml = CellParsedFormula(bin, swapit, debug, cf_col, cf_row, sharedFormula, has_revision_record);
+            fml = CellParsedFormula(bin, swapit, debug, cf_col, cf_row, sharedFormula, has_revision_record, ctx);
           }
 
           static const char* const names[8] = {"num", "num", "min", "max", "percent", "percentile", "num", "formula"};
