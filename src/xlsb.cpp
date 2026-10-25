@@ -14,6 +14,19 @@
 #include "xls_funs.h"
 #include "xls_pivot.h"
 
+// Two kinds of xlsb files are knowingly not supported. Both were seen in a single
+// file each, in the test files of other projects:
+//
+// * Package parts with a namespace prefix, e.g. a workbook.bin.rels whose elements
+//   are written as <ns0:Relationship/> (ExcelDataReader Issue682.xlsb). The prefix
+//   is only removed when the workbook part itself uses one. Removing namespaces is
+//   already a workaround, and it is not extended to other parts.
+// * Part names that differ in case from the usual names, e.g. xl/SharedStrings.bin
+//   while the relationship points to sharedStrings.bin (calamine issue_419.xlsb).
+//   The Open Packaging Conventions compare part names without regard to case, but
+//   parts are looked up by their usual names. Changing every lookup to ignore case
+//   for single files is not worth the risk for all other files.
+
 // [[Rcpp::export]]
 int32_t styles_bin(std::string filePath, std::string outPath, bool debug) {
   std::ofstream out(outPath);
@@ -2699,6 +2712,8 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
         case BrtRowHdr: {
           if (debug) Rcpp::Rcout << "<row/>: " << bin.tellg() << std::endl;
+          // some writers add bytes after the fields, the next record starts after them
+          std::streampos row_end = bin.tellg() + std::streamoff(size);
 
           // close open rows
           if (!first_row) {
@@ -2832,6 +2847,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
               (int32_t)fPhShow << " : " << ccolspan << "; " << bin.tellg() << std::endl;
           }  // #nocov end
 
+          if (bin.tellg() < row_end) bin.seekg(row_end, std::ios_base::beg);
           break;
         }
 

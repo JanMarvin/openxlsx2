@@ -1940,7 +1940,10 @@ wb_load <- function(
 
           for (j in seq_along(wb$worksheets)) {
             cc <- wb$worksheets[[j]]$sheet_data$cc
-            if (any(sel <- grepl(paste0(nri$name_id, collapse = "|"), cc$f))) {
+            # all ids start with the same prefix, a fixed search for it is much
+            # faster than a pattern of all ids. Cells with the prefix but without
+            # an id are left as they are by the replacement.
+            if (any(sel <- grepl("openxlsx2defnam_", cc$f, fixed = TRUE))) {
               cc$f[sel] <- stringi::stri_replace_all_fixed(
                 cc$f[sel],
                 nri$name_id,

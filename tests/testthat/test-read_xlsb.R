@@ -484,3 +484,20 @@ test_that("inline strings in the last row of a sheet are imported", {
   got <- unlist(wb_to_df(wb, sheet = 3, col_names = FALSE, dims = "A60:B60")[1, ], use.names = FALSE)
   expect_equal(got, c("0x01E0", "IFERROR(1/0, 0)"))
 })
+
+test_that("row headers with additional bytes are read (ExcelDataReader Issue541)", {
+  skip_if_big_endian("XLSB")
+  # like the other downloaded test files: skipped on CRAN and on CI, unless openxlsx2_testthat_fullrun is set
+  if (Sys.getenv("openxlsx2_testthat_fullrun") == "") {
+    if (isTRUE(as.logical(Sys.getenv("CI", "false")))) testthat::skip("Skip on CI")
+    if (!interactive() && !isTRUE(as.logical(Sys.getenv("NOT_CRAN", "false")))) testthat::skip("Skip on CRAN")
+  }
+  fl <- testthat::test_path("testfiles", "edr_Issue541.xlsb")
+  if (!file.exists(fl)) {
+    url <- "https://raw.githubusercontent.com/ExcelDataReader/ExcelDataReader/41170064052fdf0173915206fbf53878de1572fc/src/TestData/Issue541.xlsb"
+    tryCatch(suppressWarnings(download.file(url, destfile = fl, quiet = TRUE, mode = "wb")), error = function(e) NULL)
+  }
+  if (!file.exists(fl)) testthat::skip("Testfile Issue541.xlsb could not be acquired.")
+  wb <- wb_load(fl)
+  expect_equal(wb_to_df(wb, col_names = FALSE, detect_dates = FALSE)[1, 1], 44211)
+})
