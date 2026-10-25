@@ -10374,8 +10374,8 @@ wbWorkbook <- R6::R6Class(
           ws <- self$worksheets[[i]]
           hasHL <- length(ws$hyperlinks) > 0
 
-          prior <- ws$get_prior_sheet_data()
-          post <-  ws$get_post_sheet_data()
+          prior <- strip_xml_control_chars(ws$get_prior_sheet_data())
+          post <-  strip_xml_control_chars(ws$get_post_sheet_data())
 
           # failsafe: keep row_attr sorted and cc aligned + sorted before
           # handing to either writer. Every legitimate mutation path already

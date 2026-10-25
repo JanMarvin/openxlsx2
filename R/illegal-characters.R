@@ -22,6 +22,21 @@ illegal_chars <- function() { c("\\", "/", "?", "*", ":", "[", "]") } # nolint
 legal_chars   <- function() { c("&",     '"',      "'",      "<",    ">",    "\a", "\b", "\v", "\f") } # nolint
 legal_sub     <- function() { c("&amp;", "&quot;", "&apos;", "&lt;", "&gt;", "",   "",   "",   ""  ) } # nolint
 
+#' remove characters that are not allowed in XML 1.0
+#'
+#' Removes raw control characters (U+0000 to U+001F except tab, line feed and
+#' carriage return) and character references to them like `&#01;` or `&#x1;`.
+#' Excel refuses to open files containing either.
+#' @param x some xml string
+#' @noRd
+strip_xml_control_chars <- function(x) {
+  stringi::stri_replace_all_regex(
+    x,
+    "[\\x{01}-\\x{08}\\x{0B}\\x{0C}\\x{0E}-\\x{1F}]|&#(?:[xX]0*(?:[0-8bBcCeEfF]|1[0-9a-fA-F])|0*(?:[0-8]|1[124-9]|2[0-9]|3[01]));",
+    ""
+  )
+}
+
 #' converts & to &amp;
 #' @param x some xml string
 #' @noRd
