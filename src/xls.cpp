@@ -4,6 +4,7 @@
 #include <cstring>
 #include <limits>
 #include <iomanip>
+#include <iterator>
 #include <map>
 #include <set>
 
@@ -872,7 +873,11 @@ int32_t docprops_xls(std::string filePath, std::string corePath, std::string app
 // [[Rcpp::export]]
 int32_t workbook_xls(std::string filePath, std::string outPath, bool debug) {
   std::ofstream out(outPath);
-  std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
+  std::ifstream stream_file(filePath, std::ios::in | std::ios::binary);
+  XlsMemoryBuf stream_buf(stream_file ? std::string(std::istreambuf_iterator<char>(stream_file), std::istreambuf_iterator<char>())
+                                      : std::string());
+  std::istream bin(&stream_buf);
+  if (!stream_file) bin.setstate(std::ios::failbit);
 
   bool swapit = is_big_endian();
 
@@ -965,7 +970,6 @@ int32_t workbook_xls(std::string filePath, std::string outPath, bool debug) {
     out << "</workbook>" << std::endl;
 
     out.close();
-    bin.close();
     return static_cast<int32_t>(g.sheets.size());
   } else {
     return -1;
@@ -976,7 +980,11 @@ int32_t workbook_xls(std::string filePath, std::string outPath, bool debug) {
 // external workbook. Returns the number of external workbooks.
 // [[Rcpp::export]]
 int32_t externallinks_xls(std::string filePath, std::string outDir, bool debug) {
-  std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
+  std::ifstream stream_file(filePath, std::ios::in | std::ios::binary);
+  XlsMemoryBuf stream_buf(stream_file ? std::string(std::istreambuf_iterator<char>(stream_file), std::istreambuf_iterator<char>())
+                                      : std::string());
+  std::istream bin(&stream_buf);
+  if (!stream_file) bin.setstate(std::ios::failbit);
   bool swapit = is_big_endian();
   if (!bin) return -1;
   bin.seekg(0, std::ios_base::beg);
@@ -1009,7 +1017,11 @@ int32_t externallinks_xls(std::string filePath, std::string outDir, bool debug) 
 // written, 0 if there is no theme.
 // [[Rcpp::export]]
 int32_t theme_xls(std::string filePath, std::string outPath, bool debug) {
-  std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
+  std::ifstream stream_file(filePath, std::ios::in | std::ios::binary);
+  XlsMemoryBuf stream_buf(stream_file ? std::string(std::istreambuf_iterator<char>(stream_file), std::istreambuf_iterator<char>())
+                                      : std::string());
+  std::istream bin(&stream_buf);
+  if (!stream_file) bin.setstate(std::ios::failbit);
   bool swapit = is_big_endian();
   if (!bin) return -1;
   bin.seekg(0, std::ios_base::beg);
@@ -1059,7 +1071,11 @@ int32_t theme_xls(std::string filePath, std::string outPath, bool debug) {
 // unpacked is the attribute usize.
 // [[Rcpp::export]]
 Rcpp::CharacterVector media_xls(std::string filePath, std::string outDir, bool debug) {
-  std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
+  std::ifstream stream_file(filePath, std::ios::in | std::ios::binary);
+  XlsMemoryBuf stream_buf(stream_file ? std::string(std::istreambuf_iterator<char>(stream_file), std::istreambuf_iterator<char>())
+                                      : std::string());
+  std::istream bin(&stream_buf);
+  if (!stream_file) bin.setstate(std::ios::failbit);
   bool swapit = is_big_endian();
   if (!bin) return Rcpp::CharacterVector();
   bin.seekg(0, std::ios_base::beg);
@@ -1126,7 +1142,11 @@ Rcpp::CharacterVector media_xls(std::string filePath, std::string outDir, bool d
 // [[Rcpp::export]]
 int32_t sharedstrings_xls(std::string filePath, std::string outPath, bool debug) {
   std::ofstream out(outPath);
-  std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
+  std::ifstream stream_file(filePath, std::ios::in | std::ios::binary);
+  XlsMemoryBuf stream_buf(stream_file ? std::string(std::istreambuf_iterator<char>(stream_file), std::istreambuf_iterator<char>())
+                                      : std::string());
+  std::istream bin(&stream_buf);
+  if (!stream_file) bin.setstate(std::ios::failbit);
 
   bool swapit = is_big_endian();
 
@@ -1249,7 +1269,6 @@ int32_t sharedstrings_xls(std::string filePath, std::string outPath, bool debug)
     out << "</sst>" << std::endl;
 
     out.close();
-    bin.close();
     return 1;
   } else {
     return -1;
@@ -1261,7 +1280,11 @@ int32_t sharedstrings_xls(std::string filePath, std::string outPath, bool debug)
 // [[Rcpp::export]]
 int32_t styles_xls(std::string filePath, std::string outPath, bool debug) {
   std::ofstream out(outPath);
-  std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
+  std::ifstream stream_file(filePath, std::ios::in | std::ios::binary);
+  XlsMemoryBuf stream_buf(stream_file ? std::string(std::istreambuf_iterator<char>(stream_file), std::istreambuf_iterator<char>())
+                                      : std::string());
+  std::istream bin(&stream_buf);
+  if (!stream_file) bin.setstate(std::ios::failbit);
 
   bool swapit = is_big_endian();
 
@@ -1708,7 +1731,6 @@ int32_t styles_xls(std::string filePath, std::string outPath, bool debug) {
     out << "</styleSheet>" << std::endl;
 
     out.close();
-    bin.close();
     return 1;
   } else {
     return -1;
@@ -1718,7 +1740,11 @@ int32_t styles_xls(std::string filePath, std::string outPath, bool debug) {
 // type of each sheet: 0 worksheet, 2 chart sheet
 // [[Rcpp::export]]
 Rcpp::IntegerVector sheettypes_xls(std::string filePath) {
-  std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
+  std::ifstream stream_file(filePath, std::ios::in | std::ios::binary);
+  XlsMemoryBuf stream_buf(stream_file ? std::string(std::istreambuf_iterator<char>(stream_file), std::istreambuf_iterator<char>())
+                                      : std::string());
+  std::istream bin(&stream_buf);
+  if (!stream_file) bin.setstate(std::ios::failbit);
   bool swapit = is_big_endian();
   Rcpp::IntegerVector types;
   if (bin) {
@@ -1739,7 +1765,11 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
                                   int32_t drawing_file, std::string chartsDir, int32_t chart_file, std::string xlDir, std::string xlsPath, int32_t pivot_file,
                                   Rcpp::IntegerVector known_caches, bool data_only, bool debug) {
   std::ofstream out(outPath);
-  std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
+  std::ifstream stream_file(filePath, std::ios::in | std::ios::binary);
+  XlsMemoryBuf stream_buf(stream_file ? std::string(std::istreambuf_iterator<char>(stream_file), std::istreambuf_iterator<char>())
+                                      : std::string());
+  std::istream bin(&stream_buf);
+  if (!stream_file) bin.setstate(std::ios::failbit);
 
   bool swapit = is_big_endian();
 
@@ -2080,24 +2110,27 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
       open_sheet_data();
 
       if (static_cast<int64_t>(c.row) != current_row) {
-        if (row_open) out << "</row>" << std::endl;
+        if (row_open) out << "</row>\n";
         write_empty_rows(c.row);
         std::map<uint32_t, Row>::const_iterator it = rows.find(c.row);
-        out << "<row r=\"" << c.row + 1 << "\"" << (it == rows.end() ? "" : row_attributes(it->second)) << ">" << std::endl;
+        out << "<row r=\"" << c.row + 1 << "\"" << (it == rows.end() ? "" : row_attributes(it->second)) << ">\n";
         row_open = true;
         current_row = c.row;
       }
 
-      out << "<c r=\"" << int_to_col(c.col + 1) << c.row + 1 << "\"";
-      if (c.xf) out << " s=\"" << c.xf << "\"";
-      if (!c.type.empty()) out << " t=\"" << c.type << "\"";
+      // the cell is put together first and written at once: many small writes to
+      // the stream, and a flush for every cell, cost more than the text itself
+      std::string x = "<c r=\"" + int_to_col(c.col + 1) + std::to_string(c.row + 1) + "\"";
+      if (c.xf) x += " s=\"" + std::to_string(c.xf) + "\"";
+      if (!c.type.empty()) x += " t=\"" + c.type + "\"";
       if (c.formula.empty() && c.body.empty()) {
-        out << "/>" << std::endl;
+        x += "/>\n";
       } else {
-        out << ">";
-        if (!c.formula.empty()) out << "<f" << c.formula_attr << ">" << escape_xml(c.formula) << "</f>";
-        out << c.body << "</c>" << std::endl;
+        x += ">";
+        if (!c.formula.empty()) x += "<f" + c.formula_attr + ">" + escape_xml(c.formula) + "</f>";
+        x += c.body + "</c>\n";
       }
+      out.write(x.data(), static_cast<std::streamsize>(x.size()));
     };
 
     // The formula of the pending cell is written when it is complete.
@@ -4330,7 +4363,6 @@ Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::stri
                     n_unsupported, sheet, first_unsupported);
 
     out.close();
-    bin.close();
     Rcpp::IntegerVector result = Rcpp::IntegerVector::create(static_cast<int>(notes.size()), static_cast<int>(tables.size()),
                                                              static_cast<int>(items.empty() ? 0 : 1), static_cast<int>(nchart),
                                                              static_cast<int>(pivot_files.size()));
