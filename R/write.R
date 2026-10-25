@@ -1016,6 +1016,18 @@ write_data_table <- function(
   nCol <- ncol(x)
   nRow <- nrow(x)
 
+  # spreadsheet software stores at most 32767 characters per cell
+  for (i in seq_len(nCol)) {
+    if (is.character(x[[i]]) && any(nchar(x[[i]], allowNA = TRUE) > 32767L, na.rm = TRUE)) {
+      warning(
+        "`x` contains strings with more than 32767 characters, the maximum ",
+        "length of a cell in spreadsheet software.",
+        call. = FALSE
+      )
+      break
+    }
+  }
+
   ### Beg: Only in data --------------------------------------------------------
   if (!data_table) {
 

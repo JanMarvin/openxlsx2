@@ -1822,3 +1822,11 @@ test_that("shared strings are matched in a non-UTF-8 session", {
   expect_equal(enc2utf8(got), x)
 
 })
+
+test_that("strings exceeding the cell limit warn", {
+
+  wb <- wb_workbook()$add_worksheet()
+  expect_warning(wb$add_data(x = strrep("a", 32768L)), "more than 32767 characters")
+  expect_silent(wb$add_data(x = strrep("a", 32767L), dims = "B1"))
+
+})
