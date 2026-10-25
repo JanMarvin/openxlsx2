@@ -1769,6 +1769,17 @@ create_shape <- function(
 
   standardize(...)
 
+  # these are written as single xml attributes
+  scalars <- list(
+    name = name, rotation = rotation, id = id, fill_transparency = fill_transparency,
+    text_transparency = text_transparency, line_transparency = line_transparency
+  )
+  for (nm in names(scalars)) {
+    if (length(scalars[[nm]]) != 1L || is.na(scalars[[nm]])) {
+      stop(sprintf("`%s` must be a single value.", nm), call. = FALSE)
+    }
+  }
+
   if (!is_xml(text) || inherits(text, "fmt_txt")) {
     # if not a a14:m node
     text <- fmt_txt2(text, text_color = text_color, text_transparency)

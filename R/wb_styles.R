@@ -1115,6 +1115,10 @@ create_tablestyle <- function(
 
   standardize_case_names(...)
 
+  if (!is.character(name) || length(name) != 1L || is.na(name) || !nzchar(name)) {
+    stop("`name` must be a single non-empty string.", call. = FALSE)
+  }
+
   tab_wholeTable <- NULL
   if (length(whole_table)) {
     tab_wholeTable <- xml_node_create(

@@ -1696,3 +1696,11 @@ test_that("dxf number formats work", {
   expect_equal(nrow(wb$styles_mgr$dxf), 3L)
 
 })
+
+test_that("create_tablestyle() requires a name", {
+
+  expect_error(create_tablestyle(name = NA), "single non-empty string")
+  expect_error(create_tablestyle(name = ""), "single non-empty string")
+  expect_error(create_tablestyle(name = c("a", "b")), "single non-empty string")
+
+})
