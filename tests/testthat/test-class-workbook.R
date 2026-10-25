@@ -1764,3 +1764,14 @@ test_that("wb_data() with several header rows is a valid single header object fo
 
   expect_error(wb$add_pivot_table(x = dat, rows = "Region", data = "0-14 Male"), "single header row")
 })
+
+test_that("invalid sheet arguments throw an error", {
+
+  wb <- wb_workbook()$add_worksheet()
+
+  expect_error(wb_add_data(wb, sheet = NA, x = 1), "whole number sheet index")
+  expect_error(wb_add_data(wb, sheet = 1.5, x = 1), "whole number sheet index")
+  expect_error(wb_add_data(wb, sheet = integer(), x = 1), "must not be empty")
+  expect_silent(wb_add_data(wb, sheet = 1, x = 1))
+
+})

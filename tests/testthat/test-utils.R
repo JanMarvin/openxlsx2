@@ -967,3 +967,12 @@ test_that("assert_class() no longer slows down wb_dims()", {
   got <- wb_dims(x = df, cols = "X1")
   expect_equal(got, exp)
 })
+
+test_that("dims_to_rowcol() rejects invalid dims", {
+
+  expect_error(dims_to_rowcol(NA), "character vector of cell ranges")
+  expect_error(dims_to_rowcol(NA_character_), "character vector of cell ranges")
+  expect_error(dims_to_rowcol(character()), "character vector of cell ranges")
+  expect_error(dims_to_rowcol(1), "character vector of cell ranges")
+
+})

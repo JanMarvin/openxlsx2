@@ -10077,6 +10077,10 @@ wbWorkbook <- R6::R6Class(
         sheet <- as.character(sheet)
       }
 
+      if (!length(sheet)) {
+        stop("`sheet` must not be empty.", call. = FALSE)
+      }
+
       if (is.character(sheet)) {
         sheet <- tolower(sheet)
         m1 <- match(sheet, tolower(self$sheet_names))
@@ -10091,6 +10095,9 @@ wbWorkbook <- R6::R6Class(
         # need the vectorized
         sheet <- ifelse(is.na(m1), m2, m1)
       } else {
+        if (!is.numeric(sheet) || anyNA(sheet) || any(sheet != trunc(sheet))) {
+          stop("`sheet` must be a sheet name or a whole number sheet index.", call. = FALSE)
+        }
         sheet <- as.integer(sheet)
         bad <- which(sheet > length(self$sheet_names) | sheet < 1)
 

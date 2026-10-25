@@ -191,6 +191,10 @@ NULL
 #' @export
 dims_to_rowcol <- function(x, as_integer = FALSE) {
 
+  if (!is.character(x) || !length(x) || anyNA(x)) {
+    stop("`dims` must be a character vector of cell ranges like \"A1:B2\".", call. = FALSE)
+  }
+
   dims <- x
   if (length(x) == 1 && inherits(x, "character")) {
     if (any(grepl(",|;", x))) dims <- unlist(strsplit(dims, split = "[,;]"))
