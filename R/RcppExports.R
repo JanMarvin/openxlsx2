@@ -358,12 +358,16 @@ worksheet_xls <- function(filePath, sheet, outPath, relsPath, commentsPath, vmlP
     .Call(`_openxlsx2_worksheet_xls`, filePath, sheet, outPath, relsPath, commentsPath, vmlPath, comment_file, tablesDir, table_file, media, drawingPath, drawingRelsPath, drawing_file, chartsDir, chart_file, xlDir, xlsPath, pivot_file, known_caches, data_only, debug)
 }
 
+xlsb_context <- function(workbookPath, extLinkPaths, tablePaths) {
+    .Call(`_openxlsx2_xlsb_context`, workbookPath, extLinkPaths, tablePaths)
+}
+
 styles_bin <- function(filePath, outPath, debug) {
     .Call(`_openxlsx2_styles_bin`, filePath, outPath, debug)
 }
 
-table_bin <- function(filePath, outPath, debug) {
-    .Call(`_openxlsx2_table_bin`, filePath, outPath, debug)
+table_bin <- function(filePath, outPath, context, debug) {
+    .Call(`_openxlsx2_table_bin`, filePath, outPath, context, debug)
 }
 
 comments_bin <- function(filePath, outPath, debug) {
@@ -378,12 +382,12 @@ sharedstrings_bin <- function(filePath, outPath, debug) {
     .Call(`_openxlsx2_sharedstrings_bin`, filePath, outPath, debug)
 }
 
-workbook_bin <- function(filePath, outPath, debug) {
-    .Call(`_openxlsx2_workbook_bin`, filePath, outPath, debug)
+workbook_bin <- function(filePath, outPath, context, debug) {
+    .Call(`_openxlsx2_workbook_bin`, filePath, outPath, context, debug)
 }
 
-worksheet_bin <- function(filePath, chartsheet, outPath, debug) {
-    .Call(`_openxlsx2_worksheet_bin`, filePath, chartsheet, outPath, debug)
+worksheet_bin <- function(filePath, chartsheet, outPath, context, debug) {
+    .Call(`_openxlsx2_worksheet_bin`, filePath, chartsheet, outPath, context, debug)
 }
 
 pivotcache_bin <- function(filePath, outPath, recordsPath, recordsOut, debug) {

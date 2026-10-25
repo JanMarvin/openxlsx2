@@ -223,3 +223,8 @@ test_that("document properties in other code pages are converted (poi 57925, 128
   wb <- suppressWarnings(wb_load(poi_file("12843-1.xls")))
   expect_equal(wb$get_properties()[["creator"]], "\u674e\u4e16\u4ec1")
 })
+
+test_that("encrypted xlsb files are rejected with a clear message (poi protected_passtika)", {
+  skip_if_big_endian("XLSB")
+  expect_error(wb_load(poi_file("protected_passtika.xlsb")), "encrypted files are not supported")
+})

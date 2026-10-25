@@ -619,6 +619,12 @@ int32_t xls_extract(std::string filePath, std::string outPath, bool warn_vba, bo
   xls.seekg(0, std::ios_base::beg);
   xls.read(reinterpret_cast<char*>(file.data()), static_cast<std::streamsize>(file.size()));
 
+  // password protected xlsx and xlsb files are compound files too: the workbook is
+  // encrypted in the stream EncryptedPackage
+  // #nocov start: encrypted files are rejected
+  if (!cfb_stream(file, "EncryptedPackage").empty()) Rcpp::stop("encrypted files are not supported");
+  // #nocov end
+
   std::vector<uint8_t> workbook = cfb_stream(file, "Workbook");
   if (workbook.empty()) {
     // Excel 5 and 95 files call it Book. They have a different record layout
