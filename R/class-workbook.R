@@ -767,6 +767,10 @@ wbWorkbook <- R6::R6Class(
       if (!isFALSE(has_drawing)) message("argument \"has_drawing\" was removed")
 
       standardize(...)
+      private$check_args(
+        flags   = c("grid_lines", "row_col_headers"),
+        scalars = c("zoom", "paper_size", "orientation", "hdpi", "vdpi")
+      )
 
       visible <- tolower(as.character(visible))
       visible <- match.arg(visible)
@@ -1528,6 +1532,12 @@ wbWorkbook <- R6::R6Class(
       arguments <- c(ls(), "na.strings")
       standardize(..., arguments = arguments)
       if (missing(x)) stop("`x` is missing")
+      private$check_args(
+        flags = c("array", "col_names", "row_names", "with_filter", "apply_cell_style",
+                  "remove_cell_style", "inline_strings", "enforce"),
+        whole = c("start_col", "start_row"),
+        dims  = "dims"
+      )
       if (length(self$sheet_names) == 0) {
         stop(
           "Can't add data to a workbook with no worksheet.\n",
@@ -1612,6 +1622,13 @@ wbWorkbook <- R6::R6Class(
       arguments <- c(ls(), "na.strings")
       standardize(..., arguments = arguments)
       if (missing(x)) stop("`x` is missing")
+      private$check_args(
+        flags = c("col_names", "row_names", "with_filter", "first_column", "last_column",
+                  "banded_rows", "banded_cols", "apply_cell_style", "remove_cell_style",
+                  "inline_strings"),
+        whole = c("start_col", "start_row"),
+        dims  = "dims"
+      )
       if (length(self$sheet_names) == 0) {
         stop(
           "Can't add data to a workbook with no worksheet.\n",
@@ -2602,6 +2619,11 @@ wbWorkbook <- R6::R6Class(
     ) {
 
       standardize_case_names(...)
+      private$check_args(
+        flags = c("array", "cm", "apply_cell_style", "remove_cell_style", "enforce", "shared"),
+        whole = c("start_col", "start_row"),
+        dims  = "dims"
+      )
 
       if (is.character(x) && !is.null(names(x)) && is.null(name)) {
         assert_class(x, "character")
@@ -4669,6 +4691,14 @@ wbWorkbook <- R6::R6Class(
     ) {
 
       standardize_case_names(...)
+      private$check_args(
+        scalars = c(
+          "active_tab", "auto_filter_date_grouping", "first_sheet", "minimized",
+          "show_horizontal_scroll", "show_sheet_tabs", "show_vertical_scroll",
+          "tab_ratio", "visibility", "window_height", "window_width", "x_window",
+          "y_window", "view"
+        )
+      )
 
       wbv <- self$workbook$bookViews
 
@@ -8024,6 +8054,16 @@ wbWorkbook <- R6::R6Class(
     ) {
 
       standardize(...)
+      private$check_args(
+        scalars = c(
+          "black_and_white", "cell_comments", "copies", "draft", "errors",
+          "first_page_number", "id", "page_order", "paper_height", "paper_width",
+          "hdpi", "vdpi", "use_first_page_number", "use_printer_defaults",
+          "orientation", "scale", "left", "right", "top", "bottom", "header",
+          "footer", "paper_size", "summary_row", "summary_col",
+          "horizontal_centered", "vertical_centered", "print_headings"
+        )
+      )
 
       sheet <- private$get_sheet_index(sheet)
       xml <- self$worksheets[[sheet]]$pageSetup
@@ -8919,6 +8959,7 @@ wbWorkbook <- R6::R6Class(
     ) {
 
       standardize(...)
+      private$check_args(dims = "dims")
 
       # Ensure if style is NULL, color is NULL and vice versa
       sides <- list(
@@ -9064,6 +9105,7 @@ wbWorkbook <- R6::R6Class(
         bg_color      = NULL,
         ...
     ) {
+      private$check_args(dims = "dims")
       sheet <- private$get_sheet_index(sheet)
 
       # dim in dataframe can contain various styles. go cell by cell.
@@ -9158,6 +9200,7 @@ wbWorkbook <- R6::R6Class(
       styles <- unique(cc[["c_s"]])
 
       standardize(...)
+      private$check_args(dims = "dims")
 
       for (style in styles) {
         dim <- cc[cc$c_s == style, "r"]
@@ -9259,6 +9302,7 @@ wbWorkbook <- R6::R6Class(
         dims  = "A1",
         numfmt
     ) {
+      private$check_args(dims = "dims")
       sheet <- private$get_sheet_index(sheet)
       sel <- private$do_cell_init(sheet, dims, return_sel = TRUE)
 
@@ -9366,6 +9410,7 @@ wbWorkbook <- R6::R6Class(
     ) {
 
       standardize_case_names(...)
+      private$check_args(dims = "dims")
 
       sheet <- private$get_sheet_index(sheet)
       sel <- private$do_cell_init(sheet, dims, return_sel = TRUE)
@@ -9811,6 +9856,16 @@ wbWorkbook <- R6::R6Class(
       zoom_scale_sheet_layout_view = NULL,
       ...
     ) {
+      private$check_args(
+        scalars = c(
+          "color_id", "default_grid_color", "right_to_left", "show_formulas",
+          "show_grid_lines", "show_outline_symbols", "show_row_col_headers",
+          "show_ruler", "show_white_space", "show_zeros", "tab_selected",
+          "top_left_cell", "view", "window_protection", "workbook_view_id",
+          "zoom_scale", "zoom_scale_normal", "zoom_scale_page_layout_view",
+          "zoom_scale_sheet_layout_view"
+        )
+      )
       sheet <- private$get_sheet_index(sheet)
       self$worksheets[[sheet]]$set_sheetview(
         color_id                     = color_id,
@@ -10050,6 +10105,58 @@ wbWorkbook <- R6::R6Class(
     set_current_sheet = function(sheet_index) {
       stopifnot(is_integer_ish(sheet_index), length(sheet_index) == 1)
       private$current_sheet <- sheet_index
+    },
+
+    # Validate arguments of the calling method. The arguments are passed by
+    # name and their values are taken from the calling method:
+    # flags: single TRUE or FALSE, 1 and 0 are accepted as well
+    # whole: single whole number, a column letter is accepted for start_col
+    # scalars: NULL or of length one, used for values written as single xml
+    #   attributes
+    # dims: NULL or a character vector without NA
+    check_args = function(flags = NULL, whole = NULL, scalars = NULL, dims = NULL) {
+
+      env    <- parent.frame()
+      method <- paste(deparse(sys.call(-1L)[[1L]], nlines = 1L), collapse = "")
+      method <- sub("^.*\\$", "", method)
+
+      for (nm in flags) {
+        val <- get(nm, envir = env)
+        is_flag <- (is.logical(val) || is.numeric(val)) && length(val) == 1L &&
+          !is.na(val) && val %in% c(0, 1)
+        if (!is_flag) {
+          stop(sprintf("%s(): `%s` must be TRUE or FALSE.", method, nm), call. = FALSE)
+        }
+      }
+
+      for (nm in whole) {
+        val <- get(nm, envir = env)
+        is_col <- nm == "start_col" && is.character(val) && length(val) == 1L &&
+          grepl("^[A-Za-z]{1,3}$", val)
+        is_whole <- is.numeric(val) && length(val) == 1L && is.finite(val) && val == trunc(val)
+        if (!is_col && !is_whole) {
+          stop(sprintf("%s(): `%s` must be a single whole number.", method, nm), call. = FALSE)
+        }
+      }
+
+      for (nm in scalars) {
+        val <- get(nm, envir = env)
+        if (!is.null(val) && length(val) != 1L) {
+          stop(sprintf("%s(): `%s` must be a single value.", method, nm), call. = FALSE)
+        }
+      }
+
+      for (nm in dims) {
+        val <- get(nm, envir = env)
+        if (!is.null(val) && (!is.character(val) || anyNA(val))) {
+          stop(
+            sprintf("%s(): `%s` must be a character vector of cell ranges like \"A1:B2\".", method, nm),
+            call. = FALSE
+          )
+        }
+      }
+
+      invisible()
     },
 
     get_sheet_index = function(sheet) {
