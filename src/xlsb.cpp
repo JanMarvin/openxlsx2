@@ -1947,7 +1947,7 @@ int32_t workbook_bin(std::string filePath, std::string outPath, bool debug) {
           // Rcpp::Rcout << "reference_type: " << cXti << std::endl;
           for (uint32_t i = 0; i < cXti; ++i) {
             std::vector<int32_t> xti = Xti(bin, swapit);
-            if ((size_t)xti[0] > reference_type.size()) Rcpp::stop("references do not match");
+            if ((size_t)xti[0] >= reference_type.size()) Rcpp::stop("references do not match");
             std::string tmp = "<xti id=\"" + std::to_string(xti[0]) +
               "\" firstSheet=\"" + std::to_string(xti[1]) +
               "\" lastSheet=\"" +  std::to_string(xti[2]) +
@@ -2537,6 +2537,9 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
 
           // sqrfx[0] is the number of rfx following
           sqrfx = UncheckedSqRfX(bin, swapit);
+          // #nocov start: corrupt file
+          if (sqrfx.size() < 5) Rcpp::stop("xlsb: selection without a range");
+          // #nocov end
 
           std::string ac = int_to_col(colAct + 1) + std::to_string(rwAct + 1);
           std::string lref = int_to_col(sqrfx[3] + 1) + std::to_string(sqrfx[1] + 1);
@@ -3022,9 +3025,9 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           col = cell[0];
           if (debug) Rf_PrintValue(Rcpp::wrap(cell));
 
-          bool val = 0;
+          uint8_t val = 0;
           val = readbin(val, bin, swapit);
-          if (debug) Rcpp::Rcout << val << std::endl;
+          if (debug) Rcpp::Rcout << static_cast<int32_t>(val) << std::endl;
 
           uint16_t grbitFlags = 0;
           grbitFlags = readbin(grbitFlags, bin, swapit);
@@ -3034,7 +3037,7 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           std::string fml = CellParsedFormula(bin, swapit, debug, 0, row, is_shared_formula, has_revision_record);
 
           xml_col column;
-          column.v = std::to_string((int32_t)val);
+          column.v = std::to_string(static_cast<int32_t>(val != 0));
 
           std::string a0 = int_to_col(cell[0] + 1) + std::to_string(row);
           std::string a1 = int_to_col(cell[0] + 1) + std::to_string(row + 1);
@@ -3238,6 +3241,9 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           if (debug) Rcpp::Rcout << "BrtArrFmla: " << fml << std::endl;
 
           // add to the last colvec element
+          // #nocov start: corrupt file
+          if (colvec.empty()) Rcpp::stop("xlsb: formula without a cell");
+          // #nocov end
           auto last = colvec.size() - 1L;
           colvec[last].f = fml;
           colvec[last].f_attr = "t=\"array\"";
@@ -3284,6 +3290,9 @@ int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath
           fml_type = "shared";
 
           // add to the last colvec element
+          // #nocov start: corrupt file
+          if (colvec.empty()) Rcpp::stop("xlsb: formula without a cell");
+          // #nocov end
           auto last = colvec.size() - 1L;
           colvec[last].f = fml;
 

@@ -370,6 +370,12 @@ inline int32_t RECORD(int32_t& rid, int32_t& rsize, std::istream& sas, bool swap
   /* Record Size -------------------------------------------------------------*/
   rsize = RECORD_SIZE(sas, swapit);
 
+  // the readers skip records with seekg(size): a negative size would move back
+  // and read the same records again and again
+  // #nocov start: corrupt file
+  if (rsize < 0) Rcpp::stop("xlsb: corrupt record size");
+  // #nocov end
+
   return 0;
 }
 
