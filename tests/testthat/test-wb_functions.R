@@ -623,3 +623,14 @@ test_that("convert works", {
   expect_equal(dim(df_u), dim(df_c))
 
 })
+
+test_that("dims_to_dataframe() rejects NA dims", {
+
+  expect_error(dims_to_dataframe(NA), "character vector of cell ranges")
+  expect_error(dims_to_dataframe(NA_character_), "character vector of cell ranges")
+  expect_error(dims_to_dataframe(1L), "character vector of cell ranges")
+
+  wb <- wb_workbook()$add_worksheet()
+  expect_error(wb$add_ignore_error(dims = NA, number_stored_as_text = TRUE), "character vector of cell ranges")
+
+})
