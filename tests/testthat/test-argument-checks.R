@@ -25,3 +25,19 @@ test_that("wbWorkbook methods check their arguments", {
   expect_silent(wb$set_col_widths(cols = 1:2, widths = c(10, 20), hidden = c(TRUE, FALSE)))
 
 })
+
+test_that("cell style, ignore error and protection arguments are checked", {
+
+  wb <- wb_workbook()$add_worksheet()$add_data(x = 1)
+
+  expect_error(wb$add_cell_style(dims = "A1", wrap_text = c("1", "0")), "`wrap_text` must be a single value")
+  expect_error(wb$add_ignore_error(dims = "A1", formula = "yes"), "`formula` must be TRUE or FALSE")
+  expect_error(wb$protect_worksheet(protect = NA), "`protect` must be TRUE or FALSE")
+  expect_error(wb$protect_worksheet(password = 1234), "`password` must be a single string")
+  expect_error(wb$protect(lock_structure = "yes"), "`lock_structure` must be TRUE or FALSE")
+  expect_error(wb$protect(password = c("a", "b")), "`password` must be a single string")
+
+  expect_silent(wb$add_ignore_error(dims = "A1", number_stored_as_text = 1))
+  expect_silent(wb$protect_worksheet(password = "pw"))
+
+})

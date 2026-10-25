@@ -7534,6 +7534,13 @@ wbWorkbook <- R6::R6Class(
     ) {
 
       standardize_case_names(...)
+      private$check_args(
+        flags   = c("protect", "lock_structure", "lock_windows", "file_sharing", "read_only_recommended"),
+        scalars = c("type", "username")
+      )
+      if (!is.null(password) && (!is.character(password) || length(password) != 1L || is.na(password))) {
+        stop("protect(): `password` must be a single string.", call. = FALSE)
+      }
 
       if (!protect) {
         self$workbook$workbookProtection <- NULL
@@ -7609,6 +7616,10 @@ wbWorkbook <- R6::R6Class(
         password   = NULL,
         properties = NULL
     ) {
+      private$check_args(flags = "protect")
+      if (!is.null(password) && (!is.character(password) || length(password) != 1L || is.na(password))) {
+        stop("protect_worksheet(): `password` must be a single string.", call. = FALSE)
+      }
 
       sheet <- private$get_sheet_index(sheet)
 
@@ -9424,6 +9435,16 @@ wbWorkbook <- R6::R6Class(
     ) {
 
       standardize_case_names(...)
+      private$check_args(
+        scalars = c(
+          "apply_alignment", "apply_border", "apply_fill", "apply_font",
+          "apply_number_format", "apply_protection", "border_id", "ext_lst", "fill_id",
+          "font_id", "hidden", "horizontal", "indent", "justify_last_line", "locked",
+          "num_fmt_id", "pivot_button", "quote_prefix", "reading_order",
+          "relative_indent", "shrink_to_fit", "text_rotation", "vertical", "wrap_text",
+          "xf_id"
+        )
+      )
       private$check_args(dims = "dims")
 
       sheet <- private$get_sheet_index(sheet)
@@ -9814,6 +9835,13 @@ wbWorkbook <- R6::R6Class(
       ...
     ) {
       standardize_case_names(...)
+      private$check_args(
+        flags = c(
+          "calculated_column", "empty_cell_reference", "eval_error", "formula",
+          "formula_range", "list_data_validation", "number_stored_as_text",
+          "two_digit_text_year", "unlocked_formula"
+        )
+      )
       sheet <- private$get_sheet_index(sheet)
       self$worksheets[[sheet]]$ignore_error(
         dims               = dims,
