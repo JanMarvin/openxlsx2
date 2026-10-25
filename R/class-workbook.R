@@ -8375,7 +8375,9 @@ wbWorkbook <- R6::R6Class(
           nam
         )
 
-        if (!is.null(x) && !(length(x) == 3 || (length(x) == 1 && is.na(x))))
+        # NaN is.na() as well, but would be written as "NaN"
+        is_single_na <- length(x) == 1 && is.na(x) && !(is.numeric(x) && is.nan(x))
+        if (!is.null(x) && !(length(x) == 3 || is_single_na))
           stop(msg, call. = FALSE)
       }
 
@@ -8735,6 +8737,11 @@ wbWorkbook <- R6::R6Class(
     #' @param name name
     #' @return The `wbWorkbook` object
     remove_named_region = function(sheet = current_sheet(), name = NULL) {
+
+      if (!is.null(name) && (!is.character(name) || anyNA(name))) {
+        stop("remove_named_region(): `name` must be a character vector without NA.", call. = FALSE)
+      }
+
       # get all nown defined names
       dn <- wb_get_named_regions(self)
 
