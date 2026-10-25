@@ -40,8 +40,8 @@ install.packages('openxlsx2')
 ## Introduction
 
 `openxlsx2` aims to be the swiss knife for working with the openxml
-spreadsheet formats xlsx, xlsm and (limited) xlsb (other formats of
-other spreadsheet software are not supported). We offer two different
+spreadsheet formats xlsx, xlsm and (limited) xlsb and xls (other formats
+of other spreadsheet software are not supported). We offer two different
 ways to work with `openxlsx2`.
 
 - The first one is to simply work with R objects. It is possible to read
