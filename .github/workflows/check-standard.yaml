@@ -55,6 +55,14 @@ jobs:
             ${{ (matrix.config.r == '4.1') && 'rvg=?source' || '' }}
           needs: check
 
+      - name: Restore the default repositories for the check
+        if: matrix.config.r == '4.1'
+        shell: Rscript {0}
+        run: |
+          f <- file.path(R.home("etc"), "Rprofile.site")
+          x <- readLines(f)
+          writeLines(x[!grepl("cran-archive.r-project.org", x, fixed = TRUE)], f)
+
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
