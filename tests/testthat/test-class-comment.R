@@ -470,3 +470,51 @@ test_that("threaded comment: excaping XML works", {
   expect_equal(wb$get_thread()$text, cmt)
   expect_true(grepl(cmt, wb$get_comment()$comment))
 })
+
+test_that("comments are attached to a single cell", {
+
+  wb <- wb_workbook()$add_worksheet()
+
+  expect_error(wb$add_comment(dims = c("A1", "A1"), comment = "x"), "must be a single cell")
+  expect_error(wb$add_comment(dims = "A1:B2", comment = "x"), "must be a single cell")
+  expect_error(wb$add_comment(dims = "A1,B2", comment = "x"), "must be a single cell")
+  expect_error(wb$add_comment(dims = NA_character_, comment = "x"), "must be a single cell")
+
+})
+
+test_that("comment text with several elements uses one style per element", {
+
+  cmt <- wb_comment(text = c("a", "b", "c"), author = "")
+  wb <- wb_workbook()$add_worksheet()$add_comment(dims = "A1", comment = cmt)
+
+  temp <- temp_xlsx()
+  on.exit(unlink(temp), add = TRUE)
+  wb$save(temp)
+
+  tmp_dir <- temp_dir("comment_runs")
+  on.exit(unlink(tmp_dir, recursive = TRUE), add = TRUE)
+  utils::unzip(temp, exdir = tmp_dir)
+  xml <- paste(readLines(file.path(tmp_dir, "xl", "comments1.xml"), warn = FALSE), collapse = "")
+  got <- regmatches(xml, gregexpr("<t xml:space=\"preserve\">[^<]*</t>", xml))[[1]]
+  got <- gsub("<[^>]*>", "", got)
+  expect_equal(got, c("a", "b", "c"))
+
+  s1 <- create_font(b = "true")
+  s2 <- create_font(i = "true")
+  s3 <- create_font(u = "single")
+  expect_error(
+    wb_comment(text = c("a", "b", "c"), style = c(s1, s2), author = ""),
+    "`style` must be of length one or of the same length as `text`"
+  )
+  expect_silent(wb_comment(text = c("a", "b", "c"), style = c(s1, s2, s3), author = ""))
+
+})
+
+test_that("threads check reply and resolve", {
+
+  wb <- wb_workbook()$add_worksheet()$add_person(name = "me")
+
+  expect_error(wb$add_thread(dims = "A1", comment = "x", reply = -1), "`reply` must be TRUE or FALSE")
+  expect_error(wb$add_thread(dims = "A1", comment = "x", resolve = NA), "`resolve` must be TRUE or FALSE")
+
+})

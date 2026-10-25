@@ -5860,6 +5860,11 @@ wbWorkbook <- R6::R6Class(
         dims <- rowcol_to_dim(row, col)
       }
 
+      # a comment is attached to a single cell
+      if (!is.character(dims) || length(dims) != 1L || is.na(dims) || grepl("[:,;]", dims)) {
+        stop("add_comment(): `dims` must be a single cell like \"A1\".", call. = FALSE)
+      }
+
       if (is.character(comment)) {
         comment <- wb_comment(text = comment, author = getOption("openxlsx2.creator"))
       }
@@ -5984,6 +5989,8 @@ wbWorkbook <- R6::R6Class(
         person_id <- getOption("openxlsx2.thread_id")
         if (is.null(person_id)) stop("no person id found")
       }
+
+      private$check_args(flags = c("reply", "resolve"))
 
       sheet <- private$get_sheet_index(sheet)
       wb_cmt <- self$get_comment(sheet, dims)
