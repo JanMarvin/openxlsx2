@@ -6559,6 +6559,9 @@ wbWorkbook <- R6::R6Class(
 
       arguments <- c(ls(), "start_row", "start_col")
       standardize_case_names(..., arguments = arguments)
+      private$check_args(
+        scalars = c("file", "width", "height", "row_offset", "col_offset", "units", "dpi", "address")
+      )
 
       params <- list(...)
       if (!is.null(params$start_row)) start_row <- params$start_row
@@ -7298,6 +7301,7 @@ wbWorkbook <- R6::R6Class(
       range   = NULL,
       checked = FALSE
     ) {
+      private$check_args(flags = "checked", scalars = c("text", "link", "range"))
       sheet <- private$get_sheet_index(sheet)
 
       if (!is.null(dims)) {
@@ -8079,7 +8083,8 @@ wbWorkbook <- R6::R6Class(
           "hdpi", "vdpi", "use_first_page_number", "use_printer_defaults",
           "orientation", "scale", "left", "right", "top", "bottom", "header",
           "footer", "paper_size", "summary_row", "summary_col",
-          "horizontal_centered", "vertical_centered", "print_headings"
+          "horizontal_centered", "vertical_centered", "print_headings",
+          "fit_to_width", "fit_to_height"
         )
       )
 
