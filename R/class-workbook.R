@@ -3098,7 +3098,7 @@ wbWorkbook <- R6::R6Class(
         # TODO replace with seq_len() or seq_along()
         lapply(seq_len(nThemes), function(i) {
           con <- file(file.path(xlthemeDir, stringi::stri_join("theme", i, ".xml")), open = "wb")
-          writeBin(charToRaw(pxml(self$theme[[i]])), con)
+          writeBin(charToRaw(strip_xml_control_chars(pxml(self$theme[[i]]))), con)
           close(con)
         })
       }
