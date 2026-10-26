@@ -41,6 +41,13 @@ jobs:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
 
+      # isatty() in R 4.1 on Windows can read past a buffer when stdout is a pipe, as in
+      # parallel testthat workers, and crash them (R bug 19104)
+      - name: Run tests sequentially
+        if: matrix.config.r == '4.1'
+        shell: bash
+        run: echo "TESTTHAT_PARALLEL=FALSE" >> "$GITHUB_ENV"
+
       - name: Use CRAN archive binaries only
         if: matrix.config.r == '4.1'
         shell: Rscript {0}
