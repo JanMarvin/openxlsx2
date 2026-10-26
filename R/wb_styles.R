@@ -134,7 +134,7 @@ create_border <- function(
   for (arg in c("diagonal_down", "diagonal_up", "outline", "bottom", "diagonal", "end",
                 "horizontal", "left", "right", "start", "top", "vertical")) {
     val <- get(arg)
-    if (!is.null(val) && (length(val) != 1L || is.na(val))) {
+    if (!is.null(val) && (!is.atomic(val) || length(val) != 1L || is.na(val))) {
       stop(sprintf("create_border(): `%s` must be a single value.", arg), call. = FALSE)
     }
   }
@@ -331,7 +331,7 @@ create_font <- function(
   for (arg in c("b", "charset", "condense", "extend", "family", "i", "name", "outline",
                 "scheme", "shadow", "strike", "sz", "u", "vert_align")) {
     val <- get(arg)
-    if (length(val) != 1L || is.na(val)) {
+    if (!is.atomic(val) || length(val) != 1L || is.na(val)) {
       stop(sprintf("create_font(): `%s` must be a single value.", arg), call. = FALSE)
     }
   }
@@ -482,7 +482,7 @@ create_fill <- function(
 
   for (arg in c("gradient_fill", "pattern_type")) {
     val <- get(arg)
-    if (length(val) != 1L || is.na(val)) {
+    if (!is.atomic(val) || length(val) != 1L || is.na(val)) {
       stop(sprintf("create_fill(): `%s` must be a single value.", arg), call. = FALSE)
     }
   }

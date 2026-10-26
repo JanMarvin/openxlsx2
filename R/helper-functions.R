@@ -1775,7 +1775,7 @@ create_shape <- function(
     text_transparency = text_transparency, line_transparency = line_transparency
   )
   for (nm in names(scalars)) {
-    if (length(scalars[[nm]]) != 1L || is.na(scalars[[nm]])) {
+    if (!is.atomic(scalars[[nm]]) || length(scalars[[nm]]) != 1L || is.na(scalars[[nm]])) {
       stop(sprintf("`%s` must be a single value.", nm), call. = FALSE)
     }
   }

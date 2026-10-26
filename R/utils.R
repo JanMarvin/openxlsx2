@@ -116,6 +116,18 @@ as_xml_attr <- function(x) {
     return("")
   }
 
+  # an empty list is passed where an optional value was not found
+  is_empty_list <- is.list(x) && !length(x)
+  if (!is.logical(x) && !is.numeric(x) && !is.character(x) && !is.factor(x) && !is_empty_list) {
+    stop(
+      sprintf(
+        "`%s` must be a number, a string or TRUE/FALSE, not of class '%s'.",
+        paste(deparse(substitute(x), nlines = 1L), collapse = ""), paste(class(x), collapse = "/")
+      ),
+      call. = FALSE
+    )
+  }
+
   if (inherits(x, "logical")) {
     x <- as_binary(x)
   }

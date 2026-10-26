@@ -976,3 +976,20 @@ test_that("dims_to_rowcol() rejects invalid dims", {
   expect_error(dims_to_rowcol(1), "character vector of cell ranges")
 
 })
+
+test_that("as_xml_attr() rejects unsupported types", {
+
+  zoom <- mean
+  expect_error(as_xml_attr(zoom), "`zoom` must be a number, a string or TRUE/FALSE, not of class 'function'")
+  expect_error(as_xml_attr(new.env()), "not of class 'environment'")
+  expect_error(as_xml_attr(list(1)), "not of class 'list'")
+  expect_equal(as_xml_attr(factor("a")), "a")
+
+  expect_equal(as_xml_attr(list()), character())
+  expect_equal(as_xml_attr(NULL), "")
+  expect_equal(as_xml_attr(c(TRUE, FALSE)), c("1", "0"))
+
+  wb <- wb_workbook()$add_worksheet()
+  expect_error(wb$set_sheetview(zoom_scale = mean), "`zoom_scale` must be a number")
+
+})
