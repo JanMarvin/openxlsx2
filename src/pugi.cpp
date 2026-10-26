@@ -127,6 +127,7 @@ SEXP getXMLXPtrNamePath(XPtrXML doc, std::vector<std::string> path) {
 // helper for path-finding
 std::vector<pugi::xml_node> find_nodes_by_path(pugi::xml_document* doc, const std::vector<std::string>& path) {
   std::vector<pugi::xml_node> current_nodes;
+  if (path.empty()) return current_nodes;
 
   const std::string& first_tag = path[0];
   for (pugi::xml_node node : doc->children()) {
@@ -345,8 +346,10 @@ Rcpp::CharacterVector xml_attr_mod(
 
   std::vector<pugi::xml_node> target_nodes;
 
-  if (path.isNotNull()) {
-    std::vector<std::string> p = Rcpp::as<std::vector<std::string>>(path);
+  std::vector<std::string> p;
+  if (path.isNotNull()) p = Rcpp::as<std::vector<std::string>>(path);
+
+  if (!p.empty()) {
     target_nodes = find_nodes_by_path(&doc, p);
   } else {
     // Default behavior: targets immediate children of the document

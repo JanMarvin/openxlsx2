@@ -351,6 +351,11 @@ test_that("xml_attr_mod", {
   got <- xml_attr_mod(xml_node, c(foo = "baz"), path = c("a", "b"))
   expect_equal(got, exp)
 
+  # an empty path behaves like no path
+  exp <- "<a foo=\"baz\"><b><c>openxlsx2</c></b></a>"
+  got <- xml_attr_mod(xml_node, c(foo = "baz"), path = character())
+  expect_equal(got, exp)
+
 })
 
 test_that("xml_node_create", {

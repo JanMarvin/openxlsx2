@@ -18,6 +18,11 @@ wb_validate_sheet <- function(wb, sheet) {
 #' @noRd
 wb_validate_table_name <- function(wb, tableName) {
   assert_workbook(wb)
+
+  if (!is.character(tableName) || length(tableName) != 1L || is.na(tableName) || !nzchar(tableName)) {
+    stop("`table_name` must be a single non-empty string.", call. = FALSE)
+  }
+
   # returns the new tableName -- basically just lowercase
   ## spreadsheet software forces named regions to lowercase
   tableName <- tolower(tableName)

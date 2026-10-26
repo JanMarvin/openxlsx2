@@ -60,10 +60,15 @@ temp_xlsx <- function(name = "temp_xlsx", macros = FALSE) {
 #' @noRd
 temp_dir <- function(pattern = "file") {
 
-  base <- tempdir()
+  # the session tempdir may have been removed, e.g. by system cleanup
+  base <- tempdir(check = TRUE)
   repeat {
     path <- file.path(base, paste0(pattern, "_", basename(tempfile())))
     if (dir.create(path, showWarnings = FALSE)) return(path)
+    # only a name collision is resolved by trying another name
+    if (!file.exists(path)) {
+      stop("Unable to create temporary directory: ", path, call. = FALSE)
+    }
   }
 }
 
@@ -109,6 +114,18 @@ as_xml_attr <- function(x) {
 
   if (is.null(x)) {
     return("")
+  }
+
+  # an empty list is passed where an optional value was not found
+  is_empty_list <- is.list(x) && !length(x)
+  if (!is.logical(x) && !is.numeric(x) && !is.character(x) && !is.factor(x) && !is_empty_list) {
+    stop(
+      sprintf(
+        "`%s` must be a number, a string or TRUE/FALSE, not of class '%s'.",
+        paste(deparse(substitute(x), nlines = 1L), collapse = ""), paste(class(x), collapse = "/")
+      ),
+      call. = FALSE
+    )
   }
 
   if (inherits(x, "logical")) {
@@ -185,6 +202,10 @@ NULL
 #' @rdname dims_helper
 #' @export
 dims_to_rowcol <- function(x, as_integer = FALSE) {
+
+  if (!is.character(x) || !length(x) || anyNA(x)) {
+    stop("`dims` must be a character vector of cell ranges like \"A1:B2\".", call. = FALSE)
+  }
 
   dims <- x
   if (length(x) == 1 && inherits(x, "character")) {

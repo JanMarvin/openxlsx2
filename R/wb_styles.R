@@ -130,6 +130,15 @@ create_border <- function(
   # sml_CT_Border
   standardize(...)
 
+  # styles and attributes are single values, the colors are wb_color()
+  for (arg in c("diagonal_down", "diagonal_up", "outline", "bottom", "diagonal", "end",
+                "horizontal", "left", "right", "start", "top", "vertical")) {
+    val <- get(arg)
+    if (!is.null(val) && (!is.atomic(val) || length(val) != 1L || is.na(val))) {
+      stop(sprintf("create_border(): `%s` must be a single value.", arg), call. = FALSE)
+    }
+  }
+
   assert_xml_bool(outline)
 
   assert_class(left_color,       "wbColour", or_null = TRUE)
@@ -229,6 +238,15 @@ create_border <- function(
 #' @export
 create_numfmt <- function(numFmtId = 164, formatCode = "#,##0.00") {
 
+  same_length <- length(numFmtId) == length(formatCode) ||
+    length(numFmtId) == 1L || length(formatCode) == 1L
+  if (anyNA(numFmtId) || anyNA(formatCode) || !same_length) {
+    stop(
+      "create_numfmt(): `numFmtId` and `formatCode` must be without NA and of the same length.",
+      call. = FALSE
+    )
+  }
+
   formatCode <- escape_format_code(formatCode)
 
   df_numfmt <- data.frame(
@@ -308,6 +326,16 @@ create_font <- function(
   # sml_CT_RPrElt
   standardize(...)
 
+  # all values are written as single xml attributes, color is a wb_color()
+  if (is.null(name)) name <- ""
+  for (arg in c("b", "charset", "condense", "extend", "family", "i", "name", "outline",
+                "scheme", "shadow", "strike", "sz", "u", "vert_align")) {
+    val <- get(arg)
+    if (!is.atomic(val) || length(val) != 1L || is.na(val)) {
+      stop(sprintf("create_font(): `%s` must be a single value.", arg), call. = FALSE)
+    }
+  }
+
   if (b != "") {
     assert_xml_bool(b)
     b <- xml_node_create("b", xml_attributes = c("val" = as_xml_attr(b)))
@@ -344,7 +372,6 @@ create_font <- function(
     i <- xml_node_create("i", xml_attributes = c("val" = as_xml_attr(i)))
   }
 
-  if (is.null(name)) name <- ""
   if (name != "") {
     name <- xml_node_create("name", xml_attributes = c("val" = name))
   }
@@ -452,6 +479,13 @@ create_fill <- function(
   standardize(...)
   assert_class(bg_color, "wbColour", or_null = TRUE)
   assert_class(fg_color, "wbColour", or_null = TRUE)
+
+  for (arg in c("gradient_fill", "pattern_type")) {
+    val <- get(arg)
+    if (!is.atomic(val) || length(val) != 1L || is.na(val)) {
+      stop(sprintf("create_fill(): `%s` must be a single value.", arg), call. = FALSE)
+    }
+  }
 
   if (!is.null(bg_color) && !all(bg_color == "")) {
     bg_color <- xml_node_create("bgColor", xml_attributes = bg_color)
@@ -596,6 +630,33 @@ create_cell_style <- function(
   args <- list(...)
 
   is_cell_style_xf <- isTRUE(args$is_cell_style_xf)
+
+  # one style is created per element, values of length one are used for every style
+  values <- list(
+    border_id = border_id, fill_id = fill_id, font_id = font_id, num_fmt_id = num_fmt_id,
+    pivot_button = pivot_button, quote_prefix = quote_prefix, xf_id = xf_id,
+    horizontal = horizontal, indent = indent, justify_last_line = justify_last_line,
+    reading_order = reading_order, relative_indent = relative_indent,
+    shrink_to_fit = shrink_to_fit, text_rotation = text_rotation, vertical = vertical,
+    wrap_text = wrap_text, ext_lst = ext_lst, hidden = hidden, locked = locked
+  )
+  if (is.null(num_fmt_id)) {
+    stop("create_cell_style(): `num_fmt_id` must not be NULL.", call. = FALSE)
+  }
+  n_max <- max(lengths(values))
+  for (arg in names(values)) {
+    val <- values[[arg]]
+    if (is.null(val)) next
+    # an empty num_fmt_id creates no style
+    valid_length <- if (arg == "num_fmt_id") c(0L, 1L, n_max) else c(1L, n_max)
+    if (anyNA(val) || !length(val) %in% valid_length) {
+      stop(
+        sprintf("create_cell_style(): `%s` must be of length one or %s and without NA.", arg, n_max),
+        call. = FALSE
+      )
+    }
+  }
+
 
   applyAlignment <- "" # CT_CellAlignment
   if (any(horizontal != "") || any(text_rotation != "") || any(vertical != "") || any(wrap_text != "") || any(indent != "") || any(relative_indent != "") || any(justify_last_line != "") || any(shrink_to_fit != "") || any(reading_order != "")) applyAlignment <- "1"
@@ -1114,6 +1175,10 @@ create_tablestyle <- function(
 ) {
 
   standardize_case_names(...)
+
+  if (!is.character(name) || length(name) != 1L || is.na(name) || !nzchar(name)) {
+    stop("`name` must be a single non-empty string.", call. = FALSE)
+  }
 
   tab_wholeTable <- NULL
   if (length(whole_table)) {

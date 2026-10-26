@@ -1764,3 +1764,39 @@ test_that("wb_data() with several header rows is a valid single header object fo
 
   expect_error(wb$add_pivot_table(x = dat, rows = "Region", data = "0-14 Male"), "single header row")
 })
+
+test_that("invalid sheet arguments throw an error", {
+
+  wb <- wb_workbook()$add_worksheet()
+
+  expect_error(wb_add_data(wb, sheet = NA, x = 1), "whole number sheet index")
+  expect_error(wb_add_data(wb, sheet = 1.5, x = 1), "whole number sheet index")
+  expect_error(wb_add_data(wb, sheet = integer(), x = 1), "must not be empty")
+  expect_silent(wb_add_data(wb, sheet = 1, x = 1))
+
+})
+
+test_that("header and footer reject NaN", {
+
+  wb <- wb_workbook()$add_worksheet()
+  expect_error(wb$set_header_footer(header = NaN), "must have length 3")
+  expect_silent(wb$set_header_footer(header = NA))
+
+})
+
+test_that("remove_named_region() rejects NA names", {
+
+  wb <- wb_workbook()$add_worksheet()$add_named_region(dims = "A1", name = "nr")
+  expect_error(wb$remove_named_region(name = NA), "must be a character vector without NA")
+  expect_silent(wb$remove_named_region(name = "nr"))
+
+})
+
+test_that("table names must be non-empty strings", {
+
+  wb <- wb_workbook()$add_worksheet()
+  expect_error(wb$add_data_table(x = head(iris), table_name = ""), "single non-empty string")
+  expect_error(wb$add_data_table(x = head(iris), table_name = NA_character_), "single non-empty string")
+  expect_error(wb$add_data_table(x = head(iris), table_name = c("a", "b")), "single non-empty string")
+
+})

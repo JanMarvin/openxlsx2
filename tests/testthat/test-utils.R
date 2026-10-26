@@ -508,6 +508,9 @@ test_that("temp_dir works", {
 
   expect_true(dir.exists(out))
 
+  # a directory that cannot be created is an error, not an endless loop
+  expect_error(temp_dir("does_not_exist/temp_dir"), "Unable to create temporary directory")
+
 })
 
 test_that("relship", {
@@ -963,4 +966,30 @@ test_that("assert_class() no longer slows down wb_dims()", {
   exp <- "A2:A1000001"
   got <- wb_dims(x = df, cols = "X1")
   expect_equal(got, exp)
+})
+
+test_that("dims_to_rowcol() rejects invalid dims", {
+
+  expect_error(dims_to_rowcol(NA), "character vector of cell ranges")
+  expect_error(dims_to_rowcol(NA_character_), "character vector of cell ranges")
+  expect_error(dims_to_rowcol(character()), "character vector of cell ranges")
+  expect_error(dims_to_rowcol(1), "character vector of cell ranges")
+
+})
+
+test_that("as_xml_attr() rejects unsupported types", {
+
+  zoom <- mean
+  expect_error(as_xml_attr(zoom), "`zoom` must be a number, a string or TRUE/FALSE, not of class 'function'")
+  expect_error(as_xml_attr(new.env()), "not of class 'environment'")
+  expect_error(as_xml_attr(list(1)), "not of class 'list'")
+  expect_equal(as_xml_attr(factor("a")), "a")
+
+  expect_equal(as_xml_attr(list()), character())
+  expect_equal(as_xml_attr(NULL), "")
+  expect_equal(as_xml_attr(c(TRUE, FALSE)), c("1", "0"))
+
+  wb <- wb_workbook()$add_worksheet()
+  expect_error(wb$set_sheetview(zoom_scale = mean), "`zoom_scale` must be a number")
+
 })

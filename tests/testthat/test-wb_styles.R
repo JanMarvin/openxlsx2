@@ -1696,3 +1696,51 @@ test_that("dxf number formats work", {
   expect_equal(nrow(wb$styles_mgr$dxf), 3L)
 
 })
+
+test_that("create_tablestyle() requires a name", {
+
+  expect_error(create_tablestyle(name = NA), "single non-empty string")
+  expect_error(create_tablestyle(name = ""), "single non-empty string")
+  expect_error(create_tablestyle(name = c("a", "b")), "single non-empty string")
+
+})
+
+test_that("style builders reject NA and vectors in single value arguments", {
+
+  expect_error(create_font(sz = NaN), "`sz` must be a single value")
+  expect_error(create_font(name = NA), "`name` must be a single value")
+  expect_error(create_font(b = c(TRUE, FALSE)), "`b` must be a single value")
+  expect_error(create_border(left = c("thin", "thin")), "`left` must be a single value")
+  expect_error(create_border(diagonal_up = NA), "`diagonal_up` must be a single value")
+  expect_error(create_fill(pattern_type = NULL), "`pattern_type` must be a single value")
+  expect_error(create_numfmt(numFmtId = 164, formatCode = NA), "without NA")
+  expect_error(create_numfmt(numFmtId = 164:166, formatCode = c("0", "0.0")), "same length")
+  expect_error(create_cell_style(border_id = NaN), "`border_id` must be of length one")
+  expect_error(create_cell_style(border_id = 1:2, fill_id = 1:3), "`border_id` must be of length one or 3")
+
+  expect_length(create_cell_style(border_id = 1:2), 2L)
+  expect_silent(create_cell_style(border_id = NULL))
+  expect_silent(create_numfmt(numFmtId = 164:165, formatCode = "0.0"))
+
+})
+
+test_that("assert_xml_bool() handles invalid input", {
+
+  expect_silent(assert_xml_bool(""))
+  expect_silent(assert_xml_bool(TRUE))
+  expect_silent(assert_xml_bool(1))
+  expect_silent(assert_xml_bool("false"))
+  expect_error(assert_xml_bool(NULL), "must be")
+  expect_error(assert_xml_bool(NA), "must be")
+  expect_error(assert_xml_bool(c(TRUE, FALSE)), "must be")
+  expect_error(assert_xml_bool(2), "must be")
+
+})
+
+test_that("create_cell_style() rejects empty and NULL values", {
+
+  expect_error(create_cell_style(num_fmt_id = NULL), "`num_fmt_id` must not be NULL")
+  expect_error(create_cell_style(border_id = character()), "`border_id` must be of length one")
+  expect_silent(create_cell_style(num_fmt_id = character()))
+
+})

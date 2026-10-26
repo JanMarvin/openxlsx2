@@ -139,6 +139,14 @@ wb_comment <- function(
     style <- create_font()
   }
 
+  # one style per text element, a single style is used for all elements
+  if (!inherits(text, "fmt_txt") && length(style) != length(text)) {
+    if (length(style) != 1L) {
+      stop("`style` must be of length one or of the same length as `text`.", call. = FALSE)
+    }
+    style <- rep(style, length(text))
+  }
+
   # if text was created using fmt_txt()
   if (inherits(text, "fmt_txt")) {
     text  <- text

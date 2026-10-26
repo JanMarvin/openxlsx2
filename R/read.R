@@ -257,6 +257,34 @@ wb_to_df <- function(
   arguments <- c(ls(), "na.strings", "na.numbers", "xlsx_file")
   standardize_case_names(..., arguments = arguments)
 
+  if (!missing(file) && !inherits(file, "wbWorkbook") &&
+      (!is.character(file) || length(file) != 1L || is.na(file))) {
+    stop("wb_to_df(): `file` must be a wbWorkbook or a single file path.", call. = FALSE)
+  }
+
+  for (arg in c("row_names", "col_names", "skip_empty_rows", "skip_empty_cols",
+                "skip_hidden_rows", "skip_hidden_cols", "detect_dates", "fill_merged_cells",
+                "show_formula", "convert", "keep_attributes", "check_names",
+                "show_hyperlinks", "apply_numfmts")) {
+    val <- get(arg)
+    is_flag <- (is.logical(val) || is.numeric(val)) && length(val) == 1L &&
+      !is.na(val) && val %in% c(0, 1)
+    if (!is_flag) {
+      stop(sprintf("wb_to_df(): `%s` must be TRUE or FALSE.", arg), call. = FALSE)
+    }
+  }
+
+  for (arg in c("start_row", "start_col")) {
+    val <- get(arg)
+    if (is.null(val)) next
+    is_col <- arg == "start_col" && is.character(val) && length(val) == 1L &&
+      grepl("^[A-Za-z]{1,3}$", val)
+    is_whole <- is.numeric(val) && length(val) == 1L && is.finite(val) && val == trunc(val)
+    if (!is_col && !is_whole) {
+      stop(sprintf("wb_to_df(): `%s` must be a single whole number.", arg), call. = FALSE)
+    }
+  }
+
   na_strings <- NULL
   na_numbers <- NA
   if (is.character(na)) {

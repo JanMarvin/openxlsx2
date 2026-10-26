@@ -483,3 +483,18 @@ test_that("filter with negative values", {
   expect_equal(wb$to_df(rows = c(-3, 3), cols = c(-4, 4), col_names = FALSE)$D, NULL)
 
 })
+
+test_that("wb_to_df() checks its arguments", {
+
+  wb <- wb_workbook()$add_worksheet()$add_data(x = head(iris, 3))
+
+  expect_error(wb_to_df(wb, col_names = "yes"), "`col_names` must be TRUE or FALSE")
+  expect_error(wb_to_df(wb, detect_dates = NA), "`detect_dates` must be TRUE or FALSE")
+  expect_error(wb_to_df(wb, start_row = NA), "`start_row` must be a single whole number")
+  expect_error(wb_to_df(c("a.xlsx", "b.xlsx")), "`file` must be a wbWorkbook or a single file path")
+  expect_error(wb_to_df(wb, dims = NA), "character vector of cell ranges")
+
+  expect_equal(dim(wb_to_df(wb, col_names = 0)), c(4L, 5L))
+  expect_equal(dim(wb_to_df(wb, start_col = "B")), c(3L, 4L))
+
+})

@@ -277,6 +277,7 @@ write_file <- function(head = "", body = "", tail = "", fl = "", escapes = FALSE
       tail <- stringi::stri_encode(tail, from = from_enc, to = "UTF-8")
   }
   xml_content <- stringi::stri_join(head, body, tail, collapse = "")
+  xml_content <- strip_xml_control_chars(xml_content)
   xml_content <- write_xml_file(xml_content = xml_content, escapes = escapes)
   write_xmlPtr(xml_content, fl)
 }

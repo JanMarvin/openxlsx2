@@ -311,6 +311,7 @@ write_data2 <- function(
       data[fmls],
       function(val) {
         val <- replaceXMLEntities(val)
+        val <- strip_xml_control_chars(val)
         # replace localized separators ";" used e.g. in German formulas must be ","
         # otherwise the semicolon will interfere with the XML formulas
         val <- gsub('(;)(?=(?:[^"\']*(["\'])[^"\']*\\2)*[^"\']*$)', ',', val, perl = TRUE)
@@ -1015,6 +1016,18 @@ write_data_table <- function(
 
   nCol <- ncol(x)
   nRow <- nrow(x)
+
+  # spreadsheet software stores at most 32767 characters per cell
+  for (i in seq_len(nCol)) {
+    if (is.character(x[[i]]) && any(nchar(x[[i]], allowNA = TRUE) > 32767L, na.rm = TRUE)) {
+      warning(
+        "`x` contains strings with more than 32767 characters, the maximum ",
+        "length of a cell in spreadsheet software.",
+        call. = FALSE
+      )
+      break
+    }
+  }
 
   ### Beg: Only in data --------------------------------------------------------
   if (!data_table) {

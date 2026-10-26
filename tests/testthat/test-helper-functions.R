@@ -695,3 +695,12 @@ test_that("escaping hyperlinks works", {
   expect_identical(got, exp)
 
 })
+
+test_that("create_shape() requires single attribute values", {
+
+  expect_error(create_shape(rotation = 1:2), "`rotation` must be a single value")
+  expect_error(create_shape(name = c("a", "b")), "`name` must be a single value")
+  expect_error(create_shape(id = NA), "`id` must be a single value")
+  expect_silent(create_shape(rotation = 45))
+
+})

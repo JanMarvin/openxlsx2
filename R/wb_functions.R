@@ -69,6 +69,11 @@ dims_to_dataframe <- function(dims, fill = FALSE, empty_rm = FALSE, cc = NULL) {
   if (inherits(dims, "data.frame"))
     dims <- unlist(dims)
 
+  # NA would be taken as column "NA" and expand to more than a million cells
+  if (!is.character(dims) || anyNA(dims)) {
+    stop("`dims` must be a character vector of cell ranges like \"A1:B2\".", call. = FALSE)
+  }
+
   if (any(grepl("$", dims, fixed = TRUE))) {
     dims <- gsub("$", "", dims, fixed = TRUE)
   }

@@ -54,10 +54,9 @@ assert_named_region <- function(x) {
 
 assert_xml_bool <- function(x) {
   abort <- TRUE
-  if (length(x) && nchar(x)) {
-    abort <- !all(as_xml_attr(x) %in% c("0", "1", "false", "true"))
-  } else if (nchar(x) == 0) {
-    abort <- FALSE
+  if (length(x) == 1L && !is.na(x) && (is.logical(x) || is.numeric(x) || is.character(x))) {
+    # an empty string leaves the attribute unset
+    abort <- nzchar(x) && !as_xml_attr(x) %in% c("0", "1", "false", "true")
   }
 
   if (abort) stop(sprintf("%s must be \"0\" or \"1\"", deparse(substitute(x))), call. = FALSE)
