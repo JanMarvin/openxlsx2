@@ -640,11 +640,16 @@ create_cell_style <- function(
     shrink_to_fit = shrink_to_fit, text_rotation = text_rotation, vertical = vertical,
     wrap_text = wrap_text, ext_lst = ext_lst, hidden = hidden, locked = locked
   )
+  if (is.null(num_fmt_id)) {
+    stop("create_cell_style(): `num_fmt_id` must not be NULL.", call. = FALSE)
+  }
   n_max <- max(lengths(values))
   for (arg in names(values)) {
     val <- values[[arg]]
     if (is.null(val)) next
-    if (anyNA(val) || !length(val) %in% c(0L, 1L, n_max)) {
+    # an empty num_fmt_id creates no style
+    valid_length <- if (arg == "num_fmt_id") c(0L, 1L, n_max) else c(1L, n_max)
+    if (anyNA(val) || !length(val) %in% valid_length) {
       stop(
         sprintf("create_cell_style(): `%s` must be of length one or %s and without NA.", arg, n_max),
         call. = FALSE

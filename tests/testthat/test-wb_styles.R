@@ -1736,3 +1736,11 @@ test_that("assert_xml_bool() handles invalid input", {
   expect_error(assert_xml_bool(2), "must be")
 
 })
+
+test_that("create_cell_style() rejects empty and NULL values", {
+
+  expect_error(create_cell_style(num_fmt_id = NULL), "`num_fmt_id` must not be NULL")
+  expect_error(create_cell_style(border_id = character()), "`border_id` must be of length one")
+  expect_silent(create_cell_style(num_fmt_id = character()))
+
+})
