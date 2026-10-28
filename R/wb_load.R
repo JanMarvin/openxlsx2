@@ -743,6 +743,7 @@ wb_load <- function(
     uniqueCount <- as.character(sst_attr[[1]]["uniqueCount"])
     vals <- xml_node(sst, "sst", "si")
 
+    xml_release(sst)
     attr(vals, "uniqueCount") <- uniqueCount
     wb$sharedStrings <- vals
   }
@@ -1154,6 +1155,7 @@ wb_load <- function(
 
       # load the data. This function reads sheet_data and returns cc and row_attr
       loadvals(ws$sheet_data, worksheet_xml)
+      xml_release(worksheet_xml)
     }
   }
 
@@ -1515,6 +1517,7 @@ wb_load <- function(
         txt <- read_xml(commentsXML[comment_xml])
         authors <- xml_value(txt, "comments", "authors", "author")
         comments <- xml_node(txt, "comments", "commentList", "comment")
+        xml_release(txt)
 
 
       # create valid rich text strings in comments table

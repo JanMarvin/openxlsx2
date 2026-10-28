@@ -10607,6 +10607,7 @@ wbWorkbook <- R6::R6Class(
               sheet_data = ws$sheet_data
             )
             write_xmlPtr(doc = sheet_xml, fl = ws_file)
+            xml_release(sheet_xml)
 
           } else {
 

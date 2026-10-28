@@ -208,3 +208,10 @@ test_that("write_xmlPtr", {
   skip_on_cran()
   expect_error(write_xmlPtr(xml, paste0("/", random_string(), "/test.xml")), "could not save file")
 })
+
+test_that("xml_release frees the document", {
+  xml <- read_xml("<a><b/></a>")
+  expect_silent(xml_release(xml))
+  expect_error(xml_node(xml, "a"), "The XML pointer is invalid.")
+  expect_silent(xml_release(xml))
+})

@@ -280,6 +280,7 @@ write_file <- function(head = "", body = "", tail = "", fl = "", escapes = FALSE
   xml_content <- strip_xml_control_chars(xml_content)
   xml_content <- write_xml_file(xml_content = xml_content, escapes = escapes)
   write_xmlPtr(xml_content, fl)
+  xml_release(xml_content)
 }
 
 #' append xml child to node

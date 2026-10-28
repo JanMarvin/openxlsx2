@@ -61,6 +61,13 @@ SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration, bool
   return Rcpp::wrap(Rcpp::String(writer.result));
 }
 
+// pugixml memory is invisible to R's garbage collector, so a document read
+// with pointer = TRUE can stay alive long after its last use. Free it now.
+// [[Rcpp::export]]
+void xml_release(XPtrXML doc) {
+  doc.release();
+}
+
 inline uint32_t pugi_format(XPtrXML doc) {
 
   check_xptr_validity(doc);
