@@ -737,18 +737,20 @@ void wide_to_long(
     txt_to_is(na_string, 0, 1, 1) :
     txt_to_si(na_string, 0, 1, 1);
 
-  SEXP blank_sexp      = Rf_mkChar("");
-  SEXP inlineStr_sexp  = Rf_mkChar("inlineStr");
-  SEXP bool_sexp       = Rf_mkChar("b");
-  SEXP expr_sexp       = Rf_mkChar("e");
-  SEXP sharedStr_sexp  = Rf_mkChar("s");
-  SEXP string_sexp     = Rf_mkChar("str");
-  SEXP na_sexp         = Rf_mkChar("#N/A");
-  SEXP num_sexp        = Rf_mkChar("#NUM!");
-  SEXP value_sexp      = Rf_mkChar("#VALUE!");
-  SEXP na_strings_sexp = Rf_mkCharLenCE(final_na_string_content.data(),
-                                        static_cast<int>(final_na_string_content.size()), CE_UTF8);
-  SEXP c_cm_sexp_const = Rf_mkChar(c_cm.c_str());
+  // CHARSXPs are only kept alive by the vectors they are stored in, these
+  // might be needed before the first store and must survive a gc
+  SEXP blank_sexp      = R_BlankString;
+  SEXP inlineStr_sexp  = PROTECT(Rf_mkChar("inlineStr"));
+  SEXP bool_sexp       = PROTECT(Rf_mkChar("b"));
+  SEXP expr_sexp       = PROTECT(Rf_mkChar("e"));
+  SEXP sharedStr_sexp  = PROTECT(Rf_mkChar("s"));
+  SEXP string_sexp     = PROTECT(Rf_mkChar("str"));
+  SEXP na_sexp         = PROTECT(Rf_mkChar("#N/A"));
+  SEXP num_sexp        = PROTECT(Rf_mkChar("#NUM!"));
+  SEXP value_sexp      = PROTECT(Rf_mkChar("#VALUE!"));
+  SEXP na_strings_sexp = PROTECT(Rf_mkCharLenCE(final_na_string_content.data(),
+                                                static_cast<int>(final_na_string_content.size()), CE_UTF8));
+  SEXP c_cm_sexp_const = PROTECT(Rf_mkChar(c_cm.c_str()));
 
   R_xlen_t iter_count = 0;
   std::string cell_buf, is_buf;
@@ -902,6 +904,8 @@ void wide_to_long(
       if (has_typ) SET_STRING_ELT(zz_typ, pos, vtyp_sexp_cache[vtyp]);
     }
   }
+
+  UNPROTECT(10);
 }
 
 // simple helper function to create a data frame of type character
