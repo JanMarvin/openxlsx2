@@ -47,7 +47,10 @@ SEXP xml_to_txt(Rcpp::CharacterVector vec, const std::string& type) {
 
   const char* type_c = type.c_str();
 
+  // strings translated from a non UTF-8 encoding are R_alloc'ed, release them per element
+  const void* vmax = vmaxget();
   for (R_xlen_t i = 0; i < n; ++i) {
+    vmaxset(vmax);
     SEXP key = STRING_ELT(vec, i);
 
     std::unordered_map<SEXP, SEXP>::const_iterator it = cache.find(key);
@@ -149,21 +152,25 @@ std::string txt_to_xml(
 }
 
 // [[Rcpp::export]]
-std::string txt_to_is(
-    std::string text,
+SEXP txt_to_is(
+    Rcpp::CharacterVector text,
     bool no_escapes = false,
     bool raw = true,
     bool skip_control = true
 ) {
-  return txt_to_xml(text, no_escapes, raw, skip_control, "is");
+  if (Rf_xlength(text) != 1) Rcpp::stop("text must be a single string");
+  std::string res = txt_to_xml(Rf_translateCharUTF8(STRING_ELT(text, 0)), no_escapes, raw, skip_control, "is");
+  return Rf_ScalarString(Rf_mkCharLenCE(res.data(), static_cast<int>(res.size()), CE_UTF8));
 }
 
 // [[Rcpp::export]]
-std::string txt_to_si(
-    std::string text,
+SEXP txt_to_si(
+    Rcpp::CharacterVector text,
     bool no_escapes = false,
     bool raw = true,
     bool skip_control = true
 ) {
-  return txt_to_xml(text, no_escapes, raw, skip_control, "si");
+  if (Rf_xlength(text) != 1) Rcpp::stop("text must be a single string");
+  std::string res = txt_to_xml(Rf_translateCharUTF8(STRING_ELT(text, 0)), no_escapes, raw, skip_control, "si");
+  return Rf_ScalarString(Rf_mkCharLenCE(res.data(), static_cast<int>(res.size()), CE_UTF8));
 }

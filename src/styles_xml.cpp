@@ -75,7 +75,8 @@ Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf) {
         Rcpp::warning("%s: not found in xf name table", attr_name);
       } else {
         R_xlen_t mtc = std::distance(nams.begin(), find_res);
-        Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = attr_value;
+        SET_STRING_ELT(VECTOR_ELT(df, mtc), itr,
+                       Rf_mkCharLenCE(attr_value.data(), static_cast<int>(attr_value.size()), CE_UTF8));
       }
     }
 
@@ -93,7 +94,8 @@ Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf) {
           uint32_t pugi_format_flags = pugi::format_raw;
           xml_string_writer writer;
           cld.print(writer, " ", pugi_format_flags);
-          Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = Rcpp::String(writer.result);
+          SET_STRING_ELT(VECTOR_ELT(df, mtc), itr,
+                         Rf_mkCharLenCE(writer.result.data(), static_cast<int>(writer.result.size()), CE_UTF8));
         } else {
           for (auto attrs : cld.attributes()) {
             std::string attr_name = attrs.name();
@@ -105,7 +107,8 @@ Rcpp::DataFrame read_xf(XPtrXML xml_doc_xf) {
               Rcpp::warning("%s: not found in xf name table", attr_name);
             } else {
               R_xlen_t mtc = std::distance(nams.begin(), find_res);
-              Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = attr_value;
+              SET_STRING_ELT(VECTOR_ELT(df, mtc), itr,
+                             Rf_mkCharLenCE(attr_value.data(), static_cast<int>(attr_value.size()), CE_UTF8));
             }
           }
         }
@@ -194,7 +197,7 @@ Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf) {
         // only write attributes where cv_s has a value
         if (cv_s[0] != "") {
           // Rf_PrintValue(cv_s);
-          const std::string val_strl = Rcpp::as<std::string>(cv_s);
+          const std::string val_strl = Rf_translateCharUTF8(STRING_ELT(cv_s, 0));
           xf.append_attribute(attrnam.c_str()) = val_strl.c_str();
         }
       }
@@ -204,7 +207,7 @@ Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf) {
         cv_s = Rcpp::as<Rcpp::CharacterVector>(df_xf[j])[i];
 
         if (cv_s[0] != "") {
-          const std::string val_strl = Rcpp::as<std::string>(cv_s);
+          const std::string val_strl = Rf_translateCharUTF8(STRING_ELT(cv_s, 0));
           xf_alignment.append_attribute(attrnam.c_str()) = val_strl.c_str();
         }
       }
@@ -214,7 +217,7 @@ Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf) {
         cv_s = Rcpp::as<Rcpp::CharacterVector>(df_xf[j])[i];
 
         if (cv_s[0] != "") {
-          const std::string val_strl = Rcpp::as<std::string>(cv_s);
+          const std::string val_strl = Rf_translateCharUTF8(STRING_ELT(cv_s, 0));
           pugi::xml_document tempDoc;
           pugi::xml_parse_result tempResult = tempDoc.load_string(val_strl.c_str());
           if (tempResult) {
@@ -230,7 +233,7 @@ Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf) {
         cv_s = Rcpp::as<Rcpp::CharacterVector>(df_xf[j])[i];
 
         if (cv_s[0] != "") {
-          const std::string val_strl = Rcpp::as<std::string>(cv_s);
+          const std::string val_strl = Rf_translateCharUTF8(STRING_ELT(cv_s, 0));
           xf_protection.append_attribute(attrnam.c_str()) = val_strl.c_str();
         }
       }
@@ -238,7 +241,7 @@ Rcpp::CharacterVector write_xf(Rcpp::DataFrame df_xf) {
 
     xml_string_writer writer;
     doc.print(writer, " ", pugi_format_flags);
-    z[i] = std::move(writer.result);
+    SET_STRING_ELT(z, i, Rf_mkCharLenCE(writer.result.data(), static_cast<int>(writer.result.size()), CE_UTF8));
   }
 
   return z;
@@ -287,7 +290,8 @@ Rcpp::DataFrame read_font(XPtrXML xml_doc_font) {
         cld.print(writer, " ", pugi_format_flags);
 
         R_xlen_t mtc = std::distance(nams.begin(), find_res);
-        Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = std::move(writer.result);
+        SET_STRING_ELT(VECTOR_ELT(df, mtc), itr,
+                       Rf_mkCharLenCE(writer.result.data(), static_cast<int>(writer.result.size()), CE_UTF8));
       }
 
     }  // end aligment, extLst, protection
@@ -320,7 +324,7 @@ Rcpp::CharacterVector write_font(Rcpp::DataFrame df_font) {
       cv_s = Rcpp::as<Rcpp::CharacterVector>(df_font[j])[i];
 
       if (cv_s[0] != "") {
-        std::string font_i = Rcpp::as<std::string>(cv_s[0]);
+        std::string font_i = Rf_translateCharUTF8(STRING_ELT(cv_s, 0));
 
         pugi::xml_document font_node;
         pugi::xml_parse_result result = font_node.load_string(font_i.c_str(), pugi_parse_flags);
@@ -332,7 +336,7 @@ Rcpp::CharacterVector write_font(Rcpp::DataFrame df_font) {
 
     xml_string_writer writer;
     doc.print(writer, " ", pugi_format_flags);
-    z[i] = std::move(writer.result);
+    SET_STRING_ELT(z, i, Rf_mkCharLenCE(writer.result.data(), static_cast<int>(writer.result.size()), CE_UTF8));
   }
 
   return z;
@@ -374,7 +378,8 @@ Rcpp::DataFrame read_numfmt(XPtrXML xml_doc_numfmt) {
         Rcpp::warning("%s: not found in numfmt name table", attr_name);
       } else {
         R_xlen_t mtc = std::distance(nams.begin(), find_res);
-        Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = attr_value;
+        SET_STRING_ELT(VECTOR_ELT(df, mtc), itr,
+                       Rf_mkCharLenCE(attr_value.data(), static_cast<int>(attr_value.size()), CE_UTF8));
       }
     }
 
@@ -408,14 +413,14 @@ Rcpp::CharacterVector write_numfmt(Rcpp::DataFrame df_numfmt) {
       // only write attributes where cv_s has a value
       if (cv_s[0] != "") {
         // Rf_PrintValue(cv_s);
-        const std::string val_strl = Rcpp::as<std::string>(cv_s);
+        const std::string val_strl = Rf_translateCharUTF8(STRING_ELT(cv_s, 0));
         numFmt.append_attribute(attrnams[j]) = val_strl.c_str();
       }
     }
 
     xml_string_writer writer;
     doc.print(writer, " ", pugi_format_flags);
-    z[i] = std::move(writer.result);
+    SET_STRING_ELT(z, i, Rf_mkCharLenCE(writer.result.data(), static_cast<int>(writer.result.size()), CE_UTF8));
   }
 
   return z;
@@ -469,7 +474,8 @@ Rcpp::DataFrame read_border(XPtrXML xml_doc_border) {
         Rcpp::warning("%s: not found in border name table", attr_name);
       } else {
         R_xlen_t mtc = std::distance(nams.begin(), find_res);
-        Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = attr_value;
+        SET_STRING_ELT(VECTOR_ELT(df, mtc), itr,
+                       Rf_mkCharLenCE(attr_value.data(), static_cast<int>(attr_value.size()), CE_UTF8));
       }
     }
 
@@ -486,7 +492,8 @@ Rcpp::DataFrame read_border(XPtrXML xml_doc_border) {
         std::string cld_value = std::move(writer.result);
 
         R_xlen_t mtc = std::distance(nams.begin(), find_res);
-        Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = cld_value;
+        SET_STRING_ELT(VECTOR_ELT(df, mtc), itr,
+                       Rf_mkCharLenCE(cld_value.data(), static_cast<int>(cld_value.size()), CE_UTF8));
       }
     }
 
@@ -543,7 +550,7 @@ Rcpp::CharacterVector write_border(Rcpp::DataFrame df_border) {
         // only write attributes where cv_s has a value
         if (cv_s[0] != "") {
           // Rf_PrintValue(cv_s);
-          const std::string val_strl = Rcpp::as<std::string>(cv_s);
+          const std::string val_strl = Rf_translateCharUTF8(STRING_ELT(cv_s, 0));
           border.append_attribute(attr_j.c_str()) = val_strl.c_str();
         }
       }
@@ -553,7 +560,7 @@ Rcpp::CharacterVector write_border(Rcpp::DataFrame df_border) {
         cv_s = Rcpp::as<Rcpp::CharacterVector>(df_border[j])[i];
 
         if (cv_s[0] != "") {
-          std::string font_i = Rcpp::as<std::string>(cv_s[0]);
+          std::string font_i = Rf_translateCharUTF8(STRING_ELT(cv_s, 0));
 
           pugi::xml_document border_node;
           pugi::xml_parse_result result = border_node.load_string(font_i.c_str(), pugi_parse_flags);
@@ -569,7 +576,7 @@ Rcpp::CharacterVector write_border(Rcpp::DataFrame df_border) {
 
     xml_string_writer writer;
     doc.print(writer, " ", pugi_format_flags);
-    z[i] = std::move(writer.result);
+    SET_STRING_ELT(z, i, Rf_mkCharLenCE(writer.result.data(), static_cast<int>(writer.result.size()), CE_UTF8));
   }
 
   return z;
@@ -615,7 +622,8 @@ Rcpp::DataFrame read_fill(XPtrXML xml_doc_fill) {
         cld.print(writer, " ", pugi_format_flags);
 
         R_xlen_t mtc = std::distance(nams.begin(), find_res);
-        Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = std::move(writer.result);
+        SET_STRING_ELT(VECTOR_ELT(df, mtc), itr,
+                       Rf_mkCharLenCE(writer.result.data(), static_cast<int>(writer.result.size()), CE_UTF8));
       }
 
     }  // end aligment, extLst, protection
@@ -648,7 +656,7 @@ Rcpp::CharacterVector write_fill(Rcpp::DataFrame df_fill) {
       cv_s = Rcpp::as<Rcpp::CharacterVector>(df_fill[j])[i];
 
       if (cv_s[0] != "") {
-        std::string font_i = Rcpp::as<std::string>(cv_s[0]);
+        std::string font_i = Rf_translateCharUTF8(STRING_ELT(cv_s, 0));
 
         pugi::xml_document font_node;
         pugi::xml_parse_result result = font_node.load_string(font_i.c_str(), pugi_parse_flags);
@@ -660,7 +668,7 @@ Rcpp::CharacterVector write_fill(Rcpp::DataFrame df_fill) {
 
     xml_string_writer writer;
     doc.print(writer, " ", pugi_format_flags);
-    z[i] = std::move(writer.result);
+    SET_STRING_ELT(z, i, Rf_mkCharLenCE(writer.result.data(), static_cast<int>(writer.result.size()), CE_UTF8));
   }
 
   return z;
@@ -713,7 +721,8 @@ Rcpp::DataFrame read_cellStyle(XPtrXML xml_doc_cellStyle) {
         Rcpp::warning("%s: not found in cellstyle name table", attr_name);
       } else {
         R_xlen_t mtc = std::distance(nams.begin(), find_res);
-        Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = attr_value;
+        SET_STRING_ELT(VECTOR_ELT(df, mtc), itr,
+                       Rf_mkCharLenCE(attr_value.data(), static_cast<int>(attr_value.size()), CE_UTF8));
       }
     }
 
@@ -730,7 +739,8 @@ Rcpp::DataFrame read_cellStyle(XPtrXML xml_doc_cellStyle) {
         std::string cld_value = std::move(writer.result);
 
         R_xlen_t mtc = std::distance(nams.begin(), find_res);
-        Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = cld_value;
+        SET_STRING_ELT(VECTOR_ELT(df, mtc), itr,
+                       Rf_mkCharLenCE(cld_value.data(), static_cast<int>(cld_value.size()), CE_UTF8));
       }
     }
 
@@ -776,7 +786,7 @@ Rcpp::CharacterVector write_cellStyle(Rcpp::DataFrame df_cellstyle) {
         // only write attributes where cv_s has a value
         if (cv_s[0] != "" && cv_s[0] != NA_STRING) {
           // Rf_PrintValue(cv_s);
-          const std::string val_strl = Rcpp::as<std::string>(cv_s);
+          const std::string val_strl = Rf_translateCharUTF8(STRING_ELT(cv_s, 0));
           cellstyle.append_attribute(attr_j.c_str()) = val_strl.c_str();
         }
       }
@@ -786,7 +796,7 @@ Rcpp::CharacterVector write_cellStyle(Rcpp::DataFrame df_cellstyle) {
         cv_s = Rcpp::as<Rcpp::CharacterVector>(df_cellstyle[j])[i];
 
         if (cv_s[0] != "" && cv_s[0] != NA_STRING) {
-          std::string font_i = Rcpp::as<std::string>(cv_s[0]);
+          std::string font_i = Rf_translateCharUTF8(STRING_ELT(cv_s, 0));
 
           pugi::xml_document border_node;
           pugi::xml_parse_result result = border_node.load_string(font_i.c_str(), pugi_parse_flags);
@@ -802,7 +812,7 @@ Rcpp::CharacterVector write_cellStyle(Rcpp::DataFrame df_cellstyle) {
 
     xml_string_writer writer;
     doc.print(writer, " ", pugi_format_flags);
-    z[i] = std::move(writer.result);
+    SET_STRING_ELT(z, i, Rf_mkCharLenCE(writer.result.data(), static_cast<int>(writer.result.size()), CE_UTF8));
   }
 
   return z;
@@ -855,7 +865,8 @@ Rcpp::DataFrame read_tableStyle(XPtrXML xml_doc_tableStyle) {
         Rcpp::warning("%s: not found in tablestyle name table", attr_name);
       } else {
         R_xlen_t mtc = std::distance(nams.begin(), find_res);
-        Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = attr_value;
+        SET_STRING_ELT(VECTOR_ELT(df, mtc), itr,
+                       Rf_mkCharLenCE(attr_value.data(), static_cast<int>(attr_value.size()), CE_UTF8));
       }
     }
 
@@ -873,7 +884,8 @@ Rcpp::DataFrame read_tableStyle(XPtrXML xml_doc_tableStyle) {
         cld_value += writer.result;
 
         R_xlen_t mtc = std::distance(nams.begin(), find_res);
-        Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = cld_value;
+        SET_STRING_ELT(VECTOR_ELT(df, mtc), itr,
+                       Rf_mkCharLenCE(cld_value.data(), static_cast<int>(cld_value.size()), CE_UTF8));
       }
     }
 
@@ -930,7 +942,7 @@ Rcpp::CharacterVector write_tableStyle(Rcpp::DataFrame df_tablestyle) {
         // only write attributes where cv_s has a value
         if (cv_s[0] != "") {
           // Rf_PrintValue(cv_s);
-          const std::string val_strl = Rcpp::as<std::string>(cv_s);
+          const std::string val_strl = Rf_translateCharUTF8(STRING_ELT(cv_s, 0));
           tablestyle.append_attribute(attr_j.c_str()) = val_strl.c_str();
         }
       }
@@ -940,7 +952,7 @@ Rcpp::CharacterVector write_tableStyle(Rcpp::DataFrame df_tablestyle) {
         cv_s = Rcpp::as<Rcpp::CharacterVector>(df_tablestyle[j])[i];
 
         if (cv_s[0] != "") {
-          std::string font_i = Rcpp::as<std::string>(cv_s[0]);
+          std::string font_i = Rf_translateCharUTF8(STRING_ELT(cv_s, 0));
 
           pugi::xml_document tableStyleElement;
           pugi::xml_parse_result result = tableStyleElement.load_string(font_i.c_str(), pugi_parse_flags);
@@ -957,7 +969,7 @@ Rcpp::CharacterVector write_tableStyle(Rcpp::DataFrame df_tablestyle) {
 
     xml_string_writer writer;
     doc.print(writer, " ", pugi_format_flags);
-    z[i] = std::move(writer.result);
+    SET_STRING_ELT(z, i, Rf_mkCharLenCE(writer.result.data(), static_cast<int>(writer.result.size()), CE_UTF8));
   }
 
   return z;
@@ -1003,7 +1015,8 @@ Rcpp::DataFrame read_dxf(XPtrXML xml_doc_dxf) {
         std::string value = std::move(writer.result);
 
         R_xlen_t mtc = std::distance(nams.begin(), find_res);
-        Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = value;
+        SET_STRING_ELT(VECTOR_ELT(df, mtc), itr,
+                       Rf_mkCharLenCE(value.data(), static_cast<int>(value.size()), CE_UTF8));
       }
 
     }  // end aligment, extLst, protection
@@ -1036,7 +1049,7 @@ Rcpp::CharacterVector write_dxf(Rcpp::DataFrame df_dxf) {
       cv_s = Rcpp::as<Rcpp::CharacterVector>(df_dxf[j])[i];
 
       if (cv_s[0] != "") {
-        std::string font_i = Rcpp::as<std::string>(cv_s[0]);
+        std::string font_i = Rf_translateCharUTF8(STRING_ELT(cv_s, 0));
 
         pugi::xml_document font_node;
         pugi::xml_parse_result result = font_node.load_string(font_i.c_str(), pugi_parse_flags);
@@ -1048,7 +1061,7 @@ Rcpp::CharacterVector write_dxf(Rcpp::DataFrame df_dxf) {
 
     xml_string_writer writer;
     doc.print(writer, " ", pugi_format_flags);
-    z[i] = std::move(writer.result);
+    SET_STRING_ELT(z, i, Rf_mkCharLenCE(writer.result.data(), static_cast<int>(writer.result.size()), CE_UTF8));
   }
 
   return z;
@@ -1094,7 +1107,8 @@ Rcpp::DataFrame read_colors(XPtrXML xml_doc_colors) {
         std::string cld_value = std::move(writer.result);
 
         R_xlen_t mtc = std::distance(nams.begin(), find_res);
-        Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = cld_value;
+        SET_STRING_ELT(VECTOR_ELT(df, mtc), itr,
+                       Rf_mkCharLenCE(cld_value.data(), static_cast<int>(cld_value.size()), CE_UTF8));
       }
 
     }  // end aligment, extLst, protection
@@ -1128,7 +1142,7 @@ Rcpp::CharacterVector write_colors(Rcpp::DataFrame df_colors) {
       cv_s = Rcpp::as<Rcpp::CharacterVector>(df_colors[j])[i];
 
       if (cv_s[0] != "") {
-        std::string font_i = Rcpp::as<std::string>(cv_s[0]);
+        std::string font_i = Rf_translateCharUTF8(STRING_ELT(cv_s, 0));
 
         pugi::xml_document font_node;
         pugi::xml_parse_result result = font_node.load_string(font_i.c_str(), pugi_parse_flags);
@@ -1140,7 +1154,7 @@ Rcpp::CharacterVector write_colors(Rcpp::DataFrame df_colors) {
 
     xml_string_writer writer;
     doc.print(writer, " ", pugi_format_flags);
-    z[i] = std::move(writer.result);
+    SET_STRING_ELT(z, i, Rf_mkCharLenCE(writer.result.data(), static_cast<int>(writer.result.size()), CE_UTF8));
   }
 
   return z;

@@ -1269,13 +1269,13 @@ inline XlsbContext xlsb_context_from_list(const Rcpp::List& x) {
   Rcpp::CharacterVector xti = x["xti"], names = x["names"], table_name = x["table_name"];
   Rcpp::IntegerVector table_id = x["table_id"];
   Rcpp::List table_columns = x["table_columns"];
-  for (R_xlen_t i = 0; i < xti.size(); ++i) ctx.xti.push_back(Rcpp::as<std::string>(xti[i]));
-  for (R_xlen_t i = 0; i < names.size(); ++i) ctx.names.push_back(Rcpp::as<std::string>(names[i]));
+  for (R_xlen_t i = 0; i < xti.size(); ++i) ctx.xti.push_back(Rf_translateCharUTF8(STRING_ELT(xti, i)));
+  for (R_xlen_t i = 0; i < names.size(); ++i) ctx.names.push_back(Rf_translateCharUTF8(STRING_ELT(names, i)));
   for (R_xlen_t i = 0; i < table_id.size(); ++i) {
     XlsbTable t;
-    t.name = Rcpp::as<std::string>(table_name[i]);
+    t.name = Rf_translateCharUTF8(STRING_ELT(table_name, i));
     Rcpp::CharacterVector cols = Rcpp::as<Rcpp::CharacterVector>(table_columns[i]);
-    for (R_xlen_t j = 0; j < cols.size(); ++j) t.columns.push_back(Rcpp::as<std::string>(cols[j]));
+    for (R_xlen_t j = 0; j < cols.size(); ++j) t.columns.push_back(Rf_translateCharUTF8(STRING_ELT(cols, j)));
     ctx.tables[static_cast<uint32_t>(table_id[i])] = t;
   }
   return ctx;

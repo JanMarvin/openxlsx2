@@ -1,7 +1,7 @@
 #include "openxlsx2.h"
 
 // [[Rcpp::export]]
-SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration, bool whitespace, int comments, bool empty_tags, bool skip_control, bool pointer) {
+SEXP readXML(Rcpp::CharacterVector path, bool isfile, bool escapes, bool declaration, bool whitespace, int comments, bool empty_tags, bool skip_control, bool pointer) {
   std::unique_ptr<xmldoc> doc(new xmldoc());
   pugi::xml_parse_result result;
 
@@ -13,10 +13,13 @@ SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration, bool
   if (!whitespace) pugi_parse_flags |= pugi::parse_trim_pcdata;
   if (comments) pugi_parse_flags |= pugi::parse_comments;
 
+  if (Rf_xlength(path) != 1) Rcpp::stop("path must be a single string");
+
+  // file names are passed in the native encoding, xml content as UTF-8
   if (isfile) {
-    result = doc->load_file(path.c_str(), pugi_parse_flags, pugi::encoding_utf8);
+    result = doc->load_file(Rf_translateChar(STRING_ELT(path, 0)), pugi_parse_flags, pugi::encoding_utf8);
   } else {
-    result = doc->load_string(path.c_str(), pugi_parse_flags);
+    result = doc->load_string(Rf_translateCharUTF8(STRING_ELT(path, 0)), pugi_parse_flags);
   }
 
   if (!result) {
@@ -24,7 +27,7 @@ SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration, bool
   }
 
   if (comments == 2) {
-    Rcpp::CharacterVector comment_vec;
+    std::vector<pugi::xml_node> comment_nodes;
     std::vector<pugi::xml_node> stack;
     stack.push_back(*doc);
 
@@ -33,13 +36,18 @@ SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration, bool
       stack.pop_back();
 
       if (node.type() == pugi::node_comment) {
-        comment_vec.push_back(node.value());
+        comment_nodes.push_back(node);
       }
       for (pugi::xml_node child = node.last_child(); child; child = child.previous_sibling()) {
         stack.push_back(child);
       }
     }
-    return Rcpp::wrap(comment_vec);
+
+    Rcpp::CharacterVector comment_vec(static_cast<R_xlen_t>(comment_nodes.size()));
+    for (R_xlen_t i = 0; i < comment_vec.size(); ++i) {
+      SET_STRING_ELT(comment_vec, i, Rf_mkCharCE(comment_nodes[static_cast<size_t>(i)].value(), CE_UTF8));
+    }
+    return comment_vec;
   }
 
   uint32_t pugi_format_flags = pugi::format_raw;
@@ -58,7 +66,7 @@ SEXP readXML(std::string path, bool isfile, bool escapes, bool declaration, bool
 
   xml_string_writer writer;
   doc->print(writer, " ", pugi_format_flags);
-  return Rcpp::wrap(Rcpp::String(writer.result));
+  return Rf_ScalarString(Rf_mkCharLenCE(writer.result.data(), static_cast<int>(writer.result.size()), CE_UTF8));
 }
 
 // pugixml memory is invisible to R's garbage collector, so a document read
@@ -85,11 +93,12 @@ inline uint32_t pugi_format(XPtrXML doc) {
 }
 
 // [[Rcpp::export]]
-Rcpp::LogicalVector is_xml(std::string str) {
+Rcpp::LogicalVector is_xml(Rcpp::CharacterVector str) {
   pugi::xml_document doc;
   pugi::xml_parse_result result;
 
-  result = doc.load_string(str.c_str());
+  if (Rf_xlength(str) != 1) Rcpp::stop("str must be a single string");
+  result = doc.load_string(Rf_translateCharUTF8(STRING_ELT(str, 0)));
 
   if (!result)
     return false;
@@ -98,14 +107,18 @@ Rcpp::LogicalVector is_xml(std::string str) {
 }
 
 // [[Rcpp::export]]
-SEXP getXMLXPtrNamePath(XPtrXML doc, std::vector<std::string> path) {
+SEXP getXMLXPtrNamePath(XPtrXML doc, Rcpp::CharacterVector path) {
 
   check_xptr_validity(doc);
+  std::vector<std::string> path_utf8;
+  for (R_xlen_t i = 0; i < Rf_xlength(path); ++i) {
+    path_utf8.push_back(Rf_translateCharUTF8(STRING_ELT(path, i)));
+  }
 
   std::vector<pugi::xml_node> nodes = {*doc};  // Start from the root node
   std::vector<pugi::xml_node> next_nodes;
 
-  for (const auto& tag : path) {
+  for (const auto& tag : path_utf8) {
     next_nodes.clear();
     for (const auto& node : nodes) {
       if (tag == "*") {
@@ -121,14 +134,19 @@ SEXP getXMLXPtrNamePath(XPtrXML doc, std::vector<std::string> path) {
     nodes = next_nodes;
   }
 
-  vec_string res;
+  std::vector<const char*> names;
   for (const auto& node : nodes) {
     for (auto ch : node.children()) {
-      res.push_back(ch.name());
+      names.push_back(ch.name());
     }
   }
 
-  return Rcpp::wrap(res);
+  Rcpp::CharacterVector res(static_cast<R_xlen_t>(names.size()));
+  for (R_xlen_t i = 0; i < res.size(); ++i) {
+    SET_STRING_ELT(res, i, Rf_mkCharCE(names[static_cast<size_t>(i)], CE_UTF8));
+  }
+
+  return res;
 }
 
 // helper for path-finding
@@ -166,18 +184,22 @@ std::vector<pugi::xml_node> find_nodes_by_path(pugi::xml_document* doc, const st
 }
 
 // [[Rcpp::export]]
-SEXP getXMLXPtrPath(XPtrXML doc, std::vector<std::string> path) {
+SEXP getXMLXPtrPath(XPtrXML doc, Rcpp::CharacterVector path) {
   check_xptr_validity(doc);
+  std::vector<std::string> path_utf8;
+  for (R_xlen_t i = 0; i < Rf_xlength(path); ++i) {
+    path_utf8.push_back(Rf_translateCharUTF8(STRING_ELT(path, i)));
+  }
   uint32_t pugi_format_flags = pugi_format(doc);
 
   // If no path, return empty vector — or optionally, entire document text
-  if (path.empty()) {
+  if (path_utf8.empty()) {
     xml_string_writer writer;
     doc->print(writer, " ", pugi_format_flags);
     return Rf_ScalarString(Rf_mkCharLenCE(writer.result.data(), static_cast<int>(writer.result.size()), CE_UTF8));
   }
 
-  std::vector<pugi::xml_node> target_nodes = find_nodes_by_path(doc.get(), path);
+  std::vector<pugi::xml_node> target_nodes = find_nodes_by_path(doc.get(), path_utf8);
   Rcpp::CharacterVector res(static_cast<R_xlen_t>(target_nodes.size()));
 
   for (R_xlen_t i = 0; i < res.size(); ++i) {
@@ -190,12 +212,16 @@ SEXP getXMLXPtrPath(XPtrXML doc, std::vector<std::string> path) {
 }
 
 // [[Rcpp::export]]
-SEXP getXMLXPtrValPath(XPtrXML doc, std::vector<std::string> path) {
+SEXP getXMLXPtrValPath(XPtrXML doc, Rcpp::CharacterVector path) {
   check_xptr_validity(doc);
+  std::vector<std::string> path_utf8;
+  for (R_xlen_t i = 0; i < Rf_xlength(path); ++i) {
+    path_utf8.push_back(Rf_translateCharUTF8(STRING_ELT(path, i)));
+  }
 
-  if (path.empty()) return Rcpp::CharacterVector::create();
+  if (path_utf8.empty()) return Rcpp::CharacterVector::create();
 
-  std::vector<pugi::xml_node> target_nodes = find_nodes_by_path(doc.get(), path);
+  std::vector<pugi::xml_node> target_nodes = find_nodes_by_path(doc.get(), path_utf8);
   Rcpp::CharacterVector res(static_cast<R_xlen_t>(target_nodes.size()));
 
   for (R_xlen_t i = 0; i < res.size(); ++i) {
@@ -206,18 +232,22 @@ SEXP getXMLXPtrValPath(XPtrXML doc, std::vector<std::string> path) {
 }
 
 // [[Rcpp::export]]
-SEXP getXMLXPtrAttrPath(XPtrXML doc, std::vector<std::string> path) {
+SEXP getXMLXPtrAttrPath(XPtrXML doc, Rcpp::CharacterVector path) {
   check_xptr_validity(doc);
+  std::vector<std::string> path_utf8;
+  for (R_xlen_t i = 0; i < Rf_xlength(path); ++i) {
+    path_utf8.push_back(Rf_translateCharUTF8(STRING_ELT(path, i)));
+  }
   std::vector<pugi::xml_node> target_nodes;
 
-  if (path.empty()) {
+  if (path_utf8.empty()) {
     for (pugi::xml_node node : doc->children()) {
       if (node.type() == pugi::node_element) {
         target_nodes.push_back(node);
       }
     }
   } else {
-    target_nodes = find_nodes_by_path(doc.get(), path);
+    target_nodes = find_nodes_by_path(doc.get(), path_utf8);
   }
 
   if (target_nodes.empty()) return Rcpp::List::create();
@@ -245,9 +275,10 @@ SEXP getXMLXPtrAttrPath(XPtrXML doc, std::vector<std::string> path) {
 }
 
 // [[Rcpp::export]]
-SEXP printXPtr(XPtrXML doc, std::string indent, bool raw, bool attr_indent) {
+SEXP printXPtr(XPtrXML doc, Rcpp::CharacterVector indent, bool raw, bool attr_indent) {
 
   check_xptr_validity(doc);
+  if (Rf_xlength(indent) != 1) Rcpp::stop("indent must be a single string");
 
   // pugi::parse_default without escapes flag
   uint32_t pugi_format_flags = pugi_format(doc);
@@ -259,12 +290,15 @@ SEXP printXPtr(XPtrXML doc, std::string indent, bool raw, bool attr_indent) {
   if (attr_indent) pugi_format_flags |= pugi::format_indent_attributes;
 
   xml_string_writer writer;
-  doc->print(writer, indent.c_str(), pugi_format_flags);
-  return Rcpp::wrap(Rcpp::String(writer.result));
+  doc->print(writer, Rf_translateCharUTF8(STRING_ELT(indent, 0)), pugi_format_flags);
+  return Rf_ScalarString(Rf_mkCharLenCE(writer.result.data(), static_cast<int>(writer.result.size()), CE_UTF8));
 }
 
 // [[Rcpp::export]]
-XPtrXML write_xml_file(std::string xml_content, bool escapes) {
+XPtrXML write_xml_file(Rcpp::CharacterVector xml_content, bool escapes) {
+  if (Rf_xlength(xml_content) != 1) Rcpp::stop("xml_content must be a single string");
+  const char* xml_content_utf8 = Rf_translateCharUTF8(STRING_ELT(xml_content, 0));
+
   xmldoc* doc = new xmldoc;
 
   // pugi::parse_default without escapes flag
@@ -272,10 +306,10 @@ XPtrXML write_xml_file(std::string xml_content, bool escapes) {
   if (escapes) pugi_parse_flags |= pugi::parse_escapes;
 
   // load and validate node
-  if (xml_content != "") {
+  if (xml_content_utf8[0] != '\0') {
     pugi::xml_parse_result result;
-    result = doc->load_string(xml_content.c_str(), pugi_parse_flags);
-    if (!result) Rcpp::stop("Loading xml_content node failed: \n %s", xml_content);
+    result = doc->load_string(xml_content_utf8, pugi_parse_flags);
+    if (!result) Rcpp::stop("Loading xml_content node failed: \n %s", xml_content_utf8);
   }
 
   // Needs to be added after the node has been loaded and validated
@@ -328,9 +362,9 @@ XPtrXML write_xml_file(std::string xml_content, bool escapes) {
 //' @export
 // [[Rcpp::export]]
 Rcpp::CharacterVector xml_attr_mod(
-  std::string xml_content,
+  Rcpp::CharacterVector xml_content,
   Rcpp::CharacterVector xml_attributes,
-  Rcpp::Nullable<std::vector<std::string>> path = R_NilValue,
+  Rcpp::Nullable<Rcpp::CharacterVector> path = R_NilValue,
   bool escapes = false,
   bool declaration = false,
   bool remove_empty_attr = true
@@ -345,16 +379,24 @@ Rcpp::CharacterVector xml_attr_mod(
   uint32_t pugi_format_flags = pugi::format_raw;
   if (!escapes) pugi_format_flags |= pugi::format_no_escapes;
 
+  if (Rf_xlength(xml_content) != 1) Rcpp::stop("xml_content must be a single string");
+  const char* xml_cstr = Rf_translateCharUTF8(STRING_ELT(xml_content, 0));
+
   // load and validate node
-  if (xml_content != "") {
-    result = doc.load_string(xml_content.c_str(), pugi_parse_flags);
-    if (!result) Rcpp::stop("Loading xml_content node failed: \n %s ", xml_content);
+  if (xml_cstr[0] != '\0') {
+    result = doc.load_string(xml_cstr, pugi_parse_flags);
+    if (!result) Rcpp::stop("Loading xml_content node failed: \n %s ", xml_cstr);
   }
 
   std::vector<pugi::xml_node> target_nodes;
 
   std::vector<std::string> p;
-  if (path.isNotNull()) p = Rcpp::as<std::vector<std::string>>(path);
+  if (path.isNotNull()) {
+    Rcpp::CharacterVector path_r(path.get());
+    for (R_xlen_t i = 0; i < path_r.size(); ++i) {
+      p.push_back(Rf_translateCharUTF8(STRING_ELT(path_r, i)));
+    }
+  }
 
   if (!p.empty()) {
     target_nodes = find_nodes_by_path(&doc, p);
@@ -366,8 +408,15 @@ Rcpp::CharacterVector xml_attr_mod(
   }
 
   if (!target_nodes.empty()) {
-    std::vector<std::string> new_attr_nam = xml_attributes.names();
-    std::vector<std::string> new_attr_val = Rcpp::as<std::vector<std::string>>(xml_attributes);
+    SEXP attr_names = Rf_getAttrib(xml_attributes, R_NamesSymbol);
+    R_xlen_t n_attr = Rf_xlength(xml_attributes);
+    if (Rf_isNull(attr_names) && n_attr > 0) Rcpp::stop("xml_attributes must be named");
+
+    std::vector<std::string> new_attr_nam, new_attr_val;
+    for (R_xlen_t i = 0; i < n_attr; ++i) {
+      new_attr_nam.push_back(Rf_translateCharUTF8(STRING_ELT(attr_names, i)));
+      new_attr_val.push_back(Rf_translateCharUTF8(STRING_ELT(xml_attributes, i)));
+    }
 
     for (auto& node : target_nodes) {
       for (size_t i = 0; i < static_cast<size_t>(xml_attributes.length()); ++i) {
@@ -389,7 +438,7 @@ Rcpp::CharacterVector xml_attr_mod(
 
   xml_string_writer writer;
   doc.print(writer, " ", pugi_format_flags);
-  return Rcpp::wrap(Rcpp::String(writer.result));
+  return Rf_ScalarString(Rf_mkCharLenCE(writer.result.data(), static_cast<int>(writer.result.size()), CE_UTF8));
 }
 
 //' create xml_node from R objects
@@ -420,7 +469,7 @@ Rcpp::CharacterVector xml_attr_mod(
 //' @export
 // [[Rcpp::export]]
 Rcpp::CharacterVector xml_node_create(
-  std::string xml_name,
+  Rcpp::CharacterVector xml_name,
   Rcpp::Nullable<Rcpp::CharacterVector> xml_children = R_NilValue,
   Rcpp::Nullable<Rcpp::CharacterVector> xml_attributes = R_NilValue,
   bool escapes = false, bool declaration = false
@@ -434,24 +483,25 @@ Rcpp::CharacterVector xml_node_create(
   uint32_t pugi_format_flags = pugi::format_raw;
   if (!escapes) pugi_format_flags |= pugi::format_no_escapes;
 
-  pugi::xml_node cld = doc.append_child(xml_name.c_str());
+  if (Rf_xlength(xml_name) != 1) Rcpp::stop("xml_name must be a single string");
+  pugi::xml_node cld = doc.append_child(Rf_translateCharUTF8(STRING_ELT(xml_name, 0)));
 
   // check if children are attached
   if (xml_children.isNotNull()) {
     Rcpp::CharacterVector xml_child(xml_children.get());
 
-    for (auto i = 0; i < xml_child.size(); ++i) {
-      std::string xml_cld = std::string(xml_child[i]);
+    for (R_xlen_t i = 0; i < xml_child.size(); ++i) {
+      const char* xml_cld = Rf_translateCharUTF8(STRING_ELT(xml_child, i));
 
       pugi::xml_document is_node;
-      pugi::xml_parse_result result = is_node.load_string(xml_cld.c_str(), pugi_parse_flags);
+      pugi::xml_parse_result result = is_node.load_string(xml_cld, pugi_parse_flags);
 
       // check if result is a valid xml_node, else append as is
       if (result) {
         for (auto is_n : is_node.children())
           cld.append_copy(is_n);
       } else {
-        cld.append_child(pugi::node_pcdata).set_value(xml_cld.c_str());
+        cld.append_child(pugi::node_pcdata).set_value(xml_cld);
       }
     }
   }
@@ -460,8 +510,15 @@ Rcpp::CharacterVector xml_node_create(
   if (xml_attributes.isNotNull()) {
     Rcpp::CharacterVector xml_attr(xml_attributes.get());
 
-    std::vector<std::string> new_attr_nam = xml_attr.names();
-    std::vector<std::string> new_attr_val = Rcpp::as<std::vector<std::string>>(xml_attr);
+    SEXP attr_names = Rf_getAttrib(xml_attr, R_NamesSymbol);
+    R_xlen_t n_attr = Rf_xlength(xml_attr);
+    if (Rf_isNull(attr_names) && n_attr > 0) Rcpp::stop("xml_attributes must be named");
+
+    std::vector<std::string> new_attr_nam, new_attr_val;
+    for (R_xlen_t i = 0; i < n_attr; ++i) {
+      new_attr_nam.push_back(Rf_translateCharUTF8(STRING_ELT(attr_names, i)));
+      new_attr_val.push_back(Rf_translateCharUTF8(STRING_ELT(xml_attr, i)));
+    }
 
     for (size_t i = 0; i < static_cast<size_t>(xml_attr.length()); ++i) {
       if (!new_attr_val[i].empty())
@@ -471,14 +528,19 @@ Rcpp::CharacterVector xml_node_create(
 
   xml_string_writer writer;
   doc.print(writer, " ", pugi_format_flags);
-  return Rcpp::wrap(Rcpp::String(writer.result));
+  return Rf_ScalarString(Rf_mkCharLenCE(writer.result.data(), static_cast<int>(writer.result.size()), CE_UTF8));
 }
 
 // [[Rcpp::export]]
-SEXP xml_append_child_path(XPtrXML node, XPtrXML child, std::vector<std::string> path, bool pointer) {
+SEXP xml_append_child_path(XPtrXML node, XPtrXML child, Rcpp::CharacterVector path, bool pointer) {
 
   check_xptr_validity(node);
   check_xptr_validity(child);
+
+  std::vector<std::string> path_utf8;
+  for (R_xlen_t i = 0; i < path.size(); ++i) {
+    path_utf8.push_back(Rf_translateCharUTF8(STRING_ELT(path, i)));
+  }
 
   uint32_t pugi_format_flags = pugi_format(node);
 
@@ -486,8 +548,8 @@ SEXP xml_append_child_path(XPtrXML node, XPtrXML child, std::vector<std::string>
   pugi::xml_node current = node->first_child();
 
   // Traverse path — allow first path element to match current node name
-  for (size_t i = 0; i < path.size(); ++i) {
-    const std::string& tag = path[i];
+  for (size_t i = 0; i < path_utf8.size(); ++i) {
+    const std::string& tag = path_utf8[i];
 
     if (i == 0 && std::string(current.name()) == tag) {
       // First path element matches current node — don't descend
@@ -511,22 +573,30 @@ SEXP xml_append_child_path(XPtrXML node, XPtrXML child, std::vector<std::string>
   } else {
     xml_string_writer writer;
     node->print(writer, " ", pugi_format_flags);
-    return Rcpp::wrap(Rcpp::String(writer.result));
+    return Rf_ScalarString(Rf_mkCharLenCE(writer.result.data(), static_cast<int>(writer.result.size()), CE_UTF8));
   }
 }
 
 // [[Rcpp::export]]
-SEXP xml_remove_child_path(XPtrXML node, std::string child, std::vector<std::string> path, int32_t which, bool pointer) {
+SEXP xml_remove_child_path(XPtrXML node, Rcpp::CharacterVector child, Rcpp::CharacterVector path, int32_t which, bool pointer) {
 
   check_xptr_validity(node);
+
+  if (Rf_xlength(child) != 1) Rcpp::stop("child must be a single string");
+  std::string child_utf8 = Rf_translateCharUTF8(STRING_ELT(child, 0));
+
+  std::vector<std::string> path_utf8;
+  for (R_xlen_t i = 0; i < path.size(); ++i) {
+    path_utf8.push_back(Rf_translateCharUTF8(STRING_ELT(path, i)));
+  }
 
   uint32_t pugi_format_flags = pugi_format(node);
 
   pugi::xml_node current = node->first_child();
 
   // Allow first path element to match current node
-  for (size_t i = 0; i < path.size(); ++i) {
-    const std::string& tag = path[i];
+  for (size_t i = 0; i < path_utf8.size(); ++i) {
+    const std::string& tag = path_utf8[i];
 
     if (i == 0 && std::string(current.name()) == tag) {
       continue;
@@ -540,8 +610,8 @@ SEXP xml_remove_child_path(XPtrXML node, std::string child, std::vector<std::str
 
   // Iterate through children to remove
   int32_t ctr = 0;
-  for (pugi::xml_node cld = current.child(child.c_str()); cld;) {
-    pugi::xml_node next = cld.next_sibling(child.c_str());
+  for (pugi::xml_node cld = current.child(child_utf8.c_str()); cld;) {
+    pugi::xml_node next = cld.next_sibling(child_utf8.c_str());
 
     if (which < 0 || ctr == which) {
       current.remove_child(cld);
@@ -557,6 +627,6 @@ SEXP xml_remove_child_path(XPtrXML node, std::string child, std::vector<std::str
   } else {
     xml_string_writer writer;
     node->print(writer, " ", pugi_format_flags);
-    return Rcpp::wrap(Rcpp::String(writer.result));
+    return Rf_ScalarString(Rf_mkCharLenCE(writer.result.data(), static_cast<int>(writer.result.size()), CE_UTF8));
   }
 }

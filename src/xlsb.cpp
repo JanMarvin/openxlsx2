@@ -152,19 +152,19 @@ Rcpp::List xlsb_context(std::string workbookPath, Rcpp::CharacterVector extLinkP
         if (ok) text = quote ? "'" + prefix + name + "'" : name;
       }
     }
-    xti[static_cast<R_xlen_t>(i)] = text;
+    SET_STRING_ELT(xti, static_cast<R_xlen_t>(i), Rf_mkCharLenCE(text.data(), static_cast<int>(text.size()), CE_UTF8));
   }
 
   // tables: id, name and the names of the columns
   Rcpp::IntegerVector table_id;
-  Rcpp::CharacterVector table_name;
+  std::vector<std::string> table_names;
   Rcpp::List table_columns;
   for (R_xlen_t i = 0; i < tablePaths.size(); ++i) {
     std::ifstream tab(Rcpp::as<std::string>(tablePaths[i]), std::ios::in | std::ios::binary);
     bool in_table = false;
     uint32_t idList = 0;
     std::string display_name;
-    Rcpp::CharacterVector cols;
+    std::vector<std::string> col_names;
     while (tab && tab.peek() != std::char_traits<char>::eof()) {
       int32_t x = 0, size = 0;
       RECORD(x, size, tab, swapit);
@@ -182,21 +182,40 @@ Rcpp::List xlsb_context(std::string workbookPath, Rcpp::CharacterVector extLinkP
         // id, function, three dxfs and the query table field, then the name
         tab.seekg(24, std::ios_base::cur);
         XLNullableWideString(tab, swapit);
-        cols.push_back(XLNullableWideString(tab, swapit));
+        col_names.push_back(XLNullableWideString(tab, swapit));
       } else if (x == BrtEndList) {
         break;
       }
       tab.seekg(rec_end, std::ios_base::beg);
     }
     if (!in_table) continue;
+
+    Rcpp::CharacterVector cols(static_cast<R_xlen_t>(col_names.size()));
+    for (R_xlen_t j = 0; j < cols.size(); ++j) {
+      const std::string& col = col_names[static_cast<size_t>(j)];
+      SET_STRING_ELT(cols, j, Rf_mkCharLenCE(col.data(), static_cast<int>(col.size()), CE_UTF8));
+    }
+
     table_id.push_back(static_cast<int32_t>(idList));
-    table_name.push_back(display_name);
+    table_names.push_back(display_name);
     table_columns.push_back(cols);
+  }
+
+  Rcpp::CharacterVector table_name(static_cast<R_xlen_t>(table_names.size()));
+  for (R_xlen_t i = 0; i < table_name.size(); ++i) {
+    const std::string& nam = table_names[static_cast<size_t>(i)];
+    SET_STRING_ELT(table_name, i, Rf_mkCharLenCE(nam.data(), static_cast<int>(nam.size()), CE_UTF8));
+  }
+
+  Rcpp::CharacterVector names_r(static_cast<R_xlen_t>(names.size()));
+  for (R_xlen_t i = 0; i < names_r.size(); ++i) {
+    const std::string& nam = names[static_cast<size_t>(i)];
+    SET_STRING_ELT(names_r, i, Rf_mkCharLenCE(nam.data(), static_cast<int>(nam.size()), CE_UTF8));
   }
 
   return Rcpp::List::create(
     Rcpp::Named("xti") = xti,
-    Rcpp::Named("names") = Rcpp::wrap(names),
+    Rcpp::Named("names") = names_r,
     Rcpp::Named("table_id") = table_id,
     Rcpp::Named("table_name") = table_name,
     Rcpp::Named("table_columns") = table_columns

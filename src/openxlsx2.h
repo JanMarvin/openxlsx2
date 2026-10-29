@@ -34,8 +34,6 @@ std::string txt_to_xml(
     bool skip_control,
     const std::string& type
 );
-std::string txt_to_is(std::string txt, bool no_escapes, bool raw, bool skip_control);
-std::string txt_to_si(std::string txt, bool no_escapes, bool raw, bool skip_control);
 
 inline bool sexp_str_less(SEXP a, SEXP b) {
   return std::strcmp(CHAR(a), CHAR(b)) < 0;
