@@ -47,12 +47,6 @@ strip_xml_control_chars <- function(x) {
 #' @noRd
 replace_legal_chars <- function(x) {
   x <- as.character(x)
-  bad <- Encoding(x) != "UTF-8"
-
-  if (any(bad)) {
-    x[bad] <- stringi::stri_conv(x[bad], from = "", to = "UTF-8")
-  }
-
   stringi::stri_replace_all_fixed(x, legal_chars(), legal_sub(), vectorize_all = FALSE)
 }
 

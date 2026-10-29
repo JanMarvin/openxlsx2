@@ -756,7 +756,6 @@ write_data2 <- function(
 
     sel <- grepl("<si>", cc$v)
     v <- cc$v[sel]
-    Encoding(v) <- "UTF-8"
 
     wb$sharedStrings <- stringi::stri_unique(c(wb$sharedStrings, stringi::stri_unique(v)))
 

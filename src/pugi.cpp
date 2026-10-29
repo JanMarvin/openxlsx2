@@ -174,7 +174,7 @@ SEXP getXMLXPtrPath(XPtrXML doc, std::vector<std::string> path) {
   if (path.empty()) {
     xml_string_writer writer;
     doc->print(writer, " ", pugi_format_flags);
-    return Rcpp::CharacterVector::create(writer.result);
+    return Rf_ScalarString(Rf_mkCharLenCE(writer.result.data(), static_cast<int>(writer.result.size()), CE_UTF8));
   }
 
   std::vector<pugi::xml_node> target_nodes = find_nodes_by_path(doc.get(), path);
@@ -183,7 +183,7 @@ SEXP getXMLXPtrPath(XPtrXML doc, std::vector<std::string> path) {
   for (R_xlen_t i = 0; i < res.size(); ++i) {
     xml_string_writer writer;
     target_nodes[static_cast<size_t>(i)].print(writer, " ", pugi_format_flags);
-    res[i] = Rcpp::String(writer.result);
+    SET_STRING_ELT(res, i, Rf_mkCharLenCE(writer.result.data(), static_cast<int>(writer.result.size()), CE_UTF8));
   }
 
   return res;
@@ -199,7 +199,7 @@ SEXP getXMLXPtrValPath(XPtrXML doc, std::vector<std::string> path) {
   Rcpp::CharacterVector res(static_cast<R_xlen_t>(target_nodes.size()));
 
   for (R_xlen_t i = 0; i < res.size(); ++i) {
-    res[i] = Rcpp::String(target_nodes[static_cast<size_t>(i)].text().get());
+    SET_STRING_ELT(res, i, Rf_mkCharCE(target_nodes[static_cast<size_t>(i)].text().get(), CE_UTF8));
   }
 
   return res;
@@ -232,8 +232,8 @@ SEXP getXMLXPtrAttrPath(XPtrXML doc, std::vector<std::string> path) {
 
     R_xlen_t j = 0;
     for (auto attr : node.attributes()) {
-      attr_names[j] = Rcpp::String(attr.name());
-      attr_vals[j] = Rcpp::String(attr.value());
+      SET_STRING_ELT(attr_names, j, Rf_mkCharCE(attr.name(), CE_UTF8));
+      SET_STRING_ELT(attr_vals, j, Rf_mkCharCE(attr.value(), CE_UTF8));
       j++;
     }
 

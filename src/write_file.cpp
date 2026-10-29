@@ -81,10 +81,10 @@ void xml_sheet_data_slim(
             file << "<row";
 
             for (R_xlen_t j = 0; j < n_attr_cols; ++j) {
-              Rcpp::String s = row_attr_cols[static_cast<size_t>(j)][row_idx];
+              const char* s = Rf_translateCharUTF8(STRING_ELT(row_attr_cols[static_cast<size_t>(j)], row_idx));
 
-              if (s != "") {
-                file << " " << attrnams[j] << "=\"" << s.get_cstring() << "\"";
+              if (s[0] != '\0') {
+                file << " " << attrnams[j] << "=\"" << s << "\"";
               }
             }
             file << ">";  // end <r ...>
@@ -149,8 +149,8 @@ void xml_sheet_data_slim(
           }
           file << ">";
 
-          const char* f_cstr = CHAR(STRING_ELT(cc_f, i));
-          file << to_cstring(cc_f[i]);
+          const char* f_cstr = Rf_translateCharUTF8(STRING_ELT(cc_f, i));
+          file << f_cstr;
           if (!f_si && std::strstr(f_cstr, "\"si\"=") != nullptr) f_si = true;
 
           file << "</f>";
@@ -158,26 +158,21 @@ void xml_sheet_data_slim(
 
         // v node: value stored from evaluated formula
         if (!cc_v[i].empty()) {
-          const char* v_cstr = CHAR(STRING_ELT(cc_v, i));
+          const char* v_cstr = Rf_translateCharUTF8(STRING_ELT(cc_v, i));
           if (!f_si && v_cstr[0] == ' ' && v_cstr[1] == '\0') {
             // this looks strange
             file << "<v xml:space=\"preserve\">";
             file << " ";
             file << "</v>";
           } else {
-            // mirror xml_cols_to_df: only c_t == "str" can carry utf8 in v.
-            // numeric / formula-evaluated values are ASCII; skip the Rcpp::String round trip.
-            if (cc_c_t[i].empty() && cc_f_attr[i].empty())
-              file << "<v>" << v_cstr << "</v>";
-            else
-              file << "<v>" << to_cstring(cc_v[i]) << "</v>";
+            file << "<v>" << v_cstr << "</v>";
           }
         }
 
         // <is><t> ... </t></is>
         if (std::strcmp(CHAR(STRING_ELT(cc_c_t, i)), "inlineStr") == 0) {
           if (!cc_is[i].empty()) {
-            file << to_cstring(cc_is[i]);
+            file << Rf_translateCharUTF8(STRING_ELT(cc_is, i));
           }
         }
 
@@ -194,8 +189,8 @@ void xml_sheet_data_slim(
 
         file << "<row";
         for (R_xlen_t j = 0; j < n_attr_cols; ++j) {
-            Rcpp::String s = row_attr_cols[static_cast<size_t>(j)][row_idx];
-            if (s != "") file << " " << attrnams[j] << "=\"" << s.get_cstring() << "\"";
+            const char* s = Rf_translateCharUTF8(STRING_ELT(row_attr_cols[static_cast<size_t>(j)], row_idx));
+            if (s[0] != '\0') file << " " << attrnams[j] << "=\"" << s << "\"";
         }
         file << ">";
         row_idx++;
@@ -295,10 +290,10 @@ void xml_sheet_data(pugi::xml_node& doc, Rcpp::DataFrame& row_attr, Rcpp::DataFr
         row = doc.append_child("row");
 
         for (R_xlen_t j = 0; j < n_attr_cols; ++j) {
-          Rcpp::String s = row_attr_cols[static_cast<size_t>(j)][row_idx];
+          const char* s = Rf_translateCharUTF8(STRING_ELT(row_attr_cols[static_cast<size_t>(j)], row_idx));
 
-          if (s != "") {
-             row.append_attribute(static_cast<const char*>(attrnams[j])) = s.get_cstring();
+          if (s[0] != '\0') {
+             row.append_attribute(static_cast<const char*>(attrnams[j])) = s;
           }
         }
 
@@ -385,7 +380,7 @@ void xml_sheet_data(pugi::xml_node& doc, Rcpp::DataFrame& row_attr, Rcpp::DataFr
 
       // Add the content of <f>
       if (!cc_f[i].empty()) {
-        f.append_child(pugi::node_pcdata).set_value(to_cstring(cc_f[i]));
+        f.append_child(pugi::node_pcdata).set_value(Rf_translateCharUTF8(STRING_ELT(cc_f, i)));
       }
     }
 
@@ -395,10 +390,7 @@ void xml_sheet_data(pugi::xml_node& doc, Rcpp::DataFrame& row_attr, Rcpp::DataFr
         cell.append_child("v").append_attribute("xml:space").set_value("preserve");
         cell.child("v").append_child(pugi::node_pcdata).set_value(" ");
       } else {
-        if (cc_c_t[i].empty() && cc_f_attr[i].empty())
-          cell.append_child("v").append_child(pugi::node_pcdata).set_value(static_cast<const char*>(cc_v[i]));
-        else
-          cell.append_child("v").append_child(pugi::node_pcdata).set_value(to_cstring(cc_v[i]));
+        cell.append_child("v").append_child(pugi::node_pcdata).set_value(Rf_translateCharUTF8(STRING_ELT(cc_v, i)));
       }
     }
 
@@ -406,7 +398,8 @@ void xml_sheet_data(pugi::xml_node& doc, Rcpp::DataFrame& row_attr, Rcpp::DataFr
     if (std::string(cc_c_t[i]).compare("inlineStr") == 0) {
       if (!cc_is[i].empty()) {
         pugi::xml_document is_node;
-        pugi::xml_parse_result result = is_node.load_string(to_cstring(cc_is[i]), pugi_parse_flags);
+        const char* is_cstr = Rf_translateCharUTF8(STRING_ELT(cc_is, i));
+        pugi::xml_parse_result result = is_node.load_string(is_cstr, pugi_parse_flags);
         if (!result) Rcpp::stop("loading inlineStr node while writing failed");
 
         cell.append_copy(is_node.first_child());
@@ -417,9 +410,9 @@ void xml_sheet_data(pugi::xml_node& doc, Rcpp::DataFrame& row_attr, Rcpp::DataFr
   while (row_idx < row_attr.nrow()) {
     row = doc.append_child("row");
     for (R_xlen_t j = 0; j < n_attr_cols; ++j) {
-      Rcpp::String s = row_attr_cols[static_cast<size_t>(j)][row_idx];
-      if (s != "") {
-        row.append_attribute(static_cast<const char*>(attrnams[j])) = s.get_cstring();
+      const char* s = Rf_translateCharUTF8(STRING_ELT(row_attr_cols[static_cast<size_t>(j)], row_idx));
+      if (s[0] != '\0') {
+        row.append_attribute(static_cast<const char*>(attrnams[j])) = s;
       }
     }
     row_idx++;

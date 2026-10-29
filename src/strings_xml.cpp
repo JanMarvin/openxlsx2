@@ -35,8 +35,9 @@ SEXP xml_to_txt(Rcpp::CharacterVector vec, const std::string& type) {
   const R_xlen_t n = vec.length();
   Rcpp::CharacterVector res(n);
 
-  // cache parsed XML strings to avoid repeated parsing
-  std::unordered_map<Rcpp::String, Rcpp::String> cache;
+  // CHARSXPs are cached by R, identical strings share one pointer. The values
+  // are kept alive by res.
+  std::unordered_map<SEXP, SEXP> cache;
   cache.reserve(static_cast<std::size_t>(n));
 
   const unsigned parse_flags =
@@ -47,42 +48,34 @@ SEXP xml_to_txt(Rcpp::CharacterVector vec, const std::string& type) {
   const char* type_c = type.c_str();
 
   for (R_xlen_t i = 0; i < n; ++i) {
-    Rcpp::String key = vec[i];
+    SEXP key = STRING_ELT(vec, i);
 
-    // Check if we have already processed this XML string
-    auto it = cache.find(key);
+    std::unordered_map<SEXP, SEXP>::const_iterator it = cache.find(key);
     if (it != cache.end()) {
-      res[i] = it->second;
+      SET_STRING_ELT(res, i, it->second);
       continue;
     }
 
-    // empty string
-    if (key == "") {
-      cache.emplace(key, Rcpp::String(""));
-      res[i] = "";
+    const char* xml = Rf_translateCharUTF8(key);
+
+    if (xml[0] == '\0') {
+      cache.emplace(key, R_BlankString);
+      SET_STRING_ELT(res, i, R_BlankString);
       continue;
     }
-
-    // convert only on cache miss
-    std::string tmp(key.get_cstring());
 
     pugi::xml_document doc;
-    pugi::xml_parse_result result =
-      doc.load_string(tmp.c_str(), parse_flags);
+    pugi::xml_parse_result result = doc.load_string(xml, parse_flags);
 
     if (!result) {
       Rcpp::stop(type + " xml import unsuccessful");
     }
 
-    std::string text;
-    text.reserve(tmp.size());
+    std::string text = extract_text(doc, type_c);
 
-    text = extract_text(doc, type_c);
-
-    // Store result in cache
-    Rcpp::String rcpp_text(text);
-    cache.emplace(key, rcpp_text);
-    res[i] = rcpp_text;
+    SEXP txt = Rf_mkCharLenCE(text.data(), static_cast<int>(text.size()), CE_UTF8);
+    SET_STRING_ELT(res, i, txt);
+    cache.emplace(key, txt);
   }
 
   return res;

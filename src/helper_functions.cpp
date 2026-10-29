@@ -677,7 +677,7 @@ void wide_to_long(
     int32_t string_nums,
     bool na_null,
     bool na_missing,
-    std::string na_strings,
+    Rcpp::CharacterVector na_strings,
     bool inline_strings,
     std::string c_cm,
     std::vector<std::string> dims
@@ -731,9 +731,11 @@ void wide_to_long(
   if (has_typ) zz_typ = Rcpp::as<Rcpp::CharacterVector>(zz["typ"]);
 
   // --- 3. Pre-convert ALL constant/pre-calculated strings to SEXP (Optimization) ---
+  if (Rf_xlength(na_strings) != 1) Rcpp::stop("na_strings must be a single string");
+  std::string na_string = Rf_translateCharUTF8(STRING_ELT(na_strings, 0));
   std::string final_na_string_content = inline_strings ?
-    txt_to_is(na_strings, 0, 1, 1) :
-    txt_to_si(na_strings, 0, 1, 1);
+    txt_to_is(na_string, 0, 1, 1) :
+    txt_to_si(na_string, 0, 1, 1);
 
   SEXP blank_sexp      = Rf_mkChar("");
   SEXP inlineStr_sexp  = Rf_mkChar("inlineStr");
@@ -744,7 +746,8 @@ void wide_to_long(
   SEXP na_sexp         = Rf_mkChar("#N/A");
   SEXP num_sexp        = Rf_mkChar("#NUM!");
   SEXP value_sexp      = Rf_mkChar("#VALUE!");
-  SEXP na_strings_sexp = Rf_mkChar(final_na_string_content.c_str());
+  SEXP na_strings_sexp = Rf_mkCharLenCE(final_na_string_content.data(),
+                                        static_cast<int>(final_na_string_content.size()), CE_UTF8);
   SEXP c_cm_sexp_const = Rf_mkChar(c_cm.c_str());
 
   R_xlen_t iter_count = 0;
@@ -770,7 +773,7 @@ void wide_to_long(
       // Variables for this cell
       int8_t vtyp = (ColNames && j == 0) ? character : vtyp_i;
       SEXP vals_sexp = STRING_ELT(cvec, j);
-      const char* vals = CHAR(vals_sexp);
+      const char* vals = Rf_translateCharUTF8(vals_sexp);
       const std::string& row = srows[static_cast<size_t>(j)];
 
       // --- Coordinate Assignment ---
@@ -836,18 +839,20 @@ void wide_to_long(
             if (inline_strings) {
               SET_STRING_ELT(zz_c_t, pos, inlineStr_sexp);
               if (is_rich_text(vals)) {
-                SET_STRING_ELT(zz_is, pos, Rf_mkChar(txt_to_is(vals, 0, 1, 1).c_str()));
+                std::string is_txt = txt_to_is(vals, 0, 1, 1);
+                SET_STRING_ELT(zz_is, pos, Rf_mkCharLenCE(is_txt.data(), static_cast<int>(is_txt.size()), CE_UTF8));
               } else {
                 plain_txt_to_ist(vals, "is", is_buf);
-                SET_STRING_ELT(zz_is, pos, Rf_mkChar(is_buf.c_str()));
+                SET_STRING_ELT(zz_is, pos, Rf_mkCharLenCE(is_buf.data(), static_cast<int>(is_buf.size()), CE_UTF8));
               }
             } else {
               SET_STRING_ELT(zz_c_t, pos, sharedStr_sexp);
               if (is_rich_text(vals)) {
-                SET_STRING_ELT(zz_v, pos, Rf_mkChar(txt_to_si(vals, 0, 1, 1).c_str()));
+                std::string si_txt = txt_to_si(vals, 0, 1, 1);
+                SET_STRING_ELT(zz_v, pos, Rf_mkCharLenCE(si_txt.data(), static_cast<int>(si_txt.size()), CE_UTF8));
               } else {
                 plain_txt_to_ist(vals, "si", is_buf);
-                SET_STRING_ELT(zz_v, pos, Rf_mkChar(is_buf.c_str()));
+                SET_STRING_ELT(zz_v, pos, Rf_mkCharLenCE(is_buf.data(), static_cast<int>(is_buf.size()), CE_UTF8));
               }
             }
           }
@@ -1129,8 +1134,7 @@ Rcpp::CharacterVector df_to_xml(std::string name, Rcpp::DataFrame df_col) {
     doc.reset();
     pugi::xml_node col = doc.append_child(name.c_str());
     for (R_xlen_t j = 0; j < ncol; ++j) {
-      const Rcpp::String& s = cols[static_cast<size_t>(j)][i];
-      const char* cs = s.get_cstring();
+      const char* cs = Rf_translateCharUTF8(STRING_ELT(cols[static_cast<size_t>(j)], i));
       if (cs[0] != '\0') {
         if (std::strchr(cs, '&')) {
           col.append_attribute(attrnams[static_cast<int32_t>(j)]) = unescape_xml(cs).c_str();
@@ -1141,7 +1145,7 @@ Rcpp::CharacterVector df_to_xml(std::string name, Rcpp::DataFrame df_col) {
     }
     xml_string_writer writer;
     doc.print(writer, " ", pugi::format_raw);
-    z[i] = std::move(writer.result);
+    SET_STRING_ELT(z, i, Rf_mkCharLenCE(writer.result.data(), static_cast<int>(writer.result.size()), CE_UTF8));
   }
   return z;
 }

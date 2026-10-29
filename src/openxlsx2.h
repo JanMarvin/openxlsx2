@@ -37,12 +37,6 @@ std::string txt_to_xml(
 std::string txt_to_is(std::string txt, bool no_escapes, bool raw, bool skip_control);
 std::string txt_to_si(std::string txt, bool no_escapes, bool raw, bool skip_control);
 
-// helper function to access element from Rcpp::Character Vector as string
-inline const char * to_cstring(Rcpp::Vector<16>::Proxy x) {
-  Rcpp::String tmp = Rcpp::String(x);
-  return tmp.get_cstring();
-}
-
 inline bool sexp_str_less(SEXP a, SEXP b) {
   return std::strcmp(CHAR(a), CHAR(b)) < 0;
 }
@@ -225,32 +219,32 @@ inline SEXP xml_cols_to_df(const std::vector<xml_col>& x, bool has_cm, bool has_
   for (R_xlen_t i = 0; i < n; ++i) {
     size_t ii = static_cast<size_t>(i);
 
-    // Assignment. Use direct assignment for std::string source to Rcpp::CharacterVector elements.
-    // Use Rcpp::String only where needed for correct UTF-8 handling (e.g., cell content).
+    key[i] = x[ii].key;
+    if (!x[ii].r.empty())
+      SET_STRING_ELT(r, i, Rf_mkCharLenCE(x[ii].r.data(), static_cast<int>(x[ii].r.size()), CE_UTF8));
+    if (!x[ii].row_r.empty())
+      SET_STRING_ELT(row_r, i, Rf_mkCharLenCE(x[ii].row_r.data(), static_cast<int>(x[ii].row_r.size()), CE_UTF8));
+    if (!x[ii].c_r.empty())
+      SET_STRING_ELT(c_r, i, Rf_mkCharLenCE(x[ii].c_r.data(), static_cast<int>(x[ii].c_r.size()), CE_UTF8));
+    if (!x[ii].c_s.empty())
+      SET_STRING_ELT(c_s, i, Rf_mkCharLenCE(x[ii].c_s.data(), static_cast<int>(x[ii].c_s.size()), CE_UTF8));
+    if (!x[ii].c_t.empty())
+      SET_STRING_ELT(c_t, i, Rf_mkCharLenCE(x[ii].c_t.data(), static_cast<int>(x[ii].c_t.size()), CE_UTF8));
+    if (!x[ii].f_attr.empty())
+      SET_STRING_ELT(f_attr, i, Rf_mkCharLenCE(x[ii].f_attr.data(), static_cast<int>(x[ii].f_attr.size()), CE_UTF8));
+    if (!x[ii].v.empty())
+      SET_STRING_ELT(v, i, Rf_mkCharLenCE(x[ii].v.data(), static_cast<int>(x[ii].v.size()), CE_UTF8));
+    if (!x[ii].f.empty())
+      SET_STRING_ELT(f, i, Rf_mkCharLenCE(x[ii].f.data(), static_cast<int>(x[ii].f.size()), CE_UTF8));
+    if (!x[ii].is.empty())
+      SET_STRING_ELT(is, i, Rf_mkCharLenCE(x[ii].is.data(), static_cast<int>(x[ii].is.size()), CE_UTF8));
 
-    // Core attributes (usually simple ASCII, safe with direct assignment)
-    key[i]    = x[ii].key;
-    if (!x[ii].r.empty())      r[i]      = x[ii].r;
-    if (!x[ii].row_r.empty())  row_r[i]  = x[ii].row_r;
-    if (!x[ii].c_r.empty())    c_r[i]    = x[ii].c_r;
-    if (!x[ii].c_s.empty())    c_s[i]    = x[ii].c_s;
-    if (!x[ii].c_t.empty())    c_t[i]    = x[ii].c_t;
-    if (!x[ii].f_attr.empty()) f_attr[i] = x[ii].f_attr;
-
-    // Conditional attributes
-    if (has_cm && !x[ii].c_cm.empty()) c_cm[i] = x[ii].c_cm;
-    if (has_vm && !x[ii].c_vm.empty()) c_vm[i] = x[ii].c_vm;
-
-    // Textual attributes (use Rcpp::String for guaranteed UTF-8 handling)
-    if (has_ph && !x[ii].c_ph.empty()) c_ph[i] = Rcpp::String(x[ii].c_ph);
-    if (!x[ii].f.empty())              f[i]    = Rcpp::String(x[ii].f);
-    if (!x[ii].is.empty())             is[i]   = Rcpp::String(x[ii].is);
-    if (!x[ii].v.empty()) { // can only be utf8 if c_t = "str"
-      if (x[ii].c_t.empty() && x[ii].f_attr.empty())
-        v[i] = x[ii].v;
-      else
-        v[i] = Rcpp::String(x[ii].v);
-    }
+    if (has_cm && !x[ii].c_cm.empty())
+      SET_STRING_ELT(c_cm, i, Rf_mkCharLenCE(x[ii].c_cm.data(), static_cast<int>(x[ii].c_cm.size()), CE_UTF8));
+    if (has_ph && !x[ii].c_ph.empty())
+      SET_STRING_ELT(c_ph, i, Rf_mkCharLenCE(x[ii].c_ph.data(), static_cast<int>(x[ii].c_ph.size()), CE_UTF8));
+    if (has_vm && !x[ii].c_vm.empty())
+      SET_STRING_ELT(c_vm, i, Rf_mkCharLenCE(x[ii].c_vm.data(), static_cast<int>(x[ii].c_vm.size()), CE_UTF8));
   }
 
   // --- 3. Create DataFrame (Simplified Structure) ---
