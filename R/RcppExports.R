@@ -112,6 +112,10 @@ readXML <- function(path, isfile, escapes, declaration, whitespace, comments, em
     .Call(`_openxlsx2_readXML`, path, isfile, escapes, declaration, whitespace, comments, empty_tags, skip_control, pointer)
 }
 
+xml_release <- function(doc) {
+    invisible(.Call(`_openxlsx2_xml_release`, doc))
+}
+
 is_xml <- function(str) {
     .Call(`_openxlsx2_is_xml`, str)
 }

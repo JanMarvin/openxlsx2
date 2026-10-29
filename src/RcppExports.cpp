@@ -326,6 +326,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// xml_release
+void xml_release(XPtrXML doc);
+RcppExport SEXP _openxlsx2_xml_release(SEXP docSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtrXML >::type doc(docSEXP);
+    xml_release(doc);
+    return R_NilValue;
+END_RCPP
+}
 // is_xml
 Rcpp::LogicalVector is_xml(std::string str);
 RcppExport SEXP _openxlsx2_is_xml(SEXP strSEXP) {
@@ -1092,6 +1102,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_col_to_df", (DL_FUNC) &_openxlsx2_col_to_df, 1},
     {"_openxlsx2_loadvals", (DL_FUNC) &_openxlsx2_loadvals, 2},
     {"_openxlsx2_readXML", (DL_FUNC) &_openxlsx2_readXML, 9},
+    {"_openxlsx2_xml_release", (DL_FUNC) &_openxlsx2_xml_release, 1},
     {"_openxlsx2_is_xml", (DL_FUNC) &_openxlsx2_is_xml, 1},
     {"_openxlsx2_getXMLXPtrNamePath", (DL_FUNC) &_openxlsx2_getXMLXPtrNamePath, 2},
     {"_openxlsx2_getXMLXPtrPath", (DL_FUNC) &_openxlsx2_getXMLXPtrPath, 2},
