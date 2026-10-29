@@ -941,53 +941,6 @@ test_that("partial labels work", {
 
 })
 
-test_that("writing in specific encoding works", {
-
-  skip_on_cran()
-
-  loc <- Sys.getlocale("LC_CTYPE")
-  Sys.setlocale("LC_CTYPE", "")
-
-  op <- options(
-    "openxlsx2.force_utf8_encoding" = TRUE,
-    "openxlsx2.native_encoding" = "CP1251"
-  )
-  on.exit(options(op), add = TRUE)
-
-  # a cyrillic string: https://github.com/JanMarvin/openxlsx2/issues/640
-  enc_str <- as.raw(c(0xd0, 0xb0, 0xd0, 0xb1, 0xd0, 0xb2, 0xd0, 0xb3, 0xd0,
-                      0xb4))
-  enc_str <- rawToChar(enc_str)
-  Encoding(enc_str) <- "UTF-8"
-
-  loc_str <- stringi::stri_encode(enc_str, from = "UTF-8", to = "CP1251")
-
-  tmp <- temp_xlsx()
-  on.exit(unlink(tmp), add = TRUE)
-
-  wb <- wb_workbook()$add_worksheet("sheet")$add_data("sheet", x = loc_str)
-  wb$save(tmp)
-  expect_silent(wb2 <- wb_load(tmp))
-
-  # exp <- wb$worksheets[[1]]$sheet_data$cc$is[1]
-  # got <- wb2$worksheets[[1]]$sheet_data$cc$is[1]
-  # expect_equal(exp, got)
-
-  # got <- stringi::stri_encode(wb_to_df(wb, col_names = FALSE)$A, from = "UTF-8", to = "CP1251")
-  # expect_equal(enc_str, got)
-
-  tmp <- tempfile()
-  on.exit(unlink(tmp), add = TRUE)
-  write_file(head = "<a>", body = loc_str, tail = "</a>", fl = tmp)
-  # got <- xml_value(tmp, "a")
-  exp <- loc_str
-  got <- stringi::stri_encode(xml_value(tmp, "a"), from = "UTF-8", to = "CP1251")
-  expect_equal(exp, got)
-
-  Sys.setlocale("LC_CTYPE", loc)
-
-})
-
 test_that("writing NULL works silently", {
 
   tmp <- temp_xlsx()
