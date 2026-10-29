@@ -218,31 +218,19 @@ inline SEXP xml_cols_to_df(const std::vector<xml_col>& x, bool has_cm, bool has_
     size_t ii = static_cast<size_t>(i);
 
     key[i] = x[ii].key;
-    if (!x[ii].r.empty())
-      SET_STRING_ELT(r, i, Rf_mkCharLenCE(x[ii].r.data(), static_cast<int>(x[ii].r.size()), CE_UTF8));
-    if (!x[ii].row_r.empty())
-      SET_STRING_ELT(row_r, i, Rf_mkCharLenCE(x[ii].row_r.data(), static_cast<int>(x[ii].row_r.size()), CE_UTF8));
-    if (!x[ii].c_r.empty())
-      SET_STRING_ELT(c_r, i, Rf_mkCharLenCE(x[ii].c_r.data(), static_cast<int>(x[ii].c_r.size()), CE_UTF8));
-    if (!x[ii].c_s.empty())
-      SET_STRING_ELT(c_s, i, Rf_mkCharLenCE(x[ii].c_s.data(), static_cast<int>(x[ii].c_s.size()), CE_UTF8));
-    if (!x[ii].c_t.empty())
-      SET_STRING_ELT(c_t, i, Rf_mkCharLenCE(x[ii].c_t.data(), static_cast<int>(x[ii].c_t.size()), CE_UTF8));
-    if (!x[ii].f_attr.empty())
-      SET_STRING_ELT(f_attr, i, Rf_mkCharLenCE(x[ii].f_attr.data(), static_cast<int>(x[ii].f_attr.size()), CE_UTF8));
-    if (!x[ii].v.empty())
-      SET_STRING_ELT(v, i, Rf_mkCharLenCE(x[ii].v.data(), static_cast<int>(x[ii].v.size()), CE_UTF8));
-    if (!x[ii].f.empty())
-      SET_STRING_ELT(f, i, Rf_mkCharLenCE(x[ii].f.data(), static_cast<int>(x[ii].f.size()), CE_UTF8));
-    if (!x[ii].is.empty())
-      SET_STRING_ELT(is, i, Rf_mkCharLenCE(x[ii].is.data(), static_cast<int>(x[ii].is.size()), CE_UTF8));
+    if (!x[ii].r.empty())      SET_STRING_ELT(r, i, utf8_charsxp(x[ii].r));
+    if (!x[ii].row_r.empty())  SET_STRING_ELT(row_r, i, utf8_charsxp(x[ii].row_r));
+    if (!x[ii].c_r.empty())    SET_STRING_ELT(c_r, i, utf8_charsxp(x[ii].c_r));
+    if (!x[ii].c_s.empty())    SET_STRING_ELT(c_s, i, utf8_charsxp(x[ii].c_s));
+    if (!x[ii].c_t.empty())    SET_STRING_ELT(c_t, i, utf8_charsxp(x[ii].c_t));
+    if (!x[ii].f_attr.empty()) SET_STRING_ELT(f_attr, i, utf8_charsxp(x[ii].f_attr));
+    if (!x[ii].v.empty())      SET_STRING_ELT(v, i, utf8_charsxp(x[ii].v));
+    if (!x[ii].f.empty())      SET_STRING_ELT(f, i, utf8_charsxp(x[ii].f));
+    if (!x[ii].is.empty())     SET_STRING_ELT(is, i, utf8_charsxp(x[ii].is));
 
-    if (has_cm && !x[ii].c_cm.empty())
-      SET_STRING_ELT(c_cm, i, Rf_mkCharLenCE(x[ii].c_cm.data(), static_cast<int>(x[ii].c_cm.size()), CE_UTF8));
-    if (has_ph && !x[ii].c_ph.empty())
-      SET_STRING_ELT(c_ph, i, Rf_mkCharLenCE(x[ii].c_ph.data(), static_cast<int>(x[ii].c_ph.size()), CE_UTF8));
-    if (has_vm && !x[ii].c_vm.empty())
-      SET_STRING_ELT(c_vm, i, Rf_mkCharLenCE(x[ii].c_vm.data(), static_cast<int>(x[ii].c_vm.size()), CE_UTF8));
+    if (has_cm && !x[ii].c_cm.empty()) SET_STRING_ELT(c_cm, i, utf8_charsxp(x[ii].c_cm));
+    if (has_ph && !x[ii].c_ph.empty()) SET_STRING_ELT(c_ph, i, utf8_charsxp(x[ii].c_ph));
+    if (has_vm && !x[ii].c_vm.empty()) SET_STRING_ELT(c_vm, i, utf8_charsxp(x[ii].c_vm));
   }
 
   // --- 3. Create DataFrame (Simplified Structure) ---

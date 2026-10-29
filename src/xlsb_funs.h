@@ -1266,16 +1266,18 @@ struct XlsbContext {
 inline XlsbContext xlsb_context_from_list(const Rcpp::List& x) {
   XlsbContext ctx;
   if (x.size() == 0) return ctx;
-  Rcpp::CharacterVector xti = x["xti"], names = x["names"], table_name = x["table_name"];
+  std::vector<utf8> xti = Rcpp::as<std::vector<utf8>>(x["xti"]);
+  std::vector<utf8> names = Rcpp::as<std::vector<utf8>>(x["names"]);
+  std::vector<utf8> table_name = Rcpp::as<std::vector<utf8>>(x["table_name"]);
   Rcpp::IntegerVector table_id = x["table_id"];
   Rcpp::List table_columns = x["table_columns"];
-  for (R_xlen_t i = 0; i < xti.size(); ++i) ctx.xti.push_back(Rf_translateCharUTF8(STRING_ELT(xti, i)));
-  for (R_xlen_t i = 0; i < names.size(); ++i) ctx.names.push_back(Rf_translateCharUTF8(STRING_ELT(names, i)));
+  ctx.xti.assign(xti.begin(), xti.end());
+  ctx.names.assign(names.begin(), names.end());
   for (R_xlen_t i = 0; i < table_id.size(); ++i) {
     XlsbTable t;
-    t.name = Rf_translateCharUTF8(STRING_ELT(table_name, i));
-    Rcpp::CharacterVector cols = Rcpp::as<Rcpp::CharacterVector>(table_columns[i]);
-    for (R_xlen_t j = 0; j < cols.size(); ++j) t.columns.push_back(Rf_translateCharUTF8(STRING_ELT(cols, j)));
+    t.name = table_name[static_cast<size_t>(i)];
+    std::vector<utf8> cols = Rcpp::as<std::vector<utf8>>(table_columns[i]);
+    t.columns.assign(cols.begin(), cols.end());
     ctx.tables[static_cast<uint32_t>(table_id[i])] = t;
   }
   return ctx;

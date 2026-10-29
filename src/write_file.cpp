@@ -217,24 +217,16 @@ void xml_sheet_data_slim(
 // [[Rcpp::export]]
 void write_worksheet_slim(
     Rcpp::Environment sheet_data,
-    Rcpp::CharacterVector prior,
-    Rcpp::CharacterVector post,
-    Rcpp::CharacterVector fl
+    utf8 prior,
+    utf8 post,
+    native_path fl
 ){
-  if (Rf_xlength(prior) != 1 || Rf_xlength(post) != 1 || Rf_xlength(fl) != 1)
-    Rcpp::stop("prior, post and fl must be single strings");
-
-  // file names are passed in the native encoding, xml content as UTF-8
-  std::string prior_utf8 = Rf_translateCharUTF8(STRING_ELT(prior, 0));
-  std::string post_utf8 = Rf_translateCharUTF8(STRING_ELT(post, 0));
-  std::string fl_native = Rf_translateChar(STRING_ELT(fl, 0));
-
   // sheet_data will be in order, just need to check for row_heights
   // CharacterVector cell_col = int_to_col(sheet_data.field("cols"));
   Rcpp::DataFrame row_attr = Rcpp::as<Rcpp::DataFrame>(sheet_data["row_attr"]);
   Rcpp::DataFrame cc = Rcpp::as<Rcpp::DataFrame>(sheet_data["cc"]);
 
-  xml_sheet_data_slim(row_attr, cc, prior_utf8, post_utf8, fl_native);
+  xml_sheet_data_slim(row_attr, cc, prior, post, fl);
 }
 
 // creates an xml row
@@ -439,11 +431,7 @@ void xml_sheet_data(pugi::xml_node& doc, Rcpp::DataFrame& row_attr, Rcpp::DataFr
 // create single xml rows of sheet_data.
 //
 // [[Rcpp::export]]
-XPtrXML write_worksheet(Rcpp::CharacterVector prior, Rcpp::CharacterVector post, Rcpp::Environment sheet_data) {
-  if (Rf_xlength(prior) != 1 || Rf_xlength(post) != 1) Rcpp::stop("prior and post must be single strings");
-  std::string prior_utf8 = Rf_translateCharUTF8(STRING_ELT(prior, 0));
-  std::string post_utf8 = Rf_translateCharUTF8(STRING_ELT(post, 0));
-
+XPtrXML write_worksheet(utf8 prior, utf8 post, Rcpp::Environment sheet_data) {
   uint32_t pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
 
   // sheet_data will be in order, just need to check for row_heights
@@ -455,7 +443,7 @@ XPtrXML write_worksheet(Rcpp::CharacterVector prior, Rcpp::CharacterVector post,
   pugi::xml_parse_result result;
 
   pugi::xml_document xml_pr;
-  result = xml_pr.load_string(prior_utf8.c_str(), pugi_parse_flags);
+  result = xml_pr.load_string(prior.c_str(), pugi_parse_flags);
   if (!result) Rcpp::stop("loading prior while writing failed");
   pugi::xml_node worksheet = doc->append_copy(xml_pr.child("worksheet"));
 
@@ -465,9 +453,9 @@ XPtrXML write_worksheet(Rcpp::CharacterVector prior, Rcpp::CharacterVector post,
     xml_sheet_data(sheetData, row_attr, cc);
   }
 
-  if (!post_utf8.empty()) {
+  if (!post.empty()) {
     pugi::xml_document xml_po;
-    result = xml_po.load_string(post_utf8.c_str(), pugi_parse_flags);
+    result = xml_po.load_string(post.c_str(), pugi_parse_flags);
     if (!result) Rcpp::stop("loading post while writing failed");
     for (auto po : xml_po.children())
       worksheet.append_copy(po);
@@ -485,11 +473,9 @@ XPtrXML write_worksheet(Rcpp::CharacterVector prior, Rcpp::CharacterVector post,
 }
 
 // [[Rcpp::export]]
-void write_xmlPtr(XPtrXML doc, Rcpp::CharacterVector fl) {
+void write_xmlPtr(XPtrXML doc, native_path fl) {
   check_xptr_validity(doc);
-  if (Rf_xlength(fl) != 1) Rcpp::stop("fl must be a single string");
   uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes | pugi::format_skip_control_chars;
-  // file names are passed in the native encoding
-  const bool success = doc->save_file(Rf_translateChar(STRING_ELT(fl, 0)), "", pugi_format_flags, pugi::encoding_utf8);
+  const bool success = doc->save_file(fl.c_str(), "", pugi_format_flags, pugi::encoding_utf8);
   if (!success) Rcpp::stop("could not save file");
 }

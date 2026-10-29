@@ -611,7 +611,7 @@ bool xls_has_vba_code(const std::vector<uint8_t>& file) {
 // The stream called Workbook inside of the xls file, saved to outPath. This is
 // what the other functions read.
 // [[Rcpp::export]]
-int32_t xls_extract(std::string filePath, std::string outPath, bool warn_vba, bool debug) {
+int32_t xls_extract(native_path filePath, native_path outPath, bool warn_vba, bool debug) {
   std::ifstream xls(filePath, std::ios::in | std::ios::binary | std::ios::ate);
   if (!xls) return -1;
 
@@ -818,7 +818,7 @@ std::map<uint32_t, XlsProperty> xls_property_set(const std::vector<uint8_t>& d) 
 }  // namespace
 
 // [[Rcpp::export]]
-int32_t docprops_xls(std::string filePath, std::string corePath, std::string appPath) {
+int32_t docprops_xls(native_path filePath, native_path corePath, native_path appPath) {
   std::ifstream xls(filePath, std::ios::in | std::ios::binary | std::ios::ate);
   if (!xls) return 0;
   std::vector<uint8_t> file(static_cast<size_t>(xls.tellg()));
@@ -877,7 +877,7 @@ int32_t docprops_xls(std::string filePath, std::string corePath, std::string app
 
 // workbook.xml: sheets and defined names. Returns the number of sheets.
 // [[Rcpp::export]]
-int32_t workbook_xls(std::string filePath, std::string outPath, bool debug) {
+int32_t workbook_xls(native_path filePath, native_path outPath, bool debug) {
   std::ofstream out(outPath);
   std::ifstream stream_file(filePath, std::ios::in | std::ios::binary);
   XlsMemoryBuf stream_buf(stream_file ? std::string(std::istreambuf_iterator<char>(stream_file), std::istreambuf_iterator<char>())
@@ -985,7 +985,7 @@ int32_t workbook_xls(std::string filePath, std::string outPath, bool debug) {
 // xl/externalLinks/externalLinkN.xml and the relationship with the path of each
 // external workbook. Returns the number of external workbooks.
 // [[Rcpp::export]]
-int32_t externallinks_xls(std::string filePath, std::string outDir, bool debug) {
+int32_t externallinks_xls(native_path filePath, native_path outDir, bool debug) {
   std::ifstream stream_file(filePath, std::ios::in | std::ios::binary);
   XlsMemoryBuf stream_buf(stream_file ? std::string(std::istreambuf_iterator<char>(stream_file), std::istreambuf_iterator<char>())
                                       : std::string());
@@ -1022,7 +1022,7 @@ int32_t externallinks_xls(std::string filePath, std::string outDir, bool debug) 
 // rest of it is in Continue records. Returns the size of the zip file that was
 // written, 0 if there is no theme.
 // [[Rcpp::export]]
-int32_t theme_xls(std::string filePath, std::string outPath, bool debug) {
+int32_t theme_xls(native_path filePath, native_path outPath, bool debug) {
   std::ifstream stream_file(filePath, std::ios::in | std::ios::binary);
   XlsMemoryBuf stream_buf(stream_file ? std::string(std::istreambuf_iterator<char>(stream_file), std::istreambuf_iterator<char>())
                                       : std::string());
@@ -1076,7 +1076,7 @@ int32_t theme_xls(std::string filePath, std::string outPath, bool debug) {
 // the extension zlib added, they are unpacked in R. The size they have when
 // unpacked is the attribute usize.
 // [[Rcpp::export]]
-Rcpp::CharacterVector media_xls(std::string filePath, std::string outDir, bool debug) {
+Rcpp::CharacterVector media_xls(native_path filePath, native_path outDir, bool debug) {
   std::ifstream stream_file(filePath, std::ios::in | std::ios::binary);
   XlsMemoryBuf stream_buf(stream_file ? std::string(std::istreambuf_iterator<char>(stream_file), std::istreambuf_iterator<char>())
                                       : std::string());
@@ -1146,7 +1146,7 @@ Rcpp::CharacterVector media_xls(std::string filePath, std::string outDir, bool d
 
 // sharedStrings.xml
 // [[Rcpp::export]]
-int32_t sharedstrings_xls(std::string filePath, std::string outPath, bool debug) {
+int32_t sharedstrings_xls(native_path filePath, native_path outPath, bool debug) {
   std::ofstream out(outPath);
   std::ifstream stream_file(filePath, std::ios::in | std::ios::binary);
   XlsMemoryBuf stream_buf(stream_file ? std::string(std::istreambuf_iterator<char>(stream_file), std::istreambuf_iterator<char>())
@@ -1284,7 +1284,7 @@ int32_t sharedstrings_xls(std::string filePath, std::string outPath, bool debug)
 // styles.xml. Fonts, number formats and cell formats (XF) are collected, since
 // the palette they use can come after them, and written at the end.
 // [[Rcpp::export]]
-int32_t styles_xls(std::string filePath, std::string outPath, bool debug) {
+int32_t styles_xls(native_path filePath, native_path outPath, bool debug) {
   std::ofstream out(outPath);
   std::ifstream stream_file(filePath, std::ios::in | std::ios::binary);
   XlsMemoryBuf stream_buf(stream_file ? std::string(std::istreambuf_iterator<char>(stream_file), std::istreambuf_iterator<char>())
@@ -1745,7 +1745,7 @@ int32_t styles_xls(std::string filePath, std::string outPath, bool debug) {
 
 // type of each sheet: 0 worksheet, 2 chart sheet
 // [[Rcpp::export]]
-Rcpp::IntegerVector sheettypes_xls(std::string filePath) {
+Rcpp::IntegerVector sheettypes_xls(native_path filePath) {
   std::ifstream stream_file(filePath, std::ios::in | std::ios::binary);
   XlsMemoryBuf stream_buf(stream_file ? std::string(std::istreambuf_iterator<char>(stream_file), std::istreambuf_iterator<char>())
                                       : std::string());
@@ -1765,10 +1765,10 @@ Rcpp::IntegerVector sheettypes_xls(std::string filePath) {
 // written as they are read, with the XML around them: the rows come from the
 // ROW records, that come before the cells of the row.
 // [[Rcpp::export]]
-Rcpp::IntegerVector worksheet_xls(std::string filePath, int32_t sheet, std::string outPath, std::string relsPath, std::string commentsPath,
-                                  std::string vmlPath, int32_t comment_file, std::string tablesDir, int32_t table_file,
-                                  Rcpp::CharacterVector media, std::string drawingPath, std::string drawingRelsPath,
-                                  int32_t drawing_file, std::string chartsDir, int32_t chart_file, std::string xlDir, std::string xlsPath, int32_t pivot_file,
+Rcpp::IntegerVector worksheet_xls(native_path filePath, int32_t sheet, native_path outPath, native_path relsPath, native_path commentsPath,
+                                  native_path vmlPath, int32_t comment_file, native_path tablesDir, int32_t table_file,
+                                  Rcpp::CharacterVector media, native_path drawingPath, native_path drawingRelsPath,
+                                  int32_t drawing_file, native_path chartsDir, int32_t chart_file, native_path xlDir, native_path xlsPath, int32_t pivot_file,
                                   Rcpp::IntegerVector known_caches, bool data_only, bool debug) {
   std::ofstream out(outPath);
   std::ifstream stream_file(filePath, std::ios::in | std::ios::binary);

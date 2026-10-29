@@ -33,8 +33,7 @@ Rcpp::DataFrame col_to_df(XPtrXML doc) {
         Rcpp::Rcout << attr_name << ": not found in col name table" << std::endl;
       } else {
         R_xlen_t mtc = std::distance(col_nams.begin(), find_res);
-        SET_STRING_ELT(VECTOR_ELT(df, mtc), itr,
-                       Rf_mkCharLenCE(attr_value.data(), static_cast<int>(attr_value.size()), CE_UTF8));
+        SET_STRING_ELT(VECTOR_ELT(df, mtc), itr, utf8_charsxp(attr_value));
       }
     }
 

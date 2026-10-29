@@ -32,7 +32,7 @@
 // entry, the defined names and the tables. They are read from the binary parts
 // before any of them is converted, so every formula is written complete.
 // [[Rcpp::export]]
-Rcpp::List xlsb_context(std::string workbookPath, Rcpp::CharacterVector extLinkPaths, Rcpp::CharacterVector tablePaths) {
+Rcpp::List xlsb_context(native_path workbookPath, std::vector<native_path> extLinkPaths, std::vector<native_path> tablePaths) {
   bool swapit = is_big_endian();
 
   // workbook: sheets, supporting books (internal or the relationship of an external
@@ -86,8 +86,8 @@ Rcpp::List xlsb_context(std::string workbookPath, Rcpp::CharacterVector extLinkP
 
   // external links: the names of the sheets in the other workbook
   std::vector<std::vector<std::string> > ext_sheets;
-  for (R_xlen_t i = 0; i < extLinkPaths.size(); ++i) {
-    std::ifstream ext(Rcpp::as<std::string>(extLinkPaths[i]), std::ios::in | std::ios::binary);
+  for (const native_path& ext_path : extLinkPaths) {
+    std::ifstream ext(ext_path, std::ios::in | std::ios::binary);
     std::vector<std::string> tabs;
     while (ext && ext.peek() != std::char_traits<char>::eof()) {
       int32_t x = 0, size = 0;
@@ -118,7 +118,7 @@ Rcpp::List xlsb_context(std::string workbookPath, Rcpp::CharacterVector extLinkP
     if (!digits.empty()) used_links.insert(std::stoll(digits));
   }
 
-  Rcpp::CharacterVector xti(xtis.size());
+  std::vector<utf8> xti(xtis.size());
   for (size_t i = 0; i < xtis.size(); ++i) {
     int64_t first = static_cast<int64_t>(xtis[i][1]) + 1, last = static_cast<int64_t>(xtis[i][2]) + 1;
     std::string text;
@@ -152,19 +152,19 @@ Rcpp::List xlsb_context(std::string workbookPath, Rcpp::CharacterVector extLinkP
         if (ok) text = quote ? "'" + prefix + name + "'" : name;
       }
     }
-    SET_STRING_ELT(xti, static_cast<R_xlen_t>(i), Rf_mkCharLenCE(text.data(), static_cast<int>(text.size()), CE_UTF8));
+    xti[i] = utf8(text);
   }
 
   // tables: id, name and the names of the columns
   Rcpp::IntegerVector table_id;
-  std::vector<std::string> table_names;
+  std::vector<utf8> table_name;
   Rcpp::List table_columns;
-  for (R_xlen_t i = 0; i < tablePaths.size(); ++i) {
-    std::ifstream tab(Rcpp::as<std::string>(tablePaths[i]), std::ios::in | std::ios::binary);
+  for (const native_path& tab_path : tablePaths) {
+    std::ifstream tab(tab_path, std::ios::in | std::ios::binary);
     bool in_table = false;
     uint32_t idList = 0;
     std::string display_name;
-    std::vector<std::string> col_names;
+    std::vector<utf8> cols;
     while (tab && tab.peek() != std::char_traits<char>::eof()) {
       int32_t x = 0, size = 0;
       RECORD(x, size, tab, swapit);
@@ -182,40 +182,21 @@ Rcpp::List xlsb_context(std::string workbookPath, Rcpp::CharacterVector extLinkP
         // id, function, three dxfs and the query table field, then the name
         tab.seekg(24, std::ios_base::cur);
         XLNullableWideString(tab, swapit);
-        col_names.push_back(XLNullableWideString(tab, swapit));
+        cols.push_back(utf8(XLNullableWideString(tab, swapit)));
       } else if (x == BrtEndList) {
         break;
       }
       tab.seekg(rec_end, std::ios_base::beg);
     }
     if (!in_table) continue;
-
-    Rcpp::CharacterVector cols(static_cast<R_xlen_t>(col_names.size()));
-    for (R_xlen_t j = 0; j < cols.size(); ++j) {
-      const std::string& col = col_names[static_cast<size_t>(j)];
-      SET_STRING_ELT(cols, j, Rf_mkCharLenCE(col.data(), static_cast<int>(col.size()), CE_UTF8));
-    }
-
     table_id.push_back(static_cast<int32_t>(idList));
-    table_names.push_back(display_name);
-    table_columns.push_back(cols);
-  }
-
-  Rcpp::CharacterVector table_name(static_cast<R_xlen_t>(table_names.size()));
-  for (R_xlen_t i = 0; i < table_name.size(); ++i) {
-    const std::string& nam = table_names[static_cast<size_t>(i)];
-    SET_STRING_ELT(table_name, i, Rf_mkCharLenCE(nam.data(), static_cast<int>(nam.size()), CE_UTF8));
-  }
-
-  Rcpp::CharacterVector names_r(static_cast<R_xlen_t>(names.size()));
-  for (R_xlen_t i = 0; i < names_r.size(); ++i) {
-    const std::string& nam = names[static_cast<size_t>(i)];
-    SET_STRING_ELT(names_r, i, Rf_mkCharLenCE(nam.data(), static_cast<int>(nam.size()), CE_UTF8));
+    table_name.push_back(utf8(display_name));
+    table_columns.push_back(Rcpp::wrap(cols));
   }
 
   return Rcpp::List::create(
     Rcpp::Named("xti") = xti,
-    Rcpp::Named("names") = names_r,
+    Rcpp::Named("names") = std::vector<utf8>(names.begin(), names.end()),
     Rcpp::Named("table_id") = table_id,
     Rcpp::Named("table_name") = table_name,
     Rcpp::Named("table_columns") = table_columns
@@ -223,7 +204,7 @@ Rcpp::List xlsb_context(std::string workbookPath, Rcpp::CharacterVector extLinkP
 }
 
 // [[Rcpp::export]]
-int32_t styles_bin(std::string filePath, std::string outPath, bool debug) {
+int32_t styles_bin(native_path filePath, native_path outPath, bool debug) {
   std::ofstream out(outPath);
   std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
 
@@ -836,7 +817,7 @@ int32_t styles_bin(std::string filePath, std::string outPath, bool debug) {
 }
 
 // [[Rcpp::export]]
-int32_t table_bin(std::string filePath, std::string outPath, Rcpp::List context, bool debug) {
+int32_t table_bin(native_path filePath, native_path outPath, Rcpp::List context, bool debug) {
   XlsbContext ctx = xlsb_context_from_list(context);
   std::ofstream out(outPath);
   std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
@@ -1247,7 +1228,7 @@ int32_t table_bin(std::string filePath, std::string outPath, Rcpp::List context,
 }
 
 // [[Rcpp::export]]
-int32_t comments_bin(std::string filePath, std::string outPath, bool debug) {
+int32_t comments_bin(native_path filePath, native_path outPath, bool debug) {
   std::ofstream out(outPath);
   std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
 
@@ -1373,7 +1354,7 @@ int32_t comments_bin(std::string filePath, std::string outPath, bool debug) {
 }
 
 // [[Rcpp::export]]
-int32_t externalreferences_bin(std::string filePath, std::string outPath, bool debug) {
+int32_t externalreferences_bin(native_path filePath, native_path outPath, bool debug) {
   std::ofstream out(outPath);
   std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
 
@@ -1588,7 +1569,7 @@ int32_t externalreferences_bin(std::string filePath, std::string outPath, bool d
 }
 
 // [[Rcpp::export]]
-int32_t sharedstrings_bin(std::string filePath, std::string outPath, bool debug) {
+int32_t sharedstrings_bin(native_path filePath, native_path outPath, bool debug) {
   std::ofstream out(outPath);
   std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
 
@@ -1661,7 +1642,7 @@ int32_t sharedstrings_bin(std::string filePath, std::string outPath, bool debug)
 }
 
 // [[Rcpp::export]]
-int32_t workbook_bin(std::string filePath, std::string outPath, Rcpp::List context, bool debug) {
+int32_t workbook_bin(native_path filePath, native_path outPath, Rcpp::List context, bool debug) {
   XlsbContext ctx = xlsb_context_from_list(context);
   std::ofstream out(outPath);
   std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
@@ -2291,7 +2272,7 @@ int32_t workbook_bin(std::string filePath, std::string outPath, Rcpp::List conte
 }
 
 // [[Rcpp::export]]
-int32_t worksheet_bin(std::string filePath, bool chartsheet, std::string outPath, Rcpp::List context, bool debug) {
+int32_t worksheet_bin(native_path filePath, bool chartsheet, native_path outPath, Rcpp::List context, bool debug) {
   XlsbContext ctx = xlsb_context_from_list(context);
   std::ofstream out(outPath);
   std::ifstream bin(filePath, std::ios::in | std::ios::binary | std::ios::ate);
@@ -5045,7 +5026,7 @@ std::string pivot_string(const std::vector<uint8_t>& r, size_t& pos) {
 }  // namespace
 
 // [[Rcpp::export]]
-int32_t pivotcache_bin(std::string filePath, std::string outPath, std::string recordsPath, std::string recordsOut, bool debug) {
+int32_t pivotcache_bin(native_path filePath, native_path outPath, native_path recordsPath, native_path recordsOut, bool debug) {
   std::vector<BinRecord> recs = pivot_records(filePath);
   if (recs.empty()) return -1;
 
@@ -5341,7 +5322,7 @@ int32_t pivotcache_bin(std::string filePath, std::string outPath, std::string re
 
 // Returns the id of the cache of the table, -1 if the table is not imported
 // [[Rcpp::export]]
-int32_t pivottable_bin(std::string filePath, std::string outPath, bool debug) {
+int32_t pivottable_bin(native_path filePath, native_path outPath, bool debug) {
   std::vector<BinRecord> recs = pivot_records(filePath);
   if (recs.empty()) return -1;
 
@@ -5522,7 +5503,7 @@ int32_t pivottable_bin(std::string filePath, std::string outPath, bool debug) {
 }
 
 // [[Rcpp::export]]
-int32_t slicer_bin(std::string filePath, std::string outPath, bool debug) {
+int32_t slicer_bin(native_path filePath, native_path outPath, bool debug) {
   std::vector<BinRecord> recs = pivot_records(filePath);
   if (recs.empty()) return -1;
 
@@ -5565,7 +5546,7 @@ int32_t slicer_bin(std::string filePath, std::string outPath, bool debug) {
 }
 
 // [[Rcpp::export]]
-int32_t slicercache_bin(std::string filePath, std::string outPath, bool debug) {
+int32_t slicercache_bin(native_path filePath, native_path outPath, bool debug) {
   std::vector<BinRecord> recs = pivot_records(filePath);
   if (recs.empty()) return -1;
 

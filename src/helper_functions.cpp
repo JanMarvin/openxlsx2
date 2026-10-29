@@ -677,7 +677,7 @@ void wide_to_long(
     int32_t string_nums,
     bool na_null,
     bool na_missing,
-    Rcpp::CharacterVector na_strings,
+    utf8 na_strings,
     bool inline_strings,
     std::string c_cm,
     std::vector<std::string> dims
@@ -731,11 +731,9 @@ void wide_to_long(
   if (has_typ) zz_typ = Rcpp::as<Rcpp::CharacterVector>(zz["typ"]);
 
   // --- 3. Pre-convert ALL constant/pre-calculated strings to SEXP (Optimization) ---
-  if (Rf_xlength(na_strings) != 1) Rcpp::stop("na_strings must be a single string");
-  std::string na_string = Rf_translateCharUTF8(STRING_ELT(na_strings, 0));
   std::string final_na_string_content = inline_strings ?
-    txt_to_xml(na_string, false, true, true, "is") :
-    txt_to_xml(na_string, false, true, true, "si");
+    txt_to_xml(na_strings, false, true, true, "is") :
+    txt_to_xml(na_strings, false, true, true, "si");
 
   // CHARSXPs are only kept alive by the vectors they are stored in, these
   // might be needed before the first store and must survive a gc
@@ -748,8 +746,7 @@ void wide_to_long(
   SEXP na_sexp         = PROTECT(Rf_mkChar("#N/A"));
   SEXP num_sexp        = PROTECT(Rf_mkChar("#NUM!"));
   SEXP value_sexp      = PROTECT(Rf_mkChar("#VALUE!"));
-  SEXP na_strings_sexp = PROTECT(Rf_mkCharLenCE(final_na_string_content.data(),
-                                                static_cast<int>(final_na_string_content.size()), CE_UTF8));
+  SEXP na_strings_sexp = PROTECT(utf8_charsxp(final_na_string_content));
   SEXP c_cm_sexp_const = PROTECT(Rf_mkChar(c_cm.c_str()));
 
   R_xlen_t iter_count = 0;
@@ -847,19 +844,19 @@ void wide_to_long(
               SET_STRING_ELT(zz_c_t, pos, inlineStr_sexp);
               if (is_rich_text(vals)) {
                 std::string is_txt = txt_to_xml(vals, false, true, true, "is");
-                SET_STRING_ELT(zz_is, pos, Rf_mkCharLenCE(is_txt.data(), static_cast<int>(is_txt.size()), CE_UTF8));
+                SET_STRING_ELT(zz_is, pos, utf8_charsxp(is_txt));
               } else {
                 plain_txt_to_ist(vals, "is", is_buf);
-                SET_STRING_ELT(zz_is, pos, Rf_mkCharLenCE(is_buf.data(), static_cast<int>(is_buf.size()), CE_UTF8));
+                SET_STRING_ELT(zz_is, pos, utf8_charsxp(is_buf));
               }
             } else {
               SET_STRING_ELT(zz_c_t, pos, sharedStr_sexp);
               if (is_rich_text(vals)) {
                 std::string si_txt = txt_to_xml(vals, false, true, true, "si");
-                SET_STRING_ELT(zz_v, pos, Rf_mkCharLenCE(si_txt.data(), static_cast<int>(si_txt.size()), CE_UTF8));
+                SET_STRING_ELT(zz_v, pos, utf8_charsxp(si_txt));
               } else {
                 plain_txt_to_ist(vals, "si", is_buf);
-                SET_STRING_ELT(zz_v, pos, Rf_mkCharLenCE(is_buf.data(), static_cast<int>(is_buf.size()), CE_UTF8));
+                SET_STRING_ELT(zz_v, pos, utf8_charsxp(is_buf));
               }
             }
           }
@@ -961,24 +958,12 @@ Rcpp::DataFrame create_int_dataframe(const Rcpp::DataFrame& char_df) {
 // TODO styles_xml.cpp should be converted to use these functions
 
 // [[Rcpp::export]]
-Rcpp::DataFrame read_xml2df(XPtrXML xml, Rcpp::CharacterVector vec_name, Rcpp::CharacterVector vec_attrs,
-                            Rcpp::CharacterVector vec_chlds) {
+Rcpp::DataFrame read_xml2df(XPtrXML xml, utf8 vec_name, std::vector<utf8> vec_attrs, std::vector<utf8> vec_chlds) {
 
   check_xptr_validity(xml);
 
-  if (Rf_xlength(vec_name) != 1) Rcpp::stop("vec_name must be a single string");
-  std::string vec_name_utf8 = Rf_translateCharUTF8(STRING_ELT(vec_name, 0));
-
-  std::vector<std::string> vec_attrs_utf8, vec_chlds_utf8;
-  for (R_xlen_t i = 0; i < Rf_xlength(vec_attrs); ++i) {
-    vec_attrs_utf8.push_back(Rf_translateCharUTF8(STRING_ELT(vec_attrs, i)));
-  }
-  for (R_xlen_t i = 0; i < Rf_xlength(vec_chlds); ++i) {
-    vec_chlds_utf8.push_back(Rf_translateCharUTF8(STRING_ELT(vec_chlds, i)));
-  }
-
-  std::set<std::string> nam_attrs(vec_attrs_utf8.begin(), vec_attrs_utf8.end());
-  std::set<std::string> nam_chlds(vec_chlds_utf8.begin(), vec_chlds_utf8.end());
+  std::set<std::string> nam_attrs(vec_attrs.begin(), vec_attrs.end());
+  std::set<std::string> nam_chlds(vec_chlds.begin(), vec_chlds.end());
 
   auto total_length = nam_attrs.size() + nam_chlds.size();
   std::vector<std::string> all_names(total_length);
@@ -1005,7 +990,7 @@ Rcpp::DataFrame read_xml2df(XPtrXML xml, Rcpp::CharacterVector vec_name, Rcpp::C
   // 2. fill the list
   // <vec_name ...>
   auto itr = 0;
-  for (auto xml_node : xml->children(vec_name_utf8.c_str())) {
+  for (auto xml_node : xml->children(vec_name.c_str())) {
     for (auto attrs : xml_node.attributes()) {
       std::string attr_name = attrs.name();
       std::string attr_value = attrs.value();
@@ -1013,11 +998,10 @@ Rcpp::DataFrame read_xml2df(XPtrXML xml, Rcpp::CharacterVector vec_name, Rcpp::C
 
       // check if name is already known
       if (nams.count(attr_name) == 0) {
-        Rcpp::warning("%s: not found in %s name table", attr_name, vec_name_utf8);
+        Rcpp::warning("%s: not found in %s name table", attr_name, vec_name);
       } else {
         R_xlen_t mtc = std::distance(nams.begin(), find_res);
-        SET_STRING_ELT(VECTOR_ELT(df, mtc), itr,
-                       Rf_mkCharLenCE(attr_value.data(), static_cast<int>(attr_value.size()), CE_UTF8));
+        SET_STRING_ELT(VECTOR_ELT(df, mtc), itr, utf8_charsxp(attr_value));
       }
     }
 
@@ -1027,15 +1011,14 @@ Rcpp::DataFrame read_xml2df(XPtrXML xml, Rcpp::CharacterVector vec_name, Rcpp::C
 
       // check if name is already known
       if (nams.count(cld_name) == 0) {
-        Rcpp::warning("%s: not found in %s name table", cld_name, vec_name_utf8);
+        Rcpp::warning("%s: not found in %s name table", cld_name, vec_name);
       } else {
         xml_string_writer writer;
         cld.print(writer, " ", pugi_format_flags);
         std::string cld_value = std::move(writer.result);
 
         R_xlen_t mtc = std::distance(nams.begin(), find_res);
-        SET_STRING_ELT(VECTOR_ELT(df, mtc), itr,
-                       Rf_mkCharLenCE(cld_value.data(), static_cast<int>(cld_value.size()), CE_UTF8));
+        SET_STRING_ELT(VECTOR_ELT(df, mtc), itr, utf8_charsxp(cld_value));
       }
     }
 
@@ -1043,51 +1026,28 @@ Rcpp::DataFrame read_xml2df(XPtrXML xml, Rcpp::CharacterVector vec_name, Rcpp::C
   }
 
   // 3. Create a data.frame
-  Rcpp::CharacterVector df_names(kk);
-  R_xlen_t nam_idx = 0;
-  for (const std::string& nam : nams) {
-    SET_STRING_ELT(df_names, nam_idx++, Rf_mkCharLenCE(nam.data(), static_cast<int>(nam.size()), CE_UTF8));
-  }
-
   df.attr("row.names") = rvec;
-  df.attr("names") = df_names;
+  df.attr("names") = std::vector<utf8>(nams.begin(), nams.end());
   df.attr("class") = "data.frame";
 
   return df;
 }
 
 // [[Rcpp::export]]
-Rcpp::CharacterVector write_df2xml(Rcpp::DataFrame df, Rcpp::CharacterVector vec_name, Rcpp::CharacterVector vec_attrs,
-                                   Rcpp::CharacterVector vec_chlds) {
+std::vector<utf8> write_df2xml(Rcpp::DataFrame df, utf8 vec_name, std::vector<utf8> vec_attrs, std::vector<utf8> vec_chlds) {
   int64_t n = df.nrow();
-  Rcpp::CharacterVector z(n);
+  std::vector<utf8> z(static_cast<size_t>(n));
   uint32_t pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
   uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
-  if (Rf_xlength(vec_name) != 1) Rcpp::stop("vec_name must be a single string");
-  std::string vec_name_utf8 = Rf_translateCharUTF8(STRING_ELT(vec_name, 0));
-
-  std::vector<std::string> vec_attrs_utf8, vec_chlds_utf8;
-  for (R_xlen_t i = 0; i < Rf_xlength(vec_attrs); ++i) {
-    vec_attrs_utf8.push_back(Rf_translateCharUTF8(STRING_ELT(vec_attrs, i)));
-  }
-  for (R_xlen_t i = 0; i < Rf_xlength(vec_chlds); ++i) {
-    vec_chlds_utf8.push_back(Rf_translateCharUTF8(STRING_ELT(vec_chlds, i)));
-  }
-
-  SEXP df_names = Rf_getAttrib(df, R_NamesSymbol);
-  std::vector<std::string> attrnams;
-  for (R_xlen_t j = 0; j < Rf_xlength(df_names); ++j) {
-    attrnams.push_back(Rf_translateCharUTF8(STRING_ELT(df_names, j)));
-  }
-
   // openxml 2.8.1
-  std::set<std::string> nam_attrs(vec_attrs_utf8.begin(), vec_attrs_utf8.end());
-  std::set<std::string> nam_chlds(vec_chlds_utf8.begin(), vec_chlds_utf8.end());
+  std::vector<utf8> attrnams = Rcpp::as<std::vector<utf8>>(Rf_getAttrib(df, R_NamesSymbol));
+  std::set<std::string> nam_attrs(vec_attrs.begin(), vec_attrs.end());
+  std::set<std::string> nam_chlds(vec_chlds.begin(), vec_chlds.end());
 
   for (int64_t i = 0; i < n; ++i) {
     pugi::xml_document doc;
-    pugi::xml_node xml_node = doc.append_child(vec_name_utf8.c_str());
+    pugi::xml_node xml_node = doc.append_child(vec_name.c_str());
 
     for (auto j = 0; j < df.ncol(); ++j) {
       std::string attr_j = attrnams[static_cast<size_t>(j)];
@@ -1112,7 +1072,8 @@ Rcpp::CharacterVector write_df2xml(Rcpp::DataFrame df, Rcpp::CharacterVector vec
 
         // only write attributes where cv_s has a value
         if (cv_s[0] != "") {
-          xml_node.append_attribute(attr_j.c_str()) = Rf_translateCharUTF8(STRING_ELT(cv_s, 0));
+          const utf8 val_strl = Rcpp::as<utf8>(cv_s);
+          xml_node.append_attribute(attr_j.c_str()) = val_strl.c_str();
         }
       }
 
@@ -1121,23 +1082,23 @@ Rcpp::CharacterVector write_df2xml(Rcpp::DataFrame df, Rcpp::CharacterVector vec
         cv_s = Rcpp::as<Rcpp::CharacterVector>(df[j])[i];
 
         if (cv_s[0] != "") {
-          const char* child_i = Rf_translateCharUTF8(STRING_ELT(cv_s, 0));
+          const utf8 child_i = Rcpp::as<utf8>(cv_s);
 
           pugi::xml_document xml_child;
-          pugi::xml_parse_result result = xml_child.load_string(child_i, pugi_parse_flags);
-          if (!result) Rcpp::stop("loading %s child node fail: %s", vec_name_utf8, child_i);
+          pugi::xml_parse_result result = xml_child.load_string(child_i.c_str(), pugi_parse_flags);
+          if (!result) Rcpp::stop("loading %s child node fail: %s", vec_name, cv_s);
 
           xml_node.append_copy(xml_child.first_child());
         }
       }
 
       if (idx1.empty() && idx2.empty())
-        Rcpp::warning("%s: not found in %s name table", attr_j, vec_name_utf8);
+        Rcpp::warning("%s: not found in %s name table", attr_j, vec_name);
     }
 
     xml_string_writer writer;
     doc.print(writer, " ", pugi_format_flags);
-    SET_STRING_ELT(z, i, Rf_mkCharLenCE(writer.result.data(), static_cast<int>(writer.result.size()), CE_UTF8));
+    z[static_cast<size_t>(i)] = utf8(std::move(writer.result));
   }
 
   return z;
@@ -1163,19 +1124,12 @@ static std::string unescape_xml(const char* s) {
 }
 
 // [[Rcpp::export]]
-Rcpp::CharacterVector df_to_xml(Rcpp::CharacterVector name, Rcpp::DataFrame df_col) {
-  if (Rf_xlength(name) != 1) Rcpp::stop("name must be a single string");
-  std::string name_utf8 = Rf_translateCharUTF8(STRING_ELT(name, 0));
-
+Rcpp::CharacterVector df_to_xml(utf8 name, Rcpp::DataFrame df_col) {
   R_xlen_t n    = df_col.nrow();
   R_xlen_t ncol = df_col.ncol();
   Rcpp::CharacterVector z(n);
 
-  SEXP df_names = Rf_getAttrib(df_col, R_NamesSymbol);
-  std::vector<std::string> attrnams;
-  for (R_xlen_t j = 0; j < ncol; ++j) {
-    attrnams.push_back(Rf_translateCharUTF8(STRING_ELT(df_names, j)));
-  }
+  std::vector<utf8> attrnams = Rcpp::as<std::vector<utf8>>(Rf_getAttrib(df_col, R_NamesSymbol));
 
   std::vector<Rcpp::CharacterVector> cols(static_cast<size_t>(ncol));
   for (R_xlen_t j = 0; j < ncol; ++j)
@@ -1187,7 +1141,7 @@ Rcpp::CharacterVector df_to_xml(Rcpp::CharacterVector name, Rcpp::DataFrame df_c
   for (R_xlen_t i = 0; i < n; ++i) {
     vmaxset(vmax);
     doc.reset();
-    pugi::xml_node col = doc.append_child(name_utf8.c_str());
+    pugi::xml_node col = doc.append_child(name.c_str());
     for (R_xlen_t j = 0; j < ncol; ++j) {
       const char* cs = Rf_translateCharUTF8(STRING_ELT(cols[static_cast<size_t>(j)], i));
       if (cs[0] != '\0') {
@@ -1200,7 +1154,7 @@ Rcpp::CharacterVector df_to_xml(Rcpp::CharacterVector name, Rcpp::DataFrame df_c
     }
     xml_string_writer writer;
     doc.print(writer, " ", pugi::format_raw);
-    SET_STRING_ELT(z, i, Rf_mkCharLenCE(writer.result.data(), static_cast<int>(writer.result.size()), CE_UTF8));
+    SET_STRING_ELT(z, i, utf8_charsxp(writer.result));
   }
   return z;
 }
