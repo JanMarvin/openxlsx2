@@ -71,7 +71,7 @@ lives only for the lifetime of the R session or once it is gc().
   print(x, raw = TRUE)
 #> <a><b/></a>
   str(x)
-#> Class 'pugi_xml' <pointer: 0x555c0464dce0> 
+#> Class 'pugi_xml' <pointer: 0x55a2c37175e0> 
 #>  - attr(*, "escapes")= logi FALSE
 #>  - attr(*, "empty_tags")= logi FALSE
 #>  - attr(*, "skip_control")= logi TRUE

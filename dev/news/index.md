@@ -32,6 +32,13 @@
   some minor bugfixes.
   [\#1702](https://github.com/JanMarvin/openxlsx2/pull/1702)
 
+### Breaking changes
+
+- The options `openxlsx2.force_utf8_encoding` and
+  `openxlsx2.native_encoding` were removed. Strings are now converted to
+  UTF-8 when they are passed to C++, so the options are no longer
+  needed. [\#1715](https://github.com/JanMarvin/openxlsx2/pull/1715)
+
 ------------------------------------------------------------------------
 
 ## openxlsx2 1.30
