@@ -152,21 +152,21 @@ std::string txt_to_xml(
 }
 
 // [[Rcpp::export]]
-utf8 txt_to_is(
-    utf8 text,
+utf8_string txt_to_is(
+    utf8_string text,
     bool no_escapes = false,
     bool raw = true,
     bool skip_control = true
 ) {
-  return utf8(txt_to_xml(text, no_escapes, raw, skip_control, "is"));
+  return utf8_string(txt_to_xml(text, no_escapes, raw, skip_control, "is"));
 }
 
 // [[Rcpp::export]]
-utf8 txt_to_si(
-    utf8 text,
+utf8_string txt_to_si(
+    utf8_string text,
     bool no_escapes = false,
     bool raw = true,
     bool skip_control = true
 ) {
-  return utf8(txt_to_xml(text, no_escapes, raw, skip_control, "si"));
+  return utf8_string(txt_to_xml(text, no_escapes, raw, skip_control, "si"));
 }

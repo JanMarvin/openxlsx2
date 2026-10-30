@@ -165,7 +165,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // wide_to_long
-void wide_to_long(Rcpp::DataFrame z, std::vector<int32_t> vtyps, Rcpp::DataFrame zz, bool ColNames, int32_t start_col, int32_t start_row, Rcpp::Nullable<Rcpp::CharacterVector> refed, int32_t string_nums, bool na_null, bool na_missing, utf8 na_strings, bool inline_strings, std::string c_cm, std::vector<std::string> dims);
+void wide_to_long(Rcpp::DataFrame z, std::vector<int32_t> vtyps, Rcpp::DataFrame zz, bool ColNames, int32_t start_col, int32_t start_row, Rcpp::Nullable<Rcpp::CharacterVector> refed, int32_t string_nums, bool na_null, bool na_missing, utf8_string na_strings, bool inline_strings, std::string c_cm, std::vector<std::string> dims);
 RcppExport SEXP _openxlsx2_wide_to_long(SEXP zSEXP, SEXP vtypsSEXP, SEXP zzSEXP, SEXP ColNamesSEXP, SEXP start_colSEXP, SEXP start_rowSEXP, SEXP refedSEXP, SEXP string_numsSEXP, SEXP na_nullSEXP, SEXP na_missingSEXP, SEXP na_stringsSEXP, SEXP inline_stringsSEXP, SEXP c_cmSEXP, SEXP dimsSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -179,7 +179,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int32_t >::type string_nums(string_numsSEXP);
     Rcpp::traits::input_parameter< bool >::type na_null(na_nullSEXP);
     Rcpp::traits::input_parameter< bool >::type na_missing(na_missingSEXP);
-    Rcpp::traits::input_parameter< utf8 >::type na_strings(na_stringsSEXP);
+    Rcpp::traits::input_parameter< utf8_string >::type na_strings(na_stringsSEXP);
     Rcpp::traits::input_parameter< bool >::type inline_strings(inline_stringsSEXP);
     Rcpp::traits::input_parameter< std::string >::type c_cm(c_cmSEXP);
     Rcpp::traits::input_parameter< std::vector<std::string> >::type dims(dimsSEXP);
@@ -211,40 +211,40 @@ BEGIN_RCPP
 END_RCPP
 }
 // read_xml2df
-Rcpp::DataFrame read_xml2df(XPtrXML xml, utf8 vec_name, std::vector<utf8> vec_attrs, std::vector<utf8> vec_chlds);
+Rcpp::DataFrame read_xml2df(XPtrXML xml, utf8_string vec_name, std::vector<utf8_string> vec_attrs, std::vector<utf8_string> vec_chlds);
 RcppExport SEXP _openxlsx2_read_xml2df(SEXP xmlSEXP, SEXP vec_nameSEXP, SEXP vec_attrsSEXP, SEXP vec_chldsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< XPtrXML >::type xml(xmlSEXP);
-    Rcpp::traits::input_parameter< utf8 >::type vec_name(vec_nameSEXP);
-    Rcpp::traits::input_parameter< std::vector<utf8> >::type vec_attrs(vec_attrsSEXP);
-    Rcpp::traits::input_parameter< std::vector<utf8> >::type vec_chlds(vec_chldsSEXP);
+    Rcpp::traits::input_parameter< utf8_string >::type vec_name(vec_nameSEXP);
+    Rcpp::traits::input_parameter< std::vector<utf8_string> >::type vec_attrs(vec_attrsSEXP);
+    Rcpp::traits::input_parameter< std::vector<utf8_string> >::type vec_chlds(vec_chldsSEXP);
     rcpp_result_gen = Rcpp::wrap(read_xml2df(xml, vec_name, vec_attrs, vec_chlds));
     return rcpp_result_gen;
 END_RCPP
 }
 // write_df2xml
-std::vector<utf8> write_df2xml(Rcpp::DataFrame df, utf8 vec_name, std::vector<utf8> vec_attrs, std::vector<utf8> vec_chlds);
+std::vector<utf8_string> write_df2xml(Rcpp::DataFrame df, utf8_string vec_name, std::vector<utf8_string> vec_attrs, std::vector<utf8_string> vec_chlds);
 RcppExport SEXP _openxlsx2_write_df2xml(SEXP dfSEXP, SEXP vec_nameSEXP, SEXP vec_attrsSEXP, SEXP vec_chldsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type df(dfSEXP);
-    Rcpp::traits::input_parameter< utf8 >::type vec_name(vec_nameSEXP);
-    Rcpp::traits::input_parameter< std::vector<utf8> >::type vec_attrs(vec_attrsSEXP);
-    Rcpp::traits::input_parameter< std::vector<utf8> >::type vec_chlds(vec_chldsSEXP);
+    Rcpp::traits::input_parameter< utf8_string >::type vec_name(vec_nameSEXP);
+    Rcpp::traits::input_parameter< std::vector<utf8_string> >::type vec_attrs(vec_attrsSEXP);
+    Rcpp::traits::input_parameter< std::vector<utf8_string> >::type vec_chlds(vec_chldsSEXP);
     rcpp_result_gen = Rcpp::wrap(write_df2xml(df, vec_name, vec_attrs, vec_chlds));
     return rcpp_result_gen;
 END_RCPP
 }
 // df_to_xml
-Rcpp::CharacterVector df_to_xml(utf8 name, Rcpp::DataFrame df_col);
+Rcpp::CharacterVector df_to_xml(utf8_string name, Rcpp::DataFrame df_col);
 RcppExport SEXP _openxlsx2_df_to_xml(SEXP nameSEXP, SEXP df_colSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< utf8 >::type name(nameSEXP);
+    Rcpp::traits::input_parameter< utf8_string >::type name(nameSEXP);
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type df_col(df_colSEXP);
     rcpp_result_gen = Rcpp::wrap(df_to_xml(name, df_col));
     return rcpp_result_gen;
@@ -337,72 +337,72 @@ BEGIN_RCPP
 END_RCPP
 }
 // is_xml
-Rcpp::LogicalVector is_xml(utf8 str);
+Rcpp::LogicalVector is_xml(utf8_string str);
 RcppExport SEXP _openxlsx2_is_xml(SEXP strSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< utf8 >::type str(strSEXP);
+    Rcpp::traits::input_parameter< utf8_string >::type str(strSEXP);
     rcpp_result_gen = Rcpp::wrap(is_xml(str));
     return rcpp_result_gen;
 END_RCPP
 }
 // getXMLXPtrNamePath
-SEXP getXMLXPtrNamePath(XPtrXML doc, std::vector<utf8> path);
+SEXP getXMLXPtrNamePath(XPtrXML doc, std::vector<utf8_string> path);
 RcppExport SEXP _openxlsx2_getXMLXPtrNamePath(SEXP docSEXP, SEXP pathSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< XPtrXML >::type doc(docSEXP);
-    Rcpp::traits::input_parameter< std::vector<utf8> >::type path(pathSEXP);
+    Rcpp::traits::input_parameter< std::vector<utf8_string> >::type path(pathSEXP);
     rcpp_result_gen = Rcpp::wrap(getXMLXPtrNamePath(doc, path));
     return rcpp_result_gen;
 END_RCPP
 }
 // getXMLXPtrPath
-std::vector<utf8> getXMLXPtrPath(XPtrXML doc, std::vector<utf8> path);
+std::vector<utf8_string> getXMLXPtrPath(XPtrXML doc, std::vector<utf8_string> path);
 RcppExport SEXP _openxlsx2_getXMLXPtrPath(SEXP docSEXP, SEXP pathSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< XPtrXML >::type doc(docSEXP);
-    Rcpp::traits::input_parameter< std::vector<utf8> >::type path(pathSEXP);
+    Rcpp::traits::input_parameter< std::vector<utf8_string> >::type path(pathSEXP);
     rcpp_result_gen = Rcpp::wrap(getXMLXPtrPath(doc, path));
     return rcpp_result_gen;
 END_RCPP
 }
 // getXMLXPtrValPath
-std::vector<utf8> getXMLXPtrValPath(XPtrXML doc, std::vector<utf8> path);
+std::vector<utf8_string> getXMLXPtrValPath(XPtrXML doc, std::vector<utf8_string> path);
 RcppExport SEXP _openxlsx2_getXMLXPtrValPath(SEXP docSEXP, SEXP pathSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< XPtrXML >::type doc(docSEXP);
-    Rcpp::traits::input_parameter< std::vector<utf8> >::type path(pathSEXP);
+    Rcpp::traits::input_parameter< std::vector<utf8_string> >::type path(pathSEXP);
     rcpp_result_gen = Rcpp::wrap(getXMLXPtrValPath(doc, path));
     return rcpp_result_gen;
 END_RCPP
 }
 // getXMLXPtrAttrPath
-SEXP getXMLXPtrAttrPath(XPtrXML doc, std::vector<utf8> path);
+SEXP getXMLXPtrAttrPath(XPtrXML doc, std::vector<utf8_string> path);
 RcppExport SEXP _openxlsx2_getXMLXPtrAttrPath(SEXP docSEXP, SEXP pathSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< XPtrXML >::type doc(docSEXP);
-    Rcpp::traits::input_parameter< std::vector<utf8> >::type path(pathSEXP);
+    Rcpp::traits::input_parameter< std::vector<utf8_string> >::type path(pathSEXP);
     rcpp_result_gen = Rcpp::wrap(getXMLXPtrAttrPath(doc, path));
     return rcpp_result_gen;
 END_RCPP
 }
 // printXPtr
-utf8 printXPtr(XPtrXML doc, utf8 indent, bool raw, bool attr_indent);
+utf8_string printXPtr(XPtrXML doc, utf8_string indent, bool raw, bool attr_indent);
 RcppExport SEXP _openxlsx2_printXPtr(SEXP docSEXP, SEXP indentSEXP, SEXP rawSEXP, SEXP attr_indentSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< XPtrXML >::type doc(docSEXP);
-    Rcpp::traits::input_parameter< utf8 >::type indent(indentSEXP);
+    Rcpp::traits::input_parameter< utf8_string >::type indent(indentSEXP);
     Rcpp::traits::input_parameter< bool >::type raw(rawSEXP);
     Rcpp::traits::input_parameter< bool >::type attr_indent(attr_indentSEXP);
     rcpp_result_gen = Rcpp::wrap(printXPtr(doc, indent, raw, attr_indent));
@@ -410,24 +410,24 @@ BEGIN_RCPP
 END_RCPP
 }
 // write_xml_file
-XPtrXML write_xml_file(utf8 xml_content, bool escapes);
+XPtrXML write_xml_file(utf8_string xml_content, bool escapes);
 RcppExport SEXP _openxlsx2_write_xml_file(SEXP xml_contentSEXP, SEXP escapesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< utf8 >::type xml_content(xml_contentSEXP);
+    Rcpp::traits::input_parameter< utf8_string >::type xml_content(xml_contentSEXP);
     Rcpp::traits::input_parameter< bool >::type escapes(escapesSEXP);
     rcpp_result_gen = Rcpp::wrap(write_xml_file(xml_content, escapes));
     return rcpp_result_gen;
 END_RCPP
 }
 // xml_attr_mod
-utf8 xml_attr_mod(utf8 xml_content, Rcpp::CharacterVector xml_attributes, Rcpp::Nullable<Rcpp::CharacterVector> path, bool escapes, bool declaration, bool remove_empty_attr);
+utf8_string xml_attr_mod(utf8_string xml_content, Rcpp::CharacterVector xml_attributes, Rcpp::Nullable<Rcpp::CharacterVector> path, bool escapes, bool declaration, bool remove_empty_attr);
 RcppExport SEXP _openxlsx2_xml_attr_mod(SEXP xml_contentSEXP, SEXP xml_attributesSEXP, SEXP pathSEXP, SEXP escapesSEXP, SEXP declarationSEXP, SEXP remove_empty_attrSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< utf8 >::type xml_content(xml_contentSEXP);
+    Rcpp::traits::input_parameter< utf8_string >::type xml_content(xml_contentSEXP);
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type xml_attributes(xml_attributesSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type path(pathSEXP);
     Rcpp::traits::input_parameter< bool >::type escapes(escapesSEXP);
@@ -438,12 +438,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // xml_node_create
-utf8 xml_node_create(utf8 xml_name, Rcpp::Nullable<Rcpp::CharacterVector> xml_children, Rcpp::Nullable<Rcpp::CharacterVector> xml_attributes, bool escapes, bool declaration);
+utf8_string xml_node_create(utf8_string xml_name, Rcpp::Nullable<Rcpp::CharacterVector> xml_children, Rcpp::Nullable<Rcpp::CharacterVector> xml_attributes, bool escapes, bool declaration);
 RcppExport SEXP _openxlsx2_xml_node_create(SEXP xml_nameSEXP, SEXP xml_childrenSEXP, SEXP xml_attributesSEXP, SEXP escapesSEXP, SEXP declarationSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< utf8 >::type xml_name(xml_nameSEXP);
+    Rcpp::traits::input_parameter< utf8_string >::type xml_name(xml_nameSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type xml_children(xml_childrenSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type xml_attributes(xml_attributesSEXP);
     Rcpp::traits::input_parameter< bool >::type escapes(escapesSEXP);
@@ -453,28 +453,28 @@ BEGIN_RCPP
 END_RCPP
 }
 // xml_append_child_path
-SEXP xml_append_child_path(XPtrXML node, XPtrXML child, std::vector<utf8> path, bool pointer);
+SEXP xml_append_child_path(XPtrXML node, XPtrXML child, std::vector<utf8_string> path, bool pointer);
 RcppExport SEXP _openxlsx2_xml_append_child_path(SEXP nodeSEXP, SEXP childSEXP, SEXP pathSEXP, SEXP pointerSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< XPtrXML >::type node(nodeSEXP);
     Rcpp::traits::input_parameter< XPtrXML >::type child(childSEXP);
-    Rcpp::traits::input_parameter< std::vector<utf8> >::type path(pathSEXP);
+    Rcpp::traits::input_parameter< std::vector<utf8_string> >::type path(pathSEXP);
     Rcpp::traits::input_parameter< bool >::type pointer(pointerSEXP);
     rcpp_result_gen = Rcpp::wrap(xml_append_child_path(node, child, path, pointer));
     return rcpp_result_gen;
 END_RCPP
 }
 // xml_remove_child_path
-SEXP xml_remove_child_path(XPtrXML node, utf8 child, std::vector<utf8> path, int32_t which, bool pointer);
+SEXP xml_remove_child_path(XPtrXML node, utf8_string child, std::vector<utf8_string> path, int32_t which, bool pointer);
 RcppExport SEXP _openxlsx2_xml_remove_child_path(SEXP nodeSEXP, SEXP childSEXP, SEXP pathSEXP, SEXP whichSEXP, SEXP pointerSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< XPtrXML >::type node(nodeSEXP);
-    Rcpp::traits::input_parameter< utf8 >::type child(childSEXP);
-    Rcpp::traits::input_parameter< std::vector<utf8> >::type path(pathSEXP);
+    Rcpp::traits::input_parameter< utf8_string >::type child(childSEXP);
+    Rcpp::traits::input_parameter< std::vector<utf8_string> >::type path(pathSEXP);
     Rcpp::traits::input_parameter< int32_t >::type which(whichSEXP);
     Rcpp::traits::input_parameter< bool >::type pointer(pointerSEXP);
     rcpp_result_gen = Rcpp::wrap(xml_remove_child_path(node, child, path, which, pointer));
@@ -504,12 +504,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // txt_to_is
-utf8 txt_to_is(utf8 text, bool no_escapes, bool raw, bool skip_control);
+utf8_string txt_to_is(utf8_string text, bool no_escapes, bool raw, bool skip_control);
 RcppExport SEXP _openxlsx2_txt_to_is(SEXP textSEXP, SEXP no_escapesSEXP, SEXP rawSEXP, SEXP skip_controlSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< utf8 >::type text(textSEXP);
+    Rcpp::traits::input_parameter< utf8_string >::type text(textSEXP);
     Rcpp::traits::input_parameter< bool >::type no_escapes(no_escapesSEXP);
     Rcpp::traits::input_parameter< bool >::type raw(rawSEXP);
     Rcpp::traits::input_parameter< bool >::type skip_control(skip_controlSEXP);
@@ -518,12 +518,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // txt_to_si
-utf8 txt_to_si(utf8 text, bool no_escapes, bool raw, bool skip_control);
+utf8_string txt_to_si(utf8_string text, bool no_escapes, bool raw, bool skip_control);
 RcppExport SEXP _openxlsx2_txt_to_si(SEXP textSEXP, SEXP no_escapesSEXP, SEXP rawSEXP, SEXP skip_controlSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< utf8 >::type text(textSEXP);
+    Rcpp::traits::input_parameter< utf8_string >::type text(textSEXP);
     Rcpp::traits::input_parameter< bool >::type no_escapes(no_escapesSEXP);
     Rcpp::traits::input_parameter< bool >::type raw(rawSEXP);
     Rcpp::traits::input_parameter< bool >::type skip_control(skip_controlSEXP);
@@ -730,26 +730,26 @@ BEGIN_RCPP
 END_RCPP
 }
 // write_worksheet_slim
-void write_worksheet_slim(Rcpp::Environment sheet_data, utf8 prior, utf8 post, native_path fl);
+void write_worksheet_slim(Rcpp::Environment sheet_data, utf8_string prior, utf8_string post, native_path fl);
 RcppExport SEXP _openxlsx2_write_worksheet_slim(SEXP sheet_dataSEXP, SEXP priorSEXP, SEXP postSEXP, SEXP flSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::Environment >::type sheet_data(sheet_dataSEXP);
-    Rcpp::traits::input_parameter< utf8 >::type prior(priorSEXP);
-    Rcpp::traits::input_parameter< utf8 >::type post(postSEXP);
+    Rcpp::traits::input_parameter< utf8_string >::type prior(priorSEXP);
+    Rcpp::traits::input_parameter< utf8_string >::type post(postSEXP);
     Rcpp::traits::input_parameter< native_path >::type fl(flSEXP);
     write_worksheet_slim(sheet_data, prior, post, fl);
     return R_NilValue;
 END_RCPP
 }
 // write_worksheet
-XPtrXML write_worksheet(utf8 prior, utf8 post, Rcpp::Environment sheet_data);
+XPtrXML write_worksheet(utf8_string prior, utf8_string post, Rcpp::Environment sheet_data);
 RcppExport SEXP _openxlsx2_write_worksheet(SEXP priorSEXP, SEXP postSEXP, SEXP sheet_dataSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< utf8 >::type prior(priorSEXP);
-    Rcpp::traits::input_parameter< utf8 >::type post(postSEXP);
+    Rcpp::traits::input_parameter< utf8_string >::type prior(priorSEXP);
+    Rcpp::traits::input_parameter< utf8_string >::type post(postSEXP);
     Rcpp::traits::input_parameter< Rcpp::Environment >::type sheet_data(sheet_dataSEXP);
     rcpp_result_gen = Rcpp::wrap(write_worksheet(prior, post, sheet_data));
     return rcpp_result_gen;

@@ -36,10 +36,10 @@ typedef std::vector<std::string> vec_string;
 // comes from R and marked as UTF-8 when it goes to R. File and directory names
 // are translated to the native encoding, because the file system expects that.
 // Rcpp converts both types in the generated RcppExports.cpp.
-struct utf8 : std::string {
-  utf8() = default;
-  utf8(std::string x) : std::string(std::move(x)) {}
-  utf8(const char* x) : std::string(x) {}
+struct utf8_string : std::string {
+  utf8_string() = default;
+  utf8_string(std::string x) : std::string(std::move(x)) {}
+  utf8_string(const char* x) : std::string(x) {}
 };
 
 struct native_path : std::string {
@@ -48,12 +48,12 @@ struct native_path : std::string {
 };
 
 namespace Rcpp {
-  template <> utf8 as(SEXP x);
-  template <> std::vector<utf8> as(SEXP x);
+  template <> utf8_string as(SEXP x);
+  template <> std::vector<utf8_string> as(SEXP x);
   template <> native_path as(SEXP x);
   template <> std::vector<native_path> as(SEXP x);
-  template <> SEXP wrap(const utf8& x);
-  template <> SEXP wrap(const std::vector<utf8>& x);
+  template <> SEXP wrap(const utf8_string& x);
+  template <> SEXP wrap(const std::vector<utf8_string>& x);
 }
 
 // matches openxlsx2_celltype in openxlsx2.R
@@ -90,18 +90,18 @@ inline SEXP utf8_charsxp(const std::string& x) {
 }
 
 namespace Rcpp {
-  template <> inline utf8 as(SEXP x) {
+  template <> inline utf8_string as(SEXP x) {
     if (TYPEOF(x) != STRSXP || Rf_xlength(x) != 1) Rcpp::stop("Expecting a single string value");
-    return utf8(Rf_translateCharUTF8(STRING_ELT(x, 0)));
+    return utf8_string(Rf_translateCharUTF8(STRING_ELT(x, 0)));
   }
 
-  template <> inline std::vector<utf8> as(SEXP x) {
+  template <> inline std::vector<utf8_string> as(SEXP x) {
     // like Rcpp's as<std::vector<std::string>>(), other types are coerced
     Rcpp::Shield<SEXP> strs(Rcpp::r_cast<STRSXP>(x));
-    std::vector<utf8> res;
+    std::vector<utf8_string> res;
     res.reserve(static_cast<size_t>(Rf_xlength(strs)));
     for (R_xlen_t i = 0; i < Rf_xlength(strs); ++i) {
-      res.push_back(utf8(Rf_translateCharUTF8(STRING_ELT(strs, i))));
+      res.push_back(utf8_string(Rf_translateCharUTF8(STRING_ELT(strs, i))));
     }
     return res;
   }
@@ -121,11 +121,11 @@ namespace Rcpp {
     return res;
   }
 
-  template <> inline SEXP wrap(const utf8& x) {
+  template <> inline SEXP wrap(const utf8_string& x) {
     return Rf_ScalarString(utf8_charsxp(x));
   }
 
-  template <> inline SEXP wrap(const std::vector<utf8>& x) {
+  template <> inline SEXP wrap(const std::vector<utf8_string>& x) {
     Rcpp::Shield<SEXP> res(Rf_allocVector(STRSXP, static_cast<R_xlen_t>(x.size())));
     for (size_t i = 0; i < x.size(); ++i) {
       SET_STRING_ELT(res, static_cast<R_xlen_t>(i), utf8_charsxp(x[i]));

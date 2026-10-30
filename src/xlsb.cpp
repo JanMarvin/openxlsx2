@@ -118,7 +118,7 @@ Rcpp::List xlsb_context(native_path workbookPath, std::vector<native_path> extLi
     if (!digits.empty()) used_links.insert(std::stoll(digits));
   }
 
-  std::vector<utf8> xti(xtis.size());
+  std::vector<utf8_string> xti(xtis.size());
   for (size_t i = 0; i < xtis.size(); ++i) {
     int64_t first = static_cast<int64_t>(xtis[i][1]) + 1, last = static_cast<int64_t>(xtis[i][2]) + 1;
     std::string text;
@@ -152,19 +152,19 @@ Rcpp::List xlsb_context(native_path workbookPath, std::vector<native_path> extLi
         if (ok) text = quote ? "'" + prefix + name + "'" : name;
       }
     }
-    xti[i] = utf8(text);
+    xti[i] = utf8_string(text);
   }
 
   // tables: id, name and the names of the columns
   Rcpp::IntegerVector table_id;
-  std::vector<utf8> table_name;
+  std::vector<utf8_string> table_name;
   Rcpp::List table_columns;
   for (const native_path& tab_path : tablePaths) {
     std::ifstream tab(tab_path, std::ios::in | std::ios::binary);
     bool in_table = false;
     uint32_t idList = 0;
     std::string display_name;
-    std::vector<utf8> cols;
+    std::vector<utf8_string> cols;
     while (tab && tab.peek() != std::char_traits<char>::eof()) {
       int32_t x = 0, size = 0;
       RECORD(x, size, tab, swapit);
@@ -182,7 +182,7 @@ Rcpp::List xlsb_context(native_path workbookPath, std::vector<native_path> extLi
         // id, function, three dxfs and the query table field, then the name
         tab.seekg(24, std::ios_base::cur);
         XLNullableWideString(tab, swapit);
-        cols.push_back(utf8(XLNullableWideString(tab, swapit)));
+        cols.push_back(utf8_string(XLNullableWideString(tab, swapit)));
       } else if (x == BrtEndList) {
         break;
       }
@@ -190,13 +190,13 @@ Rcpp::List xlsb_context(native_path workbookPath, std::vector<native_path> extLi
     }
     if (!in_table) continue;
     table_id.push_back(static_cast<int32_t>(idList));
-    table_name.push_back(utf8(display_name));
+    table_name.push_back(utf8_string(display_name));
     table_columns.push_back(Rcpp::wrap(cols));
   }
 
   return Rcpp::List::create(
     Rcpp::Named("xti") = xti,
-    Rcpp::Named("names") = std::vector<utf8>(names.begin(), names.end()),
+    Rcpp::Named("names") = std::vector<utf8_string>(names.begin(), names.end()),
     Rcpp::Named("table_id") = table_id,
     Rcpp::Named("table_name") = table_name,
     Rcpp::Named("table_columns") = table_columns

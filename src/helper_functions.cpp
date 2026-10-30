@@ -677,7 +677,7 @@ void wide_to_long(
     int32_t string_nums,
     bool na_null,
     bool na_missing,
-    utf8 na_strings,
+    utf8_string na_strings,
     bool inline_strings,
     std::string c_cm,
     std::vector<std::string> dims
@@ -958,7 +958,7 @@ Rcpp::DataFrame create_int_dataframe(const Rcpp::DataFrame& char_df) {
 // TODO styles_xml.cpp should be converted to use these functions
 
 // [[Rcpp::export]]
-Rcpp::DataFrame read_xml2df(XPtrXML xml, utf8 vec_name, std::vector<utf8> vec_attrs, std::vector<utf8> vec_chlds) {
+Rcpp::DataFrame read_xml2df(XPtrXML xml, utf8_string vec_name, std::vector<utf8_string> vec_attrs, std::vector<utf8_string> vec_chlds) {
 
   check_xptr_validity(xml);
 
@@ -1027,21 +1027,22 @@ Rcpp::DataFrame read_xml2df(XPtrXML xml, utf8 vec_name, std::vector<utf8> vec_at
 
   // 3. Create a data.frame
   df.attr("row.names") = rvec;
-  df.attr("names") = std::vector<utf8>(nams.begin(), nams.end());
+  df.attr("names") = std::vector<utf8_string>(nams.begin(), nams.end());
   df.attr("class") = "data.frame";
 
   return df;
 }
 
 // [[Rcpp::export]]
-std::vector<utf8> write_df2xml(Rcpp::DataFrame df, utf8 vec_name, std::vector<utf8> vec_attrs, std::vector<utf8> vec_chlds) {
+std::vector<utf8_string> write_df2xml(Rcpp::DataFrame df, utf8_string vec_name,
+                                      std::vector<utf8_string> vec_attrs, std::vector<utf8_string> vec_chlds) {
   int64_t n = df.nrow();
-  std::vector<utf8> z(static_cast<size_t>(n));
+  std::vector<utf8_string> z(static_cast<size_t>(n));
   uint32_t pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
   uint32_t pugi_format_flags = pugi::format_raw | pugi::format_no_escapes;
 
   // openxml 2.8.1
-  std::vector<utf8> attrnams = Rcpp::as<std::vector<utf8>>(Rf_getAttrib(df, R_NamesSymbol));
+  std::vector<utf8_string> attrnams = Rcpp::as<std::vector<utf8_string>>(Rf_getAttrib(df, R_NamesSymbol));
   std::set<std::string> nam_attrs(vec_attrs.begin(), vec_attrs.end());
   std::set<std::string> nam_chlds(vec_chlds.begin(), vec_chlds.end());
 
@@ -1072,7 +1073,7 @@ std::vector<utf8> write_df2xml(Rcpp::DataFrame df, utf8 vec_name, std::vector<ut
 
         // only write attributes where cv_s has a value
         if (cv_s[0] != "") {
-          const utf8 val_strl = Rcpp::as<utf8>(cv_s);
+          const utf8_string val_strl = Rcpp::as<utf8_string>(cv_s);
           xml_node.append_attribute(attr_j.c_str()) = val_strl.c_str();
         }
       }
@@ -1082,7 +1083,7 @@ std::vector<utf8> write_df2xml(Rcpp::DataFrame df, utf8 vec_name, std::vector<ut
         cv_s = Rcpp::as<Rcpp::CharacterVector>(df[j])[i];
 
         if (cv_s[0] != "") {
-          const utf8 child_i = Rcpp::as<utf8>(cv_s);
+          const utf8_string child_i = Rcpp::as<utf8_string>(cv_s);
 
           pugi::xml_document xml_child;
           pugi::xml_parse_result result = xml_child.load_string(child_i.c_str(), pugi_parse_flags);
@@ -1098,7 +1099,7 @@ std::vector<utf8> write_df2xml(Rcpp::DataFrame df, utf8 vec_name, std::vector<ut
 
     xml_string_writer writer;
     doc.print(writer, " ", pugi_format_flags);
-    z[static_cast<size_t>(i)] = utf8(std::move(writer.result));
+    z[static_cast<size_t>(i)] = utf8_string(std::move(writer.result));
   }
 
   return z;
@@ -1124,12 +1125,12 @@ static std::string unescape_xml(const char* s) {
 }
 
 // [[Rcpp::export]]
-Rcpp::CharacterVector df_to_xml(utf8 name, Rcpp::DataFrame df_col) {
+Rcpp::CharacterVector df_to_xml(utf8_string name, Rcpp::DataFrame df_col) {
   R_xlen_t n    = df_col.nrow();
   R_xlen_t ncol = df_col.ncol();
   Rcpp::CharacterVector z(n);
 
-  std::vector<utf8> attrnams = Rcpp::as<std::vector<utf8>>(Rf_getAttrib(df_col, R_NamesSymbol));
+  std::vector<utf8_string> attrnams = Rcpp::as<std::vector<utf8_string>>(Rf_getAttrib(df_col, R_NamesSymbol));
 
   std::vector<Rcpp::CharacterVector> cols(static_cast<size_t>(ncol));
   for (R_xlen_t j = 0; j < ncol; ++j)

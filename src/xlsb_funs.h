@@ -1266,9 +1266,9 @@ struct XlsbContext {
 inline XlsbContext xlsb_context_from_list(const Rcpp::List& x) {
   XlsbContext ctx;
   if (x.size() == 0) return ctx;
-  std::vector<utf8> xti = Rcpp::as<std::vector<utf8>>(x["xti"]);
-  std::vector<utf8> names = Rcpp::as<std::vector<utf8>>(x["names"]);
-  std::vector<utf8> table_name = Rcpp::as<std::vector<utf8>>(x["table_name"]);
+  std::vector<utf8_string> xti = Rcpp::as<std::vector<utf8_string>>(x["xti"]);
+  std::vector<utf8_string> names = Rcpp::as<std::vector<utf8_string>>(x["names"]);
+  std::vector<utf8_string> table_name = Rcpp::as<std::vector<utf8_string>>(x["table_name"]);
   Rcpp::IntegerVector table_id = x["table_id"];
   Rcpp::List table_columns = x["table_columns"];
   ctx.xti.assign(xti.begin(), xti.end());
@@ -1276,7 +1276,7 @@ inline XlsbContext xlsb_context_from_list(const Rcpp::List& x) {
   for (R_xlen_t i = 0; i < table_id.size(); ++i) {
     XlsbTable t;
     t.name = table_name[static_cast<size_t>(i)];
-    std::vector<utf8> cols = Rcpp::as<std::vector<utf8>>(table_columns[i]);
+    std::vector<utf8_string> cols = Rcpp::as<std::vector<utf8_string>>(table_columns[i]);
     t.columns.assign(cols.begin(), cols.end());
     ctx.tables[static_cast<uint32_t>(table_id[i])] = t;
   }

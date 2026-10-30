@@ -217,8 +217,8 @@ void xml_sheet_data_slim(
 // [[Rcpp::export]]
 void write_worksheet_slim(
     Rcpp::Environment sheet_data,
-    utf8 prior,
-    utf8 post,
+    utf8_string prior,
+    utf8_string post,
     native_path fl
 ){
   // sheet_data will be in order, just need to check for row_heights
@@ -431,7 +431,7 @@ void xml_sheet_data(pugi::xml_node& doc, Rcpp::DataFrame& row_attr, Rcpp::DataFr
 // create single xml rows of sheet_data.
 //
 // [[Rcpp::export]]
-XPtrXML write_worksheet(utf8 prior, utf8 post, Rcpp::Environment sheet_data) {
+XPtrXML write_worksheet(utf8_string prior, utf8_string post, Rcpp::Environment sheet_data) {
   uint32_t pugi_parse_flags = pugi::parse_cdata | pugi::parse_wconv_attribute | pugi::parse_ws_pcdata | pugi::parse_eol;
 
   // sheet_data will be in order, just need to check for row_heights
