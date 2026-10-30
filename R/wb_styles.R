@@ -1731,10 +1731,7 @@ process_literals <- function(fmt, value = NULL) {
   }
 
   res <- gsub("\\s+", " ", res)
-  res <- trimws(res)
-  Encoding(res) <- "UTF-8"
-
-  enc2native(res)
+  trimws(res)
 }
 
 # --- Helper: Date and Time Formatter ---

@@ -33,7 +33,7 @@ Rcpp::DataFrame col_to_df(XPtrXML doc) {
         Rcpp::Rcout << attr_name << ": not found in col name table" << std::endl;
       } else {
         R_xlen_t mtc = std::distance(col_nams.begin(), find_res);
-        Rcpp::as<Rcpp::CharacterVector>(df[mtc])[itr] = attr_value;
+        SET_STRING_ELT(VECTOR_ELT(df, mtc), itr, utf8_charsxp(attr_value));
       }
     }
 
@@ -99,7 +99,7 @@ inline const char* fill_row_attr(const pugi::xml_node& row, R_xlen_t row_idx,
       continue;
     }
 
-    SET_STRING_ELT(col_ptrs[static_cast<size_t>(hit)], row_idx, Rf_mkChar(attrs.value()));
+    SET_STRING_ELT(col_ptrs[static_cast<size_t>(hit)], row_idx, Rf_mkCharCE(attrs.value(), CE_UTF8));
     if (hit == 0) r_val = attrs.value(); // "r" is index 0
   }
 
