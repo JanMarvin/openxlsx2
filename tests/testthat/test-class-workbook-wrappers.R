@@ -887,3 +887,19 @@ test_that("add_ignore_error is a wrapper", {
   )
 
 })
+
+test_that("table names and named regions must be unique", {
+  wb <- wb_workbook()$add_worksheet()$add_worksheet()
+  wb$add_data_table(1, x = head(iris), table_name = "iris")
+  expect_error(
+    wb$add_named_region(sheet = 2, dims = "A1:B2", name = "IRIS"),
+    "table with name 'IRIS' already exists"
+  )
+
+  wb <- wb_workbook()$add_worksheet()$add_worksheet()
+  wb$add_named_region(sheet = 2, dims = "A1:B2", name = "iris")
+  expect_error(
+    wb$add_data_table(1, x = head(iris), table_name = "iris"),
+    "named region with name 'iris' already exists"
+  )
+})

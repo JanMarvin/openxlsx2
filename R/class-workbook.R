@@ -4065,6 +4065,16 @@ wbWorkbook <- R6::R6Class(
         rid <- max(as.integer(sub("\\D+", "", rbindlist(xml_attr(self$worksheets_rels[[sheet]], "Relationship"))[["Id"]]))) + 1
       }
 
+      if (length(self$workbook$definedNames)) {
+        dn_names <- rbindlist(xml_attr(self$workbook$definedNames, level1 = "definedName"))$name
+        if (tolower(tableName) %in% tolower(dn_names)) {
+          stop(
+            sprintf("A named region with name '%s' already exists. Table names and named regions must be unique.", tableName),
+            call. = FALSE
+          )
+        }
+      }
+
       if (is.null(self$tables)) {
         nms     <- NULL
         tSheets <- NULL
@@ -8672,6 +8682,13 @@ wbWorkbook <- R6::R6Class(
       match_dn <- which(sel)
 
       assert_named_region(name)
+
+      if (!is.null(self$tables) && tolower(name) %in% tolower(self$tables$tab_name)) {
+        stop(
+          sprintf("A table with name '%s' already exists. Table names and named regions must be unique.", name),
+          call. = FALSE
+        )
+      }
 
       if (any(match_dn)) {
         if (overwrite)
