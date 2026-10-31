@@ -4003,8 +4003,13 @@ wbWorkbook <- R6::R6Class(
         stop("Failed to save workbook")
       }
 
-      if (!is.null(getOption("openxlsx2.ooxml_validator"))) {
-        system2(path.expand(getOption("openxlsx2.ooxml_validator")), file)
+      validator <- getOption("openxlsx2.ooxml_validator")
+      if (!is.null(validator)) {
+        res <- suppressWarnings(
+          system2(path.expand(validator), shQuote(file), stdout = TRUE, stderr = TRUE)
+        )
+        if (!is.null(attr(res, "status")))
+          warning(paste(res, collapse = "\n"), call. = FALSE)
       }
 
       # (re)assign file path (if successful)
