@@ -43,6 +43,37 @@ test_that("control characters do not end up in the xml files", {
 
 })
 
+test_that("the noncharacters U+FFFE and U+FFFF do not end up in the xml files", {
+
+  exp <- c("ab", "ab", "ab", "a\u00e4b")
+  got <- strip_xml_control_chars(c("a\uFFFEb", "a\uFFFFb", "a&#xFFFE;b&#65535;", "a\u00e4b"))
+  expect_equal(got, exp)
+
+  wb <- wb_workbook(title = "a\uFFFEb")$
+    set_base_font(font_name = "Ari\uFFFFal")$
+    add_worksheet(header = c("a\uFFFEb", NA, NA))$
+    add_data(x = 1)$
+    add_comment(dims = "B1", comment = "com\uFFFEment")$
+    add_hyperlink(dims = "A1", target = "https://example.com", tooltip = "tool\uFFFFtip")
+
+  temp <- temp_xlsx()
+  on.exit(unlink(temp), add = TRUE)
+  wb$save(temp)
+
+  tmp_dir <- temp_dir("nonchars")
+  on.exit(unlink(tmp_dir, recursive = TRUE), add = TRUE)
+  utils::unzip(temp, exdir = tmp_dir)
+
+  fls <- list.files(tmp_dir, pattern = "\\.(xml|vml)$", recursive = TRUE, full.names = TRUE)
+  for (fl in fls) {
+    txt <- readBin(fl, "raw", file.size(fl))
+    expect_false(grepl("\\xEF\\xBF[\\xBE\\xBF]", rawToChar(txt), perl = TRUE, useBytes = TRUE), info = fl)
+  }
+
+  expect_silent(wb_load(temp))
+
+})
+
 test_that("control characters are removed from formulas and the theme", {
 
   wb <- wb_workbook()$
