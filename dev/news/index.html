@@ -58,6 +58,8 @@
 <code><a href="../reference/wb_data.html">wb_data()</a></code> gains <code>header_rows</code> to read a header that spans more than one row. The default is unchanged. <a href="https://github.com/JanMarvin/openxlsx2/pull/1706" class="external-link">#1706</a>
 </li>
 <li>
+<code><a href="../reference/wb_data.html">wb_data()</a></code> gains <code>used_range</code> to limit reading ranges like <code>"A:B"</code> or <code>"1:2"</code> to only the required columns and rows plus one.</li>
+<li>
 <code><a href="../reference/wb_clean_sheet.html">wb_clean_sheet()</a></code> gains a new attribute to fully remove tables from a sheet. <a href="https://github.com/JanMarvin/openxlsx2/pull/1709" class="external-link">#1709</a>
 </li>
 <li>Several inputs are now validated more thoroughly to avoid creating invalid output files. These were added based on fuzzing checks using <a href="https://github.com/JanMarvin/OOXMLValidator" class="external-link">OOXMLValidator</a>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1718" class="external-link">#1718</a>
