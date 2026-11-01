@@ -5,14 +5,7 @@ provide wb_data object as mschart input
 ## Usage
 
 ``` r
-wb_data(
-  wb,
-  sheet = current_sheet(),
-  dims,
-  header_rows = 1L,
-  used_range = TRUE,
-  ...
-)
+wb_data(wb, sheet = current_sheet(), dims, header_rows = 1L, ...)
 
 # S3 method for class 'wb_data'
 `[`(
@@ -40,14 +33,6 @@ wb_data(
 - header_rows:
 
   number of rows at the top of `dims` that form the column header.
-
-- used_range:
-
-  if `TRUE`, full column dims like `"A:B"` and full row dims like
-  `"1:2"` read only the used range of the worksheet plus one blank row
-  or column. The requested dims are kept in the attribute
-  `dims_requested`, which pivot tables use as their source. If `FALSE`,
-  all rows or columns are read.
 
 - ...:
 
@@ -106,11 +91,4 @@ A data frame of class `wb_data`.
  wb_data(wb, 1, dims = "A1:D3", header_rows = 2)
 #>   A x A y B x B y
 #> 3   1   2   3   4
-
- # full columns are limited to the used range
- wb_data(wb, 1, dims = "A:D")
-#>      A <NA>    B <NA>
-#> 2    x    y    x    y
-#> 3    1    2    3    4
-#> 4 <NA> <NA> <NA> <NA>
 ```

@@ -54,14 +54,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_data</span><span class="op">(</span></span>
-<span>  <span class="va">wb</span>,</span>
-<span>  sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  <span class="va">dims</span>,</span>
-<span>  header_rows <span class="op">=</span> <span class="fl">1L</span>,</span>
-<span>  used_range <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wb_data</span><span class="op">(</span><span class="va">wb</span>, sheet <span class="op">=</span> <span class="fu"><a href="waivers.html">current_sheet</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">dims</span>, header_rows <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'wb_data'</span></span>
 <span><span class="fu">`[`</span><span class="op">(</span></span>
@@ -91,13 +84,6 @@
 <dt id="arg-header-rows">header_rows<a class="anchor" aria-label="anchor" href="#arg-header-rows"></a></dt>
 <dd><p>number of rows at the top of <code>dims</code> that form the column
 header.</p></dd>
-
-
-<dt id="arg-used-range">used_range<a class="anchor" aria-label="anchor" href="#arg-used-range"></a></dt>
-<dd><p>if <code>TRUE</code>, full column dims like <code>"A:B"</code> and full row dims
-like <code>"1:2"</code> read only the used range of the worksheet plus one blank row or
-column. The requested dims are kept in the attribute <code>dims_requested</code>, which
-pivot tables use as their source. If <code>FALSE</code>, all rows or columns are read.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -154,13 +140,6 @@ argument is valid.</p></dd>
 <span class="r-in"><span> <span class="fu">wb_data</span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A1:D3"</span>, header_rows <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   A x A y B x B y</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3   1   2   3   4</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span> <span class="co"># full columns are limited to the used range</span></span></span>
-<span class="r-in"><span> <span class="fu">wb_data</span><span class="op">(</span><span class="va">wb</span>, <span class="fl">1</span>, dims <span class="op">=</span> <span class="st">"A:D"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      A &lt;NA&gt;    B &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2    x    y    x    y</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3    1    2    3    4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 &lt;NA&gt; &lt;NA&gt; &lt;NA&gt; &lt;NA&gt;</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

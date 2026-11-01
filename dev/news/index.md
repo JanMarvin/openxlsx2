@@ -18,9 +18,6 @@
   gains `header_rows` to read a header that spans more than one row. The
   default is unchanged.
   [\#1706](https://github.com/JanMarvin/openxlsx2/pull/1706)
-- [`wb_data()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_data.md)
-  gains `used_range` to limit reading ranges like `"A:B"` or `"1:2"` to
-  only the required columns and rows plus one.
 - [`wb_clean_sheet()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_clean_sheet.md)
   gains a new attribute to fully remove tables from a sheet.
   [\#1709](https://github.com/JanMarvin/openxlsx2/pull/1709)
