@@ -40,3 +40,14 @@ test_that("validate sheet", {
   expect_warning(wb$add_worksheet("my_sheet"), "already exists")
   expect_error(wb$add_worksheet(" "), NA)
 })
+
+test_that("sheet names do not start or end with an apostrophe", {
+
+  wb <- wb_workbook()
+  expect_warning(wb$add_worksheet("'quoted'"), "apostrophes")
+  expect_warning(wb$add_worksheet("it's"), NA)
+  expect_equal(wb$get_sheet_names(escape = TRUE), c(quoted = "quoted", `it's` = "it&apos;s"))
+
+  expect_warning(wb$set_sheet_names(old = 1, new = "'again'"), "apostrophes")
+  expect_equal(unname(wb$get_sheet_names()[1]), "again")
+})

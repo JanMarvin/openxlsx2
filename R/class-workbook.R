@@ -4817,6 +4817,7 @@ wbWorkbook <- R6::R6Class(
         sheet <- new_name[i]
         private$validate_new_sheet(sheet)
         new_name[i] <- sheet
+        new_raw[i] <- replaceXMLEntities(sheet)
         private$set_single_sheet_name(pos[i], new_name[i], new_raw[i])
         # TODO move this work into private$set_single_sheet_name()
 
@@ -10153,6 +10154,11 @@ wbWorkbook <- R6::R6Class(
       if (has_illegal_chars(sheet)) {
         warning("Fixing: removing illegal characters found in sheet name. See ?openxlsx2::clean_worksheet_name.")
         sheet <- replace_illegal_chars(sheet)
+      }
+
+      if (grepl("^'|'$", replaceXMLEntities(sheet))) {
+        warning("Fixing: removing apostrophes at the start or end of the sheet name.")
+        sheet <- gsub("^(&apos;|')+|(&apos;|')+$", "", sheet)
       }
 
       if (!nzchar(sheet)) {
