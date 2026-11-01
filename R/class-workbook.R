@@ -7722,10 +7722,10 @@ wbWorkbook <- R6::R6Class(
 
 
       if (!is.null(self$app$Company)) {
-        properties <- c(properties, "company" = xml_value(self$app$Company, level1 = "Company"))
+        properties <- c(properties, "company" = xml_value(self$app$Company, level1 = "Company", escapes = TRUE))
       }
       if (!is.null(self$app$Manager)) {
-        properties <- c(properties, "manager" = xml_value(self$app$Manager, level1 = "Manager"))
+        properties <- c(properties, "manager" = xml_value(self$app$Manager, level1 = "Manager", escapes = TRUE))
       }
       properties
     },
@@ -7751,6 +7751,16 @@ wbWorkbook <- R6::R6Class(
       datetime_created <-
         getOption("openxlsx2.datetimeCreated", datetime_created)
 
+      # these are plain text, markup characters must not create xml nodes
+      if (!is.null(creator))  creator  <- replace_legal_chars(creator)
+      if (!is.null(title))    title    <- replace_legal_chars(title)
+      if (!is.null(subject))  subject  <- replace_legal_chars(subject)
+      if (!is.null(category)) category <- replace_legal_chars(category)
+      if (!is.null(modifier)) modifier <- replace_legal_chars(modifier)
+      if (!is.null(keywords)) keywords <- replace_legal_chars(keywords)
+      if (!is.null(comments)) comments <- replace_legal_chars(comments)
+      if (!is.null(manager))  manager  <- replace_legal_chars(manager)
+      if (!is.null(company))  company  <- replace_legal_chars(company)
 
       core_dctitle <- "dc:title"
       core_subject <- "dc:subject"
