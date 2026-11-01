@@ -652,6 +652,11 @@ static inline void plain_txt_to_ist(const char* s, const char* tag, std::string&
       case '>': out += "&gt;";  break;
       default:
         if (*p < 0x20 && *p != '\t' && *p != '\n' && *p != '\r') break;  // format_skip_control_chars
+        // the noncharacters U+FFFE and U+FFFF are not allowed in xml either
+        if (*p == 0xEF && p[1] == 0xBF && (p[2] == 0xBE || p[2] == 0xBF)) {
+          p += 2;
+          break;
+        }
         out += static_cast<char>(*p);
     }
   }

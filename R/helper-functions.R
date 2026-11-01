@@ -650,6 +650,15 @@ create_sparklines <- function(
       stop("`line_weight` must be a number from 0 to 1584", call. = FALSE)
   }
 
+  # sparkline colors are rgb or theme colors, auto is not allowed
+  for (nm in c("color_series", "color_negative", "color_axis", "color_markers",
+               "color_first", "color_last", "color_high", "color_low")) {
+    col <- get(nm)
+    if (!is.null(col) && "auto" %in% names(col) && col[["auto"]] %in% c("1", "true")) {
+      stop(sprintf("`%s` must not be an automatic color", nm), call. = FALSE)
+    }
+  }
+
   if (!is.null(direction) || !is_single_cell(sqref)) {
     dims <- split_dims(dims, direction = direction)
     sqref <- split_dim(sqref)
@@ -1890,4 +1899,51 @@ create_shape <- function(
   )
 
   read_xml(xml, pointer = FALSE)
+}
+
+# checks for values written as xml attributes ---------------------------------
+is_xml_flag <- function(val) {
+  (is.logical(val) || is.numeric(val) || is.character(val)) && length(val) == 1L &&
+    !is.na(val) && as_xml_attr(val) %in% c("0", "1", "false", "true")
+}
+
+# lim is list(min, max, whole = TRUE, below = TRUE), below excludes max
+in_xml_range <- function(val, lim) {
+  num <- suppressWarnings(as.numeric(val))
+  length(num) > 0L && all(is.finite(num)) && all(num >= lim[[1]]) &&
+    (if (isTRUE(lim$below)) all(num < lim[[2]]) else all(num <= lim[[2]])) &&
+    (!isTRUE(lim$whole) || all(num == trunc(num)))
+}
+
+xml_range_msg <- function(method, nm, lim) {
+  sprintf(
+    "%s(): `%s` must be a %s from %s to %s%s.", method, nm,
+    if (isTRUE(lim$whole)) "whole number" else "number", lim[[1]],
+    if (isTRUE(lim$below)) "below " else "", lim[[2]]
+  )
+}
+
+# check a list of params, NULL elements are skipped
+check_params <- function(params, method, flags = NULL, ranges = NULL, enums = NULL) {
+  for (nm in intersect(flags, names(params))) {
+    if (is.null(params[[nm]])) next
+    if (!is_xml_flag(params[[nm]]))
+      stop(sprintf("%s(): `params$%s` must be TRUE or FALSE.", method, nm), call. = FALSE)
+  }
+  for (nm in intersect(names(ranges), names(params))) {
+    if (is.null(params[[nm]])) next
+    if (!in_xml_range(params[[nm]], ranges[[nm]]))
+      stop(xml_range_msg(method, paste0("params$", nm), ranges[[nm]]), call. = FALSE)
+  }
+  for (nm in intersect(names(enums), names(params))) {
+    val <- params[[nm]]
+    if (is.null(val)) next
+    if (!is.character(val) || length(val) != 1L || !val %in% enums[[nm]])
+      stop(
+        sprintf("%s(): `params$%s` must be one of %s.", method, nm,
+                paste0("\"", enums[[nm]], "\"", collapse = ", ")),
+        call. = FALSE
+      )
+  }
+  invisible(params)
 }

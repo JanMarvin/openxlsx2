@@ -101,3 +101,87 @@ test_that("wb_add_encharter() checks dims", {
   expect_error(wb_add_encharter(wb, graph = ch, dims = "A0"), "Row exceeds")
   expect_silent(wb_add_encharter(wb, graph = ch, dims = "C2:H10"))
 })
+
+test_that("values written to workbook parts are checked", {
+  wb <- wb_workbook()$add_worksheet()$add_worksheet()$add_data(x = 1)
+  img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
+
+  expect_error(wb$set_bookview(active_tab = 32767), "active_tab")
+  expect_error(wb$set_bookview(window_width = 0.5), "window_width")
+  expect_error(wb$set_bookview(minimized = "yes"), "minimized")
+  expect_error(wb$set_bookview(visibility = TRUE), "visibility")
+  expect_error(wb$set_sheet_visibility(1, "bogus"), "value")
+  expect_error(wb$add_image(file = img, width = NA), "width")
+  expect_error(wb$add_image(file = img, height = 1e10), "2348")
+  expect_error(wb$add_image(file = img, dims = "A0"), "dims")
+  expect_error(wb$add_image(file = img, col_offset = 0.5), "col_offset")
+  expect_error(wb$add_page_break(row = 0), "row")
+  expect_error(wb$add_page_break(col = 16385), "Column")
+  expect_error(wb$group_rows(rows = 1048577), "rows")
+  expect_error(wb$group_rows(rows = 1:2, levels = c(8, 8)), "levels")
+  expect_error(wb$group_cols(cols = 1:2, levels = c(0.5, 1)), "levels")
+  expect_error(wb$add_person(id = "TRUE"), "id")
+  expect_error(wb$add_person(name = ""), "name")
+  expect_error(wb$protect(file_sharing = TRUE, username = strrep("x", 55)), "username")
+  expect_error(create_numfmt(numFmtId = -1), "numFmtId")
+  expect_error(create_numfmt(formatCode = strrep("0", 256)), "formatCode")
+  expect_error(create_border(diagonal_up = "yes"), "diagonal_up")
+  expect_error(create_cell_style(num_fmt_id = 1e10), "num_fmt_id")
+  expect_error(create_cell_style(reading_order = 0.5), "reading_order")
+  expect_error(create_cell_style(text_rotation = 181), "text_rotation")
+  expect_error(create_font(name = "\uFFFF"), "name")
+  expect_error(wb$add_data_validation(dims = "A1", type = "list", value = "\"a,b\"", prompt_title = strrep("t", 33)), "prompt_title")
+  expect_error(wb$add_conditional_formatting(dims = "A1:A3", type = "iconSet", rule = 1), "two values")
+  expect_match(create_numfmt(numFmtId = 1e6), "numFmtId=\"1000000\"")
+  expect_error(create_sparklines("Sheet 1", "A2:A4", "B2", color_series = wb_color(auto = TRUE)), "color_series")
+
+  wb$add_person(name = "me")
+  pid <- wb$get_person()$id[1]
+  expect_error(wb$add_thread(dims = "B2", person_id = "me", comment = "x"), "person_id")
+  expect_error(wb$add_thread(dims = "B2", person_id = pid, resolve = TRUE), "comment")
+  expect_warning(wb$add_thread(dims = "B2", person_id = pid, comment = "x", reply = TRUE), "cannot reply")
+  expect_silent(wb$add_thread(dims = "B2", person_id = pid, resolve = TRUE))
+
+  wb$set_selected(1:2)
+  expect_equal(
+    vapply(wb$worksheets, function(ws) grepl("tabSelected=\"1\"", ws$sheetViews), NA),
+    c(TRUE, TRUE)
+  )
+
+  wb$add_chartsheet(visible = "veryhidden")
+  expect_equal(wb$get_sheet_visibility()[3], "veryHidden")
+
+  wb$add_named_region(sheet = 1, dims = "A1", name = "x", comment = "<b>&</b>")
+  expect_silent(wb$save(temp_xlsx()))
+})
+
+test_that("pivot table, slicer and timeline params are checked", {
+  df <- data.frame(a = c("x", "y"), b = 1:2, d = as.Date("2024-01-01") + 0:1)
+  wb <- wb_workbook()$add_worksheet()$add_data(x = df)
+  x <- wb_data(wb)
+
+  expect_error(wb$add_pivot_table(x, rows = "a", data = "b", params = list(row_grand_totals = "yes")), "row_grand_totals")
+  expect_error(wb$add_pivot_table(x, rows = "a", data = "b", fun = "median"), "fun")
+  expect_error(wb$add_pivot_table(x, rows = "a", data = "b", pivot_table = ""), "name")
+  expect_error(wb$add_pivot_table(x, rows = "a", data = "b", dims = ""), "blank")
+
+  wb$add_pivot_table(x, rows = "a", data = "b", slicer = "a", timeline = "d", pivot_table = "pt")
+  expect_error(wb$add_slicer(x, slicer = "a", pivot_table = "pt", params = list(sort_order = "bogus")), "sort_order")
+  expect_error(wb$add_slicer(x, slicer = "a", pivot_table = "pt", params = list(column_count = 0)), "column_count")
+  expect_error(wb$add_timeline(x, timeline = "d", pivot_table = "pt", params = list(show_header = "yes")), "show_header")
+  expect_error(wb$add_timeline(x, timeline = "d", pivot_table = "pt", params = list(level = NaN)), "level")
+})
+
+test_that("escaped pivot table names and noncharacters in cells", {
+  wb <- wb_workbook()$add_worksheet()$add_data(x = data.frame(a = 1:3, b = c("x", "y", "z")))
+  wb$add_pivot_table(wb_data(wb, 1), rows = "b", data = "a", pivot_table = "<b>&</b>", slicer = "b")
+  expect_silent(wb$add_slicer(wb_data(wb, 1), slicer = "b", pivot_table = "<b>&</b>"))
+  expect_match(wb$pivotTables[1], "name=\"&lt;b&gt;&amp;&lt;/b&gt;\"")
+
+  skip_if_not(l10n_info()[["UTF-8"]])
+  wb <- wb_workbook()$add_worksheet()$add_data(x = data.frame(s = c("a\uFFFE", " b\uFFFF ")))
+  expect_equal(
+    wb$worksheets[[1]]$sheet_data$cc$is[2:3],
+    c("<is><t>a</t></is>", "<is><t xml:space=\"preserve\"> b </t></is>")
+  )
+})

@@ -138,6 +138,12 @@ create_border <- function(
       stop(sprintf("create_border(): `%s` must be a single value.", arg), call. = FALSE)
     }
   }
+  for (arg in c("diagonal_down", "diagonal_up", "outline")) {
+    val <- get(arg)
+    if (!is.null(val) && !identical(val, "") && !is_xml_flag(val)) {
+      stop(sprintf("create_border(): `%s` must be TRUE or FALSE.", arg), call. = FALSE)
+    }
+  }
 
   assert_xml_bool(outline)
 
@@ -246,11 +252,17 @@ create_numfmt <- function(numFmtId = 164, formatCode = "#,##0.00") {
       call. = FALSE
     )
   }
+  if (!in_xml_range(numFmtId, list(0, 4294967295, whole = TRUE))) {
+    stop("create_numfmt(): `numFmtId` must be a whole number from 0 to 4294967295.", call. = FALSE)
+  }
+  if (any(nchar(formatCode) > 255L)) {
+    stop("create_numfmt(): `formatCode` must not be longer than 255 characters.", call. = FALSE)
+  }
 
   formatCode <- escape_format_code(formatCode)
 
   df_numfmt <- data.frame(
-    numFmtId         = as_xml_attr(numFmtId),
+    numFmtId         = sprintf("%.0f", as.numeric(numFmtId)),
     formatCode       = as_xml_attr(formatCode),
     stringsAsFactors = FALSE
   )
@@ -376,8 +388,8 @@ create_font <- function(
   }
 
   if (name != "") {
-    if (nchar(name) > 31)
-      stop("create_font(): `name` must have at most 31 characters.", call. = FALSE)
+    if (nchar(name) > 31 || !nzchar(strip_xml_control_chars(name)))
+      stop("create_font(): `name` must be a non-empty string with at most 31 characters.", call. = FALSE)
     name <- xml_node_create("name", xml_attributes = c("val" = name))
   }
 
@@ -663,6 +675,25 @@ create_cell_style <- function(
         call. = FALSE
       )
     }
+  }
+
+  uint <- list(0, 4294967295, whole = TRUE)
+  ranges <- list(
+    border_id = uint, fill_id = uint, font_id = uint, num_fmt_id = uint, xf_id = uint,
+    indent = list(0, 255, whole = TRUE), reading_order = list(0, 2, whole = TRUE),
+    relative_indent = list(-2147483648, 2147483647, whole = TRUE)
+  )
+  for (arg in names(ranges)) {
+    val <- values[[arg]]
+    val <- val[val != ""]
+    if (length(val) && !in_xml_range(val, ranges[[arg]])) {
+      stop(xml_range_msg("create_cell_style", arg, ranges[[arg]]), call. = FALSE)
+    }
+  }
+  rot <- text_rotation[text_rotation != ""]
+  if (length(rot) && !(in_xml_range(rot, list(0, 255, whole = TRUE)) &&
+                       all(as.numeric(rot) <= 180 | as.numeric(rot) == 255))) {
+    stop("create_cell_style(): `text_rotation` must be a whole number from 0 to 180 or 255.", call. = FALSE)
   }
 
 

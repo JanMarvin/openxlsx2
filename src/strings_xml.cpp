@@ -148,6 +148,18 @@ std::string txt_to_xml(
 
   xml_string_writer writer;
   doc.print(writer, " ", pugi_format_flags);
+  if (skip_control) {
+    // the noncharacters U+FFFE and U+FFFF are not allowed in xml either
+    std::string& res = writer.result;
+    size_t pos = 0;
+    while ((pos = res.find("\xEF\xBF", pos)) != std::string::npos) {
+      if (pos + 2 < res.size() && (res[pos + 2] == '\xBE' || res[pos + 2] == '\xBF')) {
+        res.erase(pos, 3);
+      } else {
+        pos += 2;
+      }
+    }
+  }
   return writer.result;
 }
 

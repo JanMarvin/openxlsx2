@@ -607,6 +607,7 @@ wbWorkbook <- R6::R6Class(
 
       if (visible == "true") visible <- "visible"
       else if (visible == "false") visible <- "hidden"
+      else if (visible == "veryhidden") visible <- "veryHidden"
 
       # set up so that a single error can be reported on fail
       fail <- FALSE
@@ -1767,6 +1768,8 @@ wbWorkbook <- R6::R6Class(
       if (is.null(params$name) && !is.null(pivot_table))
         params$name <- pivot_table
 
+      validate_dims(dims)
+
       # not sure if rows & cols can be formulas too
       if (any(sel <- !data %in% names(x))) {
 
@@ -1902,10 +1905,26 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
 
       pt <- rbindlist(xml_attr(self$pivotTables, "pivotTableDefinition"))
-      sel <- which(pt$name == pivot_table)
+      sel <- which(pt$name == replace_legal_chars(pivot_table))
       cid <- pt$cacheId[sel]
 
       uni_name <- paste0(stringi::stri_replace_all_fixed(slicer, " ", "_"), cid)
+
+      check_params(
+        params, "add_slicer",
+        flags  = c("show_missing", "show_caption", "locked_position", "hide_no_data_items"),
+        ranges = list(
+          row_height   = list(0, 4294967295, whole = TRUE),
+          column_count = list(1, 20000, whole = TRUE),
+          start_item   = list(0, 4294967295, whole = TRUE),
+          level        = list(0, 4294967295, whole = TRUE)
+        ),
+        enums = list(
+          sort_order   = c("ascending", "descending"),
+          cross_filter = c("none", "showItemsWithDataAtTop", "showItemsWithNoData"),
+          edit_as      = c("absolute", "oneCell", "twoCell")
+        )
+      )
 
       ### slicer_cache
       sortOrder <- NULL
@@ -1926,7 +1945,7 @@ wbWorkbook <- R6::R6Class(
       # test that slicer is initalized in wb$pivotDefinitions.
       pt  <- self$worksheets[[sheet]]$relships$pivotTable
       ptl <- rbindlist(xml_attr(self$pivotTables[pt], "pivotTableDefinition"))
-      pt  <- pt[ptl$name == pivot_table]
+      pt  <- pt[ptl$name == replace_legal_chars(pivot_table)]
 
       fields <- xml_node(self$pivotDefinitions[pt], "pivotCacheDefinition", "cacheFields", "cacheField")
       names(fields) <- vapply(xml_attr(fields, "cacheField"), function(x) x[["name"]], "")
@@ -1977,7 +1996,7 @@ wbWorkbook <- R6::R6Class(
         uni_name,
         slicer,
         sheet,
-        pivot_table,
+        replace_legal_chars(pivot_table),
         tab_xml,
         hide_items_with_no_data
       ), pointer = FALSE)
@@ -2255,7 +2274,7 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
 
       pt <- rbindlist(xml_attr(self$pivotTables, "pivotTableDefinition"))
-      sel <- which(pt$name == pivot_table)
+      sel <- which(pt$name == replace_legal_chars(pivot_table))
       cid <- pt$cacheId[sel]
 
       uni_name <- paste0(stringi::stri_replace_all_fixed(timeline, " ", "_"), cid)
@@ -2266,7 +2285,7 @@ wbWorkbook <- R6::R6Class(
       # test that slicer is initalized in wb$pivotDefinitions.
       pt  <- self$worksheets[[sheet]]$relships$pivotTable
       ptl <- rbindlist(xml_attr(self$pivotTables[pt], "pivotTableDefinition"))
-      pt  <- pt[ptl$name == pivot_table]
+      pt  <- pt[ptl$name == replace_legal_chars(pivot_table)]
 
       fields <- xml_node(self$pivotDefinitions[pt], "pivotCacheDefinition", "cacheFields", "cacheField")
       names(fields) <- vapply(xml_attr(fields, "cacheField"), function(x) x[["name"]], "")
@@ -2341,7 +2360,7 @@ wbWorkbook <- R6::R6Class(
         st_guid(),
         timeline,
         sheet,
-        pivot_table,
+        replace_legal_chars(pivot_table),
         cid,
         selection_xml,
         bounds_xml
@@ -2361,6 +2380,16 @@ wbWorkbook <- R6::R6Class(
         )
         self$worksheets[[sheet]]$relships$timeline <- length(self$timelines)
       }
+
+      check_params(
+        params, "add_timeline",
+        flags  = c("show_header", "show_selection_label", "show_time_level", "show_horizontal_scrollbar"),
+        ranges = list(
+          level           = list(0, 4294967295, whole = TRUE),
+          selection_level = list(0, 4294967295, whole = TRUE)
+        ),
+        enums = list(edit_as = c("absolute", "oneCell", "twoCell"))
+      )
 
       caption <- timeline
       if (!is.null(params$caption))
@@ -4733,8 +4762,26 @@ wbWorkbook <- R6::R6Class(
           "show_horizontal_scroll", "show_sheet_tabs", "show_vertical_scroll",
           "tab_ratio", "visibility", "window_height", "window_width", "x_window",
           "y_window", "view"
+        ),
+        opt_flags = c(
+          "auto_filter_date_grouping", "minimized", "show_horizontal_scroll",
+          "show_sheet_tabs", "show_vertical_scroll"
+        ),
+        ranges = list(
+          active_tab    = list(0, 32766, whole = TRUE),
+          first_sheet   = list(0, 32766, whole = TRUE),
+          tab_ratio     = list(0, 1000, whole = TRUE),
+          window_height = list(0, 4294967295, whole = TRUE),
+          window_width  = list(0, 4294967295, whole = TRUE),
+          x_window      = list(-2147483648, 2147483647, whole = TRUE),
+          y_window      = list(-2147483648, 2147483647, whole = TRUE)
         )
       )
+
+      if (!is.null(visibility) && !identical(visibility, "") &&
+          !visibility %in% c("visible", "hidden", "veryHidden")) {
+        stop("visibility must be one of \"visible\", \"hidden\" or \"veryHidden\"")
+      }
 
       wbv <- self$workbook$bookViews
 
@@ -5022,6 +5069,15 @@ wbWorkbook <- R6::R6Class(
 
       if (any(cols < 1L)) {
         stop("Invalid rows entered (<= 0).")
+      }
+
+      if (!in_xml_range(cols, list(1, 16384, whole = TRUE))) {
+        stop("cols must be whole numbers from 1 to 16384.")
+      }
+
+      lvls <- levels[levels != ""]
+      if (length(lvls) && !in_xml_range(lvls, list(0, 7, whole = TRUE))) {
+        stop("levels must be whole numbers from 0 to 7.")
       }
 
       # all collapsed = TRUE
@@ -5331,6 +5387,15 @@ wbWorkbook <- R6::R6Class(
 
       if (any(rows <= 0L)) {
         stop("Invalid rows entered (<= 0).")
+      }
+
+      if (!in_xml_range(rows, list(1, 1048576, whole = TRUE))) {
+        stop("rows must be whole numbers from 1 to 1048576.")
+      }
+
+      lvls <- levels[levels != ""]
+      if (length(lvls) && !in_xml_range(lvls, list(0, 7, whole = TRUE))) {
+        stop("levels must be whole numbers from 0 to 7.")
       }
 
       # all collapsed = TRUE
@@ -5655,6 +5720,13 @@ wbWorkbook <- R6::R6Class(
       assert_class(allow_blank, "logical")
       assert_class(show_input_msg, "logical")
       assert_class(show_error_msg, "logical")
+
+      for (nm in c("error_title", "prompt_title")) {
+        val <- get(nm)
+        if (!is.null(val) && (!is.character(val) || length(val) != 1L || is.na(val) || nchar(val) > 32L)) {
+          stop(sprintf("`%s` must be a string with at most 32 characters", nm), call. = FALSE)
+        }
+      }
 
       ## check length of value
       if (length(value) > 2) {
@@ -6041,7 +6113,21 @@ wbWorkbook <- R6::R6Class(
 
       private$check_args(flags = c("reply", "resolve"))
 
+      if (!is.character(person_id) || length(person_id) != 1 ||
+          !grepl("^\\{[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}\\}$", person_id)) {
+        stop("person_id must be the id of a person, see wb_get_person()")
+      }
+
       sheet <- private$get_sheet_index(sheet)
+
+      if (is.null(comment)) {
+        thread_id <- self$worksheets[[sheet]]$relships$threadedComment
+        refs <- if (length(thread_id)) xml_attr(self$threadComments[[thread_id]], "threadedComment") else list()
+        if (!any(vapply(refs, function(x) identical(unname(x["ref"]), dims), NA))) {
+          stop("no thread found in dims, comment is required")
+        }
+      }
+
       wb_cmt <- self$get_comment(sheet, dims)
 
       if (length(cmt <- wb_cmt$comment)) {
@@ -6078,11 +6164,12 @@ wbWorkbook <- R6::R6Class(
       tcs <- rbindlist(xml_attr(self$threadComments[[thread_id]], "threadedComment"))
       sel <- which(tcs$ref == dims)
 
-      if (reply && nrow(tcs)) {
+      if (reply) {
         if (length(sel))  {
           parentId <- tcs[sel[1], ]$id
         } else {
           warning("cannot reply, will create a new thread")
+          reply <- FALSE
         }
       }
 
@@ -6377,6 +6464,9 @@ wbWorkbook <- R6::R6Class(
           # - rule is the iconSet values
           msg <- "When type == 'iconSet', "
           values <- rule
+          if (length(values) < 2) {
+            stop(msg, "rule must contain at least two values")
+          }
         },
 
         duplicatedValues = {
@@ -6609,8 +6699,14 @@ wbWorkbook <- R6::R6Class(
       arguments <- c(ls(), "start_row", "start_col")
       standardize_case_names(..., arguments = arguments)
       private$check_args(
-        scalars = c("file", "width", "height", "row_offset", "col_offset", "units", "dpi", "address")
+        scalars = c("file", "width", "height", "row_offset", "col_offset", "units", "dpi", "address"),
+        ranges  = list(
+          width  = list(0, Inf),
+          height = list(0, Inf),
+          dpi    = list(0, Inf)
+        )
       )
+      if (dpi <= 0) stop("add_image(): `dpi` must be positive.", call. = FALSE)
 
       params <- list(...)
       if (!is.null(params$start_row)) start_row <- params$start_row
@@ -6651,8 +6747,11 @@ wbWorkbook <- R6::R6Class(
       }
 
       ## Convert to EMUs
-      width  <- as.integer(round(width * 914400L, 0)) # (EMUs per inch)
-      height <- as.integer(round(height * 914400L, 0)) # (EMUs per inch)
+      width  <- suppressWarnings(as.integer(round(width * 914400L, 0))) # (EMUs per inch)
+      height <- suppressWarnings(as.integer(round(height * 914400L, 0))) # (EMUs per inch)
+      if (anyNA(c(width, height))) {
+        stop("add_image(): `width` and `height` must not exceed 2348 inches.", call. = FALSE)
+      }
 
       sheet <- private$get_sheet_index(sheet)
 
@@ -6730,7 +6829,7 @@ wbWorkbook <- R6::R6Class(
         relship <- sprintf(
           '<Relationship Id="%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="%s" TargetMode="External"/>',
           address_id,
-          address
+          replace_legal_chars(address)
         )
         self$drawings_rels[[sheet_drawing]] <- append(
           self$drawings_rels[[sheet_drawing]],
@@ -6900,6 +6999,18 @@ wbWorkbook <- R6::R6Class(
       # include rvg graphic from specific position to one or two cell anchor
       if (!is.null(dims) && !is_chartsheet && xml_node_name(xml, "xdr:wsDr") == "xdr:absoluteAnchor") {
 
+        private$check_args(
+          ranges = list(
+            col_offset = list(-27273042329600, 27273042316900, whole = TRUE),
+            row_offset = list(-27273042329600, 27273042316900, whole = TRUE)
+          )
+        )
+        check_anchor <- function(cols, rows) {
+          if (anyNA(cols) || anyNA(rows) || any(cols < 1 | cols > 16384) || any(rows < 1 | rows > 1048576)) {
+            stop("add_drawing(): `dims` must be a cell or a cell range like \"A1:B2\".", call. = FALSE)
+          }
+        }
+
         twocell <- grepl(":", dims)
 
         if (twocell) {
@@ -6910,6 +7021,7 @@ wbWorkbook <- R6::R6Class(
           dims_list <- strsplit(dims, ":")[[1]]
           cols <- col2int(dims_list)
           rows <- cdigit(dims_list, as_integer = TRUE)
+          check_anchor(cols, rows)
           if (length(col_offset) != 2) col_offset <- rep(col_offset, 2)
           if (length(row_offset) != 2) row_offset <- rep(row_offset, 2)
 
@@ -6925,10 +7037,10 @@ wbWorkbook <- R6::R6Class(
           )
           anchor <- sprintf(
             anchor,
-            cols[1] - 1L, col_offset[1],
-            rows[1] - 1L, row_offset[1],
-            cols[2], col_offset[2],
-            rows[2], row_offset[2]
+            cols[1] - 1L, sprintf("%.0f", as.numeric(col_offset[1])),
+            rows[1] - 1L, sprintf("%.0f", as.numeric(row_offset[1])),
+            cols[2], sprintf("%.0f", as.numeric(col_offset[2])),
+            rows[2], sprintf("%.0f", as.numeric(row_offset[2]))
           )
 
         } else {
@@ -6937,6 +7049,7 @@ wbWorkbook <- R6::R6Class(
 
           cols <- col2int(dims)
           rows <- cdigit(dims, as_integer = TRUE)
+          check_anchor(cols, rows)
 
           anchor <- paste0(
             "<xdr:from>",
@@ -6946,8 +7059,8 @@ wbWorkbook <- R6::R6Class(
           )
           anchor <- sprintf(
             anchor,
-            cols[1] - 1L, col_offset[1],
-            rows[1] - 1L, row_offset[1]
+            cols[1] - 1L, sprintf("%.0f", as.numeric(col_offset[1])),
+            rows[1] - 1L, sprintf("%.0f", as.numeric(row_offset[1]))
           )
 
         }
@@ -7594,6 +7707,10 @@ wbWorkbook <- R6::R6Class(
       )
       if (!is.null(password) && (!is.character(password) || length(password) != 1L || is.na(password))) {
         stop("protect(): `password` must be a single string.", call. = FALSE)
+      }
+      if (file_sharing && !is.null(username) &&
+          (!is.character(username) || is.na(username) || nchar(username) > 54L)) {
+        stop("protect(): `username` must be a string with at most 54 characters.", call. = FALSE)
       }
 
       if (!protect) {
@@ -8946,6 +9063,9 @@ wbWorkbook <- R6::R6Class(
       value[value %in% "true"] <- "visible"
       value[value %in% "false"] <- "hidden"
       value[value %in% "veryhidden"] <- "veryHidden"
+      if (!all(value %in% c("visible", "hidden", "veryHidden"))) {
+        stop("`value` must be one of \"visible\", \"hidden\", \"veryHidden\", TRUE or FALSE", call. = FALSE)
+      }
 
       exState0 <- reg_match0(self$workbook$sheets[sheet], '(?<=state=")[^"]+')
       exState <- tolower(exState0)
@@ -10085,9 +10205,23 @@ wbWorkbook <- R6::R6Class(
       provider_id = "None"
     ) {
 
-      if (is.null(name))    name    <- Sys.getenv("USERNAME", Sys.getenv("USER"))
+      if (is.null(name)) {
+        name <- Sys.getenv("USERNAME", Sys.getenv("USER"))
+        if (!nzchar(name)) name <- "unknown"
+      }
       if (is.null(id))      id      <- st_guid()
       if (is.null(user_id)) user_id <- st_userid()
+
+      if (!is.character(name) || length(name) != 1 || is.na(name) || !nzchar(name)) {
+        stop("name must be a non-empty string")
+      }
+      if (!is.character(id) || length(id) != 1 ||
+          !grepl("^\\{[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}\\}$", id)) {
+        stop("id must be a guid in the form {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX} with upper case hex digits")
+      }
+      if (!is.character(user_id) || length(user_id) != 1 || is.na(user_id)) {
+        stop("user_id must be a string")
+      }
 
       xml_person <- xml_node_create(
         "person",
@@ -10168,8 +10302,7 @@ wbWorkbook <- R6::R6Class(
       sheet <- private$get_sheet_index(sheet)
 
       for (i in seq_along(self$sheet_names)) {
-        xml_attr <- i == sheet
-        self$worksheets[[i]]$set_sheetview(tab_selected = xml_attr)
+        self$worksheets[[i]]$set_sheetview(tab_selected = i %in% sheet)
       }
 
       invisible(self)
@@ -10346,9 +10479,7 @@ wbWorkbook <- R6::R6Class(
       for (nm in opt_flags) {
         val <- get(nm, envir = env)
         if (is.null(val) || identical(val, "") || !is.atomic(val)) next
-        is_flag <- (is.logical(val) || is.numeric(val) || is.character(val)) && length(val) == 1L &&
-          !is.na(val) && as_xml_attr(val) %in% c("0", "1", "false", "true")
-        if (!is_flag) {
+        if (!is_xml_flag(val)) {
           stop(sprintf("%s(): `%s` must be TRUE or FALSE.", method, nm), call. = FALSE)
         }
       }
@@ -10357,22 +10488,8 @@ wbWorkbook <- R6::R6Class(
       for (nm in names(ranges)) {
         val <- get(nm, envir = env)
         if (is.null(val) || identical(val, "") || !is.atomic(val)) next
-        lim   <- ranges[[nm]]
-        whole <- isTRUE(lim$whole)
-        below <- isTRUE(lim$below)
-        num   <- suppressWarnings(as.numeric(val))
-        ok <- length(num) > 0L && all(is.finite(num)) && all(num >= lim[[1]]) &&
-          (if (below) all(num < lim[[2]]) else all(num <= lim[[2]])) &&
-          (!whole || all(num == trunc(num)))
-        if (!ok) {
-          stop(
-            sprintf(
-              "%s(): `%s` must be a %s from %s to %s%s.", method, nm,
-              if (whole) "whole number" else "number", lim[[1]],
-              if (below) "below " else "", lim[[2]]
-            ),
-            call. = FALSE
-          )
+        if (!in_xml_range(val, ranges[[nm]])) {
+          stop(xml_range_msg(method, nm, ranges[[nm]]), call. = FALSE)
         }
       }
 
@@ -10874,19 +10991,21 @@ wbWorkbook <- R6::R6Class(
       # _xlnm .Database
       # _xlnm .Sheet_Title
 
+      esc <- function(x) if (!is.null(x)) replace_legal_chars(x)
+
       named_region <- c(
-        comment           = comment,
-        customMenu        = customMenu,
-        description       = description,
+        comment           = esc(comment),
+        customMenu        = esc(customMenu),
+        description       = esc(description),
         `function`        = if (!is.null(is_function)) as_xml_attr(is_function),
         functionGroupId   = functionGroupId,
-        help              = help,
+        help              = esc(help),
         hidden            = if (!is.null(hidden)) as_xml_attr(hidden),
-        localName         = localName,
+        localName         = esc(localName),
         localSheetId      = localSheetId,
         name              = name,
         publishToServer   = if (!is.null(publishToServer)) as_xml_attr(publishToServer),
-        statusBar         = statusBar,
+        statusBar         = esc(statusBar),
         vbProcedure       = if (!is.null(vbProcedure)) as_xml_attr(vbProcedure),
         workbookParameter = if (!is.null(workbookParameter)) as_xml_attr(workbookParameter),
         xml               = if (!is.null(xml)) as_xml_attr(xml)
