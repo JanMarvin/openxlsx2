@@ -7229,6 +7229,7 @@ wbWorkbook <- R6::R6Class(
     ) {
 
       assert_class(graph, "EncharterBase")
+      if (!is.null(dims)) validate_dims(dims)
 
       if (inherits(graph, "Chart")) {
         chart_xml <- graph$render(u_ids = random_string(n = 5, length = 8, pattern = "[0-9]"))

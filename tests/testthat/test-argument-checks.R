@@ -93,3 +93,11 @@ test_that("values written as attributes are checked against their range", {
   expect_silent(wb$add_cell_style(dims = "A1", indent = 2, text_rotation = 255, horizontal = "center"))
   expect_silent(wb$set_row_heights(rows = 2, heights = 20, hidden = TRUE))
 })
+
+test_that("wb_add_encharter() checks dims", {
+  skip_if_not_installed("encharter")
+  wb <- wb_workbook()$add_worksheet("data")$add_data(x = data.frame(a = 1:3))
+  ch <- encharter::ec("barChart")$add_series(data = "data!$A$2:$A$4")
+  expect_error(wb_add_encharter(wb, graph = ch, dims = "A0"), "Row exceeds")
+  expect_silent(wb_add_encharter(wb, graph = ch, dims = "C2:H10"))
+})
