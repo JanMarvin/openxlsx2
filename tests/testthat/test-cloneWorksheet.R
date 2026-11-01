@@ -387,3 +387,104 @@ test_that("cloning sheets with multiple images works", {
   expect_equal(exp, got)
 
 })
+
+test_that("cloning charts and chartEx works", {
+
+  skip_if_not_installed("encharter")
+
+  wb <- wb_workbook()$add_worksheet("data")$add_data(x = mtcars)
+
+  wf <- encharter::encharter("waterfall")$add_series(data = "data!B2:B5")
+  bp <- encharter::encharter("barplot")$add_series(data = "data!B2:B5")
+
+  wb$add_worksheet("wf")$add_encharter(graph = wf)
+  wb$add_worksheet("bp")$add_encharter(graph = bp)
+
+  expect_silent(
+    wb2 <- wb_workbook()$
+      clone_worksheet("data", "data", from = wb)$
+      clone_worksheet("bp", "bp", from = wb)$
+      clone_worksheet("wf", "wf", from = wb)$
+      clone_worksheet("wf", "wf2")
+  )
+
+  exp <- c(TRUE, FALSE)
+  got <- nzchar(wb2$charts$chart)
+  expect_equal(exp, got)
+
+  exp <- c(TRUE, TRUE)
+  got <- nzchar(wb2$charts$chartEx)
+  expect_equal(exp, got)
+
+  exp <- c(wb$charts$colors, wb$charts$colors)
+  got <- wb2$charts$colors
+  expect_equal(exp, got)
+
+  expect_true(grepl("Target=\"colors2.xml\"", wb2$charts$relsEx[2], fixed = TRUE))
+  expect_true(grepl("Target=\"style2.xml\"", wb2$charts$relsEx[2], fixed = TRUE))
+
+  exp <- c("chart1.xml", "chartEx1.xml", "chartEx2.xml")
+  got <- vapply(wb2$drawings_rels, function(x) basename(rbindlist(xml_attr(x, "Relationship"))$Target), "")
+  expect_equal(exp, got)
+
+  exp <- c(1L, 2L, 3L)
+  got <- vapply(wb2$worksheets[2:4], function(x) x$relships$drawing, 0L)
+  expect_equal(exp, got)
+
+  xl_names <- function(x) {
+    unique(stringi::stri_extract_all_regex(x, "_xlchart\\.v1\\.[0-9]+", omit_no_match = TRUE)[[1]])
+  }
+  expect_length(intersect(xl_names(wb2$charts$chartEx[1]), xl_names(wb2$charts$chartEx[2])), 0)
+
+  nr <- wb2$get_named_regions()
+  expect_true(all(nr$name %in% c(xl_names(wb2$charts$chartEx[1]), xl_names(wb2$charts$chartEx[2]))))
+  expect_equal(nrow(nr), 4L)
+  expect_true(all(nr$value == "'data'!$B$2:$B$5"))
+
+})
+
+test_that("cloning defined names works", {
+
+  wb <- wb_workbook()$
+    add_worksheet("my data")$
+    add_data(x = mtcars, with_filter = TRUE)$
+    add_named_region(dims = "A2:A5", name = "glob")$
+    add_named_region(dims = "B2:B5", name = "loc", local_sheet = TRUE)$
+    add_worksheet("other")$
+    add_named_region(dims = "A1", name = "elsewhere")
+  wb$page_setup(sheet = 1, print_title_rows = 1)
+
+  wb$clone_worksheet("my data", "copy $1")
+
+  nr <- wb$get_named_regions()
+  nr <- nr[nr$localSheetId == "2", c("name", "value")]
+  nr <- nr[order(nr$name, method = "radix"), ]
+  rownames(nr) <- NULL
+
+  exp <- data.frame(
+    name = c("_xlnm.Print_Titles", "_xlnm._FilterDatabase", "glob", "loc"),
+    value = c("'copy $1'!$1:$1", "'copy $1'!$A$1:$K$33", "'copy $1'!$A$2:$A$5", "'copy $1'!$B$2:$B$5"),
+    stringsAsFactors = FALSE
+  )
+  expect_equal(exp, nr)
+
+  expect_equal(length(wb$workbook$definedNames), 9L)
+
+  wb2 <- wb_workbook()$add_worksheet("S1")$add_worksheet("S12")
+  wb2$workbook$definedNames <- c(
+    "<definedName name=\"a\">S1!$A$1,S12!$A$1</definedName>",
+    "<definedName name=\"b\">SUM(S1!A1:B2)</definedName>",
+    "<definedName name=\"c\">S12!$A$1</definedName>",
+    "<definedName name=\"d\">'S1'!$A$1</definedName>"
+  )
+  wb2$clone_worksheet("S1", "N")
+
+  exp <- c(
+    "<definedName name=\"a\" localSheetId=\"2\">'N'!$A$1,S12!$A$1</definedName>",
+    "<definedName name=\"b\" localSheetId=\"2\">SUM('N'!A1:B2)</definedName>",
+    "<definedName name=\"d\" localSheetId=\"2\">'N'!$A$1</definedName>"
+  )
+  got <- wb2$workbook$definedNames[5:7]
+  expect_equal(exp, got)
+
+})

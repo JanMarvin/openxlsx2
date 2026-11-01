@@ -1009,13 +1009,6 @@ wbWorkbook <- R6::R6Class(
       private$set_current_sheet(newSheetIndex)
       sheetId <- private$get_sheet_id_max() # checks for length of worksheets
 
-      if (!all(from$charts$chartEx == "")) {
-        warning(
-          "The file you have loaded contains chart extensions. At the moment,",
-          " cloning worksheets can damage the output."
-        )
-      }
-
       # not the best but a quick fix
       new_raw <- new
       new <- replace_legal_chars(new)
@@ -1070,6 +1063,11 @@ wbWorkbook <- R6::R6Class(
         warning("The cloned sheet contains an activeX element. Cloning this is not yet handled.")
       }
 
+      # matches references to the old sheet in defined names, quoted or not
+      old_ref_name    <- paste0("\\Q", from$sheet_names[[old]], "\\E")
+      ref_pattern     <- paste0("(?:'", old_ref_name, "'|(?<![\\p{L}\\p{N}_.'])", old_ref_name, ")!")
+      ref_replacement <- stringi::stri_replace_all_fixed(paste0("'", new, "'!"), "$", "\\$")
+
       new_drawing_sheet <- NULL
       if (length(from$worksheets[[old]]$relships$drawing)) {
 
@@ -1084,61 +1082,125 @@ wbWorkbook <- R6::R6Class(
         # select the latest addition to drawings_rels
         drawings_rels <- self$drawings_rels[[new_drawing_rels]]
 
-        # For charts we have to modify the name of the chart in the xml code
-        # give each chart its own filename (images can re-use the same file, but charts can't)
+        # Each chart or chartEx gets its own slot. Only the colors and style
+        # parts referenced in the chart rels are copied, because a row in
+        # charts can hold parts of unrelated charts.
+        empty_chart <- data.frame(
+          chart   = "",
+          colors  = "",
+          style   = "",
+          rels    = "",
+          chartEx = "",
+          relsEx  = "",
+          stringsAsFactors = FALSE
+        )
 
-        # FIXME this is no longer correct. default mschart and encharter create self contained
-        # chart XML files and only modern charts created by encharter require additonal style
-        # and color XML files. We have to inspect rels and relsEx to see if style and color are
-        # required.
+        old_sheet_name <- guard_ws(from$sheet_names[[old]])
+        new_sheet_name <- guard_ws(new)
+
         for (dl in seq_along(drawings_rels)) {
-          chartfiles <- reg_match(drawings_rels[dl], "(?<=charts/)chart[0-9]+\\.xml")
+          chartfiles <- reg_match(drawings_rels[dl], "(?<=charts/)chart(Ex)?[0-9]+\\.xml")
 
           for (cf in chartfiles) {
-            chartid <- NROW(self$charts) + 1L
-            newname <- stringi::stri_join("chart", chartid, ".xml")
-            old_chart <- cdigit(cf, as_integer = TRUE)
-            self$charts <- rbind(self$charts, from$charts[old_chart, ])
+            is_chartEx <- startsWith(cf, "chartEx")
+            col_xml    <- if (is_chartEx) "chartEx" else "chart"
+            col_rels   <- if (is_chartEx) "relsEx" else "rels"
+            old_chart  <- cdigit(cf, as_integer = TRUE)
 
-            # Read the chartfile and adjust all formulas to point to the new
-            # sheet name instead of the clone source
+            chart      <- from$charts[[col_xml]][old_chart]
+            chart_rels <- from$charts[[col_rels]][old_chart]
 
-            chart <- self$charts$chart[chartid]
-            self$charts$rels[chartid] <- gsub(
-              "?drawing[0-9]+.xml",
-              paste0("drawing", chartid, ".xml"),
-              self$charts$rels[chartid]
-            )
+            chartid <- min(which(!nzchar(self$charts[[col_xml]])), NROW(self$charts) + 1L)
+            if (chartid > NROW(self$charts)) self$charts <- rbind(self$charts, empty_chart)
 
-            old_sheet_name <- guard_ws(from$sheet_names[[old]])
-            new_sheet_name <- guard_ws(new)
+            for (part in c("colors", "style")) {
+              part_ids <- unique(reg_match(chart_rels, paste0("(?<=", part, ")[0-9]+(?=\\.xml)")))
+              for (part_id in part_ids) {
+                new_part <- min(which(!nzchar(self$charts[[part]])), NROW(self$charts) + 1L)
+                if (new_part > NROW(self$charts)) self$charts <- rbind(self$charts, empty_chart)
+                self$charts[[part]][new_part] <- from$charts[[part]][as.integer(part_id)]
+                chart_rels <- stringi::stri_replace_all_fixed(
+                  chart_rels,
+                  paste0(part, part_id, ".xml\""),
+                  paste0(part, new_part, ".xml\"")
+                )
+              }
+            }
 
-            ## we need to replace "'oldname'" as well as "oldname"
-            chart <- gsub(
-              paste0(">", old_sheet_name, "!"),
-              paste0(">", new_sheet_name, "!"),
-              chart,
-              perl = TRUE
-            )
-
-            self$charts$chart[chartid] <- chart
-
-            # two charts can not point to the same rels
-            if (self$charts$rels[chartid] != "") {
-              self$charts$rels[chartid] <- gsub(
-                stringi::stri_join(old_chart, ".xml"),
-                stringi::stri_join(chartid, ".xml"),
-                self$charts$rels[chartid]
+            if (!is_chartEx && chart_rels != "") {
+              chart_rels <- gsub(
+                "?drawing[0-9]+.xml",
+                paste0("drawing", chartid, ".xml"),
+                chart_rels
               )
             }
 
-            drawings_rels[dl] <- gsub(stringi::stri_join("(?<=charts/)", cf), newname, drawings_rels[dl], perl = TRUE)
+            ## we need to replace "'oldname'" as well as "oldname"
+            chart <- stringi::stri_replace_all_fixed(
+              chart,
+              paste0(">", old_sheet_name, "!"),
+              paste0(">", new_sheet_name, "!")
+            )
+
+            # chartEx data is referenced via hidden _xlchart.v1.N defined names.
+            # These are cloned with ids above all ids used in this workbook,
+            # keeping the distance between the ids of this chart.
+            if (is_chartEx) {
+              xl_pattern <- "_xlchart\\.v1\\.[0-9]+"
+              xl_old <- unique(stringi::stri_extract_all_regex(chart, xl_pattern, omit_no_match = TRUE)[[1]])
+
+              if (length(xl_old)) {
+                used_names <- unlist(stringi::stri_extract_all_regex(self$charts$chartEx, xl_pattern, omit_no_match = TRUE))
+                if (length(self$workbook$definedNames)) {
+                  used_names <- c(used_names, rbindlist(xml_attr(self$workbook$definedNames, "definedName"))$name)
+                }
+                used_ids <- as.integer(sub("_xlchart.v1.", "", grep(paste0("^", xl_pattern, "$"), used_names, value = TRUE), fixed = TRUE))
+                old_ids  <- as.integer(sub("_xlchart.v1.", "", xl_old, fixed = TRUE))
+                new_ids  <- old_ids - min(old_ids) + max(c(0L, used_ids)) + 1L
+                xl_new   <- paste0("_xlchart.v1.", new_ids)
+                xl_tmp   <- paste0("_xlchart_clone_", seq_along(xl_old), "_")
+
+                chart <- stringi::stri_replace_all_regex(
+                  chart,
+                  paste0("\\Q", xl_old, "\\E(?![0-9])"),
+                  xl_tmp,
+                  vectorize_all = FALSE
+                )
+                chart <- stringi::stri_replace_all_fixed(chart, xl_tmp, xl_new, vectorize_all = FALSE)
+
+                if (length(from$workbook$definedNames)) {
+                  from_dn       <- from$workbook$definedNames
+                  from_dn_names <- rbindlist(xml_attr(from_dn, "definedName"))$name
+                  for (i in seq_along(xl_old)) {
+                    sel <- which(from_dn_names == xl_old[i])
+                    if (length(sel) == 0) next
+                    dn_attr <- xml_attr(from_dn[sel[1]], "definedName")[[1]]
+                    dn_attr[["name"]] <- xl_new[i]
+                    dn_value <- stringi::stri_replace_all_regex(
+                      xml_value(from_dn[sel[1]], "definedName"),
+                      ref_pattern,
+                      ref_replacement
+                    )
+                    private$append_workbook_field(
+                      "definedNames",
+                      xml_node_create("definedName", xml_children = dn_value, xml_attributes = dn_attr)
+                    )
+                  }
+                }
+              }
+            }
+
+            self$charts[[col_xml]][chartid]  <- chart
+            self$charts[[col_rels]][chartid] <- chart_rels
+
+            drawings_rels[dl] <- gsub(stringi::stri_join("(?<=charts/)", cf), paste0(col_xml, chartid, ".xml"), drawings_rels[dl], perl = TRUE)
           }
         }
 
         self$drawings_rels[[new_drawing_rels]] <- drawings_rels
 
         self$append("drawings", from$drawings[[drawing_id]])
+        self$worksheets[[newSheetIndex]]$relships$drawing <- new_drawing_sheet
       }
 
       ## TODO Currently it is not possible to clone a sheet with a slicer in a
@@ -1255,6 +1317,38 @@ wbWorkbook <- R6::R6Class(
       self$append("sheetOrder", as.integer(newSheetIndex))
       self$append("sheet_names", new)
       private$set_single_sheet_name(pos = newSheetIndex, clean = new, raw = new_raw)
+
+      ############################
+      ## DEFINED NAMES
+      # Names local to the old sheet and global names pointing to the old sheet
+      # become names local to the new sheet, similar to copying a sheet in
+      # spreadsheet software. Formulas on the new sheet resolve them against
+      # the new sheet.
+      if (length(from$workbook$definedNames)) {
+        from_dn       <- from$workbook$definedNames
+        from_dn_attr  <- rbindlist(xml_attr(from_dn, "definedName"))
+        from_dn_value <- xml_value(from_dn, "definedName")
+
+        local_id <- from_dn_attr$localSheetId
+        if (is.null(local_id)) local_id <- rep("", length(from_dn))
+        local_id[is.na(local_id)] <- ""
+
+        is_local  <- local_id == as.character(old - 1L)
+        is_global <- local_id == "" &
+          !startsWith(from_dn_attr$name, "_xlchart.v1.") &
+          !tolower(from_dn_attr$name) %in% tolower(from_dn_attr$name[is_local]) &
+          stringi::stri_detect_regex(from_dn_value, ref_pattern)
+
+        for (i in which(is_local | is_global)) {
+          dn_attr <- xml_attr(from_dn[i], "definedName")[[1]]
+          dn_attr[["localSheetId"]] <- as.character(newSheetIndex - 1L)
+          dn_value <- stringi::stri_replace_all_regex(from_dn_value[i], ref_pattern, ref_replacement)
+          private$append_workbook_field(
+            "definedNames",
+            xml_node_create("definedName", xml_children = dn_value, xml_attributes = dn_attr)
+          )
+        }
+      }
 
 
       ############################
