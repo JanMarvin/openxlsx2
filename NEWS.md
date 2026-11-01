@@ -6,6 +6,7 @@
 * Pivot caches of `xlsb` files are imported with their records. `options("openxlsx2.pivot_refresh" = TRUE)` leaves them empty to be refreshed on open.
 * `wb_data()` gains `header_rows` to read a header that spans more than one row. The default is unchanged. [#1706](https://github.com/JanMarvin/openxlsx2/pull/1706)
 * `wb_clean_sheet()` gains a new attribute to fully remove tables from a sheet. [#1709](https://github.com/JanMarvin/openxlsx2/pull/1709)
+* Several inputs are now validated more thoroughly to avoid creating invalid output files. These were added based on fuzzing checks using [OOXMLValidator](https://github.com/JanMarvin/OOXMLValidator). [#1718](https://github.com/JanMarvin/openxlsx2/pull/1718)
 
 ## Fixes
 
