@@ -472,6 +472,14 @@ style_mgr <- R6::R6Class("wbStylesMgr",
         )
       }
 
+      # table styles reference dxf styles by index, these must exist
+      if (sty_fmt == "tableStyle") {
+        dxf_ids <- as.numeric(unlist(regmatches(style, gregexpr("(?<=dxfId=\")[^\"]+", style, perl = TRUE))))
+        if (any(dxf_ids >= length(self$styles$dxfs))) {
+          stop("the table style references a dxf style that does not exist in the workbook", call. = FALSE)
+        }
+      }
+
       # 2. Cache existing store once (Crucial for speed)
       store_xml   <- self$styles[[store_nm]]
       store_chars <- as.character(store_xml)

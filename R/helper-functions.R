@@ -144,7 +144,7 @@ validate_color <- function(
   ## create a total size of 8 in ARGB format
   color <- stringi::stri_pad_left(str = color, width = 8, pad = "F")
 
-  if (!all(grepl("[A-F0-9]{8}$", color))) {
+  if (!all(grepl("^[A-F0-9]{8}$", color))) {
     if (is.null(msg)) msg <- sprintf("`%s` ['%s'] is not a valid color", sx, color)
     stop(simpleError(msg))
   }
@@ -627,6 +627,37 @@ create_sparklines <- function(
 
   if (!is.null(markers) && as_xml_attr(markers) == "" && !is.null(type) && type %in% c("stacked", "column"))
     stop("markers only affect lines `type = NULL`, not stacked or column")
+
+  if (!is.null(markers))        assert_xml_bool(markers)
+  if (!is.null(high))           assert_xml_bool(high)
+  if (!is.null(low))            assert_xml_bool(low)
+  if (!is.null(first))          assert_xml_bool(first)
+  if (!is.null(last))           assert_xml_bool(last)
+  if (!is.null(negative))       assert_xml_bool(negative)
+  if (!is.null(date_axis))      assert_xml_bool(date_axis)
+  if (!is.null(display_x_axis)) assert_xml_bool(display_x_axis)
+  if (!is.null(display_hidden)) assert_xml_bool(display_hidden)
+  if (!is.null(right_to_left))  assert_xml_bool(right_to_left)
+
+  if (!is.null(min_axis_type))
+    min_axis_type <- match_oneof(min_axis_type, c("individual", "group", "custom"))
+  if (!is.null(max_axis_type))
+    max_axis_type <- match_oneof(max_axis_type, c("individual", "group", "custom"))
+
+  if (!is.null(line_weight)) {
+    lw <- suppressWarnings(as.numeric(line_weight))
+    if (length(lw) != 1L || !is.finite(lw) || lw < 0 || lw > 1584)
+      stop("`line_weight` must be a number from 0 to 1584", call. = FALSE)
+  }
+
+  # sparkline colors are rgb or theme colors, auto is not allowed
+  for (nm in c("color_series", "color_negative", "color_axis", "color_markers",
+               "color_first", "color_last", "color_high", "color_low")) {
+    col <- get(nm)
+    if (!is.null(col) && "auto" %in% names(col) && col[["auto"]] %in% c("1", "true")) {
+      stop(sprintf("`%s` must not be an automatic color", nm), call. = FALSE)
+    }
+  }
 
   if (!is.null(direction) || !is_single_cell(sqref)) {
     dims <- split_dims(dims, direction = direction)
@@ -1779,6 +1810,21 @@ create_shape <- function(
       stop(sprintf("`%s` must be a single value.", nm), call. = FALSE)
     }
   }
+  if (!is.numeric(rotation) || !is.finite(rotation) || abs(rotation * 60000) > 2147483647) {
+    stop("`rotation` must be a number of degrees from -35791 to 35791.", call. = FALSE)
+  }
+  for (nm in c("fill_transparency", "text_transparency", "line_transparency")) {
+    if (!in_xml_range(scalars[[nm]], list(0, 100))) {
+      stop(sprintf("`%s` must be a number from 0 to 100.", nm), call. = FALSE)
+    }
+  }
+  # theme colors are written as scheme colors, there are 17 of them
+  for (nm in c("fill_color", "text_color", "line_color")) {
+    col <- get(nm)
+    if (is_wbColour(col) && "theme" %in% names(col) && !col[["theme"]] %in% as.character(0:16)) {
+      stop(sprintf("`%s` must be a theme color from 0 to 16.", nm), call. = FALSE)
+    }
+  }
 
   if (!is_xml(text) || inherits(text, "fmt_txt")) {
     # if not a a14:m node
@@ -1862,10 +1908,57 @@ create_shape <- function(
      </xdr:absoluteAnchor>
      </xdr:wsDr>',
      mc_beg,
-     id, name, st_guid(), rotation * 60000, shape,
+     id, name, st_guid(), sprintf("%.0f", rotation * 60000), shape,
      fill_color, line_color, text_align[1], text,
      mc_end
   )
 
   read_xml(xml, pointer = FALSE)
+}
+
+# checks for values written as xml attributes ---------------------------------
+is_xml_flag <- function(val) {
+  (is.logical(val) || is.numeric(val) || is.character(val)) && length(val) == 1L &&
+    !is.na(val) && as_xml_attr(val) %in% c("0", "1", "false", "true")
+}
+
+# lim is list(min, max, whole = TRUE, below = TRUE), below excludes max
+in_xml_range <- function(val, lim) {
+  num <- suppressWarnings(as.numeric(val))
+  length(num) > 0L && all(is.finite(num)) && all(num >= lim[[1]]) &&
+    (if (isTRUE(lim$below)) all(num < lim[[2]]) else all(num <= lim[[2]])) &&
+    (!isTRUE(lim$whole) || all(num == trunc(num)))
+}
+
+xml_range_msg <- function(method, nm, lim) {
+  sprintf(
+    "%s(): `%s` must be a %s from %s to %s%s.", method, nm,
+    if (isTRUE(lim$whole)) "whole number" else "number", lim[[1]],
+    if (isTRUE(lim$below)) "below " else "", lim[[2]]
+  )
+}
+
+# check a list of params, NULL elements are skipped
+check_params <- function(params, method, flags = NULL, ranges = NULL, enums = NULL) {
+  for (nm in intersect(flags, names(params))) {
+    if (is.null(params[[nm]])) next
+    if (!is_xml_flag(params[[nm]]))
+      stop(sprintf("%s(): `params$%s` must be TRUE or FALSE.", method, nm), call. = FALSE)
+  }
+  for (nm in intersect(names(ranges), names(params))) {
+    if (is.null(params[[nm]])) next
+    if (!in_xml_range(params[[nm]], ranges[[nm]]))
+      stop(xml_range_msg(method, paste0("params$", nm), ranges[[nm]]), call. = FALSE)
+  }
+  for (nm in intersect(names(enums), names(params))) {
+    val <- params[[nm]]
+    if (is.null(val)) next
+    if (!is.character(val) || length(val) != 1L || !val %in% enums[[nm]])
+      stop(
+        sprintf("%s(): `params$%s` must be one of %s.", method, nm,
+                paste0("\"", enums[[nm]], "\"", collapse = ", ")),
+        call. = FALSE
+      )
+  }
+  invisible(params)
 }

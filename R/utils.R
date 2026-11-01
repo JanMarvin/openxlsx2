@@ -1229,7 +1229,7 @@ fmt_txt <- function(
       valid_underlines <- c("single", "double", "singleAccounting", "doubleAccounting", "none")
       match.arg_wrapper(underline, valid_underlines, fn_name = "fmt_txt")
     } else {
-      assert_xml_bool(strike)
+      assert_xml_bool(underline)
       underline <- as.logical(underline) # if a numeric is passed
       if (underline) underline <- ""
     }
@@ -1243,6 +1243,8 @@ fmt_txt <- function(
       xml_strk <- xml_node_create("strike", xml_attributes = c(val = as_xml_attr(strike)))
   }
   if (length(size)) {
+    if (!identical(size, "") && (length(size) != 1L || !in_xml_range(size, list(1, 409.55))))
+      stop("fmt_txt(): `size` must be a number from 1 to 409.55", call. = FALSE)
     xml_sz <- xml_node_create("sz", xml_attributes = c(val = as_xml_attr(size)))
   }
   if (length(color)) {
@@ -1250,9 +1252,14 @@ fmt_txt <- function(
     xml_color <- xml_node_create("color", xml_attributes = color)
   }
   if (length(font)) {
+    if (!is.character(font) || length(font) != 1L || is.na(font) ||
+        !nzchar(strip_xml_control_chars(font)) || nchar(font) > 31)
+      stop("fmt_txt(): `font` must be a non-empty string with at most 31 characters", call. = FALSE)
     xml_font <- xml_node_create("rFont", xml_attributes = c(val = as_xml_attr(font)))
   }
   if (length(charset)) {
+    if (!identical(charset, "") && (length(charset) != 1L || !in_xml_range(charset, list(0, 255, whole = TRUE))))
+      stop("fmt_txt(): `charset` must be a whole number from 0 to 255", call. = FALSE)
     xml_chrst <- xml_node_create("charset", xml_attributes = c(val = as_xml_attr(charset)))
   }
   if (length(outline)) {
@@ -1263,6 +1270,8 @@ fmt_txt <- function(
   if (length(vert_align)) {
     valid_aligns <- c("baseline", "superscript", "subscript")
     match.arg_wrapper(vert_align, valid_aligns, fn_name = "fmt_txt")
+    if (length(vert_align) != 1L || !vert_align %in% valid_aligns)
+      stop("fmt_txt(): `vert_align` must be one of \"baseline\", \"superscript\", \"subscript\"", call. = FALSE)
     xml_vrtln <- xml_node_create("vertAlign", xml_attributes = c(val = as_xml_attr(vert_align)))
   }
   if (length(family)) {

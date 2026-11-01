@@ -1800,3 +1800,22 @@ test_that("table names must be non-empty strings", {
   expect_error(wb$add_data_table(x = head(iris), table_name = c("a", "b")), "single non-empty string")
 
 })
+
+test_that("markup in workbook properties is written as text", {
+
+  props <- list(
+    title = "a<b>&c", subject = "x & y", creator = "me & you", keywords = "<k>",
+    comments = "c&d \"q\"", category = "c<t", manager = "m&n", company = "<co>"
+  )
+  wb <- do.call(wb_workbook()$add_worksheet()$set_properties, props)
+
+  temp <- temp_xlsx()
+  on.exit(unlink(temp), add = TRUE)
+  wb$save(temp)
+
+  got <- wb_load(temp)$get_properties()
+  expect_equal(got[names(props)], unlist(props))
+
+  app <- read_xml(unzip(temp, "docProps/app.xml", exdir = temp_dir("props")), pointer = FALSE)
+  expect_equal(xml_value(app, "Properties", "Company"), "&lt;co&gt;")
+})

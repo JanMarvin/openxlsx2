@@ -82,6 +82,12 @@ wb_color <- function(
     hex <- validate_color(hex, format = format)
   }
 
+  if (!is.null(tint)) {
+    num <- suppressWarnings(as.numeric(tint))
+    if (length(num) != 1L || !is.finite(num) || num < -1 || num > 1)
+      stop("`tint` must be a number from -1 to 1", call. = FALSE)
+  }
+
   z <- c(
     auto    = as_xml_attr(auto),
     indexed = as_xml_attr(indexed),

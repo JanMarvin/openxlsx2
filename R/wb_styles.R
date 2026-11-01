@@ -138,6 +138,12 @@ create_border <- function(
       stop(sprintf("create_border(): `%s` must be a single value.", arg), call. = FALSE)
     }
   }
+  for (arg in c("diagonal_down", "diagonal_up", "outline")) {
+    val <- get(arg)
+    if (!is.null(val) && !identical(val, "") && !is_xml_flag(val)) {
+      stop(sprintf("create_border(): `%s` must be TRUE or FALSE.", arg), call. = FALSE)
+    }
+  }
 
   assert_xml_bool(outline)
 
@@ -246,11 +252,17 @@ create_numfmt <- function(numFmtId = 164, formatCode = "#,##0.00") {
       call. = FALSE
     )
   }
+  if (!in_xml_range(numFmtId, list(0, 4294967295, whole = TRUE))) {
+    stop("create_numfmt(): `numFmtId` must be a whole number from 0 to 4294967295.", call. = FALSE)
+  }
+  if (any(nchar(formatCode) > 255L) || any(!nzchar(strip_xml_control_chars(as.character(formatCode))))) {
+    stop("create_numfmt(): `formatCode` must be a non-empty string with at most 255 characters.", call. = FALSE)
+  }
 
   formatCode <- escape_format_code(formatCode)
 
   df_numfmt <- data.frame(
-    numFmtId         = as_xml_attr(numFmtId),
+    numFmtId         = sprintf("%.0f", as.numeric(numFmtId)),
     formatCode       = as_xml_attr(formatCode),
     stringsAsFactors = FALSE
   )
@@ -342,6 +354,9 @@ create_font <- function(
   }
 
   if (charset != "") {
+    num <- suppressWarnings(as.numeric(charset))
+    if (!is.finite(num) || num < 0 || num > 255 || num != trunc(num))
+      stop("create_font(): `charset` must be a whole number from 0 to 255.", call. = FALSE)
     charset <- xml_node_create("charset", xml_attributes = c("val" = as_xml_attr(charset)))
   }
 
@@ -373,6 +388,8 @@ create_font <- function(
   }
 
   if (name != "") {
+    if (nchar(name) > 31 || !nzchar(strip_xml_control_chars(name)))
+      stop("create_font(): `name` must be a non-empty string with at most 31 characters.", call. = FALSE)
     name <- xml_node_create("name", xml_attributes = c("val" = name))
   }
 
@@ -398,6 +415,9 @@ create_font <- function(
   }
 
   if (sz != "") {
+    num <- suppressWarnings(as.numeric(sz))
+    if (!is.finite(num) || num < 1 || num > 409.55)
+      stop("create_font(): `sz` must be a number from 1 to 409.55.", call. = FALSE)
     sz <- xml_node_create("sz", xml_attributes = c("val" = as_xml_attr(sz)))
   }
 
@@ -655,6 +675,25 @@ create_cell_style <- function(
         call. = FALSE
       )
     }
+  }
+
+  uint <- list(0, 4294967295, whole = TRUE)
+  ranges <- list(
+    border_id = uint, fill_id = uint, font_id = uint, num_fmt_id = uint, xf_id = uint,
+    indent = list(0, 255, whole = TRUE), reading_order = list(0, 2, whole = TRUE),
+    relative_indent = list(-2147483648, 2147483647, whole = TRUE)
+  )
+  for (arg in names(ranges)) {
+    val <- values[[arg]]
+    val <- val[val != ""]
+    if (length(val) && !in_xml_range(val, ranges[[arg]])) {
+      stop(xml_range_msg("create_cell_style", arg, ranges[[arg]]), call. = FALSE)
+    }
+  }
+  rot <- text_rotation[text_rotation != ""]
+  if (length(rot) && !(in_xml_range(rot, list(0, 255, whole = TRUE)) &&
+                       all(as.numeric(rot) <= 180 | as.numeric(rot) == 255))) {
+    stop("create_cell_style(): `text_rotation` must be a whole number from 0 to 180 or 255.", call. = FALSE)
   }
 
 
@@ -1176,8 +1215,20 @@ create_tablestyle <- function(
 
   standardize_case_names(...)
 
-  if (!is.character(name) || length(name) != 1L || is.na(name) || !nzchar(name)) {
+  if (!is.character(name) || length(name) != 1L || is.na(name) || !nzchar(strip_xml_control_chars(name))) {
     stop("`name` must be a single non-empty string.", call. = FALSE)
+  }
+
+  # the elements are indices of differential formats (dxf) in the workbook
+  for (arg in c(
+    "whole_table", "header_row", "total_row", "first_column", "last_column",
+    "first_row_stripe", "second_row_stripe", "first_column_stripe", "second_column_stripe",
+    "first_header_cell", "last_header_cell", "first_total_cell", "last_total_cell"
+  )) {
+    val <- get(arg)
+    if (length(val) && (length(val) != 1L || !in_xml_range(val, list(0, 4294967295, whole = TRUE)))) {
+      stop(sprintf("create_tablestyle(): `%s` must be the index of a dxf style, a whole number from 0.", arg), call. = FALSE)
+    }
   }
 
   tab_wholeTable <- NULL
@@ -1323,6 +1374,26 @@ create_pivottablestyle <- function(
 ) {
 
   standardize_case_names(...)
+
+  if (!is.character(name) || length(name) != 1L || is.na(name) || !nzchar(strip_xml_control_chars(name))) {
+    stop("`name` must be a single non-empty string.", call. = FALSE)
+  }
+
+  # the elements are indices of differential formats (dxf) in the workbook
+  for (arg in c(
+    "whole_table", "header_row", "grand_total_row", "first_column", "grand_total_column",
+    "first_row_stripe", "second_row_stripe", "first_column_stripe", "second_column_stripe",
+    "first_header_cell", "first_subtotal_column", "second_subtotal_column",
+    "third_subtotal_column", "first_subtotal_row", "second_subtotal_row", "third_subtotal_row",
+    "blank_row", "first_column_subheading", "second_column_subheading",
+    "third_column_subheading", "first_row_subheading", "second_row_subheading",
+    "third_row_subheading", "page_field_labels", "page_field_values"
+  )) {
+    val <- get(arg)
+    if (length(val) && (length(val) != 1L || !in_xml_range(val, list(0, 4294967295, whole = TRUE)))) {
+      stop(sprintf("create_pivottablestyle(): `%s` must be the index of a dxf style, a whole number from 0.", arg), call. = FALSE)
+    }
+  }
 
   tab_wholeTable <- NULL
   if (length(whole_table)) {

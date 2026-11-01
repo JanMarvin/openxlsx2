@@ -86,7 +86,15 @@ cacheFields <- function(wbdata, filter, rows, cols, data, slicer, timeline) {
         count <- NULL
       }
 
-      if (is_char) {
+      if (all(is.na(dat)) && !is_char) {
+        # a column without values has no type and no range
+        attr <- c(
+          containsNonDate = "0",
+          containsString = "0",
+          containsBlank = "1",
+          count = count
+        )
+      } else if (is_char) {
         attr <- c(
           containsBlank = containsBlank,
           count = count
@@ -374,6 +382,48 @@ create_pivot_table <- function(
     "subtotal_top", "default_subtotal"
   )
   params <- standardize_case_names(params, arguments = arguments, return = TRUE)
+
+  uint <- list(0, 4294967295, whole = TRUE)
+  check_params(
+    params, "add_pivot_table",
+    flags = c(
+      "apply_alignment_formats", "apply_border_formats", "apply_font_formats",
+      "apply_number_formats", "apply_pattern_formats", "apply_width_height_formats",
+      "asterisk_totals", "col_grand_totals", "compact", "compact_data",
+      "custom_list_sort", "data_on_rows", "disable_field_list", "edit_data",
+      "enable_drill", "enable_field_properties", "enable_wizard",
+      "field_list_sort_ascending", "field_print_titles", "grid_drop_zones",
+      "hide_values_row", "immersive", "item_print_titles", "mdx_subqueries",
+      "merge_item", "multiple_field_filters", "outline", "outline_data",
+      "page_over_then_down", "preserve_formatting", "print_drill", "published",
+      "row_grand_totals", "show_calc_mbrs", "show_col_headers", "show_col_stripes",
+      "show_data_drop_down", "show_data_tips", "show_drill", "show_drop_zones",
+      "show_empty_col", "show_empty_row", "show_error", "show_headers",
+      "show_items", "show_last_column", "show_member_property_tips",
+      "show_missing", "show_multiple_label", "show_row_headers",
+      "show_row_stripes", "subtotal_hidden_items", "use_auto_formatting",
+      "visual_totals", "subtotal_top", "default_subtotal"
+    ),
+    ranges = list(
+      auto_format_id = uint,
+      chart_format   = uint,
+      data_position  = uint,
+      indent         = uint,
+      page_wrap      = uint
+    )
+  )
+  if (!is.null(params$name) &&
+      (!is.character(params$name) || length(params$name) != 1L || is.na(params$name) ||
+       !nzchar(params$name) || nchar(params$name) > 255L)) {
+    stop("add_pivot_table(): the pivot table name must be a string of 1 to 255 characters.", call. = FALSE)
+  }
+  if (!missing(fun)) {
+    funs <- c("average", "count", "countNums", "max", "min", "product",
+              "stdDev", "stdDevp", "sum", "var", "varp")
+    if (!is.character(fun) || !all(fun %in% funs)) {
+      stop("add_pivot_table(): `fun` must be one of ", paste0("\"", funs, "\"", collapse = ", "), ".", call. = FALSE)
+    }
+  }
 
 
   compact <- ""
@@ -731,7 +781,7 @@ create_pivot_table <- function(
       `xmlns:mc`              = "http://schemas.openxmlformats.org/markup-compatibility/2006",
       `mc:Ignorable`          = "xr",
       `xmlns:xr`              = "http://schemas.microsoft.com/office/spreadsheetml/2014/revision",
-      name                    = as_xml_attr(pivot_table_name),
+      name                    = replace_legal_chars(pivot_table_name),
       cacheId                 = as_xml_attr(n),
       applyNumberFormats      = as_xml_attr(applyNumberFormats),
       applyBorderFormats      = as_xml_attr(applyBorderFormats),
