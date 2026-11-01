@@ -148,11 +148,12 @@ test_that("values written to workbook parts are checked", {
     c(TRUE, TRUE)
   )
 
-  wb$add_chartsheet(visible = "veryhidden")
-  expect_equal(wb$get_sheet_visibility()[3], "veryHidden")
-
   wb$add_named_region(sheet = 1, dims = "A1", name = "x", comment = "<b>&</b>")
   expect_silent(wb$save(temp_xlsx()))
+
+  # a chartsheet without a chart is not valid, it is not saved
+  wb$add_chartsheet(visible = "veryhidden")
+  expect_equal(wb$get_sheet_visibility()[3], "veryHidden")
 })
 
 test_that("pivot table, slicer and timeline params are checked", {
