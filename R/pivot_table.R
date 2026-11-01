@@ -162,7 +162,8 @@ cacheFields <- function(wbdata, filter, rows, cols, data, slicer, timeline) {
 
 pivot_def_xml <- function(wbdata, filter, rows, cols, data, slicer, timeline, pcid) {
 
-  ref   <- dataframe_to_dims(attr(wbdata, "dims"))
+  ref   <- attr(wbdata, "dims_requested")
+  if (is.null(ref)) ref <- dataframe_to_dims(attr(wbdata, "dims"))
   sheet <- attr(wbdata, "sheet")
   count <- ncol(wbdata)
 
