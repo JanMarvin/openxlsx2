@@ -170,6 +170,10 @@ test_that("pivot table, slicer and timeline params are checked", {
   expect_error(wb$add_slicer(x, slicer = "a", pivot_table = "pt", params = list(column_count = 0)), "column_count")
   expect_error(wb$add_timeline(x, timeline = "d", pivot_table = "pt", params = list(show_header = "yes")), "show_header")
   expect_error(wb$add_timeline(x, timeline = "d", pivot_table = "pt", params = list(level = NaN)), "level")
+  expect_error(wb$add_slicer(x, slicer = "a", pivot_table = "pt", params = list(caption = "&#1;")), "caption")
+  expect_error(wb$add_timeline(x, timeline = "d", pivot_table = "pt", params = list(caption = "")), "caption")
+  expect_error(wb$set_properties(datetime_created = NA), "datetime_created")
+  expect_error(wb$set_properties(datetime_modified = "yesterday"), "datetime_modified")
 })
 
 test_that("escaped pivot table names and noncharacters in cells", {

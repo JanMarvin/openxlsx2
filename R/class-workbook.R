@@ -2019,6 +2019,10 @@ wbWorkbook <- R6::R6Class(
       caption <- slicer
       if (!is.null(params$caption))
         caption <- params$caption
+      if (!is.character(caption) || length(caption) != 1L || is.na(caption) ||
+          !nzchar(strip_xml_control_chars(caption))) {
+        stop("add_slicer(): `params$caption` must be a non-empty string.", call. = FALSE)
+      }
 
       row_height <- 230716
       if (!is.null(params$row_height))
@@ -2394,6 +2398,10 @@ wbWorkbook <- R6::R6Class(
       caption <- timeline
       if (!is.null(params$caption))
         caption <- params$caption
+      if (!is.character(caption) || length(caption) != 1L || is.na(caption) ||
+          !nzchar(strip_xml_control_chars(caption))) {
+        stop("add_timeline(): `params$caption` must be a non-empty string.", call. = FALSE)
+      }
 
       level <- 2
       if (!is.null(params$level))
@@ -7902,6 +7910,15 @@ wbWorkbook <- R6::R6Class(
       # Internal option to alleviate timing problems in CI and CRAN
       datetime_created <-
         getOption("openxlsx2.datetimeCreated", datetime_created)
+
+      for (nm in c("datetime_created", "datetime_modified")) {
+        val <- get(nm)
+        if (is.null(val)) next
+        val <- tryCatch(as_POSIXct_utc(val), error = function(e) NA)
+        if (length(val) != 1L || is.na(val)) {
+          stop(sprintf("`%s` must be a single date-time", nm), call. = FALSE)
+        }
+      }
 
       # these are plain text, markup characters must not create xml nodes
       if (!is.null(creator))  creator  <- replace_legal_chars(creator)
