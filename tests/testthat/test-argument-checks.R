@@ -189,3 +189,69 @@ test_that("escaped pivot table names and noncharacters in cells", {
     c("<is><t>a</t></is>", "<is><t xml:space=\"preserve\"> b </t></is>")
   )
 })
+
+test_that("removing parts leaves no references behind", {
+  df <- data.frame(a = 1:3, b = c("x", "y", "z"), d = as.Date("2026-01-01") + 0:2)
+
+  wb <- wb_workbook()$add_worksheet()$add_data(x = df)
+  wb$add_pivot_table(wb_data(wb, 1), rows = "b", data = "a", pivot_table = "pt1", slicer = "b")
+  wb$add_slicer(wb_data(wb, 1), slicer = "b", pivot_table = "pt1", sheet = 2)
+  wb$remove_slicer(sheet = 2)
+  expect_null(wb$workbook$extLst)
+  expect_false(any(grepl("Slicer_", wb$workbook$definedNames)))
+
+  wb <- wb_workbook()$add_worksheet()$add_data(x = df)
+  wb$add_pivot_table(wb_data(wb, 1), rows = "d", data = "a", pivot_table = "pt1", timeline = "d")
+  wb$add_timeline(wb_data(wb, 1), timeline = "d", pivot_table = "pt1", sheet = 2)
+  wb$remove_timeline(sheet = 2)
+  expect_null(wb$workbook$extLst)
+
+  wb <- wb_workbook()$add_worksheet()$add_data(x = df)
+  wb$add_pivot_table(wb_data(wb, 1), rows = "b", data = "a", pivot_table = "pt1")
+  wb$remove_worksheet(2)
+  expect_null(wb$workbook$pivotCaches)
+
+  wb <- wb_workbook()$add_worksheet()$add_data(x = df)$
+    add_comment(dims = "B2", comment = "a")$add_comment(dims = "C3", comment = "b")
+  wb$remove_comment(dims = "A1:C3")
+  expect_length(wb$vml, 0)
+
+  wb <- wb_workbook()$add_worksheet()
+  wb$set_bookview(active_tab = 0)
+  expect_error(wb$remove_bookview(view = NA), "view")
+  wb$remove_bookview(view = 1)
+  expect_null(wb$workbook$bookViews)
+})
+
+test_that("values found by fuzzing the create functions are checked", {
+  wb <- wb_workbook()$add_worksheet()$add_data(x = data.frame(a = 1:3, b = c("x", "y", "z")))
+  x <- wb_data(wb, 1)
+  names(x)[2] <- NA
+  expect_error(wb$add_pivot_table(x, rows = "a", data = "a"), "needs a name")
+
+  expect_error(create_tablestyle(name = "ts", whole_table = 2.75), "whole_table")
+  expect_error(create_pivottablestyle(name = ""), "name")
+  expect_error(create_pivottablestyle(name = "&#1;"), "name")
+  expect_error(create_pivottablestyle(name = "pts", blank_row = NaN), "blank_row")
+  expect_error(wb$add_style(create_tablestyle(name = "ts", whole_table = 5)), "dxf")
+
+  expect_error(wb$set_cell_style(dims = "A1", style = 72), "style")
+  expect_error(wb$set_cell_style(dims = "A1", style = -1), "style")
+  expect_error(wb$set_cell_style(dims = "R1C1", style = 0), "dims")
+  expect_silent(wb$set_cell_style(dims = "A1:B2", style = 0))
+
+  expect_error(fmt_txt("x", size = 0), "size")
+  expect_error(fmt_txt("x", charset = 256), "charset")
+  expect_error(fmt_txt("x", font = strrep("f", 32)), "font")
+  expect_error(fmt_txt("x", vert_align = ""), "vert_align")
+
+  expect_error(create_shape(rotation = Inf), "rotation")
+  expect_error(create_shape(fill_transparency = 255), "fill_transparency")
+  expect_error(create_numfmt(formatCode = ""), "formatCode")
+  expect_error(wb$add_numfmt(dims = "A1", numfmt = ""), "formatCode")
+  expect_error(wb$add_named_style(name = strrep("x", 256)), "name")
+  expect_error(wb$add_named_region(dims = "A1", name = "cmt", comment = strrep("c", 256)), "comment")
+  expect_error(wb$protect(file_sharing = TRUE, username = "\uFFFE"), "username")
+  expect_error(create_shape(line_color = wb_color(theme = 99)), "line_color")
+  expect_match(create_shape(rotation = 1e-10), "rot=\"0\"")
+})

@@ -86,7 +86,15 @@ cacheFields <- function(wbdata, filter, rows, cols, data, slicer, timeline) {
         count <- NULL
       }
 
-      if (is_char) {
+      if (all(is.na(dat)) && !is_char) {
+        # a column without values has no type and no range
+        attr <- c(
+          containsNonDate = "0",
+          containsString = "0",
+          containsBlank = "1",
+          count = count
+        )
+      } else if (is_char) {
         attr <- c(
           containsBlank = containsBlank,
           count = count

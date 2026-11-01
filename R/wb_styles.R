@@ -255,8 +255,8 @@ create_numfmt <- function(numFmtId = 164, formatCode = "#,##0.00") {
   if (!in_xml_range(numFmtId, list(0, 4294967295, whole = TRUE))) {
     stop("create_numfmt(): `numFmtId` must be a whole number from 0 to 4294967295.", call. = FALSE)
   }
-  if (any(nchar(formatCode) > 255L)) {
-    stop("create_numfmt(): `formatCode` must not be longer than 255 characters.", call. = FALSE)
+  if (any(nchar(formatCode) > 255L) || any(!nzchar(strip_xml_control_chars(as.character(formatCode))))) {
+    stop("create_numfmt(): `formatCode` must be a non-empty string with at most 255 characters.", call. = FALSE)
   }
 
   formatCode <- escape_format_code(formatCode)
@@ -1215,8 +1215,20 @@ create_tablestyle <- function(
 
   standardize_case_names(...)
 
-  if (!is.character(name) || length(name) != 1L || is.na(name) || !nzchar(name)) {
+  if (!is.character(name) || length(name) != 1L || is.na(name) || !nzchar(strip_xml_control_chars(name))) {
     stop("`name` must be a single non-empty string.", call. = FALSE)
+  }
+
+  # the elements are indices of differential formats (dxf) in the workbook
+  for (arg in c(
+    "whole_table", "header_row", "total_row", "first_column", "last_column",
+    "first_row_stripe", "second_row_stripe", "first_column_stripe", "second_column_stripe",
+    "first_header_cell", "last_header_cell", "first_total_cell", "last_total_cell"
+  )) {
+    val <- get(arg)
+    if (length(val) && (length(val) != 1L || !in_xml_range(val, list(0, 4294967295, whole = TRUE)))) {
+      stop(sprintf("create_tablestyle(): `%s` must be the index of a dxf style, a whole number from 0.", arg), call. = FALSE)
+    }
   }
 
   tab_wholeTable <- NULL
@@ -1362,6 +1374,26 @@ create_pivottablestyle <- function(
 ) {
 
   standardize_case_names(...)
+
+  if (!is.character(name) || length(name) != 1L || is.na(name) || !nzchar(strip_xml_control_chars(name))) {
+    stop("`name` must be a single non-empty string.", call. = FALSE)
+  }
+
+  # the elements are indices of differential formats (dxf) in the workbook
+  for (arg in c(
+    "whole_table", "header_row", "grand_total_row", "first_column", "grand_total_column",
+    "first_row_stripe", "second_row_stripe", "first_column_stripe", "second_column_stripe",
+    "first_header_cell", "first_subtotal_column", "second_subtotal_column",
+    "third_subtotal_column", "first_subtotal_row", "second_subtotal_row", "third_subtotal_row",
+    "blank_row", "first_column_subheading", "second_column_subheading",
+    "third_column_subheading", "first_row_subheading", "second_row_subheading",
+    "third_row_subheading", "page_field_labels", "page_field_values"
+  )) {
+    val <- get(arg)
+    if (length(val) && (length(val) != 1L || !in_xml_range(val, list(0, 4294967295, whole = TRUE)))) {
+      stop(sprintf("create_pivottablestyle(): `%s` must be the index of a dxf style, a whole number from 0.", arg), call. = FALSE)
+    }
+  }
 
   tab_wholeTable <- NULL
   if (length(whole_table)) {

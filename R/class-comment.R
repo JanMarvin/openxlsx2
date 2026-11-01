@@ -501,13 +501,19 @@ do_remove_comment <- function(
     comb <- unlist(dims_to_dataframe(dims, fill = TRUE))
   }
 
-  toKeep <- !sapply(wb$comments[[comment_id]], "[[", "ref") %in% comb
+  refs <- sapply(wb$comments[[comment_id]], "[[", "ref")
+  toKeep <- !refs %in% comb
 
   wb$comments[[comment_id]] <- wb$comments[[comment_id]][toKeep]
 
-  # remove vml
+  # remove vml, a note per removed comment, dims can be a range
   vml_id <- wb$worksheets[[sheet]]$relships$vmlDrawing
-  wb$vml[[vml_id]] <- vml_rm_note(wb$vml[[vml_id]], dims = dims)
+  removed <- unlist(refs[!toKeep])
+  if (length(removed)) {
+    for (cell in removed) wb$vml[[vml_id]] <- vml_rm_note(wb$vml[[vml_id]], dims = cell)
+  } else {
+    wb$vml[[vml_id]] <- vml_rm_note(wb$vml[[vml_id]], dims = dims)
+  }
 
   # check if there are comments left on sheet
   if (length(wb$comments[[comment_id]]) == 0) {

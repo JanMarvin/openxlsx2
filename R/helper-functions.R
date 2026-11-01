@@ -1810,6 +1810,21 @@ create_shape <- function(
       stop(sprintf("`%s` must be a single value.", nm), call. = FALSE)
     }
   }
+  if (!is.numeric(rotation) || !is.finite(rotation) || abs(rotation * 60000) > 2147483647) {
+    stop("`rotation` must be a number of degrees from -35791 to 35791.", call. = FALSE)
+  }
+  for (nm in c("fill_transparency", "text_transparency", "line_transparency")) {
+    if (!in_xml_range(scalars[[nm]], list(0, 100))) {
+      stop(sprintf("`%s` must be a number from 0 to 100.", nm), call. = FALSE)
+    }
+  }
+  # theme colors are written as scheme colors, there are 17 of them
+  for (nm in c("fill_color", "text_color", "line_color")) {
+    col <- get(nm)
+    if (is_wbColour(col) && "theme" %in% names(col) && !col[["theme"]] %in% as.character(0:16)) {
+      stop(sprintf("`%s` must be a theme color from 0 to 16.", nm), call. = FALSE)
+    }
+  }
 
   if (!is_xml(text) || inherits(text, "fmt_txt")) {
     # if not a a14:m node
@@ -1893,7 +1908,7 @@ create_shape <- function(
      </xdr:absoluteAnchor>
      </xdr:wsDr>',
      mc_beg,
-     id, name, st_guid(), rotation * 60000, shape,
+     id, name, st_guid(), sprintf("%.0f", rotation * 60000), shape,
      fill_color, line_color, text_align[1], text,
      mc_end
   )

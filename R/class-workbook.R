@@ -1717,6 +1717,9 @@ wbWorkbook <- R6::R6Class(
       if (!is.null(attr(x, "header"))) {
         stop("a pivot table needs a single header row, wb_data() objects with header_rows > 1 are not supported", call. = FALSE)
       }
+      if (anyNA(names(x)) || any(names(x) == "")) {
+        stop("every column of a pivot table source needs a name", call. = FALSE)
+      }
       add_sheet <- is_waiver(sheet) && sheet == "next_sheet"
       sheet <- private$get_sheet_index(sheet)
 
@@ -1726,6 +1729,7 @@ wbWorkbook <- R6::R6Class(
       if (missing(data))        data   <- substitute()
       if (missing(fun))         fun    <- substitute()
       if (missing(pivot_table)) pivot_table <- NULL
+
       if (missing(params))      params <- NULL
 
       if (anyDuplicated(c(if_not_missing(filter), if_not_missing(rows), if_not_missing(cols)))) {
@@ -2231,6 +2235,23 @@ wbWorkbook <- R6::R6Class(
       extLst     <- xml_rm_child(self$worksheets[[sheet]]$extLst[is_ext_x14], xml_child = "x14:slicerList")
       self$worksheets[[sheet]]$extLst[is_ext_x14] <- extLst
 
+      # remove the workbook references to the caches, an empty list or extension is invalid
+      cache_rels <- self$workbook.xml.rels[grepl(paste0(caches_xml, collapse = "|"), self$workbook.xml.rels)]
+      cache_ids  <- if (length(cache_rels)) vapply(xml_attr(cache_rels, "Relationship"), function(x) x[["Id"]], "") else character()
+      if (length(cache_ids) && !is.null(self$workbook$extLst)) {
+        ext <- self$workbook$extLst
+        for (id in cache_ids) ext <- gsub(sprintf("<x14:slicerCache r:id=\"%s\"\\s*/>", id), "", ext)
+        ext <- gsub("<x14:slicerCaches>\\s*</x14:slicerCaches>|<x14:slicerCaches/>", "", ext)
+        ext <- gsub("<ext [^>]*xmlns:x14=\"[^\"]*\"[^>]*>\\s*</ext>|<ext [^>]*xmlns:x14=\"[^\"]*\"[^>]*/>", "", ext)
+        if (grepl("^<extLst>\\s*</extLst>$|^<extLst/>$", ext)) ext <- NULL
+        self$workbook$extLst <- ext
+      }
+      if (length(cache_names)) {
+        self$workbook$definedNames <- self$workbook$definedNames[
+          !grepl(paste0("name=\"", cache_names, "\"", collapse = "|"), self$workbook$definedNames)
+        ]
+      }
+
       # clear workbook.xml.rels
       self$workbook.xml.rels                   <- self$workbook.xml.rels[!grepl(paste0(caches_xml, collapse = "|"), self$workbook.xml.rels)]
 
@@ -2630,6 +2651,23 @@ wbWorkbook <- R6::R6Class(
       is_ext_x15 <- grepl("x15:timelineRefs", self$worksheets[[sheet]]$extLst)
       extLst     <- xml_rm_child(self$worksheets[[sheet]]$extLst[is_ext_x15], xml_child = "x15:timelineRefs")
       self$worksheets[[sheet]]$extLst[is_ext_x15] <- extLst
+
+      # remove the workbook references to the caches, an empty list or extension is invalid
+      cache_rels <- self$workbook.xml.rels[grepl(paste0(caches_xml, collapse = "|"), self$workbook.xml.rels)]
+      cache_ids  <- if (length(cache_rels)) vapply(xml_attr(cache_rels, "Relationship"), function(x) x[["Id"]], "") else character()
+      if (length(cache_ids) && !is.null(self$workbook$extLst)) {
+        ext <- self$workbook$extLst
+        for (id in cache_ids) ext <- gsub(sprintf("<x15:timelineCacheRef r:id=\"%s\"\\s*/>", id), "", ext)
+        ext <- gsub("<x15:timelineCacheRefs>\\s*</x15:timelineCacheRefs>|<x15:timelineCacheRefs/>", "", ext)
+        ext <- gsub("<ext [^>]*xmlns:x15=\"[^\"]*\"[^>]*>\\s*</ext>|<ext [^>]*xmlns:x15=\"[^\"]*\"[^>]*/>", "", ext)
+        if (grepl("^<extLst>\\s*</extLst>$|^<extLst/>$", ext)) ext <- NULL
+        self$workbook$extLst <- ext
+      }
+      if (length(cache_names)) {
+        self$workbook$definedNames <- self$workbook$definedNames[
+          !grepl(paste0("name=\"", cache_names, "\"", collapse = "|"), self$workbook$definedNames)
+        ]
+      }
 
       # clear workbook.xml.rels
       self$workbook.xml.rels                     <- self$workbook.xml.rels[!grepl(paste0(caches_xml, collapse = "|"), self$workbook.xml.rels)]
@@ -4716,16 +4754,24 @@ wbWorkbook <- R6::R6Class(
       }
 
       if (!is.null(view)) {
+        if (!is.numeric(view) || anyNA(view) || any(view == 0)) {
+          stop("`view` must be the index of a workbook view", call. = FALSE)
+        }
         if (!is.integer(view)) view <- as.integer(view)
         # if there are three views, and 2 is removed, the indices are
         # now 1, 2 and not 1, 3. removing -1 keeps only the first view
         wbv <- wbv[-view]
       }
 
-      self$workbook$bookViews <- xml_node_create(
-        "bookViews",
-        xml_children = wbv
-      )
+      # without views the element is omitted, an empty bookViews is invalid
+      if (length(wbv)) {
+        self$workbook$bookViews <- xml_node_create(
+          "bookViews",
+          xml_children = wbv
+        )
+      } else {
+        self$workbook$bookViews <- NULL
+      }
 
       invisible(self)
     },
@@ -5606,7 +5652,15 @@ wbWorkbook <- R6::R6Class(
           collapse = "|"
         )
 
-        ## remove reference to file from workbook.xml.res
+        ## remove the pivotCache elements that use these relationships, then the references
+        cache_rels <- grep(toRemove, self$workbook.xml.rels, value = TRUE)
+        if (length(cache_rels) && length(self$workbook$pivotCaches)) {
+          cache_ids <- vapply(xml_attr(cache_rels, "Relationship"), function(x) x[["Id"]], "")
+          caches    <- xml_node(self$workbook$pivotCaches, "pivotCaches", "pivotCache")
+          cache_rid <- vapply(xml_attr(caches, "pivotCache"), function(x) x[["r:id"]], "")
+          caches    <- caches[!cache_rid %in% cache_ids]
+          self$workbook$pivotCaches <- if (length(caches)) xml_node_create("pivotCaches", xml_children = caches) else NULL
+        }
         self$workbook.xml.rels <- grep(toRemove, self$workbook.xml.rels, invert = TRUE, value = TRUE)
       }
 
@@ -7717,8 +7771,9 @@ wbWorkbook <- R6::R6Class(
         stop("protect(): `password` must be a single string.", call. = FALSE)
       }
       if (file_sharing && !is.null(username) &&
-          (!is.character(username) || is.na(username) || nchar(username) > 54L)) {
-        stop("protect(): `username` must be a string with at most 54 characters.", call. = FALSE)
+          (!is.character(username) || is.na(username) || nchar(username) > 54L ||
+           !nzchar(strip_xml_control_chars(username)))) {
+        stop("protect(): `username` must be a non-empty string with at most 54 characters.", call. = FALSE)
       }
 
       if (!protect) {
@@ -8860,6 +8915,8 @@ wbWorkbook <- R6::R6Class(
       )
       if (is.character(name) && any(nchar(name) > 255, na.rm = TRUE))
         stop("`name` must have at most 255 characters", call. = FALSE)
+      if (is.character(comment) && any(nchar(comment) > 255, na.rm = TRUE))
+        stop("`comment` must have at most 255 characters", call. = FALSE)
 
       sheet <- private$get_sheet_index(sheet)
 
@@ -9810,6 +9867,13 @@ wbWorkbook <- R6::R6Class(
         dims <- unlist(dims_to_dataframe(dims, fill = TRUE), use.names = FALSE)
       }
       dims <- dims[!is.na(dims) & dims != ""]
+      if (!all(grepl("^[A-Za-z]{1,3}[1-9][0-9]*$", dims))) {
+        stop("set_cell_style(): `dims` must be cells like \"A1\" or a range like \"A1:B2\".", call. = FALSE)
+      }
+      xf_id <- suppressWarnings(as.numeric(styid[styid != ""]))
+      if (anyNA(xf_id) || any(xf_id < 0 | xf_id != trunc(xf_id) | xf_id >= length(self$styles_mgr$styles$cellXfs))) {
+        stop("set_cell_style(): `style` must be the id of a cell style in the workbook.", call. = FALSE)
+      }
       cc_key <- self$worksheets[[sheet]]$sheet_data$cc$key
       sel <- match(cell_to_key(dims), cc_key)
 
@@ -9889,6 +9953,10 @@ wbWorkbook <- R6::R6Class(
       font_size = NULL
     ) {
 
+      if (!is.character(name) || length(name) != 1L || is.na(name) ||
+          !nzchar(strip_xml_control_chars(name)) || nchar(name) > 255) {
+        stop("`name` must be a non-empty string with at most 255 characters", call. = FALSE)
+      }
       if (is.null(font_name)) font_name <- self$get_base_font()$name$val
       if (is.null(font_size)) font_size <- self$get_base_font()$size$val
 
