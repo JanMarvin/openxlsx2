@@ -839,14 +839,23 @@ wbWorksheet <- R6::R6Class(
       unlockedFormula    = FALSE
     ) {
 
-      dims <- unlist(dims_to_dataframe(dims, fill = TRUE), use.names = FALSE)
+      # each range is kept as written, cells are not expanded: sqref is a list of
+      # ranges and a sheet may only have one ignoredError per combination of flags
+      dims <- unlist(strsplit(gsub("$", "", dims, fixed = TRUE), "[,; ]+"))
+      dims <- dims[nzchar(dims)]
+      validate_dims(dims)
 
       iEs <- self$ignoredErrors
       if (xml_node_name(iEs) == "ignoredErrors") {
         iE <- xml_node(iEs, "ignoredErrors", "ignoredError")
         iE_df <- rbindlist(xml_attr(iE, "ignoredError"))
 
-        need <- dims[!dims %in% iE_df$sref]
+        # one row per range of each sqref list
+        ranges <- strsplit(iE_df$sqref, " ", fixed = TRUE)
+        iE_df <- iE_df[rep(seq_len(nrow(iE_df)), lengths(ranges)), , drop = FALSE]
+        iE_df$sqref <- unlist(ranges)
+
+        need <- dims[!dims %in% iE_df$sqref]
         need_df <- as.data.frame(
           matrix("", ncol = ncol(iE_df), nrow = length(need)),
           stringsAsFactors = FALSE
@@ -906,6 +915,16 @@ wbWorksheet <- R6::R6Class(
         if (is.null(iE_df[["unlockedFormula"]])) iE_df$unlockedFormula <- ""
         iE_df[sel, "unlockedFormula"]    <- as_xml_attr(unlockedFormula)
       }
+
+      # ranges with the same flags share one ignoredError
+      flags <- setdiff(names(iE_df), "sqref")
+      key <- do.call(paste, c(list(""), iE_df[flags], sep = "\r"))
+      groups <- split(seq_len(nrow(iE_df)), factor(key, levels = unique(key)))
+      iE_df <- do.call(rbind, lapply(groups, function(i) {
+        row <- iE_df[i[1], , drop = FALSE]
+        row$sqref <- paste(unique(iE_df$sqref[i]), collapse = " ")
+        row
+      }))
 
       iE <- df_to_xml("ignoredError", iE_df)
 

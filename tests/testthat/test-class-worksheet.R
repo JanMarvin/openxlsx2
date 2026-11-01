@@ -124,6 +124,24 @@ test_that("print options work", {
 
 })
 
+test_that("ignore_error keeps ranges and groups them by flags", {
+
+  wb <- wb_workbook()$add_worksheet()
+
+  wb$add_ignore_error(dims = "A:A", number_stored_as_text = TRUE)
+  wb$add_ignore_error(dims = "C1:C10;E5", number_stored_as_text = TRUE)
+  wb$add_ignore_error(dims = "B2", formula = TRUE)
+
+  got <- xml_attr(wb$worksheets[[1]]$ignoredErrors, "ignoredErrors", "ignoredError")
+  expect_length(got, 2)
+  expect_equal(got[[1]][["sqref"]], "A:A C1:C10 E5")
+  expect_equal(got[[1]][["numberStoredAsText"]], "1")
+  expect_equal(got[[2]][["sqref"]], "B2")
+  expect_equal(got[[2]][["formula"]], "1")
+
+  expect_error(wb$add_ignore_error(dims = "A0", formula = TRUE), "Row exceeds")
+})
+
 test_that("ignore_error works", {
 
   wb <- wb_workbook()$add_worksheet()
