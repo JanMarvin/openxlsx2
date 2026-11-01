@@ -1085,6 +1085,10 @@ wb_read <- function(
 #' @param dims the dimensions
 #' @param header_rows number of rows at the top of `dims` that form the column
 #' header.
+#' @param used_range if `TRUE`, full column dims like `"A:B"` and full row dims
+#' like `"1:2"` read only the used range of the worksheet plus one blank row or
+#' column. The requested dims are kept in the attribute `dims_requested`, which
+#' pivot tables use as their source. If `FALSE`, all rows or columns are read.
 #' @param ... additional arguments for `wb_to_df()`. Be aware that not every
 #' argument is valid.
 #' @returns A data frame of class `wb_data`.
@@ -1105,14 +1109,46 @@ wb_read <- function(
 #'    col_names = FALSE
 #'  )
 #'  wb_data(wb, 1, dims = "A1:D3", header_rows = 2)
+#'
+#'  # full columns are limited to the used range
+#'  wb_data(wb, 1, dims = "A:D")
 #' @export
-wb_data <- function(wb, sheet = current_sheet(), dims, header_rows = 1L, ...) {
+wb_data <- function(wb, sheet = current_sheet(), dims, header_rows = 1L, used_range = TRUE, ...) {
   assert_workbook(wb)
   sheetno <- wb$clone()$.__enclos_env__$private$get_sheet_index(sheet)
   sheetname <- wb$get_sheet_names(escape = TRUE)[[sheetno]]
 
   if (missing(dims)) {
     dims <- unlist(xml_attr(wb$worksheets[[sheetno]]$dimension, "dimension"), use.names = FALSE)
+  }
+
+  if (!isTRUE(used_range) && !isFALSE(used_range)) {
+    stop("used_range must be TRUE or FALSE", call. = FALSE)
+  }
+
+  # Full column (A:B) and full row (1:2) dims are limited to the used range
+  # plus one blank row or column. The requested dims are kept as attribute.
+  dims_requested <- NULL
+  dims_parts <- strsplit(dims, ";", fixed = TRUE)[[1]]
+  is_full_col <- grepl("^\\$?[A-Za-z]+:\\$?[A-Za-z]+$", dims_parts)
+  is_full_row <- grepl("^\\$?[0-9]+:\\$?[0-9]+$", dims_parts)
+
+  if (used_range && any(is_full_col | is_full_row)) {
+    cc <- wb$worksheets[[sheetno]]$sheet_data$cc
+    max_row <- min(max(c(0L, as.integer(cc$row_r))) + 1L, 1048576L)
+    max_col <- min(max(c(0L, col2int(cc$c_r))) + 1L, 16384L)
+
+    for (i in which(is_full_col | is_full_row)) {
+      rng <- strsplit(gsub("$", "", dims_parts[i], fixed = TRUE), ":", fixed = TRUE)[[1]]
+      if (is_full_col[i]) {
+        dims_parts[i] <- sprintf("%s1:%s%s", rng[1], rng[2], max_row)
+      } else {
+        dims_parts[i] <- sprintf("A%s:%s%s", rng[1], int2col(max_col), rng[2])
+      }
+    }
+
+    dims_requested <- dims
+    dims <- paste(dims_parts, collapse = ";")
   }
 
   if (length(header_rows) != 1L || is.na(header_rows) || header_rows < 1L) {
@@ -1163,6 +1199,7 @@ wb_data <- function(wb, sheet = current_sheet(), dims, header_rows = 1L, ...) {
     attr(z, "header")      <- filled
   }
   attr(z, "sheet") <- sheetname
+  if (!is.null(dims_requested)) attr(z, "dims_requested") <- dims_requested
 
   class(z) <- c("wb_data", "data.frame")
   z

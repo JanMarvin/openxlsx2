@@ -5,7 +5,14 @@
 \alias{[.wb_data}
 \title{Add the \code{wb_data} attribute to a data frame in a worksheet}
 \usage{
-wb_data(wb, sheet = current_sheet(), dims, header_rows = 1L, ...)
+wb_data(
+  wb,
+  sheet = current_sheet(),
+  dims,
+  header_rows = 1L,
+  used_range = TRUE,
+  ...
+)
 
 \method{[}{wb_data}(
   x,
@@ -23,6 +30,11 @@ wb_data(wb, sheet = current_sheet(), dims, header_rows = 1L, ...)
 
 \item{header_rows}{number of rows at the top of \code{dims} that form the column
 header.}
+
+\item{used_range}{if \code{TRUE}, full column dims like \code{"A:B"} and full row dims
+like \code{"1:2"} read only the used range of the worksheet plus one blank row or
+column. The requested dims are kept in the attribute \code{dims_requested}, which
+pivot tables use as their source. If \code{FALSE}, all rows or columns are read.}
 
 \item{...}{additional arguments for \code{wb_to_df()}. Be aware that not every
 argument is valid.}
@@ -57,6 +69,9 @@ provide wb_data object as mschart input
    col_names = FALSE
  )
  wb_data(wb, 1, dims = "A1:D3", header_rows = 2)
+
+ # full columns are limited to the used range
+ wb_data(wb, 1, dims = "A:D")
 }
 \seealso{
 \code{\link[=wb_to_df]{wb_to_df()}} \code{\link[=wb_add_mschart]{wb_add_mschart()}}, \code{\link[=wb_add_pivot_table]{wb_add_pivot_table()}}

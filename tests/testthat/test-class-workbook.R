@@ -1746,6 +1746,39 @@ test_that("wb_data() reads a header of several rows", {
   expect_error(wb_data(wb, 1, dims = "B2:E3;B5:E5", header_rows = 2), "single range")
 })
 
+test_that("wb_data() limits full column and full row dims to the used range", {
+  wb <- wb_workbook()$add_worksheet()$add_data(x = mtcars)
+
+  dat <- wb_data(wb, dims = "A:K")
+  expect_equal(dim(dat), c(33L, 11L))
+  expect_true(all(is.na(dat[33, ])))
+  expect_equal(dim(attr(dat, "dims")), c(34L, 11L))
+  expect_equal(attr(dat, "dims")[34, 11], "K34")
+  expect_equal(attr(dat, "dims_requested"), "A:K")
+
+  dat <- wb_data(wb, dims = "$B:$C")
+  expect_equal(dim(attr(dat, "dims")), c(34L, 2L))
+  expect_equal(attr(dat, "dims")[1, 1], "B1")
+
+  dat <- wb_data(wb, dims = "1:2")
+  expect_equal(dim(attr(dat, "dims")), c(2L, 12L))
+  expect_equal(attr(dat, "dims")[2, 12], "L2")
+  expect_equal(attr(dat, "dims_requested"), "1:2")
+
+  dat <- wb_data(wb, dims = "A1:K33")
+  expect_null(attr(dat, "dims_requested"))
+
+  dat <- wb_data(wb, dims = "1:2", used_range = FALSE)
+  expect_equal(dim(attr(dat, "dims")), c(2L, 16384L))
+  expect_null(attr(dat, "dims_requested"))
+
+  expect_error(wb_data(wb, dims = "A:K", used_range = NA), "used_range")
+
+  wb$add_pivot_table(wb_data(wb, dims = "A:K"), rows = "cyl", data = "mpg")
+  expect_match(wb$pivotDefinitions, '<worksheetSource ref="A:K" sheet="Sheet 1"/>', fixed = TRUE)
+  expect_match(wb$pivotDefinitions, 'recordCount="33"', fixed = TRUE)
+})
+
 test_that("wb_data() with several header rows is a valid single header object for others", {
   skip_if_not_installed("mschart")
 
