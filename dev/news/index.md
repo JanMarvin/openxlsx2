@@ -21,6 +21,10 @@
 - [`wb_clean_sheet()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_clean_sheet.md)
   gains a new attribute to fully remove tables from a sheet.
   [\#1709](https://github.com/JanMarvin/openxlsx2/pull/1709)
+- Several inputs are now validated more thoroughly to avoid creating
+  invalid output files. These were added based on fuzzing checks using
+  [OOXMLValidator](https://github.com/JanMarvin/OOXMLValidator).
+  [\#1718](https://github.com/JanMarvin/openxlsx2/pull/1718)
 
 ### Fixes
 
