@@ -144,7 +144,7 @@ validate_color <- function(
   ## create a total size of 8 in ARGB format
   color <- stringi::stri_pad_left(str = color, width = 8, pad = "F")
 
-  if (!all(grepl("[A-F0-9]{8}$", color))) {
+  if (!all(grepl("^[A-F0-9]{8}$", color))) {
     if (is.null(msg)) msg <- sprintf("`%s` ['%s'] is not a valid color", sx, color)
     stop(simpleError(msg))
   }
@@ -627,6 +627,28 @@ create_sparklines <- function(
 
   if (!is.null(markers) && as_xml_attr(markers) == "" && !is.null(type) && type %in% c("stacked", "column"))
     stop("markers only affect lines `type = NULL`, not stacked or column")
+
+  if (!is.null(markers))        assert_xml_bool(markers)
+  if (!is.null(high))           assert_xml_bool(high)
+  if (!is.null(low))            assert_xml_bool(low)
+  if (!is.null(first))          assert_xml_bool(first)
+  if (!is.null(last))           assert_xml_bool(last)
+  if (!is.null(negative))       assert_xml_bool(negative)
+  if (!is.null(date_axis))      assert_xml_bool(date_axis)
+  if (!is.null(display_x_axis)) assert_xml_bool(display_x_axis)
+  if (!is.null(display_hidden)) assert_xml_bool(display_hidden)
+  if (!is.null(right_to_left))  assert_xml_bool(right_to_left)
+
+  if (!is.null(min_axis_type))
+    min_axis_type <- match_oneof(min_axis_type, c("individual", "group", "custom"))
+  if (!is.null(max_axis_type))
+    max_axis_type <- match_oneof(max_axis_type, c("individual", "group", "custom"))
+
+  if (!is.null(line_weight)) {
+    lw <- suppressWarnings(as.numeric(line_weight))
+    if (length(lw) != 1L || !is.finite(lw) || lw < 0 || lw > 1584)
+      stop("`line_weight` must be a number from 0 to 1584", call. = FALSE)
+  }
 
   if (!is.null(direction) || !is_single_cell(sqref)) {
     dims <- split_dims(dims, direction = direction)

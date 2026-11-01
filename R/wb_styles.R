@@ -342,6 +342,9 @@ create_font <- function(
   }
 
   if (charset != "") {
+    num <- suppressWarnings(as.numeric(charset))
+    if (!is.finite(num) || num < 0 || num > 255 || num != trunc(num))
+      stop("create_font(): `charset` must be a whole number from 0 to 255.", call. = FALSE)
     charset <- xml_node_create("charset", xml_attributes = c("val" = as_xml_attr(charset)))
   }
 
@@ -373,6 +376,8 @@ create_font <- function(
   }
 
   if (name != "") {
+    if (nchar(name) > 31)
+      stop("create_font(): `name` must have at most 31 characters.", call. = FALSE)
     name <- xml_node_create("name", xml_attributes = c("val" = name))
   }
 
@@ -398,6 +403,9 @@ create_font <- function(
   }
 
   if (sz != "") {
+    num <- suppressWarnings(as.numeric(sz))
+    if (!is.finite(num) || num < 1 || num > 409.55)
+      stop("create_font(): `sz` must be a number from 1 to 409.55.", call. = FALSE)
     sz <- xml_node_create("sz", xml_attributes = c("val" = as_xml_attr(sz)))
   }
 

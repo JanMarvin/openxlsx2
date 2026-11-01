@@ -873,6 +873,19 @@ wbWorkbook <- R6::R6Class(
         msg <- c(msg, "hdpi must be numeric")
       }
 
+      if (!is.na(vdpi) && vdpi < 1 || !is.na(hdpi) && hdpi < 1) {
+        fail <- TRUE
+        msg <- c(msg, "hdpi and vdpi must be positive")
+      }
+
+      if (!is.null(paper_size)) {
+        paper_size <- suppressWarnings(as.integer(paper_size))
+        if (is.na(paper_size) || !paper_size %in% 1:118) {
+          fail <- TRUE
+          msg <- c(msg, "paper_size must be an integer in range [1, 118]")
+        }
+      }
+
       if (fail) {
         stop(msg, call. = FALSE)
       }
@@ -2681,6 +2694,9 @@ wbWorkbook <- R6::R6Class(
     ) {
 
       sheet <- private$get_sheet_index(sheet)
+
+      if (!is.null(tooltip) && any(nchar(unlist(tooltip)) > 255, na.rm = TRUE))
+        stop("hyperlink tooltips are limited to 255 characters", call. = FALSE)
 
       if (!grepl(":", dims)) col_names <- FALSE
 
@@ -4496,7 +4512,12 @@ wbWorkbook <- R6::R6Class(
       arguments <- c("font_size", "font_color", "font_name",
         "font_type", "font_panose")
       standardize(..., arguments = arguments)
-      if (font_size < 0) stop("Invalid font_size")
+      if (length(font_size) != 1L || !is.finite(suppressWarnings(as.numeric(font_size))) ||
+          as.numeric(font_size) < 1 || as.numeric(font_size) > 409.55)
+        stop("Invalid font_size, it must be a number from 1 to 409.55", call. = FALSE)
+      if (!is.character(font_name) || length(font_name) != 1L || is.na(font_name) ||
+          !nzchar(strip_xml_control_chars(font_name)) || nchar(font_name) > 31)
+        stop("Invalid font_name, it must be a non-empty string with at most 31 characters", call. = FALSE)
       if (!is_wbColour(font_color)) font_color <- wb_color(font_color)
 
       fl <- system.file("extdata", "panose", "panose.csv", package = "openxlsx2")
@@ -4879,6 +4900,14 @@ wbWorkbook <- R6::R6Class(
         }
       }
 
+      num_rows <- suppressWarnings(as.numeric(rows))
+      if (anyNA(num_rows) || any(num_rows < 1 | num_rows > 1048576 | num_rows != trunc(num_rows)))
+        stop("`rows` must be whole numbers from 1 to 1048576", call. = FALSE)
+      if (!is.null(heights) && (anyNA(heights) || any(!is.finite(heights) | heights < 0)))
+        stop("`heights` must be finite numbers of at least 0", call. = FALSE)
+      if (!(is.logical(hidden) || is.numeric(hidden)) || length(hidden) != 1L || is.na(hidden))
+        stop("`hidden` must be TRUE or FALSE", call. = FALSE)
+
       private$do_row_init(sheet, rows)
 
       row_attr <- self$worksheets[[sheet]]$sheet_data$row_attr
@@ -5111,6 +5140,10 @@ wbWorkbook <- R6::R6Class(
       }
 
       cols <- col2int(cols)
+
+      if (!(is.logical(hidden) || is.numeric(hidden)) || anyNA(hidden)) {
+        stop("`hidden` must be TRUE or FALSE", call. = FALSE)
+      }
 
       if (length(widths) > length(cols)) {
         stop("More widths than columns supplied.")
@@ -8111,6 +8144,19 @@ wbWorkbook <- R6::R6Class(
           "footer", "paper_size", "summary_row", "summary_col",
           "horizontal_centered", "vertical_centered", "print_headings",
           "fit_to_width", "fit_to_height"
+        ),
+        ranges = list(
+          left          = list(0, 49, below = TRUE),
+          right         = list(0, 49, below = TRUE),
+          top           = list(0, 49, below = TRUE),
+          bottom        = list(0, 49, below = TRUE),
+          header        = list(0, 49, below = TRUE),
+          footer        = list(0, 49, below = TRUE),
+          fit_to_width  = list(0, 32767, whole = TRUE),
+          fit_to_height = list(0, 32767, whole = TRUE),
+          hdpi          = list(1, 4294967295, whole = TRUE),
+          vdpi          = list(1, 4294967295, whole = TRUE),
+          scale         = list(10, 400, whole = TRUE)
         )
       )
 
@@ -8464,11 +8510,15 @@ wbWorkbook <- R6::R6Class(
 
       if (!is.null(scale_with_doc)) {
         assert_class(scale_with_doc, "logical")
+        if (length(scale_with_doc) != 1 || is.na(scale_with_doc))
+          stop("`scale_with_doc` must be TRUE or FALSE", call. = FALSE)
         self$worksheets[[sheet]]$scale_with_doc     <- scale_with_doc
       }
 
       if (!is.null(align_with_margins)) {
         assert_class(align_with_margins, "logical")
+        if (length(align_with_margins) != 1 || is.na(align_with_margins))
+          stop("`align_with_margins` must be TRUE or FALSE", call. = FALSE)
         self$worksheets[[sheet]]$align_with_margins <- align_with_margins
       }
 
@@ -8670,6 +8720,11 @@ wbWorkbook <- R6::R6Class(
 
       arguments <- c(ls(), "rows", "cols")
       standardize_case_names(..., arguments = arguments)
+      private$check_args(
+        opt_flags = c("hidden", "is_function", "publish_to_server", "vb_procedure", "workbook_parameter", "xml")
+      )
+      if (is.character(name) && any(nchar(name) > 255, na.rm = TRUE))
+        stop("`name` must have at most 255 characters", call. = FALSE)
 
       sheet <- private$get_sheet_index(sheet)
 
@@ -9366,6 +9421,8 @@ wbWorkbook <- R6::R6Class(
         numfmt
     ) {
       private$check_args(dims = "dims")
+      if (is.numeric(numfmt) && (length(numfmt) != 1L || !is.finite(numfmt) || numfmt < 0 || numfmt != trunc(numfmt)))
+        stop("a numeric `numfmt` must be a non-negative whole number", call. = FALSE)
       sheet <- private$get_sheet_index(sheet)
       sel <- private$do_cell_init(sheet, dims, return_sel = TRUE)
 
@@ -9481,9 +9538,35 @@ wbWorkbook <- R6::R6Class(
           "num_fmt_id", "pivot_button", "quote_prefix", "reading_order",
           "relative_indent", "shrink_to_fit", "text_rotation", "vertical", "wrap_text",
           "xf_id"
+        ),
+        opt_flags = c(
+          "apply_alignment", "apply_border", "apply_fill", "apply_font", "apply_number_format",
+          "apply_protection", "hidden", "justify_last_line", "locked", "pivot_button",
+          "quote_prefix", "shrink_to_fit", "wrap_text"
+        ),
+        ranges = list(
+          border_id     = list(0, 4294967295, whole = TRUE),
+          fill_id       = list(0, 4294967295, whole = TRUE),
+          font_id       = list(0, 4294967295, whole = TRUE),
+          num_fmt_id    = list(0, 4294967295, whole = TRUE),
+          xf_id         = list(0, 4294967295, whole = TRUE),
+          indent        = list(0, 255, whole = TRUE),
+          reading_order = list(0, 2, whole = TRUE),
+          text_rotation = list(0, 255, whole = TRUE)
         )
       )
       private$check_args(dims = "dims")
+      if (!is.null(text_rotation) && !identical(text_rotation, "") &&
+          as.numeric(text_rotation) > 180 && as.numeric(text_rotation) != 255) {
+        stop("add_cell_style(): `text_rotation` must be from 0 to 180, or 255 for vertical text.", call. = FALSE)
+      }
+      if (!is.null(horizontal) && !identical(horizontal, "")) {
+        horizontal <- match_oneof(horizontal, c("general", "left", "center", "right", "fill", "justify",
+                                                "centerContinuous", "distributed"))
+      }
+      if (!is.null(vertical) && !identical(vertical, "")) {
+        vertical <- match_oneof(vertical, c("top", "center", "bottom", "justify", "distributed"))
+      }
 
       sheet <- private$get_sheet_index(sheet)
       sel <- private$do_cell_init(sheet, dims, return_sel = TRUE)
@@ -9878,7 +9961,8 @@ wbWorkbook <- R6::R6Class(
           "calculated_column", "empty_cell_reference", "eval_error", "formula",
           "formula_range", "list_data_validation", "number_stored_as_text",
           "two_digit_text_year", "unlocked_formula"
-        )
+        ),
+        dims = "dims"
       )
       sheet <- private$get_sheet_index(sheet)
       self$worksheets[[sheet]]$ignore_error(
@@ -9944,8 +10028,24 @@ wbWorkbook <- R6::R6Class(
           "top_left_cell", "view", "window_protection", "workbook_view_id",
           "zoom_scale", "zoom_scale_normal", "zoom_scale_page_layout_view",
           "zoom_scale_sheet_layout_view"
+        ),
+        opt_flags = c(
+          "default_grid_color", "right_to_left", "show_formulas", "show_grid_lines",
+          "show_outline_symbols", "show_row_col_headers", "show_ruler",
+          "show_white_space", "show_zeros", "tab_selected", "window_protection"
+        ),
+        ranges = list(
+          color_id                     = list(0, 64, whole = TRUE),
+          workbook_view_id             = list(0, 4294967295, whole = TRUE),
+          zoom_scale                   = list(10, 400, whole = TRUE),
+          zoom_scale_normal            = list(10, 400, whole = TRUE),
+          zoom_scale_page_layout_view  = list(10, 400, whole = TRUE),
+          zoom_scale_sheet_layout_view = list(10, 400, whole = TRUE)
         )
       )
+      if (!is.null(view)) {
+        view <- match_oneof(view, c("normal", "pageBreakPreview", "pageLayout"))
+      }
       sheet <- private$get_sheet_index(sheet)
       self$worksheets[[sheet]]$set_sheetview(
         color_id                     = color_id,
@@ -10199,7 +10299,7 @@ wbWorkbook <- R6::R6Class(
     # scalars: NULL or of length one, used for values written as single xml
     #   attributes
     # dims: NULL or a character vector without NA
-    check_args = function(flags = NULL, whole = NULL, scalars = NULL, dims = NULL) {
+    check_args = function(flags = NULL, whole = NULL, scalars = NULL, dims = NULL, opt_flags = NULL, ranges = NULL) {
 
       env    <- parent.frame()
       method <- paste(deparse(sys.call(-1L)[[1L]], nlines = 1L), collapse = "")
@@ -10236,6 +10336,40 @@ wbWorkbook <- R6::R6Class(
         if (!is.null(val) && (!is.character(val) || anyNA(val))) {
           stop(
             sprintf("%s(): `%s` must be a character vector of cell ranges like \"A1:B2\".", method, nm),
+            call. = FALSE
+          )
+        }
+      }
+
+      # like flags, but NULL or "" leave the value unset and "0", "1", "true", "false" are fine
+      for (nm in opt_flags) {
+        val <- get(nm, envir = env)
+        if (is.null(val) || identical(val, "") || !is.atomic(val)) next
+        is_flag <- (is.logical(val) || is.numeric(val) || is.character(val)) && length(val) == 1L &&
+          !is.na(val) && as_xml_attr(val) %in% c("0", "1", "false", "true")
+        if (!is_flag) {
+          stop(sprintf("%s(): `%s` must be TRUE or FALSE.", method, nm), call. = FALSE)
+        }
+      }
+
+      # list(name = list(min, max, whole = TRUE, below = TRUE)), below excludes max, NULL is skipped
+      for (nm in names(ranges)) {
+        val <- get(nm, envir = env)
+        if (is.null(val) || identical(val, "") || !is.atomic(val)) next
+        lim   <- ranges[[nm]]
+        whole <- isTRUE(lim$whole)
+        below <- isTRUE(lim$below)
+        num   <- suppressWarnings(as.numeric(val))
+        ok <- length(num) > 0L && all(is.finite(num)) && all(num >= lim[[1]]) &&
+          (if (below) all(num < lim[[2]]) else all(num <= lim[[2]])) &&
+          (!whole || all(num == trunc(num)))
+        if (!ok) {
+          stop(
+            sprintf(
+              "%s(): `%s` must be a %s from %s to %s%s.", method, nm,
+              if (whole) "whole number" else "number", lim[[1]],
+              if (below) "below " else "", lim[[2]]
+            ),
             call. = FALSE
           )
         }
@@ -10743,18 +10877,18 @@ wbWorkbook <- R6::R6Class(
         comment           = comment,
         customMenu        = customMenu,
         description       = description,
-        `function`        = is_function,
+        `function`        = if (!is.null(is_function)) as_xml_attr(is_function),
         functionGroupId   = functionGroupId,
         help              = help,
-        hidden            = hidden,
+        hidden            = if (!is.null(hidden)) as_xml_attr(hidden),
         localName         = localName,
         localSheetId      = localSheetId,
         name              = name,
-        publishToServer   = publishToServer,
+        publishToServer   = if (!is.null(publishToServer)) as_xml_attr(publishToServer),
         statusBar         = statusBar,
-        vbProcedure       = vbProcedure,
-        workbookParameter = workbookParameter,
-        xml               = xml
+        vbProcedure       = if (!is.null(vbProcedure)) as_xml_attr(vbProcedure),
+        workbookParameter = if (!is.null(workbookParameter)) as_xml_attr(workbookParameter),
+        xml               = if (!is.null(xml)) as_xml_attr(xml)
       )
 
       xml <- xml_node_create(
