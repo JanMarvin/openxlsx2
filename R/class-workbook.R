@@ -638,6 +638,31 @@ wbWorkbook <- R6::R6Class(
       private$validate_new_sheet(sheet)
       sheet_name <- replace_legal_chars(sheet)
 
+      standardize(...)
+
+      if (!is.null(tab_color) && !is_wbColour(tab_color)) {
+        validate_color(tab_color, msg = "Invalid tab_color in add_chartsheet.")
+        tabColor <- wb_color(tab_color)
+      } else {
+        tabColor <- tab_color
+      }
+
+      if (!is.numeric(zoom) || length(zoom) != 1 || is.na(zoom)) {
+        fail <- TRUE
+        msg <- c(msg, "zoom must be numeric")
+      }
+
+      if (fail) {
+        stop(msg, call. = FALSE)
+      }
+
+      # nocov start
+      if (zoom < 10) {
+        zoom <- 10
+      } else if (zoom > 400) {
+        zoom <- 400
+      }
+      #nocov end
 
       newSheetIndex <- length(self$worksheets) + 1L
       private$set_current_sheet(newSheetIndex)
@@ -652,28 +677,6 @@ wbWorkbook <- R6::R6Class(
           newSheetIndex
         )
       )
-
-      standardize(...)
-
-      if (!is.null(tab_color) && !is_wbColour(tab_color)) {
-        validate_color(tab_color, msg = "Invalid tab_color in add_chartsheet.")
-        tabColor <- wb_color(tab_color)
-      } else {
-        tabColor <- tab_color
-      }
-
-      if (!is.numeric(zoom)) {
-        fail <- TRUE
-        msg <- c(msg, "zoom must be numeric")
-      }
-
-      # nocov start
-      if (zoom < 10) {
-        zoom <- 10
-      } else if (zoom > 400) {
-        zoom <- 400
-      }
-      #nocov end
 
       self$append("worksheets",
         wbChartSheet$new(

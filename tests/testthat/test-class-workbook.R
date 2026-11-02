@@ -1746,6 +1746,16 @@ test_that("wb_data() reads a header of several rows", {
   expect_error(wb_data(wb, 1, dims = "B2:E3;B5:E5", header_rows = 2), "single range")
 })
 
+test_that("wb_data() returns NULL for a worksheet without data", {
+  wb <- wb_workbook()$add_worksheet()
+
+  expect_message(got <- wb_data(wb, dims = "B2:C3"), "contains no data")
+  expect_null(got)
+
+  expect_message(got <- wb_data(wb, dims = "B2:C4", header_rows = 2), "contains no data")
+  expect_null(got)
+})
+
 test_that("wb_data() limits full column and full row dims to the used range", {
   wb <- wb_workbook()$add_worksheet()$add_data(x = mtcars)
 

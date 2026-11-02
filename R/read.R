@@ -1091,7 +1091,7 @@ wb_read <- function(
 #' pivot tables use as their source. If `FALSE`, all rows or columns are read.
 #' @param ... additional arguments for `wb_to_df()`. Be aware that not every
 #' argument is valid.
-#' @returns A data frame of class `wb_data`.
+#' @returns A data frame of class `wb_data`, or `NULL` if the worksheet contains no data.
 #' @seealso [wb_to_df()] [wb_add_mschart()], [wb_add_pivot_table()]
 #' @examples
 #'  wb <- wb_workbook()
@@ -1158,6 +1158,7 @@ wb_data <- function(wb, sheet = current_sheet(), dims, header_rows = 1L, used_ra
 
   if (header_rows == 1L) {
     z <- wb_to_df(wb, sheet, dims = dims, ...)
+    if (is.null(z)) return(NULL)
     attr(z, "dims")  <- dims_to_dataframe(dims, fill = TRUE, empty_rm = TRUE)
   } else {
     if (grepl(";", dims, fixed = TRUE)) {
@@ -1172,6 +1173,7 @@ wb_data <- function(wb, sheet = current_sheet(), dims, header_rows = 1L, used_ra
     dat_dims <- sprintf("%s:%s", dd[header_rows + 1L, 1], dd[nrow(dd), ncol(dd)])
 
     hdr_df <- wb_to_df(wb, sheet, dims = hdr_dims, col_names = FALSE, fill_merged_cells = TRUE)
+    if (is.null(hdr_df)) return(NULL)
     hdr <- matrix(
       unlist(lapply(hdr_df, as.character), use.names = FALSE),
       nrow = header_rows,
