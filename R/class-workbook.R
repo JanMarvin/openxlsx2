@@ -5719,8 +5719,8 @@ wbWorkbook <- R6::R6Class(
             self$workbook$sheets,
             fixed = TRUE
           )
-          # these are zero indexed
-          self$workbook$bookViews <- gsub(
+          # these are zero indexed, a workbook without views keeps none
+          if (length(self$workbook$bookViews)) self$workbook$bookViews <- gsub(
             stringi::stri_join("activeTab=\"", i - 1L, "\""),
             stringi::stri_join("activeTab=\"", i - 2L, "\""),
             self$workbook$bookViews,

@@ -282,3 +282,12 @@ test_that("limits Office imposes beyond the schema are checked", {
   for (i in seq_len(1023)) wb$add_page_break(col = i)
   expect_error(wb$add_page_break(col = 1024), "column breaks")
 })
+
+test_that("removing a worksheet before saving keeps the default view", {
+  wb <- wb_workbook()$add_worksheet()$add_worksheet()$add_worksheet()
+  wb$remove_worksheet(2)
+  expect_null(wb$workbook$bookViews)
+  temp <- temp_xlsx()
+  wb$save(temp)
+  expect_match(wb$workbook$bookViews, "<bookViews><workbookView ")
+})
