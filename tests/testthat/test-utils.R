@@ -562,7 +562,7 @@ test_that("string formating", {
   expect_equal(exp, got)
 
   exp <- structure(
-    "<r><rPr><i/><strike/><rFont val=\"Arial\"/><charset/><outline/><vertAlign val=\"baseline\"/></rPr><t>test</t></r>",
+    "<r><rPr><i/><strike/><outline/><vertAlign val=\"baseline\"/><rFont val=\"Arial\"/><charset/></rPr><t>test</t></r>",
     class = c("character", "fmt_txt")
   )
   got <- fmt_txt(
@@ -656,7 +656,7 @@ test_that("protect against blank string in fmt_txt()", {
 
 test_that("fmt_txt() input validation works", {
 
-  exp <- "<r><rPr><b/><i/><u val=\"double\"/><strike/><sz val=\"12\"/><color rgb=\"FF0000FF\"/><rFont val=\"Times New Roman\"/><charset val=\"1\"/><outline/><vertAlign val=\"baseline\"/><family val=\"2\"/><shadow/><condense/><extend/></rPr><t>foo bar</t></r>"
+  exp <- "<r><rPr><b/><i/><strike/><condense/><extend/><outline/><shadow/><u val=\"double\"/><vertAlign val=\"baseline\"/><sz val=\"12\"/><color rgb=\"FF0000FF\"/><rFont val=\"Times New Roman\"/><family val=\"2\"/><charset val=\"1\"/></rPr><t>foo bar</t></r>"
   fmt_str <- fmt_txt(
     x = "foo bar",
     bold = TRUE,

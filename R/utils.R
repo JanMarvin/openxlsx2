@@ -1302,21 +1302,22 @@ fmt_txt <- function(
   # ommit all run properties, if x is "", this causes broken output in certain
   # spreadsheet applications
   if (nchar(x)) {
+    # the child order spreadsheet software expects (MS-OI29500, Part 1 18.4.7)
     rPr_clds <- c(
       xml_b,
       xml_i,
-      xml_u,
       xml_strk,
+      xml_cdns,
+      xml_extnd,
+      xml_otln,
+      xml_sdw,
+      xml_u,
+      xml_vrtln,
       xml_sz,
       xml_color,
       xml_font,
-      xml_chrst,
-      xml_otln,
-      xml_vrtln,
       xml_fmly,
-      xml_sdw,
-      xml_cdns,
-      xml_extnd
+      xml_chrst
     )
   }
 

@@ -255,8 +255,8 @@ create_numfmt <- function(numFmtId = 164, formatCode = "#,##0.00") {
   if (!in_xml_range(numFmtId, list(0, 4294967295, whole = TRUE))) {
     stop("create_numfmt(): `numFmtId` must be a whole number from 0 to 4294967295.", call. = FALSE)
   }
-  if (any(nchar(formatCode) > 255L) || any(!nzchar(strip_xml_control_chars(as.character(formatCode))))) {
-    stop("create_numfmt(): `formatCode` must be a non-empty string with at most 255 characters.", call. = FALSE)
+  if (any(nchar(formatCode) > 254L) || any(!nzchar(strip_xml_control_chars(as.character(formatCode))))) {
+    stop("create_numfmt(): `formatCode` must be a non-empty string with less than 255 characters.", call. = FALSE)
   }
 
   formatCode <- escape_format_code(formatCode)
