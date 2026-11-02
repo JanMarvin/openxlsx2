@@ -48,7 +48,7 @@ argument is valid.}
 \item{drop}{drop}
 }
 \value{
-A data frame of class \code{wb_data}.
+A data frame of class \code{wb_data}, or \code{NULL} if the worksheet contains no data.
 }
 \description{
 provide wb_data object as mschart input
