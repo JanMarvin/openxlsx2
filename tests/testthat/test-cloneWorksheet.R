@@ -3,7 +3,7 @@ test_that("clone Worksheet with data", {
   wb <- wb_workbook()
   wb$add_worksheet("Sheet 1")
   wb$add_data("Sheet 1", 1)
-  wb$clone_worksheet("Sheet 1", "Sheet 2")
+  expect_warning(wb$clone_worksheet("Sheet 1", "Sheet 2"), "experimental")
 
   file_name <- testfile_path("cloneWorksheetExample.xlsx")
   refwb <- wb_load(file = file_name)
@@ -17,7 +17,7 @@ test_that("clone empty Worksheet", {
 
   wb <- wb_workbook()
   wb$add_worksheet("Sheet 1")
-  wb$clone_worksheet("Sheet 1", "Sheet 2")
+  expect_warning(wb$clone_worksheet("Sheet 1", "Sheet 2"), "experimental")
 
   file_name <- testfile_path("cloneEmptyWorksheetExample.xlsx")
   refwb <- wb_load(file = file_name)
@@ -35,7 +35,7 @@ test_that("clone Worksheet with table", {
   wb$add_data_table(sheet = 1, x = mtcars, table_name = "mtcars", start_col = 10)
 
   # FIXME a wild drawing2.xml appears in wb$Content_Types
-  wb$clone_worksheet("Sheet 1", "Clone 1")
+  expect_warning(wb$clone_worksheet("Sheet 1", "Clone 1"), "experimental")
 
   old <- wb_validate_sheet(wb, "Sheet 1")
   new <- wb_validate_sheet(wb, "Clone 1")
@@ -70,22 +70,21 @@ test_that("copy cells", {
   dat <- wb_data(wb, dims = "A1:D4", col_names = FALSE)
 
   # FIXME there is a bug with next_sheet() in clone_worksheets()
-  wb$
-    # 1:1 copy to M2
-    clone_worksheet(old = 1, new = "Clone1")$
-    copy_cells(data = dat, dims = "M2", as_value = FALSE, as_ref = FALSE, transpose = FALSE)$
-    # 1:1 transposed copy to A20
-    clone_worksheet(old = 1, new = "Clone2")$
-    copy_cells(data = dat, dims = "A20", as_value = FALSE, as_ref = FALSE, transpose = TRUE)$
-    # reference transposed copy to A20
-    clone_worksheet(old = 1, new = "Clone3")$
-    copy_cells(data = dat, dims = "A20", as_value = FALSE, as_ref = TRUE, transpose = TRUE)$
-    # value copy to A20
-    clone_worksheet(old = 1, new = "Clone4")$
-    copy_cells(data = dat, dims = "A20", as_value = TRUE, as_ref = FALSE, transpose = FALSE)$
-    # transposed value copy to A20
-    clone_worksheet(old = 1, new = "Clone5")$
-    copy_cells(data = dat, dims = "A20", as_value = TRUE, as_ref = FALSE, transpose = TRUE)
+  # 1:1 copy to M2
+  expect_warning(wb$clone_worksheet(old = 1, new = "Clone1"), "experimental")
+  wb$copy_cells(data = dat, dims = "M2", as_value = FALSE, as_ref = FALSE, transpose = FALSE)
+  # 1:1 transposed copy to A20
+  expect_warning(wb$clone_worksheet(old = 1, new = "Clone2"), "experimental")
+  wb$copy_cells(data = dat, dims = "A20", as_value = FALSE, as_ref = FALSE, transpose = TRUE)
+  # reference transposed copy to A20
+  expect_warning(wb$clone_worksheet(old = 1, new = "Clone3"), "experimental")
+  wb$copy_cells(data = dat, dims = "A20", as_value = FALSE, as_ref = TRUE, transpose = TRUE)
+  # value copy to A20
+  expect_warning(wb$clone_worksheet(old = 1, new = "Clone4"), "experimental")
+  wb$copy_cells(data = dat, dims = "A20", as_value = TRUE, as_ref = FALSE, transpose = FALSE)
+  # transposed value copy to A20
+  expect_warning(wb$clone_worksheet(old = 1, new = "Clone5"), "experimental")
+  wb$copy_cells(data = dat, dims = "A20", as_value = TRUE, as_ref = FALSE, transpose = TRUE)
 
   got <- wb_data(wb, sheet = 2, dims = "M2:P5", col_names = FALSE)
   expect_equal(dat, got, ignore_attr = TRUE)
@@ -139,7 +138,8 @@ test_that("cloning comments works", {
 
   # cloning comments from loaded worksheet did not work
   wb <- wb_workbook()$add_worksheet()$add_comment(dims = "A1", comment = c1)$save(tmp)
-  wb <- wb_load(tmp)$clone_worksheet()
+  wb <- wb_load(tmp)
+  expect_warning(wb$clone_worksheet(), "experimental")
 
   expect_equal(wb$comments[[1]][[1]]$ref, wb$comments[[2]][[1]]$ref)
 
@@ -187,16 +187,16 @@ test_that("cloning from workbooks works", {
   fl <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
   wb_in <- wb_load(fl)
 
-  wb$clone_worksheet(old = "SUM", new = "SUM", from = wb_in)
+  expect_warning(wb$clone_worksheet(old = "SUM", new = "SUM", from = wb_in), "experimental")
   got <- unname(wb$get_sheet_names())
   expect_equal(got, c("NOT_SUM", "SUM"))
 
-  wb$clone_worksheet(old = "SUM", new = "SUM_clone")
+  expect_warning(wb$clone_worksheet(old = "SUM", new = "SUM_clone"), "experimental")
   exp <- c("NOT_SUM", "SUM", "SUM_clone")
   got <- unname(wb$get_sheet_names())
   expect_equal(exp, got)
 
-  wb$clone_worksheet(old = "SUM", new = "SUM2", from = wb_in)
+  expect_warning(wb$clone_worksheet(old = "SUM", new = "SUM2", from = wb_in), "experimental")
   exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2")
   got <- unname(wb$get_sheet_names())
   expect_equal(exp, got)
@@ -205,13 +205,16 @@ test_that("cloning from workbooks works", {
 
   wb_in <- wb_workbook()$add_worksheet("tab")$add_data_table(x = mtcars)
 
-  wb$clone_worksheet(old = "tab", new = "tab", from = wb_in)
+  expect_warning(wb$clone_worksheet(old = "tab", new = "tab", from = wb_in), "experimental")
   exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2", "tab")
   got <- unname(wb$get_sheet_names())
   expect_equal(exp, got)
 
   # clone it twice
-  expect_warning(wb$clone_worksheet(old = "tab", new = "tab", from = wb_in))
+  expect_warning(
+    expect_warning(wb$clone_worksheet(old = "tab", new = "tab", from = wb_in), "already exists"),
+    "experimental"
+  )
   exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2", "tab", "tab (1)")
   got <- unname(wb$get_sheet_names())
   expect_equal(exp, got)
@@ -228,12 +231,12 @@ test_that("cloning from workbooks works", {
     add_worksheet("chart")$
     add_mschart(dims = "F4:L20", graph = scatter)
 
-  wb$clone_worksheet(old = "chart", new = "chart_1", from = wb_ms)
+  expect_warning(wb$clone_worksheet(old = "chart", new = "chart_1", from = wb_ms), "experimental")
   exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2", "tab", "tab (1)", "chart_1")
   got <- unname(wb$get_sheet_names())
   expect_equal(exp, got)
 
-  wb$clone_worksheet(old = "chart", new = "chart_2", from = wb_ms)
+  expect_warning(wb$clone_worksheet(old = "chart", new = "chart_2", from = wb_ms), "experimental")
   exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2", "tab", "tab (1)", "chart_1", "chart_2")
   got <- unname(wb$get_sheet_names())
   expect_equal(exp, got)
@@ -246,12 +249,12 @@ test_that("cloning from workbooks works", {
     add_worksheet()$
     add_image("Sheet 1", dims = "C5", file = img, width = 6, height = 5)
 
-  wb$clone_worksheet(old = "Sheet 1", new = "img", from = wb_img)
+  expect_warning(wb$clone_worksheet(old = "Sheet 1", new = "img", from = wb_img), "experimental")
   exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2", "tab", "tab (1)", "chart_1", "chart_2", "img")
   got <- unname(wb$get_sheet_names())
   expect_equal(exp, got)
 
-  wb$clone_worksheet(old = "Sheet 1", new = "img2", from = wb_img)
+  expect_warning(wb$clone_worksheet(old = "Sheet 1", new = "img2", from = wb_img), "experimental")
   exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2", "tab", "tab (1)", "chart_1", "chart_2", "img", "img2")
   got <- unname(wb$get_sheet_names())
   expect_equal(exp, got)
@@ -260,8 +263,11 @@ test_that("cloning from workbooks works", {
   wb_ex <- wb_load(testfile_path("loadExample.xlsx"))
 
   expect_warning(
-    wb$clone_worksheet(old = "testing", new = "test", from = wb_ex),
-    "Input file has dxf styles. These are not cloned. Some styles might be broken and spreadsheet software might complain."
+    expect_warning(
+      wb$clone_worksheet(old = "testing", new = "test", from = wb_ex),
+      "Input file has dxf styles. These are not cloned. Some styles might be broken and spreadsheet software might complain."
+    ),
+    "experimental"
   )
   exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2", "tab", "tab (1)", "chart_1", "chart_2", "img", "img2", "test")
   got <- unname(wb$get_sheet_names())
@@ -307,8 +313,8 @@ test_that("cloning column and row styles works", {
   wb_mtcars <- wb_load(tmp)
 
   wb <- wb_workbook()$add_worksheet()
-  wb$clone_worksheet(old = "Sheet 1", "mtcars", from = wb_mtcars)
-  wb$clone_worksheet(old = "Sheet 2", "iris", from = wb_mtcars)
+  expect_warning(wb$clone_worksheet(old = "Sheet 1", "mtcars", from = wb_mtcars), "experimental")
+  expect_warning(wb$clone_worksheet(old = "Sheet 2", "iris", from = wb_mtcars), "experimental")
 
   exp <- "<col min=\"11\" max=\"11\" style=\"1\" width=\"8.43\"/>"
   got <- wb$worksheets[[2]]$cols_attr[2]
@@ -333,8 +339,11 @@ test_that("cloning slicers throws warning", {
     add_slicer(x = df, slicer = "vs", pivot_table = "mtcars")
 
   expect_warning(
-    wb$clone_worksheet(old = "Sheet 2", new = "Sheet 3"),
-    "Cloning slicers is not yet supported. It will not appear on the sheet."
+    expect_warning(
+      wb$clone_worksheet(old = "Sheet 2", new = "Sheet 3"),
+      "Cloning slicers is not yet supported. It will not appear on the sheet."
+    ),
+    "experimental"
   )
 
 })
@@ -369,7 +378,7 @@ test_that("cloning sheets with multiple images works", {
     add_image(dims = "A4:A4", file = jpg2)
 
   wb <- wb_workbook()
-  wb$clone_worksheet(old = 1, new = "Clone1", from = wb_old)
+  expect_warning(wb$clone_worksheet(old = 1, new = "Clone1", from = wb_old), "experimental")
 
   exp <- list(
     c(
@@ -400,13 +409,11 @@ test_that("cloning charts and chartEx works", {
   wb$add_worksheet("wf")$add_encharter(graph = wf)
   wb$add_worksheet("bp")$add_encharter(graph = bp)
 
-  expect_silent(
-    wb2 <- wb_workbook()$
-      clone_worksheet("data", "data", from = wb)$
-      clone_worksheet("bp", "bp", from = wb)$
-      clone_worksheet("wf", "wf", from = wb)$
-      clone_worksheet("wf", "wf2")
-  )
+  wb2 <- wb_workbook()
+  expect_warning(wb2$clone_worksheet("data", "data", from = wb), "experimental")
+  expect_warning(wb2$clone_worksheet("bp", "bp", from = wb), "experimental")
+  expect_warning(wb2$clone_worksheet("wf", "wf", from = wb), "experimental")
+  expect_warning(wb2$clone_worksheet("wf", "wf2"), "experimental")
 
   exp <- c(TRUE, FALSE)
   got <- nzchar(wb2$charts$chart)
@@ -454,7 +461,7 @@ test_that("cloning defined names works", {
     add_named_region(dims = "A1", name = "elsewhere")
   wb$page_setup(sheet = 1, print_title_rows = 1)
 
-  wb$clone_worksheet("my data", "copy $1")
+  expect_warning(wb$clone_worksheet("my data", "copy $1"), "experimental")
 
   nr <- wb$get_named_regions()
   nr <- nr[nr$localSheetId == "2", c("name", "value")]
@@ -477,7 +484,7 @@ test_that("cloning defined names works", {
     "<definedName name=\"c\">S12!$A$1</definedName>",
     "<definedName name=\"d\">'S1'!$A$1</definedName>"
   )
-  wb2$clone_worksheet("S1", "N")
+  expect_warning(wb2$clone_worksheet("S1", "N"), "experimental")
 
   exp <- c(
     "<definedName name=\"a\" localSheetId=\"2\">'N'!$A$1,S12!$A$1</definedName>",

@@ -992,6 +992,8 @@ wbWorkbook <- R6::R6Class(
     #' @param from name of new worksheet to add
     clone_worksheet = function(old = current_sheet(), new = next_sheet(), from = NULL) {
 
+      warning("Cloning worksheets is experimental and untested. Check the output carefully.")
+
       if (is.null(from)) {
         from        <- self$clone()
         external_wb <- FALSE

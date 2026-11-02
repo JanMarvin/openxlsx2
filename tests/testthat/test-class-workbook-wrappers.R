@@ -77,7 +77,13 @@ test_that("wb_freeze_pane() is a wrapper", {
 
 test_that("wb_clone_worksheet() is a wrapper", {
   wb <- wbWorkbook$new()$add_worksheet("sheet")
-  expect_wrapper("clone_worksheet", wb = wb, params = list(old = "sheet", new = "new"))
+  expect_warning(
+    expect_warning(
+      expect_wrapper("clone_worksheet", wb = wb, params = list(old = "sheet", new = "new")),
+      "experimental"
+    ),
+    "experimental"
+  )
 })
 
 # wb_freeze_pane() --------------------------------------------------------

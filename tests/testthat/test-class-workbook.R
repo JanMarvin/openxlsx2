@@ -420,14 +420,14 @@ test_that("clone worksheet", {
   fl <- testfile_path("mtcars_chart.xlsx")
   wb <- wb_load(fl)
   # wb$get_sheet_names() # chartsheet has no named name?
-  expect_silent(wb$clone_worksheet(1, "Clone 1"))
+  expect_warning(wb$clone_worksheet(1, "Clone 1"), "experimental")
   expect_s3_class(wb$worksheets[[5]], "wbChartSheet")
   # wb$open()
 
   # clone pivot table and drawing -----------------------------------------
   fl <- testfile_path("loadExample.xlsx")
   wb <- wb_load(fl)
-  expect_silent(wb$clone_worksheet(4, "Clone 1"))
+  expect_warning(wb$clone_worksheet(4, "Clone 1"), "experimental")
 
   # sheets 4 & 5 both reference the same pivot table in different drawing
   # once the file is opened, both pivot tables behave independently
@@ -441,7 +441,7 @@ test_that("clone worksheet", {
 
   # clone drawing ---------------------------------------------------------
   wb <- wb_load(fl)
-  expect_silent(wb$clone_worksheet("testing", "Clone1"))
+  expect_warning(wb$clone_worksheet("testing", "Clone1"), "experimental")
 
   expect_false(identical(wb$worksheets_rels[2], wb$worksheets_rels[5]))
   # wb$open()
@@ -449,7 +449,7 @@ test_that("clone worksheet", {
   # clone sheet with table ------------------------------------------------
   fl <- testfile_path("tableStyles.xlsx")
   wb <- wb_load(fl)
-  expect_silent(wb$clone_worksheet(1, "clone"))
+  expect_warning(wb$clone_worksheet(1, "clone"), "experimental")
 
   expect_false(identical(wb$tables$tab_xml[1], wb$tables$tab_xml[2]))
   # wb$open()
@@ -457,7 +457,7 @@ test_that("clone worksheet", {
   # clone sheet with chart ------------------------------------------------
   fl <- testfile_path("mtcars_chart.xlsx")
   wb <- wb_load(fl)
-  wb$clone_worksheet(2, "Clone 1")
+  expect_warning(wb$clone_worksheet(2, "Clone 1"), "experimental")
 
   expect_match(wb$charts$chart[2], "test")
   expect_match(wb$charts$chart[3], "'Clone 1'")
@@ -466,8 +466,13 @@ test_that("clone worksheet", {
   # clone slicer ----------------------------------------------------------
   fl <- testfile_path("loadExample.xlsx")
   wb <- wb_load(fl)
-  expect_warning(wb$clone_worksheet("IrisSample", "Clone1"),
-                 "Cloning slicers is not yet supported. It will not appear on the sheet.")
+  expect_warning(
+    expect_warning(
+      wb$clone_worksheet("IrisSample", "Clone1"),
+      "Cloning slicers is not yet supported. It will not appear on the sheet."
+    ),
+    "experimental"
+  )
   # wb$open()
 
 })
