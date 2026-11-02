@@ -4766,15 +4766,12 @@ wbWorkbook <- R6::R6Class(
         wbv <- wbv[-view]
       }
 
-      # without views the element is omitted, an empty bookViews is invalid
-      if (length(wbv)) {
-        self$workbook$bookViews <- xml_node_create(
-          "bookViews",
-          xml_children = wbv
-        )
-      } else {
-        self$workbook$bookViews <- NULL
-      }
+      # an empty bookViews is invalid and Excel cannot print without one, a default view remains
+      if (length(wbv) == 0) wbv <- xml_node_create("workbookView")
+      self$workbook$bookViews <- xml_node_create(
+        "bookViews",
+        xml_children = wbv
+      )
 
       invisible(self)
     },
@@ -4828,8 +4825,8 @@ wbWorkbook <- R6::R6Class(
           active_tab    = list(0, 32766, whole = TRUE),
           first_sheet   = list(0, 32766, whole = TRUE),
           tab_ratio     = list(0, 1000, whole = TRUE),
-          window_height = list(0, 4294967295, whole = TRUE),
-          window_width  = list(0, 4294967295, whole = TRUE),
+          window_height = list(0, 2147483647, whole = TRUE),
+          window_width  = list(0, 2147483647, whole = TRUE),
           x_window      = list(-2147483648, 2147483647, whole = TRUE),
           y_window      = list(-2147483648, 2147483647, whole = TRUE)
         )
@@ -5786,10 +5783,12 @@ wbWorkbook <- R6::R6Class(
       assert_class(show_input_msg, "logical")
       assert_class(show_error_msg, "logical")
 
-      for (nm in c("error_title", "prompt_title")) {
+      # Office limits: titles 32, error message 224 and prompt 255 characters
+      dv_limits <- c(error_title = 32L, prompt_title = 32L, error = 224L, prompt = 255L)
+      for (nm in names(dv_limits)) {
         val <- get(nm)
-        if (!is.null(val) && (!is.character(val) || length(val) != 1L || is.na(val) || nchar(val) > 32L)) {
-          stop(sprintf("`%s` must be a string with at most 32 characters", nm), call. = FALSE)
+        if (!is.null(val) && (!is.character(val) || length(val) != 1L || is.na(val) || nchar(val) > dv_limits[[nm]])) {
+          stop(sprintf("`%s` must be a string with at most %d characters", nm, dv_limits[[nm]]), call. = FALSE)
         }
       }
 
@@ -7774,7 +7773,7 @@ wbWorkbook <- R6::R6Class(
         stop("protect(): `password` must be a single string.", call. = FALSE)
       }
       if (file_sharing && !is.null(username) &&
-          (!is.character(username) || is.na(username) || nchar(username) > 54L ||
+          (!is.character(username) || length(username) != 1L || is.na(username) || nchar(username) > 54L ||
            !nzchar(strip_xml_control_chars(username)))) {
         stop("protect(): `username` must be a non-empty string with at most 54 characters.", call. = FALSE)
       }

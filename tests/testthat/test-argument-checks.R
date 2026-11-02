@@ -221,7 +221,7 @@ test_that("removing parts leaves no references behind", {
   wb$set_bookview(active_tab = 0)
   expect_error(wb$remove_bookview(view = NA), "view")
   wb$remove_bookview(view = 1)
-  expect_null(wb$workbook$bookViews)
+  expect_equal(wb$workbook$bookViews, "<bookViews><workbookView/></bookViews>")
 })
 
 test_that("values found by fuzzing the create functions are checked", {
@@ -255,4 +255,30 @@ test_that("values found by fuzzing the create functions are checked", {
   expect_error(wb$protect(file_sharing = TRUE, username = "\uFFFE"), "username")
   expect_error(create_shape(line_color = wb_color(theme = 99)), "line_color")
   expect_match(create_shape(rotation = 1e-10), "rot=\"0\"")
+})
+
+test_that("limits Office imposes beyond the schema are checked", {
+  wb <- wb_workbook()$add_worksheet()
+
+  expect_error(wb$set_header_footer(header = c(strrep("h", 100), strrep("h", 100), strrep("h", 50))), "255")
+  expect_silent(wb$set_header_footer(header = c(strrep("h", 100), strrep("h", 100), strrep("h", 49))))
+  expect_error(wb$set_header_footer(footer = c(NA, paste(rep("[Page]", 127), collapse = ""), NA)), "255")
+
+  dv <- function(...) wb$add_data_validation(dims = "A1", type = "list", value = "\"a,b\"", ...)
+  expect_error(dv(error = strrep("e", 225)), "error")
+  expect_error(dv(prompt = strrep("p", 256)), "prompt")
+  expect_silent(dv(error = strrep("e", 224), prompt = strrep("p", 255)))
+
+  expect_error(wb$set_bookview(window_height = 2147483648), "window_height")
+  expect_error(wb$set_bookview(window_width = 2147483648), "window_width")
+
+  expect_error(wb$protect(file_sharing = TRUE, username = c("a", "b")), "username")
+
+  expect_error(create_numfmt(formatCode = strrep("0", 255)), "formatCode")
+  expect_silent(create_numfmt(formatCode = strrep("0", 254)))
+
+  for (i in seq_len(1022)) wb$add_page_break(row = i)
+  expect_error(wb$add_page_break(row = 1023), "row breaks")
+  for (i in seq_len(1023)) wb$add_page_break(col = i)
+  expect_error(wb$add_page_break(col = 1024), "column breaks")
 })

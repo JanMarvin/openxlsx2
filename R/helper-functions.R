@@ -155,6 +155,13 @@ validate_color <- function(
 ## header and footer replacements ----------------------------------------------
 headerFooterSub <- function(x) {
   if (!is.null(x)) {
+    # Office keeps at most 255 characters per header or footer, the &L, &C and &R
+    # section codes and the field codes like &P included
+    txt <- x[!is.na(x)]
+    txt <- gsub("\\[(Page|Pages|Date|Time|Path|File|Tab)\\]", "&X", txt)
+    if (sum(nchar(txt)) + 2L * length(txt) > 255L) {
+      stop("a header or footer must have at most 255 characters", call. = FALSE)
+    }
     x <- replace_legal_chars(x)
     x <- gsub("\\[Page\\]", "P", x)
     x <- gsub("\\[Pages\\]", "N", x)
