@@ -1100,9 +1100,6 @@ wbWorkbook <- R6::R6Class(
           stringsAsFactors = FALSE
         )
 
-        old_sheet_name <- guard_ws(from$sheet_names[[old]])
-        new_sheet_name <- guard_ws(new)
-
         # Shapes on top of a chart (userShapes) are a drawing part of their
         # own. These are copied and placed after the drawing of the sheet.
         user_shapes      <- list()
@@ -1148,12 +1145,18 @@ wbWorkbook <- R6::R6Class(
               )
             }
 
-            ## we need to replace "'oldname'" as well as "oldname"
-            chart <- stringi::stri_replace_all_fixed(
+            # references to the old sheet in chart formulas point to the new
+            # sheet, quoted or not
+            f_old <- unique(stringi::stri_extract_all_regex(
               chart,
-              paste0(">", old_sheet_name, "!"),
-              paste0(">", new_sheet_name, "!")
-            )
+              "<([A-Za-z0-9]+):f(?: [^>]*)?>[^<]*</\\1:f>",
+              omit_no_match = TRUE
+            )[[1]])
+            f_new <- stringi::stri_replace_all_regex(f_old, ref_pattern, ref_replacement)
+            changed <- f_old != f_new
+            if (any(changed)) {
+              chart <- stringi::stri_replace_all_fixed(chart, f_old[changed], f_new[changed], vectorize_all = FALSE)
+            }
 
             # chartEx data is referenced via hidden _xlchart.v1.N defined names.
             # These are cloned with ids above all ids used in this workbook,

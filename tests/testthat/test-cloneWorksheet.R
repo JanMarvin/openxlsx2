@@ -632,3 +632,29 @@ test_that("cloning copies embedded objects and chart sheets", {
   expect_true(wb$is_chartsheet[[1]])
   expect_true(any(grepl("Extension=\"docx\"", wb$Content_Types, fixed = TRUE)))
 })
+
+test_that("cloned charts refer to the cloned sheet", {
+
+  skip_if_not_installed("encharter")
+
+  wb <- wb_workbook()$
+    add_worksheet("S")$add_data(x = mtcars)$
+    add_worksheet("other data")$add_data(x = mtcars)
+
+  dat <- wb_data(wb, sheet = "S", dims = "A1:K33")
+  wb$add_encharter(sheet = "S", dims = "M2", graph = encharter::ec("barplot")$add_series(data = dat, name = mpg, label = cyl))
+  wb$add_encharter(sheet = "S", dims = "M20", graph = encharter::ec("barplot")$add_series(data = "other data!B2:B5"))
+
+  expect_warning(wb$clone_worksheet("S", "my copy"), "experimental")
+
+  refs <- function(x) unique(regmatches(x, gregexpr("<c:f>[^<]*</c:f>", x))[[1]])
+
+  exp <- c("<c:f>'my copy'!$A$1</c:f>", "<c:f>'my copy'!$B$2:$B$33</c:f>", "<c:f>'my copy'!$A$2:$A$33</c:f>")
+  expect_equal(refs(wb$charts$chart[3]), exp)
+
+  exp <- "<c:f>'other data'!$B$2:$B$5</c:f>"
+  expect_equal(refs(wb$charts$chart[4]), exp)
+
+  exp <- c("<c:f>'S'!$A$1</c:f>", "<c:f>'S'!$B$2:$B$33</c:f>", "<c:f>'S'!$A$2:$A$33</c:f>")
+  expect_equal(refs(wb$charts$chart[1]), exp)
+})
