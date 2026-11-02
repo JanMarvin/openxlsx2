@@ -257,7 +257,7 @@ test_that("values found by fuzzing the create functions are checked", {
   expect_match(create_shape(rotation = 1e-10), "rot=\"0\"")
 })
 
-test_that("limits Office imposes beyond the schema are checked", {
+test_that("limits beyond the schema are checked", {
   wb <- wb_workbook()$add_worksheet()
 
   expect_error(wb$set_header_footer(header = c(strrep("h", 100), strrep("h", 100), strrep("h", 50))), "255")

@@ -668,7 +668,7 @@ wbWorksheet <- R6::R6Class(
       if (!is.null(row)) {
         if (!is.numeric(row) || !in_xml_range(row, list(1, 1048576, whole = TRUE)))
           stop("`row` must be a whole number from 1 to 1048576")
-        # Office keeps less than 1023 row and at most 1023 column breaks
+        # less than 1023 row and at most 1023 column breaks are kept
         if (length(self$rowBreaks) >= 1022L) stop("a worksheet can have at most 1022 row breaks")
         self$append("rowBreaks", sprintf('<brk id="%i" max="16383" man="1"/>', round(row)))
       } else if (!is.null(col)) {

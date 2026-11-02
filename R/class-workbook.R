@@ -4766,7 +4766,7 @@ wbWorkbook <- R6::R6Class(
         wbv <- wbv[-view]
       }
 
-      # an empty bookViews is invalid and Excel cannot print without one, a default view remains
+      # an empty bookViews is invalid and printing needs a view, a default view remains
       if (length(wbv) == 0) wbv <- xml_node_create("workbookView")
       self$workbook$bookViews <- xml_node_create(
         "bookViews",
@@ -5783,7 +5783,7 @@ wbWorkbook <- R6::R6Class(
       assert_class(show_input_msg, "logical")
       assert_class(show_error_msg, "logical")
 
-      # Office limits: titles 32, error message 224 and prompt 255 characters
+      # titles are limited to 32, the error message to 224 and the prompt to 255 characters
       dv_limits <- c(error_title = 32L, prompt_title = 32L, error = 224L, prompt = 255L)
       for (nm in names(dv_limits)) {
         val <- get(nm)
