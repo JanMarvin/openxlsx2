@@ -3754,10 +3754,14 @@ wbWorkbook <- R6::R6Class(
         )
       }
 
-      ## write workbook.xml.rels
+      ## write workbook.xml.rels, sharedStrings.xml is only written if needed
+      wb_rels <- self$workbook.xml.rels
+      if (!length(self$sharedStrings)) {
+        wb_rels <- wb_rels[!grepl("relationships/sharedStrings\"", wb_rels, fixed = TRUE)]
+      }
       write_file(
         head = '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">',
-        body = pxml(self$workbook.xml.rels),
+        body = pxml(wb_rels),
         tail = "</Relationships>",
         fl = file.path(xlrelsDir, "workbook.xml.rels")
       )

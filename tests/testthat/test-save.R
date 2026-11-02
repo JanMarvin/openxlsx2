@@ -757,3 +757,17 @@ test_that("long hyperlinks with digits work", {
   expect_equal(got, my_links)
 
 })
+
+test_that("no relationship to a missing shared strings part is written", {
+  tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
+  wb <- wb_load(testfile_path("gh_issue_1419.xlsx"))
+  expect_equal(length(wb$sharedStrings), 0L)
+  wb$save(tmp)
+
+  files <- unzip(tmp, list = TRUE)$Name
+  expect_false("xl/sharedStrings.xml" %in% files)
+  rels <- readLines(unz(tmp, "xl/_rels/workbook.xml.rels"), warn = FALSE)
+  expect_false(any(grepl("sharedStrings", rels, fixed = TRUE)))
+})
