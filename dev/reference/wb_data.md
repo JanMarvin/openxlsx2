@@ -73,7 +73,8 @@ wb_data(
 
 ## Value
 
-A data frame of class `wb_data`.
+A data frame of class `wb_data`, or `NULL` if the worksheet contains no
+data.
 
 ## See also
 
