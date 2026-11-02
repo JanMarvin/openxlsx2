@@ -171,9 +171,10 @@ wb_comment <- function(
   # rPr font attributes are slightly different compared to the default
   df_font <- read_font(read_xml(style))
   df_font$name <- gsub("^<name", "^<rFont", df_font$name)
+  # the child order Excel expects (MS-OI29500, Part 1 18.4.7)
   sel <- c(
-    "name", "charset", "family", "b", "i", "strike", "outline", "shadow",
-    "condense", "extend", "color", "sz", "u", "vertAlign", "scheme"
+    "b", "i", "strike", "condense", "extend", "outline", "shadow", "u",
+    "vertAlign", "sz", "color", "name", "family", "charset", "scheme"
   )
   style <- write_font(df_font[sel])
 
