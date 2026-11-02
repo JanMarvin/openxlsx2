@@ -1144,13 +1144,18 @@ wb_load <- function(
         # get attributes
         hf_attrs <- rbindlist(xml_attr(ws$headerFooter, "headerFooter"))
 
+        # both attributes default to true if missing
+        ws$align_with_margins <- TRUE
         if (!is.null(hf_attrs$alignWithMargins))
           ws$align_with_margins <- as.logical(as.integer(hf_attrs$alignWithMargins))
 
+        ws$scale_with_doc     <- TRUE
         if (!is.null(hf_attrs$scaleWithDoc))
           ws$scale_with_doc     <- as.logical(as.integer(hf_attrs$scaleWithDoc))
 
         ws$headerFooter       <- getHeaderFooterNode(ws$headerFooter)
+        # keep a headerFooter node that has attributes only
+        if (!length(ws$headerFooter)) ws$headerFooter <- list(oddHeader = NULL)
       }
 
       # load the data. This function reads sheet_data and returns cc and row_attr

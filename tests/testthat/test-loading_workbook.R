@@ -310,6 +310,44 @@ test_that("linebreaks in header footer work", {
   expect_equal(exp, got)
 })
 
+test_that("headerFooter attributes survive loading", {
+  skip_if_not_installed("zip")
+
+  tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
+  wb_workbook()$add_worksheet()$
+    set_header_footer(footer = c(NA, "&[Page]", NA))$
+    save(tmp)
+
+  unz <- tempfile()
+  on.exit(unlink(unz, recursive = TRUE), add = TRUE)
+  unzip(tmp, exdir = unz)
+  sheet <- file.path(unz, "xl", "worksheets", "sheet1.xml")
+  xml <- paste(readLines(sheet, warn = FALSE), collapse = "")
+
+  out <- temp_xlsx()
+  on.exit(unlink(out), add = TRUE)
+  old <- setwd(unz)
+  on.exit(setwd(old), add = TRUE, after = FALSE)
+
+  # attributes only
+  writeLines(sub("<headerFooter.*</headerFooter>", "<headerFooter scaleWithDoc=\"0\" alignWithMargins=\"0\"/>", xml), sheet)
+  zip::zip(out, files = list.files(unz, recursive = TRUE, all.files = TRUE), mode = "mirror")
+  wb <- wb_load(out)
+  exp <- "<headerFooter differentOddEven=\"0\" differentFirst=\"0\" scaleWithDoc=\"0\" alignWithMargins=\"0\"></headerFooter>"
+  got <- wb$worksheets[[1]]$get_post_sheet_data()
+  expect_true(grepl(exp, got, fixed = TRUE))
+
+  # no attributes
+  unlink(out)
+  writeLines(sub("<headerFooter.*</headerFooter>", "<headerFooter><oddFooter>&amp;C&amp;P</oddFooter></headerFooter>", xml), sheet)
+  zip::zip(out, files = list.files(unz, recursive = TRUE, all.files = TRUE), mode = "mirror")
+  wb <- wb_load(out)
+  expect_true(wb$worksheets[[1]]$scale_with_doc)
+  expect_true(wb$worksheets[[1]]$align_with_margins)
+})
+
 test_that("load workbook with chartsheet", {
 
   fl <- testfile_path("mtcars_chart.xlsx")
