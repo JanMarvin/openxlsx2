@@ -495,3 +495,140 @@ test_that("cloning defined names works", {
   expect_equal(exp, got)
 
 })
+
+test_that("cloning copies comments, threaded comments and hyperlinks", {
+
+  wb <- wb_workbook()$add_worksheet("S")
+  wb$add_person(name = "me")
+  pid <- wb$get_person(name = "me")$id
+  wb$add_comment(dims = "A1", comment = "note")
+  wb$add_thread(dims = "B2", person_id = pid, comment = "thread")
+  wb$add_data(dims = "A5", x = "link")
+  wb$add_hyperlink(dims = "A5", target = "https://example.com")
+
+  expect_warning(wb$clone_worksheet("S", "C"), "experimental")
+
+  rels <- wb$worksheets_rels[[2]]
+  expect_true(any(grepl("Target=\"../drawings/vmlDrawing2.vml\"", rels, fixed = TRUE)))
+  expect_true(any(grepl("Target=\"../comments2.xml\"", rels, fixed = TRUE)))
+  expect_true(any(grepl("Target=\"../threadedComments/threadedComment2.xml\"", rels, fixed = TRUE)))
+  expect_true(any(grepl("Target=\"https://example.com\" TargetMode=\"External\"", rels, fixed = TRUE)))
+  expect_true(any(grepl("/xl/threadedComments/threadedComment2.xml", wb$Content_Types, fixed = TRUE)))
+  expect_equal(length(wb$comments), 2L)
+  expect_equal(length(wb$threadComments), 2L)
+
+  wb2 <- wb_workbook()
+  expect_warning(wb2$clone_worksheet("S", "S", from = wb), "experimental")
+  expect_equal(wb2$persons, wb$persons)
+  expect_true(any(grepl("persons/person.xml", wb2$workbook.xml.rels, fixed = TRUE)))
+  expect_true(any(grepl("vml", wb2$Content_Types, fixed = TRUE)))
+
+  wb3 <- wb_workbook()$add_worksheet("B")
+  wb3$add_person(name = "you")
+  wb3$add_thread(dims = "A1", person_id = wb3$get_person(name = "you")$id, comment = "other")
+  expect_warning(wb3$clone_worksheet("S", "S", from = wb), "experimental")
+  expect_equal(wb3$get_person()$displayName, c("you", "me"))
+})
+
+test_that("cloning copies form controls, named sheet views and diagrams", {
+
+  wb <- wb_load(testfile_path("form_control.xlsx"))
+  n <- length(wb$ctrlProps)
+  expect_warning(wb$clone_worksheet(1, "clone"), "experimental")
+  expect_equal(length(wb$ctrlProps), 2L * n)
+  targets <- rbindlist(xml_attr(wb$worksheets_rels[[2]], "Relationship"))$Target
+  exp <- sprintf("../ctrlProps/ctrlProp%s.xml", seq_len(n) + n)
+  expect_equal(sort(grep("ctrlProp", targets, value = TRUE)), sort(exp))
+
+  wb <- wb_load(testfile_path("named_sv.xlsx"))
+  expect_warning(wb$clone_worksheet("Sheet2", "clone"), "experimental")
+  expect_equal(length(wb$namedSheetViews), 2L)
+  expect_true(any(grepl("../namedSheetViews/namedSheetView2.xml", wb$worksheets_rels[[3]], fixed = TRUE)))
+
+  wb <- wb_load(testfile_path("diagram.xlsx"))
+  n <- length(wb$diagrams)
+  expect_warning(wb$clone_worksheet("Sheet1", "clone"), "experimental")
+  drels <- wb$drawings_rels[[wb$worksheets[[3]]$relships$drawing]]
+  targets <- basename(rbindlist(xml_attr(drels, "Relationship"))$Target)
+  expect_length(intersect(targets, basename(wb$diagrams[seq_len(n)])), 0)
+  expect_true(all(targets %in% basename(wb$diagrams)))
+  expect_true(all(sprintf("/xl/diagrams/%s", targets) %in% rbindlist(xml_attr(wb$Content_Types[grepl("Override", wb$Content_Types)], "Override"))$PartName))
+})
+
+test_that("cloning copies shapes on top of charts", {
+
+  wb <- wb_load(testfile_path("unemployment-nrw202208.xlsx"))
+  n <- length(wb$drawings)
+  expect_warning(wb$clone_worksheet(17, "clone"), "experimental")
+
+  sheet_drawing <- wb$worksheets[[length(wb$worksheets)]]$relships$drawing
+  expect_equal(sheet_drawing, n + 1L)
+  expect_equal(length(wb$drawings), n + 2L)
+  expect_equal(xml_node_name(wb$drawings[[n + 2L]]), "c:userShapes")
+
+  targets <- rbindlist(xml_attr(wb$drawings_rels[[sheet_drawing]], "Relationship"))$Target
+  crt <- cdigit(basename(grep("charts/chart", targets, value = TRUE)), as_integer = TRUE)
+  expect_length(crt, 1)
+  expect_match(wb$charts$rels[crt], sprintf("../drawings/drawing%s.xml", n + 2L), fixed = TRUE)
+})
+
+test_that("cloning pivot tables to another workbook drops the pivot table", {
+
+  wb <- wb_workbook()$add_worksheet("data")$add_data(x = mtcars)
+  df <- wb_data(wb, sheet = "data", dims = "A1:K33")
+  wb$add_pivot_table(df, rows = "cyl", data = "mpg")
+
+  wb2 <- wb_workbook()
+  expect_warning(
+    expect_warning(
+      wb2$clone_worksheet(2, "pivot", from = wb),
+      "Cloning pivot tables over workbooks is not yet supported."
+    ),
+    "experimental"
+  )
+  expect_false(any(grepl("pivotTable", wb2$worksheets_rels[[1]], fixed = TRUE)))
+})
+
+test_that("cloning images into a workbook with images keeps them apart", {
+
+  png1 <- tempfile(fileext = ".png")
+  png2 <- tempfile(fileext = ".png")
+  png3 <- tempfile(fileext = ".png")
+  on.exit(unlink(c(png1, png2, png3)), add = TRUE)
+  for (fl in c(png1, png2, png3)) {
+    png(fl)
+    plot(1:3)
+    dev.off()
+  }
+
+  wb_old <- wb_workbook()$add_worksheet()$
+    add_image(dims = "A1", file = png1)$
+    add_image(dims = "A5", file = png2)
+
+  wb <- wb_workbook()$add_worksheet()$add_image(dims = "A1", file = png3)
+  expect_warning(wb$clone_worksheet(old = 1, new = "Clone1", from = wb_old), "experimental")
+
+  targets <- rbindlist(xml_attr(wb$drawings_rels[[2]], "Relationship"))$Target
+  expect_equal(targets, c("../media/image2.png", "../media/image3.png"))
+  expect_equal(names(wb$media), c("image1.png", "image2.png", "image3.png"))
+})
+
+test_that("cloning copies embedded objects and chart sheets", {
+
+  fl <- testfile_path("mtcars_chart.xlsx")
+
+  wb <- wb_load(fl)
+  expect_warning(wb$clone_worksheet("Emb", "clone"), "experimental")
+  expect_equal(basename(wb$embeddings), c("Microsoft_Word_Document.docx", "Microsoft_Word_Document1.docx"))
+  expect_true(any(grepl("../embeddings/Microsoft_Word_Document1.docx", wb$worksheets_rels[[5]], fixed = TRUE)))
+
+  wb_from <- wb_load(fl)
+  wb <- wb_workbook()
+  for (sheet in wb_from$get_sheet_names()) {
+    expect_warning(wb$clone_worksheet(sheet, sheet, from = wb_from), "experimental")
+  }
+  expect_equal(basename(wb$embeddings), "Microsoft_Word_Document.docx")
+  expect_equal(names(wb$media), "image1.png")
+  expect_true(wb$is_chartsheet[[1]])
+  expect_true(any(grepl("Extension=\"docx\"", wb$Content_Types, fixed = TRUE)))
+})

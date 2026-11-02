@@ -1103,6 +1103,11 @@ wbWorkbook <- R6::R6Class(
         old_sheet_name <- guard_ws(from$sheet_names[[old]])
         new_sheet_name <- guard_ws(new)
 
+        # Shapes on top of a chart (userShapes) are a drawing part of their
+        # own. These are copied and placed after the drawing of the sheet.
+        user_shapes      <- list()
+        user_shapes_rels <- list()
+
         for (dl in seq_along(drawings_rels)) {
           chartfiles <- reg_match(drawings_rels[dl], "(?<=charts/)chart(Ex)?[0-9]+\\.xml")
 
@@ -1132,11 +1137,14 @@ wbWorkbook <- R6::R6Class(
               }
             }
 
-            if (!is_chartEx && chart_rels != "") {
-              chart_rels <- gsub(
-                "?drawing[0-9]+.xml",
-                paste0("drawing", chartid, ".xml"),
-                chart_rels
+            us_ids <- unique(reg_match(chart_rels, "(?<=drawings/drawing)[0-9]+(?=\\.xml)"))
+            for (us_id in us_ids) {
+              user_shapes      <- c(user_shapes, list(from$drawings[[as.integer(us_id)]]))
+              user_shapes_rels <- c(user_shapes_rels, list(from$drawings_rels[[as.integer(us_id)]]))
+              chart_rels <- stringi::stri_replace_all_fixed(
+                chart_rels,
+                paste0("drawings/drawing", us_id, ".xml\""),
+                paste0("drawings/drawing", new_drawing_sheet + length(user_shapes), ".xml\"")
               )
             }
 
@@ -1202,10 +1210,47 @@ wbWorkbook <- R6::R6Class(
           }
         }
 
+        # SmartArt diagrams are files of their own. Each one gets a copy with
+        # a file name not yet used in this workbook.
+        dgm_old <- unique(unlist(regmatches(drawings_rels, gregexpr("(?<=\\.\\./diagrams/)[A-Za-z]+[0-9]+\\.xml", drawings_rels, perl = TRUE))))
+        if (length(dgm_old)) {
+          dgm_types <- c(
+            colors     = "application/vnd.openxmlformats-officedocument.drawingml.diagramColors+xml",
+            data       = "application/vnd.openxmlformats-officedocument.drawingml.diagramData+xml",
+            drawing    = "application/vnd.ms-office.drawingml.diagramDrawing+xml",
+            layout     = "application/vnd.openxmlformats-officedocument.drawingml.diagramLayout+xml",
+            quickStyle = "application/vnd.openxmlformats-officedocument.drawingml.diagramStyle+xml"
+          )
+          dgm_dir  <- temp_dir("_openxlsx_clone_diagrams")
+          dgm_new  <- character(length(dgm_old))
+          dgm_have <- if (length(self$diagrams)) basename2(self$diagrams) else character()
+          for (i in seq_along(dgm_old)) {
+            dgm_type <- sub("[0-9]+\\.xml$", "", dgm_old[i])
+            dgm_used <- grep(paste0("^", dgm_type, "[0-9]+\\.xml$"), c(dgm_have, dgm_new), value = TRUE)
+            dgm_new[i] <- paste0(dgm_type, max(c(0L, cdigit(dgm_used, as_integer = TRUE))) + 1L, ".xml")
+            file.copy(from$diagrams[basename2(from$diagrams) == dgm_old[i]], file.path(dgm_dir, dgm_new[i]))
+            self$diagrams <- c(self$diagrams, file.path(dgm_dir, dgm_new[i]))
+            if (dgm_type %in% names(dgm_types)) {
+              self$append(
+                "Content_Types",
+                sprintf('<Override PartName="/xl/diagrams/%s" ContentType="%s"/>', dgm_new[i], dgm_types[[dgm_type]])
+              )
+            }
+          }
+          dgm_tmp <- paste0("../diagrams/clone_", seq_along(dgm_old), "\"")
+          drawings_rels <- stringi::stri_replace_all_fixed(drawings_rels, paste0("../diagrams/", dgm_old, "\""), dgm_tmp, vectorize_all = FALSE)
+          drawings_rels <- stringi::stri_replace_all_fixed(drawings_rels, dgm_tmp, paste0("../diagrams/", dgm_new, "\""), vectorize_all = FALSE)
+        }
+
         self$drawings_rels[[new_drawing_rels]] <- drawings_rels
 
-        self$append("drawings", from$drawings[[drawing_id]])
+        self$append("drawings", list(from$drawings[[drawing_id]]))
         self$worksheets[[newSheetIndex]]$relships$drawing <- new_drawing_sheet
+
+        for (i in seq_along(user_shapes)) {
+          self$append("drawings", user_shapes[i])
+          self$append("drawings_rels", user_shapes_rels[i])
+        }
       }
 
       ## TODO Currently it is not possible to clone a sheet with a slicer in a
@@ -1301,20 +1346,158 @@ wbWorkbook <- R6::R6Class(
       cmt_id <- from$worksheets[[old]]$relships$comments
       trd_id <- from$worksheets[[old]]$relships$threadedComment
 
+      # The copied sheet relationships still point to the parts of the old
+      # sheet and are updated to the copies.
       if (length(vml_id)) {
         self$append("vml",      from$vml[[vml_id]])
         self$append("vml_rels", from$vml_rels[[vml_id]])
         self$worksheets[[newSheetIndex]]$relships$vmlDrawing <- length(self$vml)
+        self$worksheets_rels[[newSheetIndex]] <- stringi::stri_replace_all_fixed(
+          self$worksheets_rels[[newSheetIndex]],
+          sprintf('Target="../drawings/vmlDrawing%s.vml"', vml_id),
+          sprintf('Target="../drawings/vmlDrawing%s.vml"', length(self$vml))
+        )
+        vml_ct <- '<Default Extension="vml" ContentType="application/vnd.openxmlformats-officedocument.vmlDrawing"/>'
+        if (!vml_ct %in% self$Content_Types) self$append("Content_Types", vml_ct)
       }
 
       if (length(cmt_id)) {
         self$append("comments", from$comments[cmt_id])
         self$worksheets[[newSheetIndex]]$relships$comments <- length(self$comments)
+        self$worksheets_rels[[newSheetIndex]] <- stringi::stri_replace_all_fixed(
+          self$worksheets_rels[[newSheetIndex]],
+          sprintf('Target="../comments%s.xml"', cmt_id),
+          sprintf('Target="../comments%s.xml"', length(self$comments))
+        )
       }
 
       if (length(trd_id)) {
-        self$append("threadComments", from$threadComments[cmt_id])
+        self$append("threadComments", from$threadComments[trd_id])
         self$worksheets[[newSheetIndex]]$relships$threadedComment <- length(self$threadComments)
+        self$worksheets_rels[[newSheetIndex]] <- stringi::stri_replace_all_fixed(
+          self$worksheets_rels[[newSheetIndex]],
+          sprintf('Target="../threadedComments/threadedComment%s.xml"', trd_id),
+          sprintf('Target="../threadedComments/threadedComment%s.xml"', length(self$threadComments))
+        )
+        self$append(
+          "Content_Types",
+          sprintf('<Override PartName="/xl/threadedComments/threadedComment%s.xml" ContentType="application/vnd.ms-excel.threadedcomments+xml"/>', length(self$threadComments))
+        )
+
+        # threaded comments refer to their authors in the persons part
+        if (external_wb && !is.null(from$persons)) {
+          from_persons <- xml_node(from$persons, "personList", "person")
+          if (is.null(self$persons)) {
+            self$persons <- from$persons
+            self$append(
+              "workbook.xml.rels",
+              "<Relationship Id=\"rId5\" Type=\"http://schemas.microsoft.com/office/2017/10/relationships/person\" Target=\"persons/person.xml\"/>"
+            )
+            self$append(
+              "Content_Types",
+              "<Override PartName=\"/xl/persons/person.xml\" ContentType=\"application/vnd.ms-excel.person+xml\"/>"
+            )
+          } else {
+            self_ids <- rbindlist(xml_attr(self$persons, "personList", "person"))$id
+            from_ids <- rbindlist(xml_attr(from_persons, "person"))$id
+            for (i in which(!from_ids %in% self_ids)) {
+              self$persons <- xml_add_child(self$persons, from_persons[i])
+            }
+          }
+        }
+      }
+
+      # Form control properties and named sheet views are parts of their own
+      # and are copied for the new sheet.
+      for (part in c("ctrlProp", "namedSheetView")) {
+        field <- paste0(part, "s")
+        ws_rels  <- self$worksheets_rels[[newSheetIndex]]
+        part_ids <- unique(unlist(regmatches(ws_rels, gregexpr(paste0("(?<=\\.\\./", field, "/", part, ")[0-9]+(?=\\.xml)"), ws_rels, perl = TRUE))))
+        if (length(part_ids) == 0) next
+        content_type <- if (part == "ctrlProp") "application/vnd.ms-excel.controlproperties+xml" else "application/vnd.ms-excel.namedsheetviews+xml"
+        new_ids <- length(self[[field]]) + seq_along(part_ids)
+        self[[field]] <- c(self[[field]], from[[field]][as.integer(part_ids)])
+        self$append(
+          "Content_Types",
+          sprintf('<Override PartName="/xl/%s/%s%s.xml" ContentType="%s"/>', field, part, new_ids, content_type)
+        )
+        part_tmp <- sprintf('Target="../%s/clone_%s"', field, seq_along(part_ids))
+        self$worksheets_rels[[newSheetIndex]] <- stringi::stri_replace_all_fixed(
+          self$worksheets_rels[[newSheetIndex]],
+          sprintf('Target="../%s/%s%s.xml"', field, part, part_ids),
+          part_tmp,
+          vectorize_all = FALSE
+        )
+        self$worksheets_rels[[newSheetIndex]] <- stringi::stri_replace_all_fixed(
+          self$worksheets_rels[[newSheetIndex]],
+          part_tmp,
+          sprintf('Target="../%s/%s%s.xml"', field, part, new_ids),
+          vectorize_all = FALSE
+        )
+      }
+
+      # Embedded objects get a copy with a file name not yet used in this
+      # workbook. For another workbook, images used directly by the sheet or
+      # by its vml drawing are copied as well.
+      ws_rels <- self$worksheets_rels[[newSheetIndex]]
+      emb_old <- unique(unlist(regmatches(ws_rels, gregexpr('(?<=Target="\\.\\./embeddings/)[^"]+', ws_rels, perl = TRUE))))
+      if (length(emb_old)) {
+        emb_dir  <- temp_dir("_openxlsx_clone_embeddings")
+        emb_have <- if (length(self$embeddings)) basename2(self$embeddings) else character()
+        emb_new  <- emb_old
+        for (i in seq_along(emb_old)) {
+          stem <- sub("[0-9]*\\.[^.]+$", "", emb_old[i])
+          ext  <- file_ext2(emb_old[i])
+          k    <- 0L
+          while (emb_new[i] %in% c(emb_have, emb_new[-i])) {
+            k <- k + 1L
+            emb_new[i] <- paste0(stem, k, ".", ext)
+          }
+          file.copy(from$embeddings[basename2(from$embeddings) == emb_old[i]][1], file.path(emb_dir, emb_new[i]))
+          self$embeddings <- c(self$embeddings, file.path(emb_dir, emb_new[i]))
+          if (!any(grepl(sprintf('Extension="%s"', ext), self$Content_Types, fixed = TRUE))) {
+            from_ct <- grep(sprintf('<Default Extension="%s"', ext), from$Content_Types, value = TRUE, fixed = TRUE)
+            if (length(from_ct)) self$append("Content_Types", from_ct[1])
+          }
+        }
+        emb_tmp <- sprintf('Target="../embeddings/clone_%s"', seq_along(emb_old))
+        ws_rels <- stringi::stri_replace_all_fixed(ws_rels, sprintf('Target="../embeddings/%s"', emb_old), emb_tmp, vectorize_all = FALSE)
+        ws_rels <- stringi::stri_replace_all_fixed(ws_rels, emb_tmp, sprintf('Target="../embeddings/%s"', emb_new), vectorize_all = FALSE)
+        self$worksheets_rels[[newSheetIndex]] <- ws_rels
+      }
+
+      new_vml <- self$worksheets[[newSheetIndex]]$relships$vmlDrawing
+      vml_rels <- if (length(new_vml)) self$vml_rels[[new_vml]] else character()
+      med_old <- unique(unlist(regmatches(
+        c(ws_rels, vml_rels),
+        gregexpr('(?<=Target="\\.\\./media/)[^"]+', c(ws_rels, vml_rels), perl = TRUE)
+      )))
+      if (external_wb && length(med_old)) {
+        med_new <- med_old
+        for (i in seq_along(med_old)) {
+          stem <- sub("[0-9]*\\.[^.]+$", "", med_old[i])
+          ext  <- file_ext2(med_old[i])
+          k    <- length(self$media)
+          while (med_new[i] %in% c(names(self$media), med_new[-i])) {
+            k <- k + 1L
+            med_new[i] <- paste0(stem, k, ".", ext)
+          }
+          media <- from$media[med_old[i]]
+          names(media) <- med_new[i]
+          self$append("media", media)
+          if (!any(grepl(sprintf('Extension="%s"', ext), self$Content_Types, fixed = TRUE))) {
+            from_ct <- grep(sprintf('<Default Extension="%s"', ext), from$Content_Types, value = TRUE, fixed = TRUE)
+            if (length(from_ct)) self$append("Content_Types", from_ct[1])
+          }
+        }
+        med_tmp <- sprintf('Target="../media/clone_%s"', seq_along(med_old))
+        ws_rels <- stringi::stri_replace_all_fixed(ws_rels, sprintf('Target="../media/%s"', med_old), med_tmp, vectorize_all = FALSE)
+        ws_rels <- stringi::stri_replace_all_fixed(ws_rels, med_tmp, sprintf('Target="../media/%s"', med_new), vectorize_all = FALSE)
+        self$worksheets_rels[[newSheetIndex]] <- ws_rels
+        if (length(new_vml)) {
+          vml_rels <- stringi::stri_replace_all_fixed(vml_rels, sprintf('Target="../media/%s"', med_old), med_tmp, vectorize_all = FALSE)
+          self$vml_rels[[new_vml]] <- stringi::stri_replace_all_fixed(vml_rels, med_tmp, sprintf('Target="../media/%s"', med_new), vectorize_all = FALSE)
+        }
       }
 
       self$is_chartsheet[[newSheetIndex]]  <- from$is_chartsheet[[old]]
@@ -1468,10 +1651,6 @@ wbWorkbook <- R6::R6Class(
 
           if (length(old_drawing_sheet)) {
 
-            # assuming that if drawing was copied, this is the new drawing id
-            new_drawing_sheet <- length(self$drawings)
-            self$worksheets[[newSheetIndex]]$relships$drawing <- new_drawing_sheet
-
             # we pick up the drawing relationship. This is something like: "../media/image1.jpg"
             # because we might end up with multiple files with similar names, we have to rename
             # the media file and update the drawing relationship
@@ -1506,10 +1685,17 @@ wbWorkbook <- R6::R6Class(
                 }
                 names(media_names) <- mnams
 
-                # update relationship
+                # update relationship, in two steps to avoid renaming twice
+                media_tmp <- sprintf("clone_media_%s_", seq_along(onams))
                 self$drawings_rels[[new_drawing_rels]] <- stringi::stri_replace_all_fixed(
                   self$drawings_rels[[new_drawing_rels]],
                   pattern = onams,
+                  replacement = media_tmp,
+                  vectorize_all = FALSE
+                )
+                self$drawings_rels[[new_drawing_rels]] <- stringi::stri_replace_all_fixed(
+                  self$drawings_rels[[new_drawing_rels]],
+                  pattern = media_tmp,
                   replacement = mnams,
                   vectorize_all = FALSE
                 )
@@ -1553,6 +1739,7 @@ wbWorkbook <- R6::R6Class(
           # self$styles_mgr$styles$cellStyleXfs <- from$styles_mgr$styles$cellStyleXfs
 
           warning("Cloning pivot tables over workbooks is not yet supported.")
+          self$worksheets_rels[[newSheetIndex]] <- relship_no(obj = self$worksheets_rels[[newSheetIndex]], x = "pivotTable")
         }
 
         # update sheet styles
@@ -1594,7 +1781,10 @@ wbWorkbook <- R6::R6Class(
           warning(msg, call. = FALSE)
         }
 
-        clone_shared_strings(from, old, self, newSheetIndex)
+        # chart sheets have no cells
+        if (!from$is_chartsheet[[old]]) {
+          clone_shared_strings(from, old, self, newSheetIndex)
+        }
       }
 
       invisible(self)
