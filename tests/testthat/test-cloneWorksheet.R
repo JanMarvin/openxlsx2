@@ -658,3 +658,24 @@ test_that("cloned charts refer to the cloned sheet", {
   exp <- c("<c:f>'S'!$A$1</c:f>", "<c:f>'S'!$B$2:$B$33</c:f>", "<c:f>'S'!$A$2:$A$33</c:f>")
   expect_equal(refs(wb$charts$chart[1]), exp)
 })
+
+test_that("cloning a chart and an image declares each extension once", {
+
+  skip_if_not_installed("encharter")
+
+  img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
+  bp  <- encharter::encharter("barplot")$add_series(data = "data!B2:B5")
+
+  wb <- wb_workbook()$add_worksheet("data")$add_data(x = mtcars)$
+    add_encharter(graph = bp, dims = "M2:S15")$
+    add_image(dims = "M17", file = img)
+
+  wb2 <- wb_workbook()$add_worksheet()
+  expect_warning(wb2$clone_worksheet("data", "data", from = wb), "experimental")
+  expect_warning(wb2$clone_worksheet("data", "data2", from = wb), "experimental")
+
+  ext <- stringi::stri_match_first_regex(wb2$Content_Types, "<Default Extension=\"([^\"]+)\"")[, 2]
+  ext <- ext[!is.na(ext)]
+  expect_false(anyDuplicated(ext) > 0)
+  expect_true("jpg" %in% ext)
+})

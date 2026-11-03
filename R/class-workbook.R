@@ -1661,12 +1661,13 @@ wbWorkbook <- R6::R6Class(
             if (all(nchar(self$drawings_rels[[new_drawing_rels]]))) {
 
               drels <- rbindlist(xml_attr(self$drawings_rels[[new_drawing_rels]], "Relationship"))
-              fe <- unique(file_ext2(drels$Target))
+              # only images need a default content type, charts have their own
+              # override and an extension can be declared once only
+              fe <- unique(file_ext2(drels$Target[basename(drels$Type) == "image"]))
+              declared <- stringi::stri_match_first_regex(self$Content_Types, "<Default Extension=\"([^\"]+)\"")[, 2]
+              fe <- setdiff(fe, declared)
 
-              cte <- sprintf("<Default Extension=\"%s\" ContentType=\"image/%s\"/>", fe, fe)
-              sel <- which(!cte %in% self$Content_Types)
-
-              if (length(sel)) {
+              if (length(fe)) {
                 self$append("Content_Types", sprintf("<Default Extension=\"%s\" ContentType=\"image/%s\"/>", fe, fe))
               }
 
