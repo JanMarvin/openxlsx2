@@ -3,7 +3,7 @@ test_that("clone Worksheet with data", {
   wb <- wb_workbook()
   wb$add_worksheet("Sheet 1")
   wb$add_data("Sheet 1", 1)
-  expect_warning(wb$clone_worksheet("Sheet 1", "Sheet 2"), "experimental")
+  wb$clone_worksheet("Sheet 1", "Sheet 2")
 
   file_name <- testfile_path("cloneWorksheetExample.xlsx")
   refwb <- wb_load(file = file_name)
@@ -17,7 +17,7 @@ test_that("clone empty Worksheet", {
 
   wb <- wb_workbook()
   wb$add_worksheet("Sheet 1")
-  expect_warning(wb$clone_worksheet("Sheet 1", "Sheet 2"), "experimental")
+  wb$clone_worksheet("Sheet 1", "Sheet 2")
 
   file_name <- testfile_path("cloneEmptyWorksheetExample.xlsx")
   refwb <- wb_load(file = file_name)
@@ -35,7 +35,7 @@ test_that("clone Worksheet with table", {
   wb$add_data_table(sheet = 1, x = mtcars, table_name = "mtcars", start_col = 10)
 
   # FIXME a wild drawing2.xml appears in wb$Content_Types
-  expect_warning(wb$clone_worksheet("Sheet 1", "Clone 1"), "experimental")
+  wb$clone_worksheet("Sheet 1", "Clone 1")
 
   old <- wb_validate_sheet(wb, "Sheet 1")
   new <- wb_validate_sheet(wb, "Clone 1")
@@ -71,19 +71,19 @@ test_that("copy cells", {
 
   # FIXME there is a bug with next_sheet() in clone_worksheets()
   # 1:1 copy to M2
-  expect_warning(wb$clone_worksheet(old = 1, new = "Clone1"), "experimental")
+  wb$clone_worksheet(old = 1, new = "Clone1")
   wb$copy_cells(data = dat, dims = "M2", as_value = FALSE, as_ref = FALSE, transpose = FALSE)
   # 1:1 transposed copy to A20
-  expect_warning(wb$clone_worksheet(old = 1, new = "Clone2"), "experimental")
+  wb$clone_worksheet(old = 1, new = "Clone2")
   wb$copy_cells(data = dat, dims = "A20", as_value = FALSE, as_ref = FALSE, transpose = TRUE)
   # reference transposed copy to A20
-  expect_warning(wb$clone_worksheet(old = 1, new = "Clone3"), "experimental")
+  wb$clone_worksheet(old = 1, new = "Clone3")
   wb$copy_cells(data = dat, dims = "A20", as_value = FALSE, as_ref = TRUE, transpose = TRUE)
   # value copy to A20
-  expect_warning(wb$clone_worksheet(old = 1, new = "Clone4"), "experimental")
+  wb$clone_worksheet(old = 1, new = "Clone4")
   wb$copy_cells(data = dat, dims = "A20", as_value = TRUE, as_ref = FALSE, transpose = FALSE)
   # transposed value copy to A20
-  expect_warning(wb$clone_worksheet(old = 1, new = "Clone5"), "experimental")
+  wb$clone_worksheet(old = 1, new = "Clone5")
   wb$copy_cells(data = dat, dims = "A20", as_value = TRUE, as_ref = FALSE, transpose = TRUE)
 
   got <- wb_data(wb, sheet = 2, dims = "M2:P5", col_names = FALSE)
@@ -139,7 +139,7 @@ test_that("cloning comments works", {
   # cloning comments from loaded worksheet did not work
   wb <- wb_workbook()$add_worksheet()$add_comment(dims = "A1", comment = c1)$save(tmp)
   wb <- wb_load(tmp)
-  expect_warning(wb$clone_worksheet(), "experimental")
+  wb$clone_worksheet()
 
   expect_equal(wb$comments[[1]][[1]]$ref, wb$comments[[2]][[1]]$ref)
 
@@ -187,16 +187,16 @@ test_that("cloning from workbooks works", {
   fl <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
   wb_in <- wb_load(fl)
 
-  expect_warning(wb$clone_worksheet(old = "SUM", new = "SUM", from = wb_in), "experimental")
+  wb$clone_worksheet(old = "SUM", new = "SUM", from = wb_in)
   got <- unname(wb$get_sheet_names())
   expect_equal(got, c("NOT_SUM", "SUM"))
 
-  expect_warning(wb$clone_worksheet(old = "SUM", new = "SUM_clone"), "experimental")
+  wb$clone_worksheet(old = "SUM", new = "SUM_clone")
   exp <- c("NOT_SUM", "SUM", "SUM_clone")
   got <- unname(wb$get_sheet_names())
   expect_equal(exp, got)
 
-  expect_warning(wb$clone_worksheet(old = "SUM", new = "SUM2", from = wb_in), "experimental")
+  wb$clone_worksheet(old = "SUM", new = "SUM2", from = wb_in)
   exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2")
   got <- unname(wb$get_sheet_names())
   expect_equal(exp, got)
@@ -205,16 +205,13 @@ test_that("cloning from workbooks works", {
 
   wb_in <- wb_workbook()$add_worksheet("tab")$add_data_table(x = mtcars)
 
-  expect_warning(wb$clone_worksheet(old = "tab", new = "tab", from = wb_in), "experimental")
+  wb$clone_worksheet(old = "tab", new = "tab", from = wb_in)
   exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2", "tab")
   got <- unname(wb$get_sheet_names())
   expect_equal(exp, got)
 
   # clone it twice
-  expect_warning(
-    expect_warning(wb$clone_worksheet(old = "tab", new = "tab", from = wb_in), "already exists"),
-    "experimental"
-  )
+  expect_warning(wb$clone_worksheet(old = "tab", new = "tab", from = wb_in), "already exists")
   exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2", "tab", "tab (1)")
   got <- unname(wb$get_sheet_names())
   expect_equal(exp, got)
@@ -231,12 +228,12 @@ test_that("cloning from workbooks works", {
     add_worksheet("chart")$
     add_mschart(dims = "F4:L20", graph = scatter)
 
-  expect_warning(wb$clone_worksheet(old = "chart", new = "chart_1", from = wb_ms), "experimental")
+  wb$clone_worksheet(old = "chart", new = "chart_1", from = wb_ms)
   exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2", "tab", "tab (1)", "chart_1")
   got <- unname(wb$get_sheet_names())
   expect_equal(exp, got)
 
-  expect_warning(wb$clone_worksheet(old = "chart", new = "chart_2", from = wb_ms), "experimental")
+  wb$clone_worksheet(old = "chart", new = "chart_2", from = wb_ms)
   exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2", "tab", "tab (1)", "chart_1", "chart_2")
   got <- unname(wb$get_sheet_names())
   expect_equal(exp, got)
@@ -249,12 +246,12 @@ test_that("cloning from workbooks works", {
     add_worksheet()$
     add_image("Sheet 1", dims = "C5", file = img, width = 6, height = 5)
 
-  expect_warning(wb$clone_worksheet(old = "Sheet 1", new = "img", from = wb_img), "experimental")
+  wb$clone_worksheet(old = "Sheet 1", new = "img", from = wb_img)
   exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2", "tab", "tab (1)", "chart_1", "chart_2", "img")
   got <- unname(wb$get_sheet_names())
   expect_equal(exp, got)
 
-  expect_warning(wb$clone_worksheet(old = "Sheet 1", new = "img2", from = wb_img), "experimental")
+  wb$clone_worksheet(old = "Sheet 1", new = "img2", from = wb_img)
   exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2", "tab", "tab (1)", "chart_1", "chart_2", "img", "img2")
   got <- unname(wb$get_sheet_names())
   expect_equal(exp, got)
@@ -262,7 +259,7 @@ test_that("cloning from workbooks works", {
   ## clone drawing, borders function and shared strings
   wb_ex <- wb_load(testfile_path("loadExample.xlsx"))
 
-  expect_warning(wb$clone_worksheet(old = "testing", new = "test", from = wb_ex), "experimental")
+  wb$clone_worksheet(old = "testing", new = "test", from = wb_ex)
   exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2", "tab", "tab (1)", "chart_1", "chart_2", "img", "img2", "test")
   got <- unname(wb$get_sheet_names())
   expect_equal(exp, got)
@@ -307,8 +304,8 @@ test_that("cloning column and row styles works", {
   wb_mtcars <- wb_load(tmp)
 
   wb <- wb_workbook()$add_worksheet()
-  expect_warning(wb$clone_worksheet(old = "Sheet 1", "mtcars", from = wb_mtcars), "experimental")
-  expect_warning(wb$clone_worksheet(old = "Sheet 2", "iris", from = wb_mtcars), "experimental")
+  wb$clone_worksheet(old = "Sheet 1", "mtcars", from = wb_mtcars)
+  wb$clone_worksheet(old = "Sheet 2", "iris", from = wb_mtcars)
 
   exp <- "<col min=\"11\" max=\"11\" style=\"1\" width=\"8.43\"/>"
   got <- wb$worksheets[[2]]$cols_attr[2]
@@ -372,7 +369,7 @@ test_that("cloning sheets with multiple images works", {
     add_image(dims = "A4:A4", file = jpg2)
 
   wb <- wb_workbook()
-  expect_warning(wb$clone_worksheet(old = 1, new = "Clone1", from = wb_old), "experimental")
+  wb$clone_worksheet(old = 1, new = "Clone1", from = wb_old)
 
   exp <- list(
     c(
@@ -404,8 +401,8 @@ test_that("cloning charts and chartEx works", {
   wb$add_worksheet("bp")$add_encharter(graph = bp)
 
   wb2 <- wb_workbook()
-  expect_warning(wb2$clone_worksheet("data", "data", from = wb), "experimental")
-  expect_warning(wb2$clone_worksheet("bp", "bp", from = wb), "experimental")
+  wb2$clone_worksheet("data", "data", from = wb)
+  wb2$clone_worksheet("bp", "bp", from = wb)
   expect_warning(wb2$clone_worksheet("wf", "wf", from = wb), "experimental")
   expect_warning(wb2$clone_worksheet("wf", "wf2"), "experimental")
 
@@ -535,13 +532,13 @@ test_that("cloning copies form controls, named sheet views and diagrams", {
   expect_equal(sort(grep("ctrlProp", targets, value = TRUE)), sort(exp))
 
   wb <- wb_load(testfile_path("named_sv.xlsx"))
-  expect_warning(wb$clone_worksheet("Sheet2", "clone"), "experimental")
+  wb$clone_worksheet("Sheet2", "clone")
   expect_equal(length(wb$namedSheetViews), 2L)
   expect_true(any(grepl("../namedSheetViews/namedSheetView2.xml", wb$worksheets_rels[[3]], fixed = TRUE)))
 
   wb <- wb_load(testfile_path("diagram.xlsx"))
   n <- length(wb$diagrams)
-  expect_warning(wb$clone_worksheet("Sheet1", "clone"), "experimental")
+  wb$clone_worksheet("Sheet1", "clone")
   drels <- wb$drawings_rels[[wb$worksheets[[3]]$relships$drawing]]
   targets <- basename(rbindlist(xml_attr(drels, "Relationship"))$Target)
   expect_length(intersect(targets, basename(wb$diagrams[seq_len(n)])), 0)
@@ -553,7 +550,7 @@ test_that("cloning copies shapes on top of charts", {
 
   wb <- wb_load(testfile_path("unemployment-nrw202208.xlsx"))
   n <- length(wb$drawings)
-  expect_warning(wb$clone_worksheet(17, "clone"), "experimental")
+  wb$clone_worksheet(17, "clone")
 
   sheet_drawing <- wb$worksheets[[length(wb$worksheets)]]$relships$drawing
   expect_equal(sheet_drawing, n + 1L)
@@ -600,7 +597,7 @@ test_that("cloning images into a workbook with images keeps them apart", {
     add_image(dims = "A5", file = png2)
 
   wb <- wb_workbook()$add_worksheet()$add_image(dims = "A1", file = png3)
-  expect_warning(wb$clone_worksheet(old = 1, new = "Clone1", from = wb_old), "experimental")
+  wb$clone_worksheet(old = 1, new = "Clone1", from = wb_old)
 
   targets <- rbindlist(xml_attr(wb$drawings_rels[[2]], "Relationship"))$Target
   expect_equal(targets, c("../media/image2.png", "../media/image3.png"))
@@ -619,7 +616,11 @@ test_that("cloning copies embedded objects and chart sheets", {
   wb_from <- wb_load(fl)
   wb <- wb_workbook()
   for (sheet in wb_from$get_sheet_names()) {
-    expect_warning(wb$clone_worksheet(sheet, sheet, from = wb_from), "experimental")
+    if (sheet == "Emb") {
+      expect_warning(wb$clone_worksheet(sheet, sheet, from = wb_from), "embedded objects")
+    } else {
+      wb$clone_worksheet(sheet, sheet, from = wb_from)
+    }
   }
   expect_equal(basename(wb$embeddings), "Microsoft_Word_Document.docx")
   expect_equal(names(wb$media), "image1.png")
@@ -639,7 +640,7 @@ test_that("cloned charts refer to the cloned sheet", {
   wb$add_encharter(sheet = "S", dims = "M2", graph = encharter::ec("barplot")$add_series(data = dat, name = mpg, label = cyl))
   wb$add_encharter(sheet = "S", dims = "M20", graph = encharter::ec("barplot")$add_series(data = "other data!B2:B5"))
 
-  expect_warning(wb$clone_worksheet("S", "my copy"), "experimental")
+  wb$clone_worksheet("S", "my copy")
 
   refs <- function(x) unique(regmatches(x, gregexpr("<c:f>[^<]*</c:f>", x))[[1]])
 
@@ -665,8 +666,8 @@ test_that("cloning a chart and an image declares each extension once", {
     add_image(dims = "M17", file = img)
 
   wb2 <- wb_workbook()$add_worksheet()
-  expect_warning(wb2$clone_worksheet("data", "data", from = wb), "experimental")
-  expect_warning(wb2$clone_worksheet("data", "data2", from = wb), "experimental")
+  wb2$clone_worksheet("data", "data", from = wb)
+  wb2$clone_worksheet("data", "data2", from = wb)
 
   ext <- stringi::stri_match_first_regex(wb2$Content_Types, "<Default Extension=\"([^\"]+)\"")[, 2]
   ext <- ext[!is.na(ext)]
@@ -691,7 +692,7 @@ test_that("cloning from another workbook carries dxf styles, media and cell styl
   wb2 <- wb_workbook()$add_worksheet()$add_fill(dims = "A1", color = wb_color("red"))
   wb2$add_conditional_formatting(dims = "A1", rule = ">5", style = "bad_style")
 
-  expect_warning(wb2$clone_worksheet("cf", "cf", from = wb), "experimental")
+  wb2$clone_worksheet("cf", "cf", from = wb)
   cf  <- wb2$worksheets[[2]]$conditionalFormatting
   ids <- as.integer(regmatches(cf$cf, regexpr("(?<=dxfId=\")[0-9]+", cf$cf, perl = TRUE)))
   expect_true(all(ids < length(wb2$styles_mgr$styles$dxfs)))
@@ -701,6 +702,16 @@ test_that("cloning from another workbook carries dxf styles, media and cell styl
   xf_ids <- as.integer(rbindlist(xml_attr(wb2$styles_mgr$styles$cellXfs, "xf"))$xfId)
   expect_true(all(is.na(xf_ids) | xf_ids < length(wb2$styles_mgr$styles$cellStyleXfs)))
 
-  expect_warning(wb2$clone_worksheet("img", "img", from = wb), "experimental")
+  wb2$clone_worksheet("img", "img", from = wb)
   expect_length(wb2$media, 1)
+})
+
+test_that("cloning warns only about experimental elements", {
+  wb <- wb_workbook()$add_worksheet("plain")$add_data(x = mtcars)$
+    add_fill(dims = "A1:B2", color = wb_color("yellow"))$
+    add_data_table(x = iris, dims = "M1")
+  expect_silent(wb$clone_worksheet("plain", "plain copy"))
+
+  wb$add_named_region(sheet = "plain", dims = "A1:A3", name = "first")
+  expect_warning(wb$clone_worksheet("plain", "named copy"), "with named regions is experimental")
 })

@@ -1265,18 +1265,20 @@ wb_add_worksheet <- function(
 #' @description
 #' Create a copy of a worksheet in the same `wbWorkbook` object.
 #'
-#' Cloning worksheets is experimental and untested. Every call throws a
-#' warning about this. Check the output carefully.
+#' Data, styles, tables, comments, images and charts are cloned. Cloning
+#' sheets with pivot tables, slicers, timelines, named regions, chart
+#' extensions, form controls, embedded objects or threaded comments is
+#' experimental and throws a warning naming these elements. Check the output
+#' carefully.
 #'
 #' Cloning is possible only to a limited extent. References to sheet names in
 #' formulas, charts, pivot tables, etc. may not be updated. Some elements like
 #' slicers and timelines cannot be cloned yet.
 #'
 #' Cloning from another workbook is still an experimental feature and might not
-#' work reliably. Cloning data, media, charts and tables should work. Slicers
-#' and pivot tables as well as everything everything relying on dxfs styles
-#' (e.g. custom table styles and conditional formatting) is currently not
-#' implemented.
+#' work reliably. Cloning data, media, charts, tables and conditional
+#' formatting should work. Slicers, timelines and pivot tables are currently
+#' not implemented.
 #' Formula references are not updated to reflect interactions between workbooks.
 #'
 #' @param wb A `wbWorkbook` object

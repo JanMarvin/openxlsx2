@@ -992,8 +992,6 @@ wbWorkbook <- R6::R6Class(
     #' @param from name of new worksheet to add
     clone_worksheet = function(old = current_sheet(), new = next_sheet(), from = NULL) {
 
-      warning("Cloning worksheets is experimental and untested. Check the output carefully.")
-
       if (is.null(from)) {
         from        <- self$clone()
         external_wb <- FALSE
@@ -1081,6 +1079,46 @@ wbWorkbook <- R6::R6Class(
       old_ref_name    <- paste0("\\Q", from$sheet_names[[old]], "\\E")
       ref_pattern     <- paste0("(?:'", old_ref_name, "'|(?<![\\p{L}\\p{N}_.'])", old_ref_name, ")!")
       ref_replacement <- stringi::stri_replace_all_fixed(paste0("'", new, "'!"), "$", "\\$")
+
+      # data, styles, tables, comments, images and charts are cloned as they
+      # are. Cloning other elements is experimental, these are named in a warning
+      src_rels  <- from$worksheets_rels[[old]]
+      rel_types <- character()
+      if (length(src_rels) && any(nzchar(src_rels))) {
+        rel_types <- basename(rbindlist(xml_attr(src_rels, "Relationship"))$Type)
+      }
+      src_drawing_rels <- character()
+      if (length(from$worksheets[[old]]$relships$drawing)) {
+        src_drawing_rels <- from$drawings_rels[[from$worksheets[[old]]$relships$drawing]]
+      }
+      has_names <- FALSE
+      if (length(from$workbook$definedNames)) {
+        dn_attr   <- rbindlist(xml_attr(from$workbook$definedNames, "definedName"))
+        dn_local  <- if (is.null(dn_attr$localSheetId)) rep("", nrow(dn_attr)) else dn_attr$localSheetId
+        dn_local[is.na(dn_local)] <- ""
+        has_names <- any(
+          !startsWith(dn_attr$name, "_xlchart.v1.") &
+            (dn_local == as.character(old - 1L) |
+               stringi::stri_detect_regex(xml_value(from$workbook$definedNames, "definedName"), ref_pattern))
+        )
+      }
+      experimental <- c(
+        "pivot tables"      = "pivotTable" %in% rel_types,
+        "slicers"           = "slicer" %in% rel_types,
+        "timelines"         = "timeline" %in% rel_types,
+        "named regions"     = has_names,
+        "chart extensions"  = any(grepl("chartEx", src_drawing_rels, fixed = TRUE)),
+        "form controls"     = "ctrlProp" %in% rel_types,
+        "embedded objects"  = any(c("oleObject", "package") %in% rel_types),
+        "threaded comments" = "threadedComment" %in% rel_types
+      )
+      if (any(experimental)) {
+        warning(
+          "Cloning worksheets with ", paste(names(experimental)[experimental], collapse = ", "),
+          " is experimental. Check the output carefully.",
+          call. = FALSE
+        )
+      }
 
       new_drawing_sheet <- NULL
       if (length(from$worksheets[[old]]$relships$drawing)) {
