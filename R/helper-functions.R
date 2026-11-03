@@ -1030,10 +1030,11 @@ fetch_styles <- function(wb, xf_xml, st_ids) {
     if (is.na(xf_xml[[i]])) next
     xf_df <- read_xf(read_xml(xf_xml[[i]]))
 
-    border_id <- which(wb$styles_mgr$border$id == xf_df$borderId)
-    fill_id   <- which(wb$styles_mgr$fill$id == xf_df$fillId)
-    font_id   <- which(wb$styles_mgr$font$id == xf_df$fontId)
-    numFmt_id <- which(wb$styles_mgr$numfmt$id == xf_df$numFmtId)
+    # an id can be registered under more than one name, e.g. by named styles
+    border_id <- head(which(wb$styles_mgr$border$id == xf_df$borderId), 1L)
+    fill_id   <- head(which(wb$styles_mgr$fill$id == xf_df$fillId), 1L)
+    font_id   <- head(which(wb$styles_mgr$font$id == xf_df$fontId), 1L)
+    numFmt_id <- head(which(wb$styles_mgr$numfmt$id == xf_df$numFmtId), 1L)
 
     border_xml <- wb$styles_mgr$styles$borders[border_id]
     fill_xml   <- wb$styles_mgr$styles$fills[fill_id]
@@ -1160,6 +1161,13 @@ set_cellstyles <- function(wb, style) {
 
     if (has_numfmt)
       xf_df$numFmtId <- wb$styles_mgr$get_numfmt_id(session_id)
+
+    # a style from another workbook can refer to a cell style xf that does not
+    # exist in this workbook, it falls back to the default one
+    if (!is.null(xf_df$xfId) && nzchar(xf_df$xfId) &&
+        as.integer(xf_df$xfId) >= length(wb$styles_mgr$styles$cellStyleXfs)) {
+      xf_df$xfId <- "0"
+    }
 
     xf_xml <- write_xf(xf_df) # can be NULL
 
