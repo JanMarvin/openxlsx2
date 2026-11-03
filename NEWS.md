@@ -12,12 +12,12 @@
 
 * `wb_add_data_table(..., total_row = ...)` checked for max column length instead of max row length and refused to write anything beyond the maximum number of columns. [#1700](https://github.com/JanMarvin/openxlsx2/pull/1700)
 * Several improvements to `xlsb` imports. This includes new features and some minor bugfixes. [#1702](https://github.com/JanMarvin/openxlsx2/pull/1702)
+* `wb_clone_worksheet()` was improved. Cloning is still experimental: a warning is only thrown if the sheet contains elements like pivot tables, slicers, timelines, named regions or chart extensions. [#1721](https://github.com/JanMarvin/openxlsx2/pull/1721)
 
 ## Breaking changes
 
 * The options `openxlsx2.force_utf8_encoding` and `openxlsx2.native_encoding` were removed. Strings are now converted to UTF-8 when they are passed to C++, so the options are no longer needed. [#1715](https://github.com/JanMarvin/openxlsx2/pull/1715)
 * `wb_data()` gains `used_range` to limit reading ranges like `"A:B"` or `"1:2"` to only the required columns and rows plus one.
-*  To prevent accidental failures `wb_clone_worksheet()` will throw warnings per default. It never worked really good, it was improved once again, but there is still a lot that is not yet working and even the working parts are largely untested.
 
 
 ***************************************************************************
