@@ -262,13 +262,7 @@ test_that("cloning from workbooks works", {
   ## clone drawing, borders function and shared strings
   wb_ex <- wb_load(testfile_path("loadExample.xlsx"))
 
-  expect_warning(
-    expect_warning(
-      wb$clone_worksheet(old = "testing", new = "test", from = wb_ex),
-      "Input file has dxf styles. These are not cloned. Some styles might be broken and spreadsheet software might complain."
-    ),
-    "experimental"
-  )
+  expect_warning(wb$clone_worksheet(old = "testing", new = "test", from = wb_ex), "experimental")
   exp <- c("NOT_SUM", "SUM", "SUM_clone", "SUM2", "tab", "tab (1)", "chart_1", "chart_2", "img", "img2", "test")
   got <- unname(wb$get_sheet_names())
   expect_equal(exp, got)
@@ -678,4 +672,35 @@ test_that("cloning a chart and an image declares each extension once", {
   ext <- ext[!is.na(ext)]
   expect_false(anyDuplicated(ext) > 0)
   expect_true("jpg" %in% ext)
+})
+
+test_that("cloning from another workbook carries dxf styles, media and cell styles", {
+
+  img <- system.file("extdata", "einstein.jpg", package = "openxlsx2")
+
+  wb <- wb_workbook()$add_worksheet("cf")$add_data(x = data.frame(a = 1:3))$
+    add_conditional_formatting(dims = "A2:A4", rule = ">1")$
+    add_worksheet("img")$add_image(dims = "B2", file = img)$
+    add_worksheet("other")$add_image(dims = "B2", file = system.file("extdata", "einstein.jpg", package = "openxlsx2"))
+  # the named style adds a cell style xf that the target workbook does not have
+  wb$add_named_style(name = "Note")
+  wb$set_cell_style(sheet = "cf", dims = "A1", style = 1)
+  expect_match(wb$styles_mgr$styles$cellXfs[2], "xfId=\"1\"")
+  wb$add_formula(sheet = "cf", x = "SEQUENCE(2)", dims = "C1", cm = TRUE)
+
+  wb2 <- wb_workbook()$add_worksheet()$add_fill(dims = "A1", color = wb_color("red"))
+  wb2$add_conditional_formatting(dims = "A1", rule = ">5", style = "bad_style")
+
+  expect_warning(wb2$clone_worksheet("cf", "cf", from = wb), "experimental")
+  cf  <- wb2$worksheets[[2]]$conditionalFormatting
+  ids <- as.integer(regmatches(cf$cf, regexpr("(?<=dxfId=\")[0-9]+", cf$cf, perl = TRUE)))
+  expect_true(all(ids < length(wb2$styles_mgr$styles$dxfs)))
+  expect_equal(wb2$styles_mgr$styles$dxfs[ids + 1L], wb$styles_mgr$styles$dxfs[1])
+  expect_true(all(wb2$worksheets[[2]]$sheet_data$cc$c_cm == ""))
+
+  xf_ids <- as.integer(rbindlist(xml_attr(wb2$styles_mgr$styles$cellXfs, "xf"))$xfId)
+  expect_true(all(is.na(xf_ids) | xf_ids < length(wb2$styles_mgr$styles$cellStyleXfs)))
+
+  expect_warning(wb2$clone_worksheet("img", "img", from = wb), "experimental")
+  expect_length(wb2$media, 1)
 })

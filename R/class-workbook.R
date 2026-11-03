@@ -1059,8 +1059,17 @@ wbWorkbook <- R6::R6Class(
         }
       )
 
-      ## create sheet.rels to simplify id assignment
-      self$worksheets_rels[[newSheetIndex]] <- from$worksheets_rels[[old]]
+      ## create sheet.rels to simplify id assignment. Targets relative to the
+      ## package root are written relative to the sheet, as the parts below expect
+      self$worksheets_rels[[newSheetIndex]] <- stringi::stri_replace_all_fixed(
+        from$worksheets_rels[[old]],
+        'Target="/xl/',
+        'Target="../'
+      )
+      ## cells mapped to an xml map belong to the original sheet
+      if (any(grepl("tableSingleCells", self$worksheets_rels[[newSheetIndex]], fixed = TRUE))) {
+        self$worksheets_rels[[newSheetIndex]] <- relship_no(obj = self$worksheets_rels[[newSheetIndex]], x = "tableSingleCells")
+      }
 
       ## TODO actually check this and add a similar warning for embeddings
       ## TODO it should be able to clone this
@@ -1575,7 +1584,8 @@ wbWorkbook <- R6::R6Class(
       ## set these to the default value 0 to avoid broken spreadsheets
 
       # if we have tables to clone, remove every table referece from Relationship
-      rid <- as.integer(sub("\\D+", "", get_relship_id(obj = self$worksheets_rels[[newSheetIndex]], x = "table")))
+      # the relationship ids are kept as they are, these are not always rIdN
+      rid <- get_relship_id(obj = self$worksheets_rels[[newSheetIndex]], x = "table")
 
       if (length(rid)) {
 
@@ -1620,7 +1630,7 @@ wbWorkbook <- R6::R6Class(
             tbls
           )
 
-          self$worksheets[[newSheetIndex]]$tableParts                    <- sprintf('<tablePart r:id="rId%s"/>', rid)
+          self$worksheets[[newSheetIndex]]$tableParts                    <- sprintf('<tablePart r:id="%s"/>', rid)
           attr(self$worksheets[[newSheetIndex]]$tableParts, "tableName") <- tbls$tab_name
 
           ## hint: Content_Types will be created once the sheet is written. no need to add tables there
@@ -1632,7 +1642,7 @@ wbWorkbook <- R6::R6Class(
           self$worksheets_rels[[newSheetIndex]] <- c(
             self$worksheets_rels[[newSheetIndex]],
             sprintf(
-              '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/table" Target="../tables/table%s.xml"/>',
+              '<Relationship Id="%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/table" Target="../tables/table%s.xml"/>',
               rid,
               newid
             )
@@ -1674,18 +1684,22 @@ wbWorkbook <- R6::R6Class(
               if (ncol(drels) && any(basename(drels$Type) == "image")) {
                 sel <- basename(drels$Type) == "image"
                 targets <- basename2(drels$Target)[sel]
-                media_names <- from$media[targets %in% names(from$media)]
+                # only the media referenced by this drawing are copied
+                onams <- unique(targets[targets %in% names(from$media)])
+                media_names <- from$media[onams]
 
-                onams    <- names(media_names)
-                mnams    <- vector("character", length(onams))
-                next_ids <- length(names(self$media)) + seq_along(mnams)
-
-                # we might have multiple media references on a sheet
+                # we might have multiple media references on a sheet, each gets
+                # a name not used in this workbook, e.g. "image5.jpg" becomes "image2.jpg"
+                mnams <- character(length(onams))
+                k     <- length(self$media)
                 for (i in seq_along(onams)) {
-                  media_id   <- cdigit(onams[i], as_integer = TRUE)
-                  # take filetype + number + file extension
-                  # e.g. "image5.jpg" and return "image2.jpg"
-                  mnams[i] <- gsub("(\\d+)\\.(\\w+)", paste0(next_ids[i], ".\\2"), onams[i])
+                  stem <- sub("[0-9]*\\.[^.]+$", "", onams[i])
+                  ext  <- file_ext2(onams[i])
+                  repeat {
+                    k <- k + 1L
+                    mnams[i] <- paste0(stem, k, ".", ext)
+                    if (!mnams[i] %in% c(names(self$media), mnams[seq_len(i - 1L)])) break
+                  }
                 }
                 names(media_names) <- mnams
 
@@ -1779,10 +1793,41 @@ wbWorkbook <- R6::R6Class(
           rm(style, new_s, new_sty)
         }
 
-        # TODO dxfs styles for (pivot) table styles and conditional formatting
-        if (length(from$styles_mgr$get_dxf())) {
-          msg <- "Input file has dxf styles. These are not cloned. Some styles might be broken and spreadsheet software might complain."
-          warning(msg, call. = FALSE)
+        # dxf styles of conditional formatting and tables are added to this
+        # workbook and the references of the cloned sheet point to the new ids
+        from_dxfs <- from$styles_mgr$styles$dxfs
+        if (length(from_dxfs)) {
+          dxf_names <- paste0(random_string(), "_dxf", seq_along(from_dxfs))
+          self$styles_mgr$add(from_dxfs, dxf_names, skip_duplicates = FALSE)
+          new_dxf <- self$styles_mgr$get_dxf_id(dxf_names)
+          old_dxf <- as.character(seq_along(from_dxfs) - 1L)
+
+          dxf_old <- sprintf("(?<=[dD]xfId=\")%s(?=\")", old_dxf)
+          dxf_tmp <- sprintf("clone_dxf_%s_", old_dxf)
+
+          # conditional formatting is kept as data frame with sqref and cf rule
+          cf <- self$worksheets[[newSheetIndex]]$conditionalFormatting
+          if (NROW(cf)) {
+            cf$cf <- stringi::stri_replace_all_regex(cf$cf, dxf_old, dxf_tmp, vectorize_all = FALSE)
+            cf$cf <- stringi::stri_replace_all_fixed(cf$cf, dxf_tmp, new_dxf, vectorize_all = FALSE)
+            self$worksheets[[newSheetIndex]]$conditionalFormatting <- cf
+          }
+
+          sel <- which(self$tables$tab_sheet == newSheetIndex)
+          if (length(sel)) {
+            tab_xml <- self$tables$tab_xml[sel]
+            tab_xml <- stringi::stri_replace_all_regex(tab_xml, dxf_old, dxf_tmp, vectorize_all = FALSE)
+            self$tables$tab_xml[sel] <- stringi::stri_replace_all_fixed(tab_xml, dxf_tmp, new_dxf, vectorize_all = FALSE)
+          }
+        }
+
+        # cell and value metadata (dynamic arrays, rich values) are not cloned,
+        # cells must not refer to it
+        cc <- self$worksheets[[newSheetIndex]]$sheet_data$cc
+        if (!is.null(cc)) {
+          if (!is.null(cc$c_cm)) cc$c_cm <- ""
+          if (!is.null(cc$c_vm)) cc$c_vm <- ""
+          self$worksheets[[newSheetIndex]]$sheet_data$cc <- cc
         }
 
         # chart sheets have no cells
