@@ -705,7 +705,7 @@ test_that("cloning from another workbook carries dxf styles, media and cell styl
   wb2 <- wb_workbook()$add_worksheet()$add_fill(dims = "A1", color = wb_color("red"))
   wb2$add_conditional_formatting(dims = "A1", rule = ">5", style = "bad_style")
 
-  wb2$clone_worksheet("cf", "cf", from = wb)
+  expect_warning(wb2$clone_worksheet("cf", "cf", from = wb), "with cell metadata is experimental")
   cf  <- wb2$worksheets[[2]]$conditionalFormatting
   ids <- as.integer(regmatches(cf$cf, regexpr("(?<=dxfId=\")[0-9]+", cf$cf, perl = TRUE)))
   expect_true(all(ids < length(wb2$styles_mgr$styles$dxfs)))
@@ -727,4 +727,18 @@ test_that("cloning warns only about experimental elements", {
 
   wb$add_named_region(sheet = "plain", dims = "A1:A3", name = "first")
   expect_warning(wb$clone_worksheet("plain", "named copy"), "with named regions is experimental")
+})
+
+test_that("cloning warns about query tables, custom table styles and metadata", {
+  wb <- wb_load(testfile_path("connection.xlsx"))
+  expect_warning(wb$clone_worksheet(1, "query copy"), "query tables")
+
+  src <- wb_load(testfile_path("tableStyles.xlsx"))
+  wb  <- wb_workbook()$add_worksheet()
+  expect_warning(wb$clone_worksheet(1, "styled", from = src), "with custom table styles is experimental")
+  expect_silent(src$clone_worksheet(1, "styled copy"))
+
+  src <- wb_load(testfile_path("formula.xlsx"))
+  wb  <- wb_workbook()$add_worksheet()
+  expect_warning(wb$clone_worksheet(1, "dynamic", from = src), "with cell metadata is experimental")
 })

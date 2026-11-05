@@ -23,9 +23,9 @@ Create a copy of a worksheet in the same \code{wbWorkbook} object.
 
 Data, styles, tables, comments, images and charts are cloned. Cloning
 sheets with pivot tables, slicers, timelines, named regions, chart
-extensions, form controls, embedded objects or threaded comments is
-experimental and throws a warning naming these elements. Check the output
-carefully.
+extensions, form controls, embedded objects, threaded comments or query
+tables is experimental and throws a warning naming these elements. Check the
+output carefully.
 
 Cloning is possible only to a limited extent. References to sheet names in
 formulas, charts, pivot tables, etc. may not be updated. Some elements like
@@ -33,8 +33,9 @@ slicers and timelines cannot be cloned yet.
 
 Cloning from another workbook is still an experimental feature and might not
 work reliably. Cloning data, media, charts, tables and conditional
-formatting should work. Slicers, timelines and pivot tables are currently
-not implemented.
+formatting should work. Slicers, timelines, pivot tables, custom table
+styles and cell metadata (e.g. dynamic arrays) are currently not
+implemented.
 Formula references are not updated to reflect interactions between workbooks.
 }
 \examples{

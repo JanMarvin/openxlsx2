@@ -1102,15 +1102,33 @@ wbWorkbook <- R6::R6Class(
                stringi::stri_detect_regex(xml_value(from$workbook$definedNames, "definedName"), ref_pattern))
         )
       }
+      # query tables are not cloned. For another workbook, custom table styles
+      # and cell metadata (dynamic arrays, rich values) are not cloned either
+      src_tbl <- which(from$tables$tab_sheet == old)
+      has_query_tables <- any(grepl("relationships/queryTable\"", from$tables.xml.rels[src_tbl], fixed = TRUE))
+      has_table_styles <- FALSE
+      if (external_wb && length(src_tbl) && length(from$styles_mgr$styles$tableStyles)) {
+        custom_styles <- rbindlist(xml_attr(from$styles_mgr$styles$tableStyles, "tableStyle"))$name
+        tbl_styles    <- rbindlist(xml_attr(from$tables$tab_xml[src_tbl], "table", "tableStyleInfo"))$name
+        has_table_styles <- any(tbl_styles %in% custom_styles)
+      }
+      has_metadata <- FALSE
+      src_cc <- from$worksheets[[old]]$sheet_data$cc
+      if (external_wb && !is.null(src_cc)) {
+        has_metadata <- any(nzchar(c(src_cc$c_cm, src_cc$c_vm)))
+      }
       experimental <- c(
-        "pivot tables"      = "pivotTable" %in% rel_types,
-        "slicers"           = "slicer" %in% rel_types,
-        "timelines"         = "timeline" %in% rel_types,
-        "named regions"     = has_names,
-        "chart extensions"  = any(grepl("chartEx", src_drawing_rels, fixed = TRUE)),
-        "form controls"     = "ctrlProp" %in% rel_types,
-        "embedded objects"  = any(c("oleObject", "package") %in% rel_types),
-        "threaded comments" = "threadedComment" %in% rel_types
+        "pivot tables"        = "pivotTable" %in% rel_types,
+        "slicers"             = "slicer" %in% rel_types,
+        "timelines"           = "timeline" %in% rel_types,
+        "named regions"       = has_names,
+        "chart extensions"    = any(grepl("chartEx", src_drawing_rels, fixed = TRUE)),
+        "form controls"       = "ctrlProp" %in% rel_types,
+        "embedded objects"    = any(c("oleObject", "package") %in% rel_types),
+        "threaded comments"   = "threadedComment" %in% rel_types,
+        "query tables"        = has_query_tables,
+        "custom table styles" = has_table_styles,
+        "cell metadata"       = has_metadata
       )
       if (any(experimental)) {
         warning(
