@@ -631,6 +631,12 @@ test_that("cloning copies embedded objects and chart sheets", {
   wb$clone_worksheet("Ext", "Ext2", from = wb_from)
   expect_equal(length(wb$externalLinks), 3L)
 
+  # relationship ids are not always rIdN
+  wb <- wb_workbook()
+  wb$workbook.xml.rels <- sub("rId", "Rx", wb$workbook.xml.rels, fixed = TRUE)
+  expect_silent(wb$clone_worksheet("Ext", "Ext", from = wb_from))
+  expect_equal(length(wb$externalLinks), 3L)
+
   # different external references are added and the formulas updated
   wb <- wb_load(fl)
   wb$externalLinks[[1]] <- sub("SUM", "SUMX", wb$externalLinks[[1]])
@@ -715,8 +721,13 @@ test_that("cloning from another workbook carries dxf styles, media and cell styl
   xf_ids <- as.integer(rbindlist(xml_attr(wb2$styles_mgr$styles$cellXfs, "xf"))$xfId)
   expect_true(all(is.na(xf_ids) | xf_ids < length(wb2$styles_mgr$styles$cellStyleXfs)))
 
+  # only dxf styles used by the sheet are added, identical ones are reused
+  n_dxf <- length(wb2$styles_mgr$styles$dxfs)
   wb2$clone_worksheet("img", "img", from = wb)
   expect_length(wb2$media, 1)
+  expect_equal(length(wb2$styles_mgr$styles$dxfs), n_dxf)
+  expect_warning(wb2$clone_worksheet("cf", "cf2", from = wb), "with cell metadata is experimental")
+  expect_equal(length(wb2$styles_mgr$styles$dxfs), n_dxf)
 })
 
 test_that("cloning warns only about experimental elements", {

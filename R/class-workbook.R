@@ -1912,27 +1912,45 @@ wbWorkbook <- R6::R6Class(
           rm(style, new_s, new_sty)
         }
 
-        # dxf styles of conditional formatting and tables are added to this
-        # workbook and the references of the cloned sheet point to the new ids
+        # dxf styles used by conditional formatting, sorting and tables of the
+        # cloned sheet are added to this workbook, or reused if identical, and
+        # the references of the cloned sheet point to the new ids
         from_dxfs <- from$styles_mgr$styles$dxfs
         if (length(from_dxfs)) {
-          dxf_names <- paste0(random_string(), "_dxf", seq_along(from_dxfs))
-          self$styles_mgr$add(from_dxfs, dxf_names, skip_duplicates = FALSE)
+          ws        <- self$worksheets[[newSheetIndex]]
+          cf        <- ws$conditionalFormatting
+          sel       <- which(self$tables$tab_sheet == newSheetIndex)
+          dxf_users <- c(if (NROW(cf)) cf$cf, ws$autoFilter, ws$sortState, self$tables$tab_xml[sel])
+          dxf_ids   <- unlist(regmatches(dxf_users, gregexpr("(?<=[dD]xfId=\")[0-9]+(?=\")", dxf_users, perl = TRUE)))
+          dxf_ids   <- sort(unique(as.integer(dxf_ids)))
+          dxf_ids   <- dxf_ids[dxf_ids < length(from_dxfs)]
+        } else {
+          dxf_ids   <- integer()
+        }
+
+        if (length(dxf_ids)) {
+          dxf_names <- paste0(random_string(), "_dxf", dxf_ids)
+          self$styles_mgr$add(from_dxfs[dxf_ids + 1L], dxf_names)
           new_dxf <- self$styles_mgr$get_dxf_id(dxf_names)
-          old_dxf <- as.character(seq_along(from_dxfs) - 1L)
+          old_dxf <- as.character(dxf_ids)
 
           dxf_old <- sprintf("(?<=[dD]xfId=\")%s(?=\")", old_dxf)
           dxf_tmp <- sprintf("clone_dxf_%s_", old_dxf)
 
           # conditional formatting is kept as data frame with sqref and cf rule
-          cf <- self$worksheets[[newSheetIndex]]$conditionalFormatting
           if (NROW(cf)) {
             cf$cf <- stringi::stri_replace_all_regex(cf$cf, dxf_old, dxf_tmp, vectorize_all = FALSE)
             cf$cf <- stringi::stri_replace_all_fixed(cf$cf, dxf_tmp, new_dxf, vectorize_all = FALSE)
             self$worksheets[[newSheetIndex]]$conditionalFormatting <- cf
           }
 
-          sel <- which(self$tables$tab_sheet == newSheetIndex)
+          for (field in c("autoFilter", "sortState")) {
+            x <- self$worksheets[[newSheetIndex]][[field]]
+            if (length(x) == 0) next
+            x <- stringi::stri_replace_all_regex(x, dxf_old, dxf_tmp, vectorize_all = FALSE)
+            self$worksheets[[newSheetIndex]][[field]] <- stringi::stri_replace_all_fixed(x, dxf_tmp, new_dxf, vectorize_all = FALSE)
+          }
+
           if (length(sel)) {
             tab_xml <- self$tables$tab_xml[sel]
             tab_xml <- stringi::stri_replace_all_regex(tab_xml, dxf_old, dxf_tmp, vectorize_all = FALSE)
@@ -1988,7 +2006,8 @@ wbWorkbook <- R6::R6Class(
               self$externalLinksRels <- c(self$externalLinksRels, from$externalLinksRels[ext_old[i]])
               ext_new[i] <- length(self$externalLinks)
 
-              rids <- as.integer(sub("rId", "", rbindlist(xml_attr(self$workbook.xml.rels, "Relationship"))$Id, fixed = TRUE))
+              rids <- rbindlist(xml_attr(self$workbook.xml.rels, "Relationship"))$Id
+              rids <- as.integer(sub("rId", "", rids[grepl("^rId[0-9]+$", rids)], fixed = TRUE))
               self$append(
                 "workbook.xml.rels",
                 sprintf(
