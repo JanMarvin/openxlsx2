@@ -1867,3 +1867,29 @@ test_that("markup in workbook properties is written as text", {
   app <- read_xml(unzip(temp, "docProps/app.xml", exdir = temp_dir("props")), pointer = FALSE)
   expect_equal(xml_value(app, "Properties", "Company"), "&lt;co&gt;")
 })
+
+test_that("wb_set_header_footer() works", {
+  wb <- wb_workbook()
+
+  # Add example data
+  wb$add_worksheet("S1")$add_data(x = 1:400)
+  wb$set_header_footer(
+    sheet = 1,
+    header = c("&[Date]", "ALL HEAD CENTER 2", "&[Page] / &[Pages]"),
+    footer = c("&[Path]&[File]", NA, "&[Tab]"),
+    first_header = c(NA, "Center Header of First Page", NA),
+    first_footer = c(NA, "Center Footer of First Page", NA)
+  )
+
+  exp <- list(
+    oddHeader = list("&amp;D", "ALL HEAD CENTER 2", "&amp;P / &amp;N"),
+    oddFooter = list("&amp;Z&amp;F", NULL, "&amp;A"),
+    evenHeader = list(),
+    evenFooter = list(),
+    firstHeader = list(NULL, "Center Header of First Page", NULL),
+    firstFooter = list(NULL, "Center Footer of First Page", NULL)
+  )
+  got <- wb$worksheets[[1]]$headerFooter
+  expect_equal(exp, got)
+
+})
