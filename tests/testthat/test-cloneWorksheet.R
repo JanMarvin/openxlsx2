@@ -462,6 +462,9 @@ test_that("cloning defined names works", {
 
 test_that("cloning copies comments, threaded comments and hyperlinks", {
 
+  ## FIXME this does not load in Excel
+  # <removedPart>Removed Part: Data store.</removedPart>
+
   wb <- wb_workbook()$add_worksheet("S")
   wb$add_person(name = "me")
   pid <- wb$get_person(name = "me")$id
@@ -481,12 +484,14 @@ test_that("cloning copies comments, threaded comments and hyperlinks", {
   expect_equal(length(wb$comments), 2L)
   expect_equal(length(wb$threadComments), 2L)
 
+  ## this works
   wb2 <- wb_workbook()
   expect_warning(wb2$clone_worksheet("S", "S", from = wb), "experimental")
   expect_equal(wb2$persons, wb$persons)
   expect_true(any(grepl("persons/person.xml", wb2$workbook.xml.rels, fixed = TRUE)))
   expect_true(any(grepl("vml", wb2$Content_Types, fixed = TRUE)))
 
+  ## this also
   wb3 <- wb_workbook()$add_worksheet("B")
   wb3$add_person(name = "you")
   wb3$add_thread(dims = "A1", person_id = wb3$get_person(name = "you")$id, comment = "other")
@@ -579,6 +584,7 @@ test_that("cloning images into a workbook with images keeps them apart", {
 
 test_that("cloning copies embedded objects and chart sheets", {
 
+  ## FIXME this does not work. the icon is not a hyperlink aka the files does not open
   fl <- testfile_path("mtcars_chart.xlsx")
 
   wb <- wb_load(fl)
@@ -595,6 +601,8 @@ test_that("cloning copies embedded objects and chart sheets", {
       wb$clone_worksheet(sheet, sheet, from = wb_from)
     }
   }
+  # this workbook is entirely broken
+  # <removedRecord>Removed Records: Formula from /xl/worksheets/sheet3.xml part</removedRecord>
   expect_equal(basename(wb$embeddings), "Microsoft_Word_Document.docx")
   expect_equal(names(wb$media), "image1.png")
   expect_true(wb$is_chartsheet[[1]])
