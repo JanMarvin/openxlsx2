@@ -1409,6 +1409,52 @@ wbWorkbook <- R6::R6Class(
         )
         vml_ct <- '<Default Extension="vml" ContentType="application/vnd.openxmlformats-officedocument.vmlDrawing"/>'
         if (!vml_ct %in% self$Content_Types) self$append("Content_Types", vml_ct)
+
+        # Shape ids in vml drawings are unique in the workbook. Each block of
+        # 1024 ids is declared in the idmap. The copied shapes are moved to
+        # blocks not yet used, block 1 is kept for comments.
+        new_vml   <- length(self$vml)
+        vml_other <- as.character(unlist(self$vml[-new_vml]))
+        used_blocks <- as.integer(unlist(strsplit(as.character(unlist(regmatches(
+          vml_other,
+          gregexpr('(?<=<o:idmap v:ext="edit" data=")[0-9,]+', vml_other, perl = TRUE)
+        ))), ",")))
+        used_ids <- as.integer(unlist(regmatches(vml_other, gregexpr("(?<=_x0000_s)[0-9]+", vml_other, perl = TRUE))))
+        max_block <- max(c(1L, used_blocks, used_ids %/% 1024L))
+
+        vml_new <- self$vml[[new_vml]]
+        spid_old <- unique(as.integer(unlist(regmatches(vml_new, gregexpr("(?<=_x0000_s)[0-9]+", vml_new, perl = TRUE)))))
+
+        if (length(spid_old)) {
+          blocks_old <- sort(unique(spid_old %/% 1024L))
+          blocks_new <- max_block + seq_along(blocks_old)
+          spid_new   <- blocks_new[match(spid_old %/% 1024L, blocks_old)] * 1024L + spid_old %% 1024L
+          spid_tmp   <- sprintf("clone_spid_%s_", seq_along(spid_old))
+
+          vml_new <- stringi::stri_replace_all_regex(
+            vml_new,
+            '(?<=<o:idmap v:ext="edit" data=")[0-9,]+',
+            paste(blocks_new, collapse = ",")
+          )
+          vml_new <- stringi::stri_replace_all_regex(vml_new, paste0("_x0000_s", spid_old, "(?![0-9])"), paste0("_x0000_s", spid_tmp), vectorize_all = FALSE)
+          self$vml[[new_vml]] <- stringi::stri_replace_all_fixed(vml_new, paste0("_x0000_s", spid_tmp), paste0("_x0000_s", spid_new), vectorize_all = FALSE)
+
+          # ole objects and form controls on the sheet and in its drawing
+          # refer to these shapes
+          for (field in c("oleObjects", "controls")) {
+            x <- self$worksheets[[newSheetIndex]][[field]]
+            if (length(x) == 0) next
+            x <- stringi::stri_replace_all_regex(x, paste0('shapeId="', spid_old, '"'), paste0('shapeId="', spid_tmp, '"'), vectorize_all = FALSE)
+            self$worksheets[[newSheetIndex]][[field]] <- stringi::stri_replace_all_fixed(x, paste0('shapeId="', spid_tmp, '"'), paste0('shapeId="', spid_new, '"'), vectorize_all = FALSE)
+          }
+
+          new_drawing <- self$worksheets[[newSheetIndex]]$relships$drawing
+          if (length(new_drawing)) {
+            x <- self$drawings[[new_drawing]]
+            x <- stringi::stri_replace_all_regex(x, paste0("_x0000_s", spid_old, "(?![0-9])"), paste0("_x0000_s", spid_tmp), vectorize_all = FALSE)
+            self$drawings[[new_drawing]] <- stringi::stri_replace_all_fixed(x, paste0("_x0000_s", spid_tmp), paste0("_x0000_s", spid_new), vectorize_all = FALSE)
+          }
+        }
       }
 
       if (length(cmt_id)) {
@@ -1424,6 +1470,23 @@ wbWorkbook <- R6::R6Class(
       if (length(trd_id)) {
         self$append("threadComments", from$threadComments[trd_id])
         self$worksheets[[newSheetIndex]]$relships$threadedComment <- length(self$threadComments)
+
+        # Threaded comment ids are unique in the workbook. The copies get new
+        # ids, also in the replies and in the legacy comments referring to them.
+        new_trd <- length(self$threadComments)
+        trd_old <- rbindlist(xml_attr(self$threadComments[[new_trd]], "threadedComment"))$id
+        trd_new <- vapply(trd_old, function(x) st_guid(), NA_character_, USE.NAMES = FALSE)
+        self$threadComments[[new_trd]] <- stringi::stri_replace_all_fixed(
+          self$threadComments[[new_trd]], trd_old, trd_new, vectorize_all = FALSE
+        )
+        new_cmt <- self$worksheets[[newSheetIndex]]$relships$comments
+        if (length(new_cmt)) {
+          for (i in seq_along(self$comments[[new_cmt]])) {
+            self$comments[[new_cmt]][[i]]$author <- stringi::stri_replace_all_fixed(
+              self$comments[[new_cmt]][[i]]$author, trd_old, trd_new, vectorize_all = FALSE
+            )
+          }
+        }
         self$worksheets_rels[[newSheetIndex]] <- stringi::stri_replace_all_fixed(
           self$worksheets_rels[[newSheetIndex]],
           sprintf('Target="../threadedComments/threadedComment%s.xml"', trd_id),
@@ -1871,6 +1934,72 @@ wbWorkbook <- R6::R6Class(
         # chart sheets have no cells
         if (!from$is_chartsheet[[old]]) {
           clone_shared_strings(from, old, self, newSheetIndex)
+        }
+
+        # Formulas refer to other workbooks by the position [n] of the external
+        # reference, quoted '[n]Sheet'! or not [n]Sheet! and [n]!name. These
+        # references are copied, or reused if this workbook has the same.
+        ext_pattern <- "(?<=')\\[%s\\](?=[^']*'!)|(?<!['A-Za-z0-9_\\]])\\[%s\\](?=[^'!(),\\s\\[\\]]*!)"
+        if (!from$is_chartsheet[[old]] && length(from$externalLinks)) {
+          cc <- self$worksheets[[newSheetIndex]]$sheet_data$cc
+          dn_local <- integer()
+          if (length(self$workbook$definedNames)) {
+            dn_lid <- rbindlist(xml_attr(self$workbook$definedNames, "definedName"))$localSheetId
+            if (!is.null(dn_lid)) dn_local <- which(dn_lid == as.character(newSheetIndex - 1L))
+          }
+          formulas <- c(cc$f, self$workbook$definedNames[dn_local])
+          ext_old <- unlist(regmatches(
+            formulas,
+            gregexpr(sprintf(ext_pattern, "[0-9]+", "[0-9]+"), formulas, perl = TRUE)
+          ))
+          ext_old <- sort(unique(as.integer(gsub("[^0-9]", "", ext_old))))
+          ext_old <- ext_old[ext_old <= length(from$externalLinks)]
+
+          if (length(ext_old)) {
+            ext_new <- integer(length(ext_old))
+            for (i in seq_along(ext_old)) {
+              same <- which(
+                vapply(self$externalLinks, identical, NA, from$externalLinks[[ext_old[i]]]) &
+                  vapply(self$externalLinksRels, identical, NA, from$externalLinksRels[[ext_old[i]]])
+              )
+              if (length(same)) {
+                ext_new[i] <- same[1]
+                next
+              }
+              self$externalLinks     <- c(self$externalLinks, from$externalLinks[ext_old[i]])
+              self$externalLinksRels <- c(self$externalLinksRels, from$externalLinksRels[ext_old[i]])
+              ext_new[i] <- length(self$externalLinks)
+
+              rids <- as.integer(sub("rId", "", rbindlist(xml_attr(self$workbook.xml.rels, "Relationship"))$Id, fixed = TRUE))
+              self$append(
+                "workbook.xml.rels",
+                sprintf(
+                  '<Relationship Id="rId%s" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLink" Target="externalLinks/externalLink%s.xml"/>',
+                  max(c(0L, rids), na.rm = TRUE) + 1L, ext_new[i]
+                )
+              )
+              self$append(
+                "Content_Types",
+                sprintf(
+                  '<Override PartName="/xl/externalLinks/externalLink%s.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.externalLink+xml"/>',
+                  ext_new[i]
+                )
+              )
+            }
+
+            ext_tmp <- sprintf("[clone_ext_%s_]", seq_along(ext_old))
+            ext_pat <- sprintf(ext_pattern, ext_old, ext_old)
+            if (!is.null(cc$f)) {
+              cc$f <- stringi::stri_replace_all_regex(cc$f, ext_pat, ext_tmp, vectorize_all = FALSE)
+              cc$f <- stringi::stri_replace_all_fixed(cc$f, ext_tmp, sprintf("[%s]", ext_new), vectorize_all = FALSE)
+              self$worksheets[[newSheetIndex]]$sheet_data$cc <- cc
+            }
+            if (length(dn_local)) {
+              dn <- self$workbook$definedNames[dn_local]
+              dn <- stringi::stri_replace_all_regex(dn, ext_pat, ext_tmp, vectorize_all = FALSE)
+              self$workbook$definedNames[dn_local] <- stringi::stri_replace_all_fixed(dn, ext_tmp, sprintf("[%s]", ext_new), vectorize_all = FALSE)
+            }
+          }
         }
       }
 

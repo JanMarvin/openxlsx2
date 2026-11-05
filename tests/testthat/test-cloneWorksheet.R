@@ -462,9 +462,6 @@ test_that("cloning defined names works", {
 
 test_that("cloning copies comments, threaded comments and hyperlinks", {
 
-  ## FIXME this does not load in Excel
-  # <removedPart>Removed Part: Data store.</removedPart>
-
   wb <- wb_workbook()$add_worksheet("S")
   wb$add_person(name = "me")
   pid <- wb$get_person(name = "me")$id
@@ -484,14 +481,24 @@ test_that("cloning copies comments, threaded comments and hyperlinks", {
   expect_equal(length(wb$comments), 2L)
   expect_equal(length(wb$threadComments), 2L)
 
-  ## this works
+  # threaded comments and vml shapes get new ids
+  ids1 <- rbindlist(xml_attr(wb$threadComments[[1]], "threadedComment"))$id
+  ids2 <- rbindlist(xml_attr(wb$threadComments[[2]], "threadedComment"))$id
+  expect_length(intersect(ids1, ids2), 0)
+  authors <- vapply(wb$comments[[2]], function(x) x$author, "")
+  expect_true(paste0("tc=", ids2) %in% authors)
+  expect_false(paste0("tc=", ids1) %in% authors)
+
+  spid <- function(x) unique(regmatches(x, gregexpr("_x0000_s[0-9]+", x))[[1]])
+  expect_length(intersect(spid(wb$vml[[1]]), spid(wb$vml[[2]])), 0)
+  expect_match(wb$vml[[2]], '<o:idmap v:ext="edit" data="2"/>', fixed = TRUE)
+
   wb2 <- wb_workbook()
   expect_warning(wb2$clone_worksheet("S", "S", from = wb), "experimental")
   expect_equal(wb2$persons, wb$persons)
   expect_true(any(grepl("persons/person.xml", wb2$workbook.xml.rels, fixed = TRUE)))
   expect_true(any(grepl("vml", wb2$Content_Types, fixed = TRUE)))
 
-  ## this also
   wb3 <- wb_workbook()$add_worksheet("B")
   wb3$add_person(name = "you")
   wb3$add_thread(dims = "A1", person_id = wb3$get_person(name = "you")$id, comment = "other")
@@ -584,13 +591,19 @@ test_that("cloning images into a workbook with images keeps them apart", {
 
 test_that("cloning copies embedded objects and chart sheets", {
 
-  ## FIXME this does not work. the icon is not a hyperlink aka the files does not open
   fl <- testfile_path("mtcars_chart.xlsx")
 
   wb <- wb_load(fl)
   expect_warning(wb$clone_worksheet("Emb", "clone"), "experimental")
   expect_equal(basename(wb$embeddings), c("Microsoft_Word_Document.docx", "Microsoft_Word_Document1.docx"))
   expect_true(any(grepl("../embeddings/Microsoft_Word_Document1.docx", wb$worksheets_rels[[5]], fixed = TRUE)))
+
+  # the ole object, its vml shape and the drawing use new shape ids
+  expect_match(wb$worksheets[[4]]$oleObjects, 'shapeId="4097"', fixed = TRUE)
+  expect_match(wb$worksheets[[5]]$oleObjects, 'shapeId="5121"', fixed = TRUE)
+  expect_match(wb$vml[[2]], '<o:idmap v:ext="edit" data="5"/>', fixed = TRUE)
+  expect_match(wb$vml[[2]], "_x0000_s5121", fixed = TRUE)
+  expect_match(wb$drawings[[wb$worksheets[[5]]$relships$drawing]], "_x0000_s5121", fixed = TRUE)
 
   wb_from <- wb_load(fl)
   wb <- wb_workbook()
@@ -601,12 +614,31 @@ test_that("cloning copies embedded objects and chart sheets", {
       wb$clone_worksheet(sheet, sheet, from = wb_from)
     }
   }
-  # this workbook is entirely broken
-  # <removedRecord>Removed Records: Formula from /xl/worksheets/sheet3.xml part</removedRecord>
   expect_equal(basename(wb$embeddings), "Microsoft_Word_Document.docx")
   expect_equal(names(wb$media), "image1.png")
   expect_true(wb$is_chartsheet[[1]])
   expect_true(any(grepl("Extension=\"docx\"", wb$Content_Types, fixed = TRUE)))
+
+  # formulas referring to other workbooks keep their external references
+  expect_equal(length(wb$externalLinks), 3L)
+  expect_equal(wb$externalLinks, wb_from$externalLinks)
+  expect_equal(sum(grepl("externalLinks/externalLink", wb$workbook.xml.rels, fixed = TRUE)), 3L)
+  cc <- wb$worksheets[[3]]$sheet_data$cc
+  exp <- c("VLOOKUP(B5,[1]SUM!$B$6:$C$6,2,FALSE)", "[2]IrisSample!$A$2", "'[3]1'!$A$2")
+  expect_equal(cc$f[cc$f != ""], exp)
+
+  # a second clone reuses the external references
+  wb$clone_worksheet("Ext", "Ext2", from = wb_from)
+  expect_equal(length(wb$externalLinks), 3L)
+
+  # different external references are added and the formulas updated
+  wb <- wb_load(fl)
+  wb$externalLinks[[1]] <- sub("SUM", "SUMX", wb$externalLinks[[1]])
+  wb$clone_worksheet("Ext", "Ext2", from = wb_from)
+  expect_equal(length(wb$externalLinks), 4L)
+  cc <- wb$worksheets[[5]]$sheet_data$cc
+  exp <- c("VLOOKUP(B5,[4]SUM!$B$6:$C$6,2,FALSE)", "[2]IrisSample!$A$2", "'[3]1'!$A$2")
+  expect_equal(cc$f[cc$f != ""], exp)
 })
 
 test_that("cloned charts refer to the cloned sheet", {
