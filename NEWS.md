@@ -12,7 +12,7 @@
 
 * `wb_add_data_table(..., total_row = ...)` checked for max column length instead of max row length and refused to write anything beyond the maximum number of columns. [#1700](https://github.com/JanMarvin/openxlsx2/pull/1700)
 * Several improvements to `xlsb` imports. This includes new features and some minor bugfixes. [#1702](https://github.com/JanMarvin/openxlsx2/pull/1702)
-* `wb_clone_worksheet()` was improved. Cloning is still experimental: a warning is only thrown if the sheet contains elements like pivot tables, slicers, timelines, named regions, chart extensions, query tables, custom table styles or cell metadata. [#1721](https://github.com/JanMarvin/openxlsx2/pull/1721)
+* `wb_clone_worksheet()` was improved. Cloning is still experimental: a warning is only thrown if the sheet contains elements like pivot tables, slicers, timelines, named regions, chart extensions, query tables, custom table styles, cell metadata or rich values. [#1721](https://github.com/JanMarvin/openxlsx2/pull/1721)
 
 ## Breaking changes
 

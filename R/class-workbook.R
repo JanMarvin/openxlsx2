@@ -1112,10 +1112,17 @@ wbWorkbook <- R6::R6Class(
         tbl_styles    <- rbindlist(xml_attr(from$tables$tab_xml[src_tbl], "table", "tableStyleInfo"))$name
         has_table_styles <- any(tbl_styles %in% custom_styles)
       }
-      has_metadata <- FALSE
+      # within the same workbook, cells with rich values (e.g. pictures in
+      # cells) refer to the same rich values as the original cells
+      has_metadata    <- FALSE
+      has_rich_values <- FALSE
       src_cc <- from$worksheets[[old]]$sheet_data$cc
-      if (external_wb && !is.null(src_cc)) {
-        has_metadata <- any(nzchar(c(src_cc$c_cm, src_cc$c_vm)))
+      if (!is.null(src_cc)) {
+        if (external_wb) {
+          has_metadata <- any(nzchar(c(src_cc$c_cm, src_cc$c_vm)))
+        } else {
+          has_rich_values <- any(nzchar(src_cc$c_vm))
+        }
       }
       experimental <- c(
         "pivot tables"        = "pivotTable" %in% rel_types,
@@ -1128,7 +1135,8 @@ wbWorkbook <- R6::R6Class(
         "threaded comments"   = "threadedComment" %in% rel_types,
         "query tables"        = has_query_tables,
         "custom table styles" = has_table_styles,
-        "cell metadata"       = has_metadata
+        "cell metadata"       = has_metadata,
+        "rich values"         = has_rich_values
       )
       if (any(experimental)) {
         warning(
@@ -1402,10 +1410,6 @@ wbWorkbook <- R6::R6Class(
           self$Content_Types,
           sprintf("<Override PartName=\"/xl/timelines/timeline%s.xml\" ContentType=\"application/vnd.ms-excel.timeline+xml\"/>", newid)
         )
-      }
-
-      if (!is.null(self$richData)) {
-        warning("Cloning richData (e.g., cells with picture) is not yet supported. The output file will be broken.")
       }
 
       # The IDs in the drawings array are sheet-specific, so within the new

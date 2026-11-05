@@ -23,9 +23,9 @@ Create a copy of a worksheet in the same \code{wbWorkbook} object.
 
 Data, styles, tables, comments, images and charts are cloned. Cloning
 sheets with pivot tables, slicers, timelines, named regions, chart
-extensions, form controls, embedded objects, threaded comments or query
-tables is experimental and throws a warning naming these elements. Check the
-output carefully.
+extensions, form controls, embedded objects, threaded comments, query
+tables or rich values (e.g. pictures in cells) is experimental and throws a
+warning naming these elements. Check the output carefully.
 
 Cloning is possible only to a limited extent. References to sheet names in
 formulas, charts, pivot tables, etc. may not be updated. Some elements like

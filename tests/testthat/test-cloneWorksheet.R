@@ -753,3 +753,12 @@ test_that("cloning warns about query tables, custom table styles and metadata", 
   wb  <- wb_workbook()$add_worksheet()
   expect_warning(wb$clone_worksheet(1, "dynamic", from = src), "with cell metadata is experimental")
 })
+
+test_that("cloning warns about rich values only for sheets with rich values", {
+  wb <- wb_load(testfile_path("richData_datatypes.xlsx"))
+  wb$add_worksheet("plain")$add_data(x = 1)
+  expect_silent(wb$clone_worksheet("plain", "plain copy"))
+  expect_warning(wb$clone_worksheet(1, "rich copy"), "with rich values is experimental")
+  cc <- wb$worksheets[[4]]$sheet_data$cc
+  expect_equal(sum(nzchar(cc$c_vm)), 12L)
+})
