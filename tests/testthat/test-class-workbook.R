@@ -420,7 +420,7 @@ test_that("clone worksheet", {
   fl <- testfile_path("mtcars_chart.xlsx")
   wb <- wb_load(fl)
   # wb$get_sheet_names() # chartsheet has no named name?
-  wb$clone_worksheet(1, "Clone 1")
+  expect_silent(wb$clone_worksheet(1, "Clone 1"))
   expect_s3_class(wb$worksheets[[5]], "wbChartSheet")
   # wb$open()
 
@@ -441,7 +441,7 @@ test_that("clone worksheet", {
 
   # clone drawing ---------------------------------------------------------
   wb <- wb_load(fl)
-  wb$clone_worksheet("testing", "Clone1")
+  expect_silent(wb$clone_worksheet("testing", "Clone1"))
 
   expect_false(identical(wb$worksheets_rels[2], wb$worksheets_rels[5]))
   # wb$open()
@@ -449,7 +449,7 @@ test_that("clone worksheet", {
   # clone sheet with table ------------------------------------------------
   fl <- testfile_path("tableStyles.xlsx")
   wb <- wb_load(fl)
-  wb$clone_worksheet(1, "clone")
+  expect_silent(wb$clone_worksheet(1, "clone"))
 
   expect_false(identical(wb$tables$tab_xml[1], wb$tables$tab_xml[2]))
   # wb$open()

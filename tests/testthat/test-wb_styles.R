@@ -19,8 +19,7 @@ test_that("wb_clone_sheet_style", {
 
   # clone style on cloned and cleaned worksheet
   fl <- system.file("extdata", "oxlsx2_sheet.xlsx", package = "openxlsx2")
-  wb <- wb_load(fl)
-  wb$clone_worksheet("SUM", "clone")
+  wb <- wb_load(fl)$clone_worksheet("SUM", "clone")
   wb <- wb_clean_sheet(wb, sheet = "clone", numbers = TRUE, characters = TRUE, styles = TRUE, merged_cells = FALSE)
   wb <- wb_clone_sheet_style(wb, "SUM", "clone")
 

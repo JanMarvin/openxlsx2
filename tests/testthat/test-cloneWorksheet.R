@@ -34,7 +34,6 @@ test_that("clone Worksheet with table", {
   wb$add_data_table(sheet = "Sheet 1", x = iris, table_name = "iris")
   wb$add_data_table(sheet = 1, x = mtcars, table_name = "mtcars", start_col = 10)
 
-  # FIXME a wild drawing2.xml appears in wb$Content_Types
   wb$clone_worksheet("Sheet 1", "Clone 1")
 
   old <- wb_validate_sheet(wb, "Sheet 1")
@@ -70,21 +69,22 @@ test_that("copy cells", {
   dat <- wb_data(wb, dims = "A1:D4", col_names = FALSE)
 
   # FIXME there is a bug with next_sheet() in clone_worksheets()
-  # 1:1 copy to M2
-  wb$clone_worksheet(old = 1, new = "Clone1")
-  wb$copy_cells(data = dat, dims = "M2", as_value = FALSE, as_ref = FALSE, transpose = FALSE)
-  # 1:1 transposed copy to A20
-  wb$clone_worksheet(old = 1, new = "Clone2")
-  wb$copy_cells(data = dat, dims = "A20", as_value = FALSE, as_ref = FALSE, transpose = TRUE)
-  # reference transposed copy to A20
-  wb$clone_worksheet(old = 1, new = "Clone3")
-  wb$copy_cells(data = dat, dims = "A20", as_value = FALSE, as_ref = TRUE, transpose = TRUE)
-  # value copy to A20
-  wb$clone_worksheet(old = 1, new = "Clone4")
-  wb$copy_cells(data = dat, dims = "A20", as_value = TRUE, as_ref = FALSE, transpose = FALSE)
-  # transposed value copy to A20
-  wb$clone_worksheet(old = 1, new = "Clone5")
-  wb$copy_cells(data = dat, dims = "A20", as_value = TRUE, as_ref = FALSE, transpose = TRUE)
+  wb$
+    # 1:1 copy to M2
+    clone_worksheet(old = 1, new = "Clone1")$
+    copy_cells(data = dat, dims = "M2", as_value = FALSE, as_ref = FALSE, transpose = FALSE)$
+    # 1:1 transposed copy to A20
+    clone_worksheet(old = 1, new = "Clone2")$
+    copy_cells(data = dat, dims = "A20", as_value = FALSE, as_ref = FALSE, transpose = TRUE)$
+    # reference transposed copy to A20
+    clone_worksheet(old = 1, new = "Clone3")$
+    copy_cells(data = dat, dims = "A20", as_value = FALSE, as_ref = TRUE, transpose = TRUE)$
+    # value copy to A20
+    clone_worksheet(old = 1, new = "Clone4")$
+    copy_cells(data = dat, dims = "A20", as_value = TRUE, as_ref = FALSE, transpose = FALSE)$
+    # transposed value copy to A20
+    clone_worksheet(old = 1, new = "Clone5")$
+    copy_cells(data = dat, dims = "A20", as_value = TRUE, as_ref = FALSE, transpose = TRUE)
 
   got <- wb_data(wb, sheet = 2, dims = "M2:P5", col_names = FALSE)
   expect_equal(dat, got, ignore_attr = TRUE)
@@ -138,8 +138,7 @@ test_that("cloning comments works", {
 
   # cloning comments from loaded worksheet did not work
   wb <- wb_workbook()$add_worksheet()$add_comment(dims = "A1", comment = c1)$save(tmp)
-  wb <- wb_load(tmp)
-  wb$clone_worksheet()
+  wb <- wb_load(tmp)$clone_worksheet()
 
   expect_equal(wb$comments[[1]][[1]]$ref, wb$comments[[2]][[1]]$ref)
 
