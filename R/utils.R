@@ -1089,7 +1089,8 @@ relship_no <- function(obj, x) {
   relship <- rbindlist(xml_attr(obj, "Relationship"))
   relship$typ <- basename(relship$Type)
   relship <- relship[relship$typ != x, ]
-  df_to_xml("Relationship", relship[c("Id", "Type", "Target")])
+  if (is.null(relship$TargetMode)) relship$TargetMode <- rep("", nrow(relship))
+  df_to_xml("Relationship", relship[c("Id", "Type", "Target", "TargetMode")])
 }
 
 #' get ids from worksheets_rels

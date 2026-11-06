@@ -285,10 +285,20 @@ test_that("read workbook with chart extension", {
 
   wb <- wb_load(fl)
 
-  expect_warning(
-    wb$clone_worksheet(),
-    "The file you have loaded contains chart extensions. At the moment, cloning worksheets can damage the output."
+  expect_warning(wb$clone_worksheet(), "experimental")
+
+  exp <- c(
+    "<definedName name=\"_xlchart.v1.5\" hidden=\"1\">'next_sheet'!$A$1</definedName>",
+    "<definedName name=\"_xlchart.v1.6\" hidden=\"1\">'next_sheet'!$A$1</definedName>",
+    "<definedName name=\"_xlchart.v1.7\" hidden=\"1\">'next_sheet'!$A$1</definedName>",
+    "<definedName name=\"_xlchart.v1.8\" hidden=\"1\">'next_sheet'!$A$1</definedName>"
   )
+  got <- wb$workbook$definedNames[6:9]
+  expect_equal(exp, got)
+
+  exp <- c("chart2.xml", "chartEx5.xml", "chartEx6.xml", "chartEx7.xml", "chartEx8.xml")
+  got <- basename(rbindlist(xml_attr(wb$drawings_rels[[2]], "Relationship"))$Target)
+  expect_equal(exp, got)
 
 })
 
@@ -425,8 +435,11 @@ test_that("reading timeline works", {
   expect_true(all(wb$workbook.xml.rels == wb2$workbook.xml.rels))
 
   expect_warning(
-    wb$clone_worksheet(old = "Sheet 2", new = "Sheet3"),
-    "Cloning timelines is not yet supported. It will not appear on the sheet."
+    expect_warning(
+      wb$clone_worksheet(old = "Sheet 2", new = "Sheet3"),
+      "Cloning timelines is not yet supported. It will not appear on the sheet."
+    ),
+    "experimental"
   )
 
 })
