@@ -1893,3 +1893,30 @@ test_that("wb_set_header_footer() works", {
   expect_equal(exp, got)
 
 })
+
+test_that("shapes of several drawings on a sheet get unique ids", {
+
+  sp <- function(id) {
+    sprintf(paste0(
+      "<xdr:sp macro=\"\" textlink=\"\"><xdr:nvSpPr><xdr:cNvPr id=\"%s\" name=\"\"/><xdr:cNvSpPr/></xdr:nvSpPr>",
+      "<xdr:spPr><a:prstGeom prst=\"rect\"><a:avLst/></a:prstGeom></xdr:spPr></xdr:sp>"
+    ), id)
+  }
+  xml <- paste0(
+    "<xdr:wsDr xmlns:xdr=\"http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing\" ",
+    "xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\">",
+    "<xdr:absoluteAnchor><xdr:pos x=\"0\" y=\"0\"/><xdr:ext cx=\"914400\" cy=\"914400\"/>",
+    "<xdr:grpSp><xdr:nvGrpSpPr><xdr:cNvPr id=\"1\" name=\"\"/><xdr:cNvGrpSpPr/></xdr:nvGrpSpPr><xdr:grpSpPr/>",
+    sp(2), sp(3),
+    "</xdr:grpSp><xdr:clientData/></xdr:absoluteAnchor></xdr:wsDr>"
+  )
+
+  wb <- wb_workbook()$add_worksheet()$
+    add_drawing(xml = xml, dims = "A1")$
+    add_drawing(xml = xml, dims = "D1")$
+    add_drawing(xml = xml, dims = "G1")
+
+  ids <- regmatches(wb$drawings[[1]], gregexpr("(?<=cNvPr id=\")[0-9]+", wb$drawings[[1]], perl = TRUE))[[1]]
+  expect_length(ids, 9)
+  expect_false(anyDuplicated(ids) > 0)
+})
