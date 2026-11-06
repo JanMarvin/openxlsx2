@@ -18,9 +18,6 @@
   gains `header_rows` to read a header that spans more than one row. The
   default is unchanged.
   [\#1706](https://github.com/JanMarvin/openxlsx2/pull/1706)
-- [`wb_data()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_data.md)
-  gains `used_range` to limit reading ranges like `"A:B"` or `"1:2"` to
-  only the required columns and rows plus one.
 - [`wb_clean_sheet()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_clean_sheet.md)
   gains a new attribute to fully remove tables from a sheet.
   [\#1709](https://github.com/JanMarvin/openxlsx2/pull/1709)
@@ -38,6 +35,12 @@
 - Several improvements to `xlsb` imports. This includes new features and
   some minor bugfixes.
   [\#1702](https://github.com/JanMarvin/openxlsx2/pull/1702)
+- [`wb_clone_worksheet()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_clone_worksheet.md)
+  was improved. Cloning is still experimental: a warning is only thrown
+  if the sheet contains elements like pivot tables, slicers, timelines,
+  named regions, chart extensions, query tables, custom table styles,
+  cell metadata or rich values.
+  [\#1721](https://github.com/JanMarvin/openxlsx2/pull/1721)
 
 ### Breaking changes
 
@@ -45,6 +48,9 @@
   `openxlsx2.native_encoding` were removed. Strings are now converted to
   UTF-8 when they are passed to C++, so the options are no longer
   needed. [\#1715](https://github.com/JanMarvin/openxlsx2/pull/1715)
+- [`wb_data()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_data.md)
+  gains `used_range` to limit reading ranges like `"A:B"` or `"1:2"` to
+  only the required columns and rows plus one.
 
 ------------------------------------------------------------------------
 
