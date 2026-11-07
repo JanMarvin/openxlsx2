@@ -1116,7 +1116,7 @@ wb_read <- function(
 wb_data <- function(wb, sheet = current_sheet(), dims, header_rows = 1L, used_range = TRUE, ...) {
   assert_workbook(wb)
   sheetno <- wb$clone()$.__enclos_env__$private$get_sheet_index(sheet)
-  sheetname <- wb$get_sheet_names(escape = TRUE)[[sheetno]]
+  sheetname <- wb$sheet_names[[sheetno]]
 
   if (missing(dims)) {
     dims <- unlist(xml_attr(wb$worksheets[[sheetno]]$dimension, "dimension"), use.names = FALSE)

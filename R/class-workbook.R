@@ -1098,7 +1098,7 @@ wbWorkbook <- R6::R6Class(
         dn_local[is.na(dn_local)] <- ""
         has_names <- any(
           !startsWith(dn_attr$name, "_xlchart.v1.") &
-            (dn_local == as.character(old - 1L) |
+            (dn_local == as.character(match(old, from$sheetOrder) - 1L) |
                stringi::stri_detect_regex(xml_value(from$workbook$definedNames, "definedName"), ref_pattern))
         )
       }
@@ -1656,7 +1656,7 @@ wbWorkbook <- R6::R6Class(
         if (is.null(local_id)) local_id <- rep("", length(from_dn))
         local_id[is.na(local_id)] <- ""
 
-        is_local  <- local_id == as.character(old - 1L)
+        is_local  <- local_id == as.character(match(old, from$sheetOrder) - 1L)
         is_global <- local_id == "" &
           !startsWith(from_dn_attr$name, "_xlchart.v1.") &
           !tolower(from_dn_attr$name) %in% tolower(from_dn_attr$name[is_local]) &
@@ -5024,7 +5024,7 @@ wbWorkbook <- R6::R6Class(
       to_cc$key <- cell_to_key(to_dims_f)
 
       if (as_ref) {
-        from_sheet_name <- self$get_sheet_names(escape = TRUE)[[from_sheet]]
+        from_sheet_name <- self$sheet_names[[from_sheet]]
         to_cc[names(to_cc) %in% c("c_t", "c_cm", "c_ph", "c_vm", "v", "f", "f_attr", "is")] <- ""
         to_cc[c("f")] <- paste0(shQuote(from_sheet_name, type = "sh"), "!", from_dims)
       }
@@ -5487,33 +5487,21 @@ wbWorkbook <- R6::R6Class(
         private$validate_new_sheet(sheet)
         new_name[i] <- sheet
         new_raw[i] <- replaceXMLEntities(sheet)
+        old_name <- self$sheet_names[[pos[i]]]
         private$set_single_sheet_name(pos[i], new_name[i], new_raw[i])
-        # TODO move this work into private$set_single_sheet_name()
 
-        ## Rename in workbook
-        sheetId <- private$get_sheet_id(type = "sheetId", pos[i])
-        rId <- private$get_sheet_id(type = 'rId', pos[i])
-        self$workbook$sheets[[pos[i]]] <-
-          sprintf(
-            '<sheet name="%s" sheetId="%s" r:id="rId%s"/>',
-            new_name[i],
-            sheetId,
-            rId
-          )
+        self$workbook$sheets[[pos[i]]] <- xml_attr_mod(
+          self$workbook$sheets[[pos[i]]],
+          xml_attributes = c(name = new_name[i])
+        )
 
-        ## rename defined names
         if (length(self$workbook$definedNames)) {
-          ind <- self$get_named_regions()
-          # TODO why is the order switched?
-          ind <- ind[order(as.integer(rownames(ind))), ]
-          ind <- ind$sheets == old
-
-          if (any(ind)) {
-            nn <- sprintf("'%s'", new_name[i])
-            nn <- stringi::stri_replace_all_fixed(self$workbook$definedNames[ind], old, nn)
-            nn <- stringi::stri_replace_all(nn, regex = "'+", replacement = "'")
-            self$workbook$definedNames[ind] <- nn
-          }
+          new_ref <- paste0("'", new_name[i], "'!")
+          dn <- self$workbook$definedNames
+          dn <- stringi::stri_replace_all_fixed(dn, paste0("'", old_name, "'!"), new_ref)
+          dn <- stringi::stri_replace_all_fixed(dn, paste0(">", old_name, "!"), paste0(">", new_ref))
+          dn <- stringi::stri_replace_all_fixed(dn, paste0(",", old_name, "!"), paste0(",", new_ref))
+          self$workbook$definedNames <- dn
         }
       }
 
@@ -6110,17 +6098,33 @@ wbWorkbook <- R6::R6Class(
       sheet_names <- self$sheet_names
       nSheets     <- length(sheet_names)
       sheet_names <- sheet_names[[sheet]]
+      position    <- match(sheet, self$sheetOrder) - 1L
+      active      <- self$get_active_sheet() - 1L
 
       ## definedNames
       if (length(self$workbook$definedNames)) {
         # wb_validate_sheet() makes sheet an integer
         # so we need to remove this before getting rid of the sheet names
-        self$workbook$definedNames <- self$workbook$definedNames[
-          !get_nr_from_definedName(self)$sheets %in% self$sheet_names[sheet]
-        ]
+        nr <- get_nr_from_definedName(self)
+        drop <- nr$id[nr$sheets %in% self$sheet_names[sheet]]
+        if (length(drop)) self$workbook$definedNames <- self$workbook$definedNames[-drop]
       }
 
       self$remove_named_region(sheet)
+
+      if (length(self$workbook$definedNames)) {
+        dn_lid <- rbindlist(xml_attr(self$workbook$definedNames, "definedName"))$localSheetId
+        for (i in which(dn_lid != "")) {
+          lid <- as.integer(dn_lid[i])
+          if (lid > position) {
+            self$workbook$definedNames[i] <- xml_attr_mod(
+              self$workbook$definedNames[i],
+              xml_attributes = c(localSheetId = as.character(lid - 1L))
+            )
+          }
+        }
+      }
+
       self$sheet_names <- self$sheet_names[-sheet]
       private$original_sheet_names <- private$original_sheet_names[-sheet]
 
@@ -6266,13 +6270,12 @@ wbWorkbook <- R6::R6Class(
             self$workbook$sheets,
             fixed = TRUE
           )
-          # these are zero indexed, a workbook without views keeps none
-          if (length(self$workbook$bookViews)) self$workbook$bookViews <- gsub(
-            stringi::stri_join("activeTab=\"", i - 1L, "\""),
-            stringi::stri_join("activeTab=\"", i - 2L, "\""),
-            self$workbook$bookViews,
-            fixed = TRUE
-          )
+        }
+        for (view in seq_along(active)) {
+          if (is.na(active[view])) next
+          if (active[view] > position || active[view] == nSheets - 1L) {
+            self$set_bookview(active_tab = active[view] - 1L, view = view)
+          }
         }
       } else {
         self$workbook$sheets <- NULL
@@ -9041,6 +9044,15 @@ wbWorkbook <- R6::R6Class(
       self$worksheets[[sheet]]$sheetPr <- write_sheetpr(sheetpr_df)
 
       ## print Titles ----
+      if (!is.null(print_title_rows) || !is.null(print_title_cols)) {
+        lid <- match(sheet, self$sheetOrder) - 1L
+        if (length(self$workbook$definedNames)) {
+          dn_attr <- rbindlist(xml_attr(self$workbook$definedNames, "definedName"))
+          old_pt <- which(dn_attr$name == "_xlnm.Print_Titles" & dn_attr$localSheetId == as.character(lid))
+          if (length(old_pt)) self$workbook$definedNames <- self$workbook$definedNames[-old_pt]
+        }
+      }
+
       if (!is.null(print_title_rows) && is.null(print_title_cols)) {
         if (!is.numeric(print_title_rows)) {
           stop("print_title_rows must be numeric.")
@@ -9050,8 +9062,8 @@ wbWorkbook <- R6::R6Class(
           ref1 = paste0("$", min(print_title_rows)),
           ref2 = paste0("$", max(print_title_rows)),
           name = "_xlnm.Print_Titles",
-          sheet = self$get_sheet_names(escape = TRUE)[[sheet]],
-          localSheetId = sheet - 1L
+          sheet = self$sheet_names[[sheet]],
+          localSheetId = lid
         )
       } else if (!is.null(print_title_cols) && is.null(print_title_rows)) {
         if (!is.numeric(print_title_cols)) {
@@ -9063,8 +9075,8 @@ wbWorkbook <- R6::R6Class(
           ref1 = paste0("$", cols[1]),
           ref2 = paste0("$", cols[2]),
           name = "_xlnm.Print_Titles",
-          sheet = self$get_sheet_names(escape = TRUE)[[sheet]],
-          localSheetId = sheet - 1L
+          sheet = self$sheet_names[[sheet]],
+          localSheetId = lid
         )
       } else if (!is.null(print_title_cols) && !is.null(print_title_rows)) {
         if (!is.numeric(print_title_rows)) {
@@ -9080,14 +9092,13 @@ wbWorkbook <- R6::R6Class(
 
         cols <- paste(paste0("$", cols[1]), paste0("$", cols[2]), sep = ":")
         rows <- paste(paste0("$", rows[1]), paste0("$", rows[2]), sep = ":")
-        localSheetId <- sheet - 1L
-        sheet <- self$get_sheet_names(escape = TRUE)[[sheet]]
+        sheet <- self$sheet_names[[sheet]]
 
         self$workbook$definedNames <- c(
           self$workbook$definedNames,
           sprintf(
             '<definedName name="_xlnm.Print_Titles" localSheetId="%s">\'%s\'!%s,\'%s\'!%s</definedName>',
-            localSheetId, sheet, cols, sheet, rows
+            lid, sheet, cols, sheet, rows
           )
         )
 
@@ -9478,7 +9489,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       localSheetId <- ""
-      if (local_sheet) localSheetId <- as.character(sheet - 1L)
+      if (local_sheet) localSheetId <- as.character(match(sheet, self$sheetOrder) - 1L)
 
       ## check name doesn't already exist
       ## named region
@@ -9618,7 +9629,9 @@ wbWorkbook <- R6::R6Class(
     #' @param sheets sheets
     #' @return The `wbWorkbook` object
     set_order = function(sheets) {
+      cur <- private$current_sheet
       sheets <- private$get_sheet_index(sheet = sheets)
+      private$current_sheet <- cur
 
       if (anyDuplicated(sheets)) {
         stop("`sheets` cannot have duplicates")
@@ -9632,29 +9645,24 @@ wbWorkbook <- R6::R6Class(
         stop("Elements of order are greater than the number of worksheets")
       }
 
-      ## Code adapted from set_sheet_names()
-      ## rename defined names
+      old_order <- self$sheetOrder
+
       if (length(self$workbook$definedNames)) {
-        ind <- self$get_named_regions()
-        ind <- ind[order(as.integer(rownames(ind))), ]
-
-        has_local <- ind$localSheetId != ""
-        local_ids <- as.integer(ind$localSheetId[has_local])
-        target_sheets <- as.integer(sheets) - 1L
-
-        if (any(local_ids %in% target_sheets)) {
-          ind$new_sheet <- NA_integer_
-          ind$new_sheet[has_local] <- pmax(match(local_ids, target_sheets) - 1L, 0L)
-
-          mask <- !is.na(ind$new_sheet)
-          new_ids <- sprintf('localSheetId="%d"', ind$new_sheet[mask])
-
-          self$workbook$definedNames[mask] <- stringi::stri_replace_first_regex(
-            self$workbook$definedNames[mask],
-            'localSheetId="[0-9]+"',
-            new_ids
+        dn_lid <- rbindlist(xml_attr(self$workbook$definedNames, "definedName"))$localSheetId
+        for (i in which(dn_lid != "")) {
+          internal <- old_order[as.integer(dn_lid[i]) + 1L]
+          self$workbook$definedNames[i] <- xml_attr_mod(
+            self$workbook$definedNames[i],
+            xml_attributes = c(localSheetId = as.character(match(internal, sheets) - 1L))
           )
         }
+      }
+
+      active <- self$get_active_sheet()
+      for (view in seq_along(active)) {
+        if (is.na(active[view])) next
+        internal <- old_order[active[view]]
+        self$set_bookview(active_tab = match(internal, sheets) - 1L, view = view)
       }
 
       self$sheetOrder <- sheets
@@ -9666,10 +9674,11 @@ wbWorkbook <- R6::R6Class(
     #' @description Get sheet visibility
     #' @return Returns sheet visibility
     get_sheet_visibility = function() {
-      state <- rep("visible", length(self$workbook$sheets))
-      state[grepl("hidden", self$workbook$sheets)] <- "hidden"
-      state[grepl("veryHidden", self$workbook$sheets, ignore.case = TRUE)] <- "veryHidden"
-      state
+      state <- rbindlist(xml_attr(self$workbook$sheets, "sheet"))$state
+      if (is.null(state)) state <- rep("", length(self$workbook$sheets))
+      state[is.na(state) | state == ""] <- "visible"
+      state[tolower(state) == "veryhidden"] <- "veryHidden"
+      state[self$sheetOrder]
     },
 
     #' @description Set sheet visibility
@@ -9690,27 +9699,16 @@ wbWorkbook <- R6::R6Class(
         stop("`value` must be one of \"visible\", \"hidden\", \"veryHidden\", TRUE or FALSE", call. = FALSE)
       }
 
-      exState0 <- reg_match0(self$workbook$sheets[sheet], '(?<=state=")[^"]+')
-      exState <- tolower(exState0)
-      exState[exState %in% "true"] <- "visible"
-      exState[exState %in% "hidden"] <- "hidden"
-      exState[exState %in% "false"] <- "hidden"
-      exState[exState %in% "veryhidden"] <- "veryHidden"
-
-
-      inds <- which(value != exState)
-
-      if (length(inds) == 0) {
-        return(invisible(self))
+      for (i in seq_along(sheet)) {
+        self$workbook$sheets[sheet[i]] <- xml_attr_mod(
+          self$workbook$sheets[sheet[i]],
+          xml_attributes = c(state = value[i])
+        )
       }
 
-      for (i in seq_along(self$worksheets)) {
-        self$workbook$sheets[sheet[i]] <- gsub(exState0[i], value[i], self$workbook$sheets[sheet[i]], fixed = TRUE)
-      }
-
-      if (!any(self$get_sheet_visibility() %in% c("true", "visible"))) {
+      if (!any(self$get_sheet_visibility() == "visible")) {
         warning("A workbook must have atleast 1 visible worksheet.  Setting first for visible")
-        self$set_sheet_visibility(1, TRUE)
+        self$set_sheet_visibility(self$sheetOrder[1], TRUE)
       }
 
       invisible(self)
@@ -10911,7 +10909,9 @@ wbWorkbook <- R6::R6Class(
 
     #' @description description set active sheet
     set_active_sheet = function(sheet = current_sheet()) {
+      by_position <- is.numeric(sheet)
       sheet <- private$get_sheet_index(sheet)
+      if (!by_position) sheet <- match(sheet, self$sheetOrder)
       self$set_bookview(active_tab = sheet - 1L)
     },
 
@@ -11200,8 +11200,8 @@ wbWorkbook <- R6::R6Class(
         length(clean) == 1, !is.na(clean),
         length(raw)   == 1, !is.na(raw)
       )
-      self$sheet_names[self$sheetOrder[pos]] <- clean
-      private$original_sheet_names[self$sheetOrder[pos]] <- raw
+      self$sheet_names[pos] <- clean
+      private$original_sheet_names[pos] <- raw
     },
 
     append_sheet_field = function(sheet = current_sheet(), field, value = NULL) {
@@ -11913,10 +11913,10 @@ wbWorkbook <- R6::R6Class(
 
 
       ## re-assign tab_selected
-      state <- rep.int("visible", nSheets)
-      hidden <- grepl("hidden", self$workbook$sheets)
-      state[hidden] <- "hidden"
-      visible_sheet_index <- which(!hidden)[1] # first visible
+      state <- rbindlist(xml_attr(self$workbook$sheets, "sheet"))$state
+      if (is.null(state)) state <- rep("", nSheets)
+      hidden <- state %in% c("hidden", "veryHidden")
+      visible_sheet_index <- which(!hidden)[1]
 
       if (is.null(self$workbook$bookViews))
         self$set_bookview(
@@ -11931,7 +11931,7 @@ wbWorkbook <- R6::R6Class(
       # Failsafe: hidden sheet can not be selected.
       if (any(hidden)) {
         for (i in which(hidden)) {
-          self$worksheets[[i]]$set_sheetview(tab_selected = FALSE)
+          self$worksheets[[self$sheetOrder[i]]]$set_sheetview(tab_selected = FALSE)
         }
       }
 

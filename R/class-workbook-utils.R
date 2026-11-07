@@ -252,7 +252,7 @@ replace_waiver <- function(x, wb) {
   }
 
   sheetno <- wb$clone()$.__enclos_env__$private$get_sheet_index(sheet)
-  sheet_name <- wb$clone()$get_sheet_names(escape = TRUE)[[sheetno]]
+  sheet_name <- wb$sheet_names[[sheetno]]
   stringi::stri_replace_all_fixed(x, rpl, sheet_name)
 }
 
