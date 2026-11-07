@@ -252,14 +252,14 @@ replace_waiver <- function(x, wb) {
   }
 
   sheetno <- wb$clone()$.__enclos_env__$private$get_sheet_index(sheet)
-  sheet_name <- wb$clone()$get_sheet_names(escape = TRUE)[[sheetno]]
+  sheet_name <- wb$sheet_names[[sheetno]]
   stringi::stri_replace_all_fixed(x, rpl, sheet_name)
 }
 
 # create parts of app.xml
 wb_create_app_xml <- function(wb) {
   all_sheet_names  <- wb$get_sheet_names(escape = TRUE)
-  sel <- wb$is_chartsheet
+  sel <- wb$is_chartsheet[wb$sheetOrder]
 
   # split
   work_sheets <- all_sheet_names[!sel]

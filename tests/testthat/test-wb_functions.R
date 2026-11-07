@@ -179,6 +179,371 @@ test_that("select_active_sheet", {
 
 })
 
+test_that("get_selected respects set_order", {
+
+  wb <- wb_workbook()
+  for (s in c("Data", "Notes", "Disclaimer")) wb$add_worksheet(s)
+  wb$set_order(c("Disclaimer", "Data", "Notes"))
+
+  got <- wb$get_selected()
+  expect_identical(got$names, c("Disclaimer", "Data", "Notes"))
+  expect_identical(got$tabSelected, c("0", "1", "0"))
+
+  wb$set_selected("Disclaimer")
+  expect_identical(wb$get_selected()$tabSelected, c("1", "0", "0"))
+
+})
+
+test_that("selecting several sheets keeps the current sheet", {
+
+  wb <- wb_workbook()
+  for (s in c("A", "B", "C")) wb$add_worksheet(s)
+  wb$set_selected(c("A", "B"))
+  wb$set_order(c("C", "B", "A"))
+  wb$add_data(x = "on C")
+  expect_identical(wb_to_df(wb, sheet = "C", col_names = FALSE)[[1]], "on C")
+
+})
+
+test_that("set_active_sheet by name respects set_order", {
+
+  wb <- wb_workbook()
+  for (s in c("Data", "Notes", "Summary", "Disclaimer")) wb$add_worksheet(s)
+  wb$set_order(c("Disclaimer", "Data", "Notes", "Summary"))
+
+  wb$set_active_sheet()
+  expect_identical(wb$get_active_sheet(), 1)
+
+  wb$set_active_sheet("Disclaimer")
+  expect_identical(wb$get_active_sheet(), 1)
+
+  wb$set_active_sheet("Summary")
+  expect_identical(wb$get_active_sheet(), 4)
+
+  wb$set_active_sheet(1)
+  expect_identical(wb$get_active_sheet(), 1)
+
+  tmp <- temp_xlsx()
+  wb$set_active_sheet("Notes")
+  wb$save(tmp)
+  wb2 <- wb_load(tmp)
+  expect_identical(wb2$get_active_sheet(), 3)
+  expect_identical(unname(wb2$get_sheet_names()[3]), "Notes")
+
+})
+
+test_that("local sheet ids follow set_order", {
+
+  wb <- wb_workbook()
+  for (s in c("A", "B", "C")) wb$add_worksheet(s)
+  wb$set_order(c("C", "A", "B"))
+
+  wb$add_named_region(sheet = "C", dims = "A1", name = "nc", local_sheet = TRUE)
+  wb$set_page_setup(sheet = "C", print_title_rows = 1)
+  wb$add_data(sheet = "C", x = data.frame(x = 1), with_filter = TRUE)
+
+  dn <- wb$get_named_regions(builtins = TRUE)
+  expect_identical(unique(dn$localSheetId), "0")
+  expect_identical(unique(dn$sheets), "C")
+
+  wb$set_active_sheet("A")
+  wb$set_order(c("B", "A", "C"))
+  dn <- wb$get_named_regions(builtins = TRUE)
+  expect_identical(unique(dn$localSheetId), "2")
+  expect_identical(wb$get_active_sheet(), 2)
+
+  wb$set_order(c("A", "C", "B"))
+  dn <- wb$get_named_regions(builtins = TRUE)
+  expect_identical(unique(dn$localSheetId), "1")
+  expect_identical(wb$get_active_sheet(), 1)
+
+})
+
+test_that("remove_worksheet shifts written positions", {
+
+  wb <- wb_workbook()
+  for (s in c("A", "B", "C")) wb$add_worksheet(s)
+  wb$add_named_region(sheet = "C", dims = "A1", name = "nc", local_sheet = TRUE)
+  wb$remove_worksheet("A")
+  expect_identical(wb$get_named_regions()$localSheetId, "1")
+
+  wb <- wb_workbook()
+  for (s in c("A", "B", "C")) wb$add_worksheet(s)
+  wb$set_order(c("C", "A", "B"))
+  wb$set_active_sheet("A")
+  wb$remove_worksheet("C")
+  expect_identical(wb$get_active_sheet(), 1)
+
+  wb <- wb_workbook()
+  for (s in c("A", "B", "C")) wb$add_worksheet(s)
+  wb$set_active_sheet("B")
+  wb$remove_worksheet("C")
+  expect_identical(wb$get_active_sheet(), 2)
+
+  wb$set_active_sheet("B")
+  wb$remove_worksheet("B")
+  expect_identical(wb$get_active_sheet(), 1)
+
+})
+
+test_that("set_sheet_names respects set_order and keeps attributes", {
+
+  wb <- wb_workbook()
+  for (s in c("A", "B", "C")) wb$add_worksheet(s)
+  wb$set_order(c("C", "A", "B"))
+  wb$add_named_region(sheet = "C", dims = "A1", name = "nc")
+  wb$set_sheet_visibility("B", "hidden")
+
+  wb$set_sheet_names("C", "Z")
+  wb$set_sheet_names("B", "Q")
+  expect_identical(unname(wb$get_sheet_names()), c("Z", "A", "Q"))
+  expect_identical(wb$get_sheet_visibility(), c("visible", "visible", "hidden"))
+  expect_identical(xml_value(wb$workbook$definedNames, "definedName"), "'Z'!$A$1:$A$1")
+
+  wb <- wb_workbook()
+  for (s in c("A", "B")) wb$add_worksheet(s)
+  wb$add_named_region(sheet = "A", dims = "A1", name = "na")
+  wb$add_named_region(sheet = "B", dims = "A1", name = "nb")
+  wb$set_sheet_names(c("A", "B"), c("X", "Y"))
+  expect_identical(
+    xml_value(wb$workbook$definedNames, "definedName"),
+    c("'X'!$A$1:$A$1", "'Y'!$A$1:$A$1")
+  )
+
+})
+
+test_that("sheet visibility follows set_order", {
+
+  wb <- wb_workbook()
+  for (s in c("hidden", "B", "C")) wb$add_worksheet(s)
+  wb$set_order(c("C", "hidden", "B"))
+  wb$set_sheet_visibility("C", "veryHidden")
+  expect_identical(wb$get_sheet_visibility(), c("veryHidden", "visible", "visible"))
+
+  tmp <- temp_xlsx()
+  wb$save(tmp)
+  wb2 <- wb_load(tmp)
+  expect_identical(wb2$get_sheet_visibility(), c("veryHidden", "visible", "visible"))
+  expect_identical(wb2$get_active_sheet(), 2)
+
+  expect_warning(
+    wb$set_sheet_visibility(c("hidden", "B"), c(FALSE, FALSE)),
+    "1 visible worksheet"
+  )
+  expect_identical(wb$get_sheet_visibility(), c("visible", "hidden", "hidden"))
+
+})
+
+test_that("defined names are not overwritten or duplicated", {
+
+  wb <- wb_workbook()
+  for (s in c("A", "B")) wb$add_worksheet(s)
+  wb$add_named_region(sheet = "A", dims = "B2", name = "aaa", local_sheet = TRUE)
+  wb$add_data(sheet = "B", x = data.frame(v = 1:2), dims = "D1", with_filter = TRUE)
+  wb$add_data(sheet = "B", x = data.frame(v = 1:2), dims = "F1", with_filter = TRUE)
+  wb$set_page_setup(sheet = "B", print_title_rows = 1)
+  wb$set_page_setup(sheet = "B", print_title_rows = 2)
+
+  dn <- rbindlist(xml_attr(wb$workbook$definedNames, "definedName"))
+  expect_identical(sort(dn$name), sort(c("aaa", "_xlnm._FilterDatabase", "_xlnm.Print_Titles")))
+  expect_true(any(grepl("$F$1", wb$workbook$definedNames, fixed = TRUE)))
+  expect_true(any(grepl("$2:$2", wb$workbook$definedNames, fixed = TRUE)))
+
+  wb <- wb_workbook()
+  for (s in c("A", "B", "C")) wb$add_worksheet(s)
+  wb$set_page_setup(sheet = "A", print_title_rows = 1)
+  wb$add_named_region(sheet = "C", dims = "B2", name = "keep", local_sheet = TRUE)
+  wb$remove_worksheet("B")
+  dn <- rbindlist(xml_attr(wb$workbook$definedNames, "definedName"))
+  expect_identical(dn$name, c("_xlnm.Print_Titles", "keep"))
+  expect_identical(dn$localSheetId, c("0", "1"))
+
+})
+
+test_that("selection by position follows set_order", {
+
+  wb <- wb_workbook()
+  for (s in c("A", "B", "C")) wb$add_worksheet(s)
+  wb$set_order(c("C", "A", "B"))
+  wb$set_selected(1)
+  sel <- wb$get_selected()
+  expect_identical(sel$names[sel$tabSelected == "1"], "C")
+
+  wb <- wb_workbook()
+  wb$add_worksheet("A")
+  expect_identical(wb$get_selected()$names, "A")
+
+})
+
+test_that("set_sheet_names without old follows set_order", {
+
+  wb <- wb_workbook()
+  for (s in c("A", "B", "C")) wb$add_worksheet(s)
+  wb$set_order(c("C", "A", "B"))
+  wb$set_sheet_names(new = paste0(wb$get_sheet_names(), "x"))
+  expect_identical(unname(wb$get_sheet_names()), c("Cx", "Ax", "Bx"))
+
+  wb$set_sheet_names("Cx", "cx")
+  expect_identical(unname(wb$get_sheet_names()), c("cx", "Ax", "Bx"))
+
+})
+
+test_that("removing sheets keeps tables, first sheet and app.xml in sync", {
+
+  wb <- wb_workbook()
+  for (s in c("A", "B", "C")) wb$add_worksheet(s)
+  wb$add_data_table(sheet = "B", x = data.frame(t = 1:2), table_name = "tb")
+  wb$remove_worksheet("A")
+  expect_identical(wb$get_tables("B")$tab_name, "tb")
+  expect_length(wb$get_tables("C"), 2)
+  expect_equal(NROW(wb$get_tables("C")), 0)
+
+  wb$remove_worksheet("B")
+  expect_null(wb$get_named_regions(tables = TRUE))
+
+  wb <- wb_workbook()
+  for (s in c("A", "B", "C")) wb$add_worksheet(s)
+  wb$set_bookview(first_sheet = 2, active_tab = 2)
+  wb$remove_worksheet("C")
+  expect_identical(wb$get_bookview()$firstSheet, "1")
+
+  wb <- wb_workbook()
+  wb$add_worksheet("A")
+  wb$add_chartsheet("C")
+  wb$add_worksheet("B")
+  wb$set_order(c("C", "B", "A"))
+  tmp <- temp_xlsx()
+  wb$save(tmp)
+  dir <- tempfile()
+  unzip(tmp, files = "docProps/app.xml", exdir = dir)
+  app <- read_xml(file.path(dir, "docProps/app.xml"))
+  parts <- xml_node(app, "Properties", "TitlesOfParts")
+  expect_true(grepl("<vt:lpstr>B</vt:lpstr><vt:lpstr>A</vt:lpstr><vt:lpstr>C</vt:lpstr>", parts, fixed = TRUE))
+
+  wb <- wb_workbook()
+  wb$add_chartsheet("C")
+  wb$save(tmp)
+  expect_identical(unname(wb_load(tmp)$get_sheet_names()), "C")
+
+})
+
+test_that("clean_sheet removes tables on sheets with xml entities", {
+
+  wb <- wb_workbook()
+  wb$add_worksheet("a&b")
+  wb$add_data_table(x = data.frame(t = 1:2), table_name = "tb")
+  wb$clean_sheet(sheet = "a&b", tables = TRUE)
+  expect_equal(NROW(wb$get_tables("a&b")), 0)
+
+})
+
+test_that("clone and copy_cells follow set_order", {
+
+  wb <- wb_workbook()
+  for (s in c("A", "B")) wb$add_worksheet(s)
+  wb$add_data(sheet = "B", x = "on B", dims = "A1", col_names = FALSE)
+  wb$add_named_region(sheet = "B", dims = "B2", name = "loc", local_sheet = TRUE)
+  wb$set_order(c("B", "A"))
+
+  expect_warning(wb$clone_worksheet("B", "C"), "named regions")
+  dn <- rbindlist(xml_attr(wb$workbook$definedNames, "definedName"))
+  expect_identical(dn$localSheetId[dn$name == "loc"], c("0", "2"))
+
+  wb <- wb_workbook()
+  for (s in c("A", "B")) wb$add_worksheet(s)
+  wb$set_order(c("B", "A"))
+  wb$workbook$definedNames <- '<definedName localSheetId="0" name="k">1</definedName>'
+  expect_warning(wb$clone_worksheet("B", "C"), "named regions")
+  expect_identical(rbindlist(xml_attr(wb$workbook$definedNames, "definedName"))$localSheetId, c("0", "2"))
+
+  wb <- wb_workbook()
+  for (s in c("A", "B")) wb$add_worksheet(s)
+  wb$add_data(sheet = "B", x = "on B", dims = "A1", col_names = FALSE)
+  wb$set_order(c("B", "A"))
+  dat <- wb_data(wb, sheet = "B", dims = "A1", col_names = FALSE)
+  expect_identical(attr(dat, "sheet"), "B")
+  wb$copy_cells(sheet = "A", dims = "C3", data = dat, as_ref = TRUE)
+  expect_identical(wb$worksheets[[1]]$sheet_data$cc$f[wb$worksheets[[1]]$sheet_data$cc$r == "C3"], "'B'!A1")
+
+})
+
+test_that("print titles with columns follow set_order", {
+
+  wb <- wb_workbook()
+  for (s in c("A", "B", "C")) wb$add_worksheet(s)
+  wb$set_order(c("C", "A", "B"))
+  wb$set_page_setup(sheet = "C", print_title_cols = 1:2)
+  wb$set_page_setup(sheet = "A", print_title_rows = 1, print_title_cols = 1)
+
+  dn <- rbindlist(xml_attr(wb$workbook$definedNames, "definedName"))
+  val <- xml_value(wb$workbook$definedNames, "definedName")
+  expect_identical(dn$localSheetId, c("0", "1"))
+  expect_identical(val, c("'C'!$A:$B", "'A'!$A:$A,'A'!$1:$1"))
+
+})
+
+test_that("named regions survive deleted tables and broken references", {
+
+  wb <- wb_workbook()
+  wb$add_worksheet("A")
+  wb$add_named_region(dims = "B2", name = "nr")
+  wb$add_data_table(x = data.frame(t = 1:2), dims = "D1", table_name = "tb")
+  wb$remove_tables(table = "tb")
+  expect_identical(wb$get_named_regions(tables = TRUE)$name, "nr")
+
+  wb$workbook$definedNames <- c(wb$workbook$definedNames, "<definedName name=\"gone\">#REF!$A$1</definedName>")
+  wb$remove_named_region(sheet = "A")
+  expect_identical(wb$workbook$definedNames, "<definedName name=\"gone\">#REF!$A$1</definedName>")
+
+})
+
+test_that("hidden sheets are unselected after set_order", {
+
+  wb <- wb_workbook()
+  for (s in c("A", "B", "C")) wb$add_worksheet(s)
+  wb$set_order(c("C", "A", "B"))
+  wb$set_selected(c("C", "B"))
+  wb$set_sheet_visibility("B", "hidden")
+
+  tmp <- temp_xlsx()
+  wb$save(tmp)
+  sel <- wb_load(tmp)$get_selected()
+  expect_identical(sel$names[sel$tabSelected == "1"], "C")
+
+})
+
+test_that("sheet names with xml entities work with named regions", {
+
+  for (nm in c("a&b", "x<y", "q\"t", "&gt;", "&amp;", "&lt;&gt;")) {
+
+    wb <- wb_workbook()
+    wb$add_worksheet(nm)
+    wb$add_worksheet("B")
+    wb$add_data(sheet = nm, x = data.frame(v = 1:2), dims = "B2", name = "rng")
+    wb$add_named_region(sheet = nm, dims = "D4", name = "loc", local_sheet = TRUE)
+
+    expect_identical(wb_get_named_regions(wb)$sheet, c(1L, 1L))
+
+    wb$add_worksheet("C")
+    wb$remove_worksheet("B")
+    expect_length(wb$workbook$definedNames, 2)
+    expect_identical(wb_to_df(wb, named_region = "rng")$v, c(1, 2))
+
+    wb$set_sheet_names("C", paste0(nm, "x"))
+    expect_identical(unname(wb$get_sheet_names()), c(nm, paste0(nm, "x")))
+    wb$add_named_region(sheet = paste0(nm, "x"), dims = "B2", name = "other")
+
+    wb$remove_named_region(sheet = nm)
+    expect_identical(wb_get_named_regions(wb)$name, "other")
+
+    tmp <- temp_xlsx()
+    wb$save(tmp)
+    wb2 <- wb_load(tmp)
+    expect_identical(unname(wb2$get_sheet_names()), c(nm, paste0(nm, "x")))
+  }
+
+})
+
 
 test_that("dims_to_dataframe", {
 

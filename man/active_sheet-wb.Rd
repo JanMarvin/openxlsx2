@@ -19,7 +19,7 @@ wb_set_selected(wb, sheet)
 \arguments{
 \item{wb}{a workbook}
 
-\item{sheet}{a sheet name of the workbook}
+\item{sheet}{a sheet name or the position of the sheet in the workbook}
 }
 \value{
 a data frame with tabSelected and names
@@ -29,6 +29,7 @@ Get and set table of sheets and their state as selected and active in a workbook
 
 Multiple sheets can be selected, but only a single one can be active (visible).
 The visible sheet, must not necessarily be a selected sheet.
+Sheets are returned in the order they appear in the workbook (see \link{wb_order}).
 }
 \examples{
 wb <- wb_load(file = system.file("extdata", "openxlsx2_example.xlsx", package = "openxlsx2"))

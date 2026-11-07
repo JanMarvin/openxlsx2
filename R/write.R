@@ -1034,14 +1034,16 @@ write_data_table <- function(
       wb$worksheets[[sheet]]$autoFilter <- sprintf('<autoFilter ref="%s"/>', ref)
 
       l   <- int2col(unlist(coords[, 2]))
-      dfn <- sprintf("'%s'!%s", wb$get_sheet_names(escape = TRUE)[sheet], stringi::stri_join("$", l, "$", coords[, 1], collapse = ":"))
+      dfn <- sprintf("'%s'!%s", wb$sheet_names[sheet], stringi::stri_join("$", l, "$", coords[, 1], collapse = ":"))
 
-      dn  <- sprintf('<definedName name="_xlnm._FilterDatabase" localSheetId="%s" hidden="1">%s</definedName>', sheet - 1L, dfn)
+      lid <- match(sheet, wb$sheetOrder) - 1L
+      dn  <- sprintf('<definedName name="_xlnm._FilterDatabase" localSheetId="%s" hidden="1">%s</definedName>', lid, dfn)
 
-      if (!is.null(wbdn <- wb$get_named_regions())) {
+      if (length(wb$workbook$definedNames)) {
 
-        ind <- wbdn$name == "_xlnm._FilterDatabase" & wbdn$localSheetId == sheet - 1L
-        if (any(ind)) {
+        dn_attr <- rbindlist(xml_attr(wb$workbook$definedNames, "definedName"))
+        ind <- which(dn_attr$name == "_xlnm._FilterDatabase" & dn_attr$localSheetId == as.character(lid))
+        if (length(ind)) {
           wb$workbook$definedNames[ind] <- dn
         } else {
           wb$workbook$definedNames <- c(

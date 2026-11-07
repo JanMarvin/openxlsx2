@@ -11,6 +11,7 @@ get_nr_from_definedName <- function(wb) {
     value =  xml_value(dn, "definedName"),
     stringsAsFactors = FALSE
   )
+  dn_id <- seq_len(nrow(dn))
 
   if (!is.null(dn$value)) {
     dn_pos <- dn$value
@@ -23,19 +24,21 @@ get_nr_from_definedName <- function(wb) {
     has_bang <- grepl("!", dn_pos, fixed = TRUE)
     dn$sheets <- ifelse(has_bang, gsub("^(.*)!.*$", "\\1", dn_pos), "")
     dn$coords <- ifelse(has_bang, gsub("^.*!(.*)$", "\\1", dn_pos), "")
-    dn <- dn[!(dn$sheets == "" & grepl("^_(xlfn|xlnm)\\.", dn$value)), , drop = FALSE]
+    keep <- !(dn$sheets == "" & grepl("^_(xlfn|xlnm)\\.", dn$value))
+    dn <- dn[keep, , drop = FALSE]
+    dn_id <- dn_id[keep]
   }
 
   if (nrow(dn) == 0) return(NULL)
 
-  dn$id <- seq_len(nrow(dn))
+  dn$id <- dn_id
 
   if (!is.null(dn$localSheetId)) {
     dn$local <- as.integer(dn$localSheetId != "")
   } else {
     dn$local <- 0
   }
-  dn$sheet <- vapply(dn$sheets, function(x) ifelse(x != "", wb_validate_sheet(wb, x), NA_integer_), NA_integer_)
+  dn$sheet <- vapply(dn$sheets, function(x) ifelse(x != "", wb_validate_sheet(wb, replaceXMLEntities(x)), NA_integer_), NA_integer_)
 
   dn[order(dn[, "local"], dn[, "name"], dn[, "sheet"]), ]
 }
@@ -46,11 +49,12 @@ get_nr_from_definedName <- function(wb) {
 #' @noRd
 get_named_regions_tab <- function(wb) {
   tabs <- wb$tables[wb$tables$tab_act == 1, ]
+  if (!NROW(tabs)) return(NULL)
   data.frame(
     #localSheetId is not always available
     name = tabs$tab_name,
     value = "table",
-    sheets = unname(wb$get_sheet_names()[tabs$tab_sheet]),
+    sheets = unname(wb$get_sheet_names()[match(tabs$tab_sheet, wb$sheetOrder)]),
     coords = tabs$tab_ref,
     id = NA_integer_,
     local = NA_integer_,

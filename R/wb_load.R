@@ -157,8 +157,9 @@ wb_load <- function(
   # only been seen in a single xlsx file (the one with the x namespace). Presumably
   # this breaks logics like: as.integer(cdigit(basename(xlsx)))
   worksheetsXML     <- grep_xml("/worksheets/sheet[0-9a-fA-F]*\\.(xml|bin)$")
+  sheetsXML         <- c(worksheetsXML, grep_xml("/chartsheets/sheet[0-9a-fA-F]*\\.(xml|bin)$"))
 
-  if ((length(ContentTypesXML) == 0 || length(worksheetsXML) == 0) && !debug) {
+  if ((length(ContentTypesXML) == 0 || length(sheetsXML) == 0) && !debug) {
     msg <- paste("File does not appear to be xlsx, xlsm or xlsb: ", file)
     stop(msg)
   }
