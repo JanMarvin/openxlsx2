@@ -7796,6 +7796,17 @@ wbWorkbook <- R6::R6Class(
         }
       }
 
+      # a drawing numbers its shapes on its own, shapes inside of groups
+      # included. Ids already used in the drawing of the sheet are replaced
+      id_regex <- "(?<=<xdr:cNvPr\\s[^>]{0,1000}\\bid=\")\\d+(?=\")"
+      used_ids <- stringi::stri_extract_all_regex(self$drawings[[sheet_drawing]], id_regex)[[1]]
+      new_ids  <- stringi::stri_extract_all_regex(xml, id_regex)[[1]]
+      if (!anyNA(used_ids) && !anyNA(new_ids) && any(new_ids %in% used_ids)) {
+        loc <- stringi::stri_locate_all_regex(xml, id_regex)[[1]]
+        ids <- max(as.numeric(used_ids)) + seq_len(nrow(loc))
+        xml <- stringi::stri_sub_replace_all(xml, from = loc[, 1], to = loc[, 2], replacement = sprintf("%.0f", ids))
+      }
+
       # check if sheet already contains drawing. if yes, try to integrate
       # our drawing into this else we only use our drawing.
       drawings <- self$drawings[[sheet_drawing]]
