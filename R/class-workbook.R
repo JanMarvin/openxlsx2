@@ -5454,7 +5454,7 @@ wbWorkbook <- R6::R6Class(
     set_sheet_names = function(old = NULL, new) {
       # assume all names.  Default values makes the test check for wrappers a
       # little weird
-      old <- old %||% seq_along(self$sheet_names)
+      old <- old %||% self$sheetOrder
 
       if (identical(old, new)) {
         return(invisible(self))
@@ -5484,7 +5484,7 @@ wbWorkbook <- R6::R6Class(
       # should be able to pull this out into a single private function
       for (i in seq_along(pos)) {
         sheet <- new_name[i]
-        private$validate_new_sheet(sheet)
+        private$validate_new_sheet(sheet, renamed = pos[i])
         new_name[i] <- sheet
         new_raw[i] <- replaceXMLEntities(sheet)
         old_name <- self$sheet_names[[pos[i]]]
@@ -6099,14 +6099,14 @@ wbWorkbook <- R6::R6Class(
       nSheets     <- length(sheet_names)
       sheet_names <- sheet_names[[sheet]]
       position    <- match(sheet, self$sheetOrder) - 1L
-      active      <- self$get_active_sheet() - 1L
+      book_views  <- if (length(self$workbook$bookViews)) self$get_bookview() else NULL
 
       ## definedNames
       if (length(self$workbook$definedNames)) {
         # wb_validate_sheet() makes sheet an integer
         # so we need to remove this before getting rid of the sheet names
         nr <- get_nr_from_definedName(self)
-        drop <- nr$id[nr$sheets %in% self$sheet_names[sheet]]
+        drop <- nr$id[which(nr$sheet == sheet)]
         if (length(drop)) self$workbook$definedNames <- self$workbook$definedNames[-drop]
       }
 
@@ -6237,15 +6237,17 @@ wbWorkbook <- R6::R6Class(
       # tableName is a character Vector with an attached name Vector.
       if (any(sel)) {
         self$tables$tab_name[sel] <- paste0(self$tables$tab_name[sel], "_openxlsx_deleted")
-        tab_sheet <- self$tables$tab_sheet
-        tab_sheet[sel] <- 0
-        tab_sheet[tab_sheet > sheet] <- tab_sheet[tab_sheet > sheet] - 1L
-        self$tables$tab_sheet <- tab_sheet
         self$tables$tab_ref[sel] <- ""
         self$tables$tab_xml[sel] <- ""
 
         # deactivate sheet
         self$tables$tab_act[sel] <- 0
+      }
+      if (length(sel)) {
+        tab_sheet <- self$tables$tab_sheet
+        tab_sheet[sel] <- 0
+        tab_sheet[tab_sheet > sheet] <- tab_sheet[tab_sheet > sheet] - 1L
+        self$tables$tab_sheet <- tab_sheet
       }
 
       ## remove sheet
@@ -6271,10 +6273,14 @@ wbWorkbook <- R6::R6Class(
             fixed = TRUE
           )
         }
-        for (view in seq_along(active)) {
-          if (is.na(active[view])) next
-          if (active[view] > position || active[view] == nSheets - 1L) {
-            self$set_bookview(active_tab = active[view] - 1L, view = view)
+        for (view in seq_len(NROW(book_views))) {
+          active <- as.integer(book_views$activeTab[view])
+          if (length(active) && !is.na(active) && (active > position || active == nSheets - 1L)) {
+            self$set_bookview(active_tab = active - 1L, view = view)
+          }
+          first <- as.integer(book_views$firstSheet[view])
+          if (length(first) && !is.na(first) && (first > position || first == nSheets - 1L)) {
+            self$set_bookview(first_sheet = first - 1L, view = view)
           }
         }
       } else {
@@ -9575,7 +9581,7 @@ wbWorkbook <- R6::R6Class(
 
         if (is.null(z)) {
           z <- tb
-        } else {
+        } else if (!is.null(tb)) {
           z <- merge(z, tb, all = TRUE, sort = FALSE)
         }
 
@@ -9761,7 +9767,7 @@ wbWorkbook <- R6::R6Class(
 
       if (tables) {
         tbs <- self$get_named_regions(tables = TRUE)
-        tbs <- tbs[tbs$value == "table" & tbs$sheets == private$get_sheet_name(sheet), ]
+        tbs <- tbs[which(tbs$value == "table" & tbs$sheet == private$get_sheet_index(sheet)), ]
         if (NROW(tbs)) {
           if (!is.null(dims))
             ddims <- dims_to_dataframe(dims, fill = TRUE)
@@ -9773,7 +9779,7 @@ wbWorkbook <- R6::R6Class(
             }
 
             self$remove_tables(
-              sheet = tbs$sheets[i],
+              sheet = tbs$sheet[i],
               table = tbs$name[i]
             )
           }
@@ -10918,21 +10924,24 @@ wbWorkbook <- R6::R6Class(
     #' @description description get selected sheets
     get_selected = function() {
       len <- length(self$sheet_names)
-      sv <- vector("list", length = len)
+      sv <- rep("<sheetView/>", len)
 
       for (i in seq_len(len)) {
-        sv[[i]] <- xml_node(self$worksheets[[i]]$sheetViews, "sheetViews", "sheetView")
+        view <- xml_node(self$worksheets[[i]]$sheetViews, "sheetViews", "sheetView")
+        if (length(view)) sv[i] <- view[1]
       }
 
-      # print(sv)
       z <- rbindlist(xml_attr(sv, "sheetView"))
-      z$names <- self$get_sheet_names(escape = TRUE)
+      z$names <- self$sheet_names
+      z <- z[self$sheetOrder, , drop = FALSE]
+      rownames(z) <- NULL
       z
     },
 
     #' @description set selected sheet
     set_selected = function(sheet = current_sheet()) {
 
+      if (is.numeric(sheet)) sheet <- self$sheetOrder[sheet]
       sheet <- private$get_sheet_index(sheet)
 
       for (i in seq_along(self$sheet_names)) {
@@ -10987,7 +10996,7 @@ wbWorkbook <- R6::R6Class(
       private[[field]] <- c(private[[field]], value)
     },
 
-    validate_new_sheet = function(sheet) {
+    validate_new_sheet = function(sheet, renamed = NULL) {
       # returns nothing, throws error if there's a problem.
       if (length(sheet) != 1) {
         stop("sheet name must be length 1")
@@ -11018,6 +11027,9 @@ wbWorkbook <- R6::R6Class(
         return()
       }
 
+      other_names <- self$sheet_names
+      if (!is.null(renamed)) other_names <- other_names[-renamed]
+
       sheet <- as.character(sheet)
       if (has_illegal_chars(sheet)) {
         warning("Fixing: removing illegal characters found in sheet name. See ?openxlsx2::clean_worksheet_name.")
@@ -11037,14 +11049,14 @@ wbWorkbook <- R6::R6Class(
       if (nchar(sheet) > 31) {
         warning("Fixing: shortening sheet name to 31 characters.")
         sheet <- stringi::stri_sub(sheet, 1, 31)
-        if (anyDuplicated(c(sheet, self$sheet_names)))
+        if (anyDuplicated(c(sheet, other_names)))
           stop(
             "Cannot shorten sheet name to a unique string. ",
             "Please provide a unique sheetname with maximum 31 characters."
           )
       }
 
-      if (tolower(sheet) %in% tolower(self$sheet_names)) {
+      if (tolower(sheet) %in% tolower(other_names)) {
         warning('Attempted to add a worksheet that is invalid or already exists.\n',
                 'Fixing: a sheet with name "', sheet, '" already exists. Creating a unique sheetname"', call. = FALSE)
         ## We simply append (1), while spreadsheet software would increase

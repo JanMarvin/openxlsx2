@@ -2671,11 +2671,11 @@ wb_set_grid_lines <- function(wb, sheet = current_sheet(), show = FALSE, print =
 #' wb$add_data(x = Formaldehyde)
 #'
 #' wb_get_order(wb)
-#' wb$get_sheet_na
+#' wb$get_sheet_names()
 #' wb$set_order(c(1, 3, 2)) # switch position of sheets 2 & 3
 #' wb$add_data(2, 'This is still the "mtcars" worksheet', start_col = 15)
 #' wb_get_order(wb)
-#' wb$get_sheet_names() ## ordering within workbook is not changed
+#' wb$get_sheet_names() ## sheet names are returned in the new order
 #' wb$set_order(3:1)
 #' @name wb_order
 wb_get_order <- function(wb) {
@@ -5215,6 +5215,7 @@ wb_set_sheetview <- function(
 #'
 #' Multiple sheets can be selected, but only a single one can be active (visible).
 #' The visible sheet, must not necessarily be a selected sheet.
+#' Sheets are returned in the order they appear in the workbook (see [wb_order]).
 #'
 #' @param wb a workbook
 #' @returns a data frame with tabSelected and names
@@ -5236,7 +5237,7 @@ wb_get_active_sheet <- function(wb) {
 }
 
 #' @rdname active_sheet-wb
-#' @param sheet a sheet name of the workbook
+#' @param sheet a sheet name or the position of the sheet in the workbook
 #' @export
 wb_set_active_sheet <- function(wb, sheet) {
   # active tab requires a c index

@@ -179,6 +179,21 @@ test_that("select_active_sheet", {
 
 })
 
+test_that("get_selected respects set_order", {
+
+  wb <- wb_workbook()
+  for (s in c("Data", "Notes", "Disclaimer")) wb$add_worksheet(s)
+  wb$set_order(c("Disclaimer", "Data", "Notes"))
+
+  got <- wb$get_selected()
+  expect_identical(got$names, c("Disclaimer", "Data", "Notes"))
+  expect_identical(got$tabSelected, c("0", "1", "0"))
+
+  wb$set_selected("Disclaimer")
+  expect_identical(wb$get_selected()$tabSelected, c("1", "0", "0"))
+
+})
+
 test_that("set_active_sheet by name respects set_order", {
 
   wb <- wb_workbook()
@@ -331,6 +346,83 @@ test_that("defined names are not overwritten or duplicated", {
   dn <- rbindlist(xml_attr(wb$workbook$definedNames, "definedName"))
   expect_identical(dn$name, c("_xlnm.Print_Titles", "keep"))
   expect_identical(dn$localSheetId, c("0", "1"))
+
+})
+
+test_that("selection by position follows set_order", {
+
+  wb <- wb_workbook()
+  for (s in c("A", "B", "C")) wb$add_worksheet(s)
+  wb$set_order(c("C", "A", "B"))
+  wb$set_selected(1)
+  sel <- wb$get_selected()
+  expect_identical(sel$names[sel$tabSelected == "1"], "C")
+
+  wb <- wb_workbook()
+  wb$add_worksheet("A")
+  expect_identical(wb$get_selected()$names, "A")
+
+})
+
+test_that("set_sheet_names without old follows set_order", {
+
+  wb <- wb_workbook()
+  for (s in c("A", "B", "C")) wb$add_worksheet(s)
+  wb$set_order(c("C", "A", "B"))
+  wb$set_sheet_names(new = paste0(wb$get_sheet_names(), "x"))
+  expect_identical(unname(wb$get_sheet_names()), c("Cx", "Ax", "Bx"))
+
+  wb$set_sheet_names("Cx", "cx")
+  expect_identical(unname(wb$get_sheet_names()), c("cx", "Ax", "Bx"))
+
+})
+
+test_that("removing sheets keeps tables, first sheet and app.xml in sync", {
+
+  wb <- wb_workbook()
+  for (s in c("A", "B", "C")) wb$add_worksheet(s)
+  wb$add_data_table(sheet = "B", x = data.frame(t = 1:2), table_name = "tb")
+  wb$remove_worksheet("A")
+  expect_identical(wb$get_tables("B")$tab_name, "tb")
+  expect_length(wb$get_tables("C"), 2)
+  expect_equal(NROW(wb$get_tables("C")), 0)
+
+  wb$remove_worksheet("B")
+  expect_null(wb$get_named_regions(tables = TRUE))
+
+  wb <- wb_workbook()
+  for (s in c("A", "B", "C")) wb$add_worksheet(s)
+  wb$set_bookview(first_sheet = 2, active_tab = 2)
+  wb$remove_worksheet("C")
+  expect_identical(wb$get_bookview()$firstSheet, "1")
+
+  wb <- wb_workbook()
+  wb$add_worksheet("A")
+  wb$add_chartsheet("C")
+  wb$add_worksheet("B")
+  wb$set_order(c("C", "B", "A"))
+  tmp <- temp_xlsx()
+  wb$save(tmp)
+  dir <- tempfile()
+  unzip(tmp, files = "docProps/app.xml", exdir = dir)
+  app <- read_xml(file.path(dir, "docProps/app.xml"))
+  parts <- xml_node(app, "Properties", "TitlesOfParts")
+  expect_true(grepl("<vt:lpstr>B</vt:lpstr><vt:lpstr>A</vt:lpstr><vt:lpstr>C</vt:lpstr>", parts, fixed = TRUE))
+
+  wb <- wb_workbook()
+  wb$add_chartsheet("C")
+  wb$save(tmp)
+  expect_identical(unname(wb_load(tmp)$get_sheet_names()), "C")
+
+})
+
+test_that("clean_sheet removes tables on sheets with xml entities", {
+
+  wb <- wb_workbook()
+  wb$add_worksheet("a&b")
+  wb$add_data_table(x = data.frame(t = 1:2), table_name = "tb")
+  wb$clean_sheet(sheet = "a&b", tables = TRUE)
+  expect_equal(NROW(wb$get_tables("a&b")), 0)
 
 })
 

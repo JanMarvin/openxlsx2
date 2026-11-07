@@ -259,7 +259,7 @@ replace_waiver <- function(x, wb) {
 # create parts of app.xml
 wb_create_app_xml <- function(wb) {
   all_sheet_names  <- wb$get_sheet_names(escape = TRUE)
-  sel <- wb$is_chartsheet
+  sel <- wb$is_chartsheet[wb$sheetOrder]
 
   # split
   work_sheets <- all_sheet_names[!sel]

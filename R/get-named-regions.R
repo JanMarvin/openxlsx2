@@ -49,6 +49,7 @@ get_nr_from_definedName <- function(wb) {
 #' @noRd
 get_named_regions_tab <- function(wb) {
   tabs <- wb$tables[wb$tables$tab_act == 1, ]
+  if (!NROW(tabs)) return(NULL)
   data.frame(
     #localSheetId is not always available
     name = tabs$tab_name,

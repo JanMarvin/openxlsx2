@@ -35,10 +35,10 @@ wb$add_worksheet("Sheet 3", grid_lines = FALSE)
 wb$add_data(x = Formaldehyde)
 
 wb_get_order(wb)
-wb$get_sheet_na
+wb$get_sheet_names()
 wb$set_order(c(1, 3, 2)) # switch position of sheets 2 & 3
 wb$add_data(2, 'This is still the "mtcars" worksheet', start_col = 15)
 wb_get_order(wb)
-wb$get_sheet_names() ## ordering within workbook is not changed
+wb$get_sheet_names() ## sheet names are returned in the new order
 wb$set_order(3:1)
 }
