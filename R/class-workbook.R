@@ -6114,14 +6114,13 @@ wbWorkbook <- R6::R6Class(
 
       if (length(self$workbook$definedNames)) {
         dn_lid <- rbindlist(xml_attr(self$workbook$definedNames, "definedName"))$localSheetId
-        for (i in which(dn_lid != "")) {
-          lid <- as.integer(dn_lid[i])
-          if (lid > position) {
-            self$workbook$definedNames[i] <- xml_attr_mod(
-              self$workbook$definedNames[i],
-              xml_attributes = c(localSheetId = as.character(lid - 1L))
-            )
-          }
+        lid <- as.integer(dn_lid)
+        shift <- which(lid > position)
+        for (j in shift) {
+          self$workbook$definedNames[j] <- xml_attr_mod(
+            self$workbook$definedNames[j],
+            xml_attributes = c(localSheetId = as.character(lid[j] - 1L))
+          )
         }
       }
 
@@ -6273,15 +6272,17 @@ wbWorkbook <- R6::R6Class(
             fixed = TRUE
           )
         }
+        active <- as.integer(book_views$activeTab)
+        first  <- as.integer(book_views$firstSheet)
         for (view in seq_len(NROW(book_views))) {
-          active <- as.integer(book_views$activeTab[view])
-          if (length(active) && !is.na(active) && (active > position || active == nSheets - 1L)) {
-            self$set_bookview(active_tab = active - 1L, view = view)
-          }
-          first <- as.integer(book_views$firstSheet[view])
-          if (length(first) && !is.na(first) && (first > position || first == nSheets - 1L)) {
-            self$set_bookview(first_sheet = first - 1L, view = view)
-          }
+          new_active <- NULL
+          new_first  <- NULL
+          if (length(active) && !is.na(active[view]) && (active[view] > position || active[view] == nSheets - 1L))
+            new_active <- active[view] - 1L
+          if (length(first) && !is.na(first[view]) && (first[view] > position || first[view] == nSheets - 1L))
+            new_first <- first[view] - 1L
+          if (length(new_active) || length(new_first))
+            self$set_bookview(active_tab = new_active, first_sheet = new_first, view = view)
         }
       } else {
         self$workbook$sheets <- NULL
@@ -9635,9 +9636,7 @@ wbWorkbook <- R6::R6Class(
     #' @param sheets sheets
     #' @return The `wbWorkbook` object
     set_order = function(sheets) {
-      cur <- private$current_sheet
       sheets <- private$get_sheet_index(sheet = sheets)
-      private$current_sheet <- cur
 
       if (anyDuplicated(sheets)) {
         stop("`sheets` cannot have duplicates")
@@ -9651,24 +9650,21 @@ wbWorkbook <- R6::R6Class(
         stop("Elements of order are greater than the number of worksheets")
       }
 
-      old_order <- self$sheetOrder
-
       if (length(self$workbook$definedNames)) {
         dn_lid <- rbindlist(xml_attr(self$workbook$definedNames, "definedName"))$localSheetId
-        for (i in which(dn_lid != "")) {
-          internal <- old_order[as.integer(dn_lid[i]) + 1L]
-          self$workbook$definedNames[i] <- xml_attr_mod(
-            self$workbook$definedNames[i],
-            xml_attributes = c(localSheetId = as.character(match(internal, sheets) - 1L))
+        local <- which(dn_lid != "")
+        new_lid <- match(self$sheetOrder[as.integer(dn_lid[local]) + 1L], sheets) - 1L
+        for (j in seq_along(local)) {
+          self$workbook$definedNames[local[j]] <- xml_attr_mod(
+            self$workbook$definedNames[local[j]],
+            xml_attributes = c(localSheetId = as.character(new_lid[j]))
           )
         }
       }
 
       active <- self$get_active_sheet()
-      for (view in seq_along(active)) {
-        if (is.na(active[view])) next
-        internal <- old_order[active[view]]
-        self$set_bookview(active_tab = match(internal, sheets) - 1L, view = view)
+      for (view in which(!is.na(active))) {
+        self$set_bookview(active_tab = match(self$sheetOrder[active[view]], sheets) - 1L, view = view)
       }
 
       self$sheetOrder <- sheets
@@ -9779,7 +9775,7 @@ wbWorkbook <- R6::R6Class(
             }
 
             self$remove_tables(
-              sheet = tbs$sheet[i],
+              sheet = tbs$sheets[i],
               table = tbs$name[i]
             )
           }
@@ -11197,7 +11193,7 @@ wbWorkbook <- R6::R6Class(
         }
       }
 
-      private$current_sheet <- sheet
+      if (length(sheet) == 1L) private$current_sheet <- sheet
       sheet
     },
 

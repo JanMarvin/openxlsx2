@@ -194,6 +194,17 @@ test_that("get_selected respects set_order", {
 
 })
 
+test_that("selecting several sheets keeps the current sheet", {
+
+  wb <- wb_workbook()
+  for (s in c("A", "B", "C")) wb$add_worksheet(s)
+  wb$set_selected(c("A", "B"))
+  wb$set_order(c("C", "B", "A"))
+  wb$add_data(x = "on C")
+  expect_identical(wb_to_df(wb, sheet = "C", col_names = FALSE)[[1]], "on C")
+
+})
+
 test_that("set_active_sheet by name respects set_order", {
 
   wb <- wb_workbook()
@@ -423,6 +434,81 @@ test_that("clean_sheet removes tables on sheets with xml entities", {
   wb$add_data_table(x = data.frame(t = 1:2), table_name = "tb")
   wb$clean_sheet(sheet = "a&b", tables = TRUE)
   expect_equal(NROW(wb$get_tables("a&b")), 0)
+
+})
+
+test_that("clone and copy_cells follow set_order", {
+
+  wb <- wb_workbook()
+  for (s in c("A", "B")) wb$add_worksheet(s)
+  wb$add_data(sheet = "B", x = "on B", dims = "A1", col_names = FALSE)
+  wb$add_named_region(sheet = "B", dims = "B2", name = "loc", local_sheet = TRUE)
+  wb$set_order(c("B", "A"))
+
+  expect_warning(wb$clone_worksheet("B", "C"), "named regions")
+  dn <- rbindlist(xml_attr(wb$workbook$definedNames, "definedName"))
+  expect_identical(dn$localSheetId[dn$name == "loc"], c("0", "2"))
+
+  wb <- wb_workbook()
+  for (s in c("A", "B")) wb$add_worksheet(s)
+  wb$set_order(c("B", "A"))
+  wb$workbook$definedNames <- '<definedName localSheetId="0" name="k">1</definedName>'
+  expect_warning(wb$clone_worksheet("B", "C"), "named regions")
+  expect_identical(rbindlist(xml_attr(wb$workbook$definedNames, "definedName"))$localSheetId, c("0", "2"))
+
+  wb <- wb_workbook()
+  for (s in c("A", "B")) wb$add_worksheet(s)
+  wb$add_data(sheet = "B", x = "on B", dims = "A1", col_names = FALSE)
+  wb$set_order(c("B", "A"))
+  dat <- wb_data(wb, sheet = "B", dims = "A1", col_names = FALSE)
+  expect_identical(attr(dat, "sheet"), "B")
+  wb$copy_cells(sheet = "A", dims = "C3", data = dat, as_ref = TRUE)
+  expect_identical(wb$worksheets[[1]]$sheet_data$cc$f[wb$worksheets[[1]]$sheet_data$cc$r == "C3"], "'B'!A1")
+
+})
+
+test_that("print titles with columns follow set_order", {
+
+  wb <- wb_workbook()
+  for (s in c("A", "B", "C")) wb$add_worksheet(s)
+  wb$set_order(c("C", "A", "B"))
+  wb$set_page_setup(sheet = "C", print_title_cols = 1:2)
+  wb$set_page_setup(sheet = "A", print_title_rows = 1, print_title_cols = 1)
+
+  dn <- rbindlist(xml_attr(wb$workbook$definedNames, "definedName"))
+  val <- xml_value(wb$workbook$definedNames, "definedName")
+  expect_identical(dn$localSheetId, c("0", "1"))
+  expect_identical(val, c("'C'!$A:$B", "'A'!$A:$A,'A'!$1:$1"))
+
+})
+
+test_that("named regions survive deleted tables and broken references", {
+
+  wb <- wb_workbook()
+  wb$add_worksheet("A")
+  wb$add_named_region(dims = "B2", name = "nr")
+  wb$add_data_table(x = data.frame(t = 1:2), dims = "D1", table_name = "tb")
+  wb$remove_tables(table = "tb")
+  expect_identical(wb$get_named_regions(tables = TRUE)$name, "nr")
+
+  wb$workbook$definedNames <- c(wb$workbook$definedNames, "<definedName name=\"gone\">#REF!$A$1</definedName>")
+  wb$remove_named_region(sheet = "A")
+  expect_identical(wb$workbook$definedNames, "<definedName name=\"gone\">#REF!$A$1</definedName>")
+
+})
+
+test_that("hidden sheets are unselected after set_order", {
+
+  wb <- wb_workbook()
+  for (s in c("A", "B", "C")) wb$add_worksheet(s)
+  wb$set_order(c("C", "A", "B"))
+  wb$set_selected(c("C", "B"))
+  wb$set_sheet_visibility("B", "hidden")
+
+  tmp <- temp_xlsx()
+  wb$save(tmp)
+  sel <- wb_load(tmp)$get_selected()
+  expect_identical(sel$names[sel$tabSelected == "1"], "C")
 
 })
 
