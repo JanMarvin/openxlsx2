@@ -41,6 +41,11 @@
   named regions, chart extensions, query tables, custom table styles,
   cell metadata or rich values.
   [\#1721](https://github.com/JanMarvin/openxlsx2/pull/1721)
+- Fixed issues with
+  [`wb_set_active_sheet()`](https://janmarvin.github.io/openxlsx2/dev/reference/active_sheet-wb.md)
+  ignoring
+  [`wb_set_order()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_order.md).
+  [\#1725](https://github.com/JanMarvin/openxlsx2/issues/1725)
 
 ### Breaking changes
 
@@ -51,6 +56,20 @@
 - [`wb_data()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_data.md)
   gains `used_range` to limit reading ranges like `"A:B"` or `"1:2"` to
   only the required columns and rows plus one.
+- [`wb_get_sheet_visibility()`](https://janmarvin.github.io/openxlsx2/dev/reference/sheet_visibility-wb.md)
+  now returns the visibility in sheet order, matching
+  [`wb_get_sheet_names()`](https://janmarvin.github.io/openxlsx2/dev/reference/sheet_names-wb.md).
+  [`wb_set_order()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_order.md)
+  keeps the active sheet instead of the active tab position.
+  [\#1725](https://github.com/JanMarvin/openxlsx2/issues/1725)
+- [`wb_set_selected()`](https://janmarvin.github.io/openxlsx2/dev/reference/active_sheet-wb.md)
+  with numeric input now refers to the position of the tab, similar to
+  how
+  [`wb_set_active_sheet()`](https://janmarvin.github.io/openxlsx2/dev/reference/active_sheet-wb.md)
+  does.
+  [`wb_set_order()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_order.md)
+  keeps the active sheet active, instead of whichever sheet moved to its
+  tab position.
 
 ------------------------------------------------------------------------
 

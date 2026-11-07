@@ -73,6 +73,8 @@
 <li>
 <code><a href="../reference/wb_clone_worksheet.html">wb_clone_worksheet()</a></code> was improved. Cloning is still experimental: a warning is only thrown if the sheet contains elements like pivot tables, slicers, timelines, named regions, chart extensions, query tables, custom table styles, cell metadata or rich values. <a href="https://github.com/JanMarvin/openxlsx2/pull/1721" class="external-link">#1721</a>
 </li>
+<li>Fixed issues with <code><a href="../reference/active_sheet-wb.html">wb_set_active_sheet()</a></code> ignoring <code><a href="../reference/wb_order.html">wb_set_order()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/issues/1725" class="external-link">#1725</a>
+</li>
 </ul></div>
 <div class="section level3">
 <h3 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h3>
@@ -80,6 +82,11 @@
 </li>
 <li>
 <code><a href="../reference/wb_data.html">wb_data()</a></code> gains <code>used_range</code> to limit reading ranges like <code>"A:B"</code> or <code>"1:2"</code> to only the required columns and rows plus one.</li>
+<li>
+<code><a href="../reference/sheet_visibility-wb.html">wb_get_sheet_visibility()</a></code> now returns the visibility in sheet order, matching <code><a href="../reference/sheet_names-wb.html">wb_get_sheet_names()</a></code>. <code><a href="../reference/wb_order.html">wb_set_order()</a></code> keeps the active sheet instead of the active tab position. <a href="https://github.com/JanMarvin/openxlsx2/issues/1725" class="external-link">#1725</a>
+</li>
+<li>
+<code><a href="../reference/active_sheet-wb.html">wb_set_selected()</a></code> with numeric input now refers to the position of the tab, similar to how <code><a href="../reference/active_sheet-wb.html">wb_set_active_sheet()</a></code> does. <code><a href="../reference/wb_order.html">wb_set_order()</a></code> keeps the active sheet active, instead of whichever sheet moved to its tab position.</li>
 </ul><hr></div>
 </div>
     <div class="section level2">
