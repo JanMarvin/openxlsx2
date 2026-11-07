@@ -93,8 +93,8 @@ clean_worksheet_name <- function(x, replacement = " ") {
 replaceXMLEntities <- function(x) {
   stringi::stri_replace_all_fixed(
     x,
-    c("&amp;", "&quot;", "&apos;", "&lt;", "&gt;"),
-    c("&",     '"',      "'",      "<",    ">"),
+    c("&quot;", "&apos;", "&lt;", "&gt;", "&amp;"),
+    c('"',      "'",      "<",    ">",    "&"),
     vectorize_all = FALSE
   )
 }

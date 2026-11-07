@@ -9603,12 +9603,12 @@ wbWorkbook <- R6::R6Class(
 
       if (is.null(name) && !is.null(sheet)) {
         sheet <- private$get_sheet_index(sheet)
-        del <- dn$id[dn$sheet == sheet]
+        del <- dn$id[which(dn$sheet == sheet)]
       } else if (!is.null(name) && is.null(sheet)) {
-        del <- dn$id[dn$name == name]
+        del <- dn$id[which(dn$name == name)]
       } else {
         sheet <- private$get_sheet_index(sheet)
-        del <- dn$id[dn$sheet == sheet & dn$name == name]
+        del <- dn$id[which(dn$sheet == sheet & dn$name == name)]
       }
 
       if (length(del)) {

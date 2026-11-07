@@ -334,6 +334,38 @@ test_that("defined names are not overwritten or duplicated", {
 
 })
 
+test_that("sheet names with xml entities work with named regions", {
+
+  for (nm in c("a&b", "x<y", "q\"t", "&gt;", "&amp;", "&lt;&gt;")) {
+
+    wb <- wb_workbook()
+    wb$add_worksheet(nm)
+    wb$add_worksheet("B")
+    wb$add_data(sheet = nm, x = data.frame(v = 1:2), dims = "B2", name = "rng")
+    wb$add_named_region(sheet = nm, dims = "D4", name = "loc", local_sheet = TRUE)
+
+    expect_identical(wb_get_named_regions(wb)$sheet, c(1L, 1L))
+
+    wb$add_worksheet("C")
+    wb$remove_worksheet("B")
+    expect_length(wb$workbook$definedNames, 2)
+    expect_identical(wb_to_df(wb, named_region = "rng")$v, c(1, 2))
+
+    wb$set_sheet_names("C", paste0(nm, "x"))
+    expect_identical(unname(wb$get_sheet_names()), c(nm, paste0(nm, "x")))
+    wb$add_named_region(sheet = paste0(nm, "x"), dims = "B2", name = "other")
+
+    wb$remove_named_region(sheet = nm)
+    expect_identical(wb_get_named_regions(wb)$name, "other")
+
+    tmp <- temp_xlsx()
+    wb$save(tmp)
+    wb2 <- wb_load(tmp)
+    expect_identical(unname(wb2$get_sheet_names()), c(nm, paste0(nm, "x")))
+  }
+
+})
+
 
 test_that("dims_to_dataframe", {
 

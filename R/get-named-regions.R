@@ -38,7 +38,7 @@ get_nr_from_definedName <- function(wb) {
   } else {
     dn$local <- 0
   }
-  dn$sheet <- vapply(dn$sheets, function(x) ifelse(x != "", wb_validate_sheet(wb, x), NA_integer_), NA_integer_)
+  dn$sheet <- vapply(dn$sheets, function(x) ifelse(x != "", wb_validate_sheet(wb, replaceXMLEntities(x)), NA_integer_), NA_integer_)
 
   dn[order(dn[, "local"], dn[, "name"], dn[, "sheet"]), ]
 }
