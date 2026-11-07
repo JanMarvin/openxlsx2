@@ -20,6 +20,7 @@
 * The options `openxlsx2.force_utf8_encoding` and `openxlsx2.native_encoding` were removed. Strings are now converted to UTF-8 when they are passed to C++, so the options are no longer needed. [#1715](https://github.com/JanMarvin/openxlsx2/pull/1715)
 * `wb_data()` gains `used_range` to limit reading ranges like `"A:B"` or `"1:2"` to only the required columns and rows plus one.
 * `wb_get_sheet_visibility()` now returns the visibility in sheet order, matching `wb_get_sheet_names()`. `wb_set_order()` keeps the active sheet instead of the active tab position. [#1725](https://github.com/JanMarvin/openxlsx2/issues/1725)
+* `wb_set_selected()` with numeric input now refers to the position of the tab, similar to how `wb_set_active_sheet()` does. `wb_set_order()` keeps the active sheet active, instead of whichever sheet moved to its tab position.
 
 
 ***************************************************************************
