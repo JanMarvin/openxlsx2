@@ -5,6 +5,8 @@ workbook
 
 Multiple sheets can be selected, but only a single one can be active
 (visible). The visible sheet, must not necessarily be a selected sheet.
+Sheets are returned in the order they appear in the workbook (see
+[wb_order](https://janmarvin.github.io/openxlsx2/reference/wb_order.md)).
 
 ## Usage
 
@@ -26,7 +28,7 @@ wb_set_selected(wb, sheet)
 
 - sheet:
 
-  a sheet name of the workbook
+  a sheet name or the position of the sheet in the workbook
 
 ## Value
 

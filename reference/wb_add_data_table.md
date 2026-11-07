@@ -246,8 +246,6 @@ wb <- wb_workbook()$add_worksheet()$
   add_data_table(
     x = as.data.frame(USPersonalExpenditure),
     row_names = TRUE,
-    total_row = c(text = "Total", "none", "sum", "sum", "sum", "SUM"),
-    stringsAsFactors = FALSE
+    total_row = c(text = "Total", "none", "sum", "sum", "sum", "SUM")
   )
-#> Warning: unused arguments (strings_as_factors)
 ```

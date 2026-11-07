@@ -40,8 +40,8 @@ install.packages('openxlsx2')
 ## Introduction
 
 `openxlsx2` aims to be the swiss knife for working with the openxml
-spreadsheet formats xlsx, xlsm and (limited) xlsb (other formats of
-other spreadsheet software are not supported). We offer two different
+spreadsheet formats xlsx, xlsm and (limited) xlsb and xls (other formats
+of other spreadsheet software are not supported). We offer two different
 ways to work with `openxlsx2`.
 
 - The first one is to simply work with R objects. It is possible to read
@@ -186,7 +186,7 @@ Write tabular data frame(s) to file with options
 Load and interact with an existing workbook
 
 - [`wb_load()`](https://janmarvin.github.io/openxlsx2/reference/wb_load.md)
-  : Load an existing .xlsx, .xlsm or .xlsb file
+  : Load an existing .xlsx, .xlsm, .xlsb or .xls file
 - [`wbWorkbook`](https://janmarvin.github.io/openxlsx2/reference/wbWorkbook.md)
   : Workbook class
 

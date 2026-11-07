@@ -1,6 +1,83 @@
 # Changelog
 
+## openxlsx2 1.31
+
+CRAN release: 2026-11-07
+
+### New features
+
+- Initial support for `xls` parsing. This is similar to how we handle
+  `xlsb` files. We create some pseudo XML from the binary file and
+  import this with
+  [`wb_load()`](https://janmarvin.github.io/openxlsx2/reference/wb_load.md)
+  as if the input was provided as `xlsx`/`xlsm` file.
+  [\#1698](https://github.com/JanMarvin/openxlsx2/pull/1698)
+  [\#1701](https://github.com/JanMarvin/openxlsx2/pull/1701)
+- Pivot caches of `xlsb` files are imported with their records.
+  `options("openxlsx2.pivot_refresh" = TRUE)` leaves them empty to be
+  refreshed on open.
+- [`wb_data()`](https://janmarvin.github.io/openxlsx2/reference/wb_data.md)
+  gains `header_rows` to read a header that spans more than one row. The
+  default is unchanged.
+  [\#1706](https://github.com/JanMarvin/openxlsx2/pull/1706)
+- [`wb_clean_sheet()`](https://janmarvin.github.io/openxlsx2/reference/wb_clean_sheet.md)
+  gains a new attribute to fully remove tables from a sheet.
+  [\#1709](https://github.com/JanMarvin/openxlsx2/pull/1709)
+- Several inputs are now validated more thoroughly to avoid creating
+  invalid output files. These were added based on fuzzing checks using
+  [OOXMLValidator](https://github.com/JanMarvin/OOXMLValidator).
+  [\#1718](https://github.com/JanMarvin/openxlsx2/pull/1718)
+
+### Fixes
+
+- `wb_add_data_table(..., total_row = ...)` checked for max column
+  length instead of max row length and refused to write anything beyond
+  the maximum number of columns.
+  [\#1700](https://github.com/JanMarvin/openxlsx2/pull/1700)
+- Several improvements to `xlsb` imports. This includes new features and
+  some minor bugfixes.
+  [\#1702](https://github.com/JanMarvin/openxlsx2/pull/1702)
+- [`wb_clone_worksheet()`](https://janmarvin.github.io/openxlsx2/reference/wb_clone_worksheet.md)
+  was improved. Cloning is still experimental: a warning is only thrown
+  if the sheet contains elements like pivot tables, slicers, timelines,
+  named regions, chart extensions, query tables, custom table styles,
+  cell metadata or rich values.
+  [\#1721](https://github.com/JanMarvin/openxlsx2/pull/1721)
+- Fixed issues with
+  [`wb_set_active_sheet()`](https://janmarvin.github.io/openxlsx2/reference/active_sheet-wb.md)
+  ignoring
+  [`wb_set_order()`](https://janmarvin.github.io/openxlsx2/reference/wb_order.md).
+  [\#1725](https://github.com/JanMarvin/openxlsx2/issues/1725)
+
+### Breaking changes
+
+- The options `openxlsx2.force_utf8_encoding` and
+  `openxlsx2.native_encoding` were removed. Strings are now converted to
+  UTF-8 when they are passed to C++, so the options are no longer
+  needed. [\#1715](https://github.com/JanMarvin/openxlsx2/pull/1715)
+- [`wb_data()`](https://janmarvin.github.io/openxlsx2/reference/wb_data.md)
+  gains `used_range` to limit reading ranges like `"A:B"` or `"1:2"` to
+  only the required columns and rows plus one.
+- [`wb_get_sheet_visibility()`](https://janmarvin.github.io/openxlsx2/reference/sheet_visibility-wb.md)
+  now returns the visibility in sheet order, matching
+  [`wb_get_sheet_names()`](https://janmarvin.github.io/openxlsx2/reference/sheet_names-wb.md).
+  [`wb_set_order()`](https://janmarvin.github.io/openxlsx2/reference/wb_order.md)
+  keeps the active sheet instead of the active tab position.
+  [\#1725](https://github.com/JanMarvin/openxlsx2/issues/1725)
+- [`wb_set_selected()`](https://janmarvin.github.io/openxlsx2/reference/active_sheet-wb.md)
+  with numeric input now refers to the position of the tab, similar to
+  how
+  [`wb_set_active_sheet()`](https://janmarvin.github.io/openxlsx2/reference/active_sheet-wb.md)
+  does.
+  [`wb_set_order()`](https://janmarvin.github.io/openxlsx2/reference/wb_order.md)
+  keeps the active sheet active, instead of whichever sheet moved to its
+  tab position.
+
+------------------------------------------------------------------------
+
 ## openxlsx2 1.30
+
+CRAN release: 2026-10-11
 
 ### New features
 
