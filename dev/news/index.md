@@ -2,6 +2,18 @@
 
 ## openxlsx2 (development version)
 
+### Fixes
+
+- Speedup
+  [`wb_add_border()`](https://janmarvin.github.io/openxlsx2/dev/reference/wb_add_border.md).
+  [\#1728](https://github.com/JanMarvin/openxlsx2/pull/1728)
+
+------------------------------------------------------------------------
+
+## openxlsx2 1.31
+
+CRAN release: 2026-11-07
+
 ### New features
 
 - Initial support for `xls` parsing. This is similar to how we handle
