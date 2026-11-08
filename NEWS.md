@@ -1,5 +1,9 @@
 # openxlsx2 (development version)
 
+## Fixes
+
+* Speedup `wb_add_border()`. [#1728](https://github.com/JanMarvin/openxlsx2/pull/1728)
+
 
 ***************************************************************************
 
