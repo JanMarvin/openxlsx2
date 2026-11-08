@@ -945,18 +945,13 @@ styles_on_sheet <- function(wb, sheet) {
 get_cell_styles <- function(wb, sheet, cell) {
   cellstyles <- wb$get_cell_style(sheet, cell)
 
-  out <- NULL
-  for (cellstyle in cellstyles) {
-    if (cellstyle == "") {
-      tmp <- wb$styles_mgr$styles$cellXfs[1]
-    } else {
-      tmp <- wb$styles_mgr$styles$cellXfs[as.numeric(cellstyle) + 1]
-    }
+  if (length(cellstyles) == 0) return(NULL)
 
-    out <- c(out, tmp)
-  }
+  idx <- rep_len(1, length(cellstyles))
+  sel <- cellstyles != ""
+  idx[sel] <- as.numeric(cellstyles[sel]) + 1
 
-  out
+  wb$styles_mgr$styles$cellXfs[idx]
 }
 
 #' Create a custom formatting style
@@ -1146,7 +1141,8 @@ update_border <- function(wb, sheet = current_sheet(), dims = "A1", new_border) 
 
   ## the current border for the cell
   get_border <- c_s$borderId
-  borders <- read_border(read_xml(wb$styles_mgr$styles$borders))[get_border, ]
+  uni_border <- unique(get_border)
+  borders <- read_border(read_xml(wb$styles_mgr$styles$borders))[uni_border, ]
 
   # While an update was requested, the original cell might have been borderless
   borders[is.na(borders)] <- ""
@@ -1162,7 +1158,7 @@ update_border <- function(wb, sheet = current_sheet(), dims = "A1", new_border) 
     "diagonalUp", "diagonal", "vertical", "horizontal", "outline"
   )
 
-  write_border(borders[nms])
+  write_border(borders[nms])[match(get_border, uni_border)]
 }
 
 ## The functions below are only partially covered, but span over 300+ LOC ##

@@ -9910,16 +9910,23 @@ wbWorkbook <- R6::R6Class(
             border_obj <- update_border(self, sheet = sheet, dims = target_dims, new_border = border_obj)
           }
 
-          n_styles <- length(border_obj)
-          s_names  <- paste0(smp, tag, seq_len(n_styles))
           border_obj <- unname(border_obj)
+          border_uni <- unique(border_obj)
+          s_names    <- paste0(smp, tag, seq_along(border_uni))
 
-          self$styles_mgr$add(border_obj, s_names)
-          b_ids  <- self$styles_mgr$get_border_id(s_names)
-          xf_new <- set_border(xf_prev, b_ids)
+          self$styles_mgr$add(border_uni, s_names)
+          # s_names can repeat names of an earlier call, look up the borders by their xml
+          b_pos <- match(border_uni, self$styles_mgr$styles$borders)
+          b_ids <- as.character(b_pos - 1L)[match(border_obj, border_uni)]
+          b_ids <- rep_len(b_ids, length(xf_prev))
+
+          xf_key <- paste(b_ids, xf_prev)
+          xf_one <- !duplicated(xf_key)
+          xf_new <- set_border(xf_prev[xf_one], b_ids[xf_one])[match(xf_key, xf_key[xf_one])]
         }
 
-        self$styles_mgr$add(xf_new, xf_new)
+        xf_uni <- unique(xf_new)
+        self$styles_mgr$add(xf_uni, xf_uni)
         private$set_cell_style_sel(sheet, target_sel, self$styles_mgr$get_xf_id(xf_new))
       }
 
