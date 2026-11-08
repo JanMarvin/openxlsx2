@@ -1533,6 +1533,31 @@ test_that("removing border works", {
   expect_equal(unique(xml_df$borderId), "0")
 })
 
+test_that("add_border() keeps fill, font and numfmt per cell", {
+  wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 6, 4))
+  cols <- c("FFFF0000", "FF00FF00", "FF0000FF")
+  for (r in 2:7) for (cc in 1:4) {
+    d <- paste0(LETTERS[cc], r)
+    wb$add_fill(dims = d, color = wb_color(hex = cols[(r + cc) %% 3 + 1]))
+    if ((r * cc) %% 3 == 0) wb$add_font(dims = d, bold = TRUE)
+    if ((r + cc) %% 4 == 0) wb$add_numfmt(dims = d, numfmt = "0.00")
+  }
+
+  cells <- unlist(dims_to_dataframe("A2:D7", fill = TRUE), use.names = FALSE)
+  get_ids <- function() {
+    xf <- vapply(cells, function(x) get_cell_styles(wb, 1, x), "")
+    rbindlist(xml_attr(xf, "xf"))[c("fillId", "fontId", "numFmtId", "borderId")]
+  }
+
+  exp <- get_ids()
+  wb$add_border(dims = "B3:C6", inner_hgrid = "dashed", inner_vgrid = "dotted")
+  wb$add_border(dims = "A2:D7", update = TRUE, top_border = "thick")
+  got <- get_ids()
+
+  expect_identical(got[1:3], exp[1:3])
+  expect_true(all(got$borderId != "0"))
+})
+
 test_that("add_border() is independent of the random seed", {
   add_borders <- function() {
     wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 10, 5))
