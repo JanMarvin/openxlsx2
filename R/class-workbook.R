@@ -9915,7 +9915,9 @@ wbWorkbook <- R6::R6Class(
           s_names    <- paste0(smp, tag, seq_along(border_uni))
 
           self$styles_mgr$add(border_uni, s_names)
-          b_ids <- self$styles_mgr$get_border_id(s_names)[match(border_obj, border_uni)]
+          # s_names can repeat names of an earlier call, look up the borders by their xml
+          b_pos <- match(border_uni, self$styles_mgr$styles$borders)
+          b_ids <- as.character(b_pos - 1L)[match(border_obj, border_uni)]
           b_ids <- rep_len(b_ids, length(xf_prev))
 
           xf_key <- paste(b_ids, xf_prev)

@@ -1533,6 +1533,30 @@ test_that("removing border works", {
   expect_equal(unique(xml_df$borderId), "0")
 })
 
+test_that("add_border() is independent of the random seed", {
+  add_borders <- function() {
+    wb <- wb_workbook()$add_worksheet()$add_data(x = matrix(1, 10, 5))
+    wb$add_border(dims = "A1:C5", diagonal_up = "thin")
+    wb$add_border(dims = "B3:E9", inner_hgrid = "dashed", inner_vgrid = "dotted", update = TRUE)
+    wb$add_border(dims = "D1:D11", left_border = "thick", right_border = NULL,
+                  top_border = NULL, bottom_border = NULL, update = TRUE)
+    list(
+      borders = wb$styles_mgr$styles$borders,
+      xfs     = wb$styles_mgr$styles$cellXfs,
+      cells   = wb$get_cell_style(dims = "A1:E11")
+    )
+  }
+
+  options("openxlsx2_seed" = NULL)
+  exp <- add_borders()
+
+  set.seed(1)
+  options("openxlsx2_seed" = NULL)
+  got <- add_borders()
+
+  expect_identical(got, exp)
+})
+
 test_that("wb_set_col_widths() works", {
   wb <- wb_workbook()$add_worksheet()$
     set_col_widths(cols = 2:7, widths = "auto")
