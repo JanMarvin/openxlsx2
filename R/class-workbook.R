@@ -1806,7 +1806,7 @@ wbWorkbook <- R6::R6Class(
 
               if (ncol(drels) && any(basename(drels$Type) == "image")) {
                 sel <- basename(drels$Type) == "image"
-                targets <- basename2(drels$Target)[sel]
+                targets <- basename2(drels$Target[sel])
                 # only the media referenced by this drawing are copied
                 onams <- unique(targets[targets %in% names(from$media)])
                 media_names <- from$media[onams]
@@ -4584,15 +4584,13 @@ wbWorkbook <- R6::R6Class(
               # just a filename (some files in charts folder)
               WR$Target <- sub("^([^/])", paste0("/xl/", folder, "/\\1"), WR$Target)
 
-              WR$tmpDirPartName <- paste0(tmpDir, "/", WR$Target)
-              WR$fileExists <- file.exists(WR$tmpDirPartName)
-
-              # exclude hyperlinks
+              # exclude hyperlinks, their targets are not files
               WR$type <- basename(WR$Type)
               WR <- WR[WR$type != "hyperlink", ]
+              file_exists <- file.exists(file.path(tmpDir, WR$Target))
 
-              if (!all(WR$fileExists)) {
-                missing_in_tmp <- WR$Target[!WR$fileExists]
+              if (!all(file_exists)) {
+                missing_in_tmp <- WR$Target[!file_exists]
                 warning(
                   "[", folder, "] file expected to be in output is missing: ",
                   paste(missing_in_tmp, collapse = " ")
@@ -6136,8 +6134,9 @@ wbWorkbook <- R6::R6Class(
 
         if (nrow(xml_rels) && ncol(xml_rels)) {
           xml_rels$type   <- basename(xml_rels$Type)
-          xml_rels$target <- basename(xml_rels$Target)
-          xml_rels$target[xml_rels$type == "hyperlink"] <- ""
+          xml_rels$target <- ""
+          sel <- xml_rels$type != "hyperlink"
+          xml_rels$target[sel] <- basename(xml_rels$Target[sel])
           xml_rels$target_ind <- cdigit(xml_rels$target, as_integer = TRUE)
         }
 

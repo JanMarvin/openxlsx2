@@ -155,3 +155,21 @@ test_that("dont bail on phone number in hyperlink target", {
   file.exists(temp_file)
   expect_silent(wb_load(temp_file))
 })
+
+test_that("hyperlink targets are not treated as file names in non-Unicode locales", {
+  old_locale <- Sys.getlocale("LC_CTYPE")
+  Sys.setlocale("LC_CTYPE", "C")
+  on.exit(Sys.setlocale("LC_CTYPE", old_locale), add = TRUE)
+
+  temp_file <- temp_xlsx()
+  on.exit(unlink(temp_file, recursive = TRUE), add = TRUE)
+
+  target <- "../file_\u6771\u4eac_\u20ac.xls"
+  wb <- wb_workbook()$add_worksheet()$add_worksheet()$add_data(x = "link")
+  wb$add_hyperlink(dims = "A1", target = target)
+  wb$save(temp_file)
+
+  wb <- wb_load(temp_file)
+  expect_true(grepl(target, wb$worksheets_rels[[2]], fixed = TRUE))
+  expect_silent(wb$remove_worksheet(2))
+})
