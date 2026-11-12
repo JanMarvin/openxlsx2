@@ -1207,7 +1207,10 @@ wb_load <- function(
 
         xml_relship <- rbindlist(xml_attr(xml, "Relationship"))
         xml_relship$typ <- basename(xml_relship$Type)
-        xml_relship$base <- basename2(xml_relship$Target)
+        # hyperlink targets are not files and may not be representable in the native encoding
+        xml_relship$base <- ""
+        sel <- xml_relship$typ != "hyperlink"
+        xml_relship$base[sel] <- basename2(xml_relship$Target[sel])
 
         # silently remove empty drawing/vml references created by openxlsx
         if (any(missing_rels <- is.na(match(xml_relship$base, file_names) & !xml_relship$typ == "hyperlink"))) {
