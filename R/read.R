@@ -915,9 +915,12 @@ wb_to_df <- function(
     ## conversion to date fails and a character frame is returned, we return
     ## a character instead of the unix time stamp as character.
     if (detect_dates) {
-      date_conv_c     <- function(...) as.character(date_conv(...))
       datetime_conv_c <- function(...) as.character(datetime_conv(...))
       hms_conv_c      <- function(...) as.character(hms_conv(...))
+
+      # before R 4.3.0 as.character() of a POSIXct picks one format for the
+      # whole vector, so the elements have to be converted one by one
+      datetime_vectorized <- getRversion() >= "4.3.0"
 
       sel <- !is.na(names(types))
       # update only if types is character
@@ -926,13 +929,17 @@ wb_to_df <- function(
       for (chr in chrs) {
         not_na_chr <- !is.na(z[[chr]])
         sel <- tt[[chr]] == 2L & not_na_chr
-        if (length(sel)) {
-          z[[chr]][sel] <- vapply(z[[chr]][sel], date_conv_c, NA_character_)
+        if (any(sel, na.rm = TRUE)) {
+          z[[chr]][sel] <- as.character(date_conv(z[[chr]][sel]))
         }
 
         sel <- tt[[chr]] == 3L & not_na_chr
-        if (length(sel)) {
-          z[[chr]][sel] <- vapply(z[[chr]][sel], datetime_conv_c, NA_character_)
+        if (any(sel, na.rm = TRUE)) {
+          if (datetime_vectorized) {
+            z[[chr]][sel] <- as.character(datetime_conv(z[[chr]][sel]))
+          } else {
+            z[[chr]][sel] <- vapply(z[[chr]][sel], datetime_conv_c, NA_character_)
+          }
         }
 
         sel <- tt[[chr]] == 5L & not_na_chr
