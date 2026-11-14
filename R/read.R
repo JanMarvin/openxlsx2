@@ -405,8 +405,8 @@ wb_to_df <- function(
     has_dims <- FALSE
 
     sd <- ws$sheet_data$cc[c("row_r", "c_r")]
-    row <- range(as.integer(unique(sd$row_r)))
-    col <- range(col2int(unique(sd$c_r)))
+    row <- f_range(as.integer(f_unique(sd$row_r)))
+    col <- f_range(col2int(f_unique(sd$c_r)))
 
     if (!is.null(start_row) && as.integer(start_row) < row[1])
       row[1] <- start_row
@@ -427,7 +427,7 @@ wb_to_df <- function(
   sst <- wb$sharedStrings
 
   rnams <- row_attr$r
-  rnams <- rnams[rnams %in% unique(cc$row_r)] # avoid blank row interference
+  rnams <- rnams[rnams %in% f_unique(cc$row_r)] # avoid blank row interference
 
   numfmt_date <- numfmt_is_date(wb$styles_mgr$styles$numFmts)
   xlsx_date_style <- style_is_date(wb$styles_mgr$styles$cellXfs, numfmt_date)
@@ -472,7 +472,7 @@ wb_to_df <- function(
     if (any(sel <- rows < 0)) {
       rm_rows <- as.character(as.integer(abs(rows[sel])))
 
-      if (!anyNA(sel <- match(rm_rows, rownames(z)))) {
+      if (!anyNA(sel <- f_match(rm_rows, rownames(z)))) {
         z  <- z[-sel, , drop = FALSE]
         tt <- tt[-sel, , drop = FALSE]
       }
@@ -482,7 +482,7 @@ wb_to_df <- function(
       keep_rows <- as.character(as.integer(rows[sel]))
 
       # FIXME why do we match over characters?
-      if (!anyNA(sel <- match(keep_rows, rownames(z)))) {
+      if (!anyNA(sel <- f_match(keep_rows, rownames(z)))) {
         z  <- z[sel, , drop = FALSE]
         tt <- tt[sel, , drop = FALSE]
       } else {
@@ -515,7 +515,7 @@ wb_to_df <- function(
       tt <- tt[keep_cols]
     }
 
-    sel <- match(keep_cols, colnames(z))
+    sel <- f_match(keep_cols, colnames(z))
     z  <- z[, sel, drop = FALSE]
     tt <- tt[, sel, drop = FALSE]
   }
@@ -544,7 +544,7 @@ wb_to_df <- function(
       tt[keep_col] <- NA_integer_
     }
 
-    sel <- match(keep_cols, colnames(z))
+    sel <- f_match(keep_cols, colnames(z))
     z  <- z[, sel, drop = FALSE]
     tt <- tt[, sel, drop = FALSE]
   }
@@ -558,7 +558,7 @@ wb_to_df <- function(
   cc$val <- rep_len(NA_character_, nrow(cc))
   cc$typ <- rep_len(NA_integer_, nrow(cc))
 
-  cc_tab <- unique(cc$c_t)
+  cc_tab <- f_unique(cc$c_t)
 
   # bool
   if (any(cc_tab == "b")) {
@@ -619,7 +619,7 @@ wb_to_df <- function(
     all_styles <- c(xlsx_date_style, xlsx_hms_style, xlsx_posix_style)
     if (detect_dates && missing(types) && length(all_styles)) {
 
-      uccs <- unique(cc$c_s)
+      uccs <- f_unique(cc$c_s)
 
       if (any(uccs %in% all_styles)) {
 
@@ -705,7 +705,7 @@ wb_to_df <- function(
         ),
         stringsAsFactors = FALSE
       )
-      cc$val[match(hyprlnks$V1, cc$r)] <- hyprlnks$V2
+      cc$val[f_match(hyprlnks$V1, cc$r)] <- hyprlnks$V2
     }
 
   }
@@ -741,8 +741,8 @@ wb_to_df <- function(
   zz <- data.frame(
     val  = cc$val,
     typ  = cc$typ,
-    cols = match(cc$c_r, colnames(z)) - 1L,
-    rows = match(cc$row_r, rownames(z)) - 1L,
+    cols = f_match(cc$c_r, colnames(z)) - 1L,
+    rows = f_match(cc$row_r, rownames(z)) - 1L,
     stringsAsFactors = FALSE
   )
 
@@ -892,7 +892,7 @@ wb_to_df <- function(
       }
 
       # assign types the correct column name "A", "B" etc.
-      names(types) <- names(xlsx_cols_names[match(names(types), xlsx_cols_names)])
+      names(types) <- names(xlsx_cols_names[f_match(names(types), xlsx_cols_names)])
 
       # replace predefined types in guessed column types
       guess <- guess_col_type(tt)
@@ -1234,7 +1234,7 @@ wb_data <- function(wb, sheet = current_sheet(), dims, header_rows = 1L, used_ra
   has_colnames <- as.integer(nrow(dd) - nrow(x))
 
   if (missing(j) && is.character(i)) {
-    j <- match(i, colnames(x))
+    j <- f_match(i, colnames(x))
     i <- seq_len(nrow(x))
   }
 
