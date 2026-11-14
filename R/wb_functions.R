@@ -85,8 +85,8 @@ dims_to_dataframe <- function(dims, fill = FALSE, empty_rm = FALSE, cc = NULL) {
   }
 
   if (any(grep("-|\\+", dims)) && !is.null(cc)) {
-    rows <- range(row2int(cc$row_r))
-    cols <- int2col(range(col2int(cc$c_r)))
+    rows <- f_range(row2int(cc$row_r))
+    cols <- int2col(f_range(col2int(cc$c_r)))
 
     dims <- vapply(dims, function(x) expand_dims(x, cols, rows), "")
   }
@@ -125,10 +125,10 @@ dims_to_dataframe <- function(dims, fill = FALSE, empty_rm = FALSE, cc = NULL) {
       if (!is.null(full_cols)) full_cols <- seq_along(cols_out) - 1L
     } else {
       # somehow we have to make sure that all columns are covered
-      col_ints <- range(cols_out)
+      col_ints <- f_range(cols_out)
       cols_out <- seq.int(from = col_ints[1], to = col_ints[2])
 
-      row_ints <- range(rows_out)
+      row_ints <- f_range(rows_out)
       rows_out <- seq.int(from = row_ints[1], to = row_ints[2])
     }
   }
@@ -205,7 +205,7 @@ guess_col_type <- function(tt) {
 
   uu <- lapply(tt, unique)
 
-  unique_types <- unique(unlist(uu))
+  unique_types <- f_unique(unlist(uu))
   unique_types[is.na(unique_types)] <- 1L
 
   check_col_type <- function(u, type_char) {
