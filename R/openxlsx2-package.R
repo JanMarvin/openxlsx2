@@ -11,7 +11,7 @@
 #' @import Rcpp
 #' @import R6
 #' @importFrom grDevices bmp col2rgb colors dev.copy dev.list dev.off jpeg palette png rgb tiff
-#' @importFrom stringi stri_encode stri_extract_all_regex stri_extract_first_regex stri_join stri_match_first_regex stri_order stri_opts_collator stri_pad_left stri_rand_strings stri_read_lines stri_replace_all_fixed stri_replace_all_regex stri_split_fixed stri_sub stri_unescape_unicode
+#' @importFrom stringi stri_detect_fixed stri_detect_regex stri_escape_unicode stri_extract_all_regex stri_extract_first_regex stri_join stri_locate_all_regex stri_match_first_regex stri_opts_collator stri_order stri_pad_left stri_rand_strings stri_read_lines stri_replace_all_fixed stri_replace_all_regex stri_split_fixed stri_sub stri_sub_replace_all stri_unescape_unicode stri_unique
 #' @importFrom utils download.file head menu read.csv unzip zip
 #'
 #' @seealso

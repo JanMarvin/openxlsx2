@@ -191,10 +191,13 @@ importFrom(grDevices,
   tiff
 )
 importFrom(stringi,
-  stri_encode,
+  stri_detect_fixed,
+  stri_detect_regex,
+  stri_escape_unicode,
   stri_extract_all_regex,
   stri_extract_first_regex,
   stri_join,
+  stri_locate_all_regex,
   stri_match_first_regex,
   stri_opts_collator,
   stri_order,
@@ -205,7 +208,9 @@ importFrom(stringi,
   stri_replace_all_regex,
   stri_split_fixed,
   stri_sub,
-  stri_unescape_unicode
+  stri_sub_replace_all,
+  stri_unescape_unicode,
+  stri_unique
 )
 importFrom(utils,
   download.file,
