@@ -28,6 +28,7 @@ Imports:
 LinkingTo:
     Rcpp
 Suggests:
+    collapse,
     encharter,
     ggplot2,
     knitr,

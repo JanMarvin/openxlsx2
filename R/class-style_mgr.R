@@ -493,7 +493,7 @@ style_mgr <- R6::R6Class("wbStylesMgr",
         sty_char <- as.character(sty_node)
 
         # Fast match against the cache
-        match_idx <- if (skip_duplicates) match(sty_char, store_chars) else NA
+        match_idx <- if (skip_duplicates) f_match(sty_char, store_chars) else NA
 
         if (!is.na(match_idx)) {
           # Found duplicate: Use existing ID
@@ -521,7 +521,7 @@ style_mgr <- R6::R6Class("wbStylesMgr",
         stringsAsFactors = FALSE
       )
 
-      self[[tab_nm]] <- unique(rbind(self[[tab_nm]], new_entry))
+      self[[tab_nm]] <- f_unique(rbind(self[[tab_nm]], new_entry))
       invisible(self)
     },
 
@@ -960,7 +960,7 @@ style_mgr <- R6::R6Class("wbStylesMgr",
   private = list(
 
     get_id = function(df, name) {
-      sel <- match(name, df$name)
+      sel <- f_match(name, df$name)
       if (length(sel) == 0 || anyNA(sel)) {
         warning("Could not find style(s): ", paste(name[is.na(sel)], collapse = ", "), call. = FALSE)
         if (all(is.na(sel))) return(NULL)

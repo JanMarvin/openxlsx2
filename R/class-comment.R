@@ -411,7 +411,7 @@ vml_rm_note <- function(x, dims) {
 
   # FIXME openxlsx2 blows up shapetype and shapelayout, this should be avoided
   dedup <- function(x, xml_nam) {
-    dups <- which(duplicated(xml_node(x, "xml", xml_nam)))
+    dups <- which(f_duplicated(xml_node(x, "xml", xml_nam)))
     if (length(dups)) {
       for (i in rev(dups)) {
         x <- xml_rm_child(
