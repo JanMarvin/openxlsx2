@@ -281,9 +281,10 @@ do_write_comment <- function(
 
   # create new commment vml
   cd <- unapply(comment_list, "[[", "clientData")
-  vml_xml <- read_xml(genBaseShapeVML(cd, id, fillcolor, rID), pointer = FALSE)
-  vml_comment <- '<o:shapelayout v:ext="edit"><o:idmap v:ext="edit" data="1"/></o:shapelayout><v:shapetype id="_x0000_t202" coordsize="21600,21600" o:spt="202" path="m,l,21600r21600,l21600,xe"><v:stroke joinstyle="miter"/><v:path gradientshapeok="t" o:connecttype="rect"/></v:shapetype>'
-  vml_xml <- paste0(vml_xml, vml_comment)
+  vml_shape  <- read_xml(genBaseShapeVML(cd, id, fillcolor, rID), pointer = FALSE)
+  vml_layout <- '<o:shapelayout v:ext="edit"><o:idmap v:ext="edit" data="1"/></o:shapelayout>'
+  vml_type   <- '<v:shapetype id="_x0000_t202" coordsize="21600,21600" o:spt="202" path="m,l,21600r21600,l21600,xe"><v:stroke joinstyle="miter"/><v:path gradientshapeok="t" o:connecttype="rect"/></v:shapetype>'
+  vml_xml    <- paste0(vml_shape, vml_layout, vml_type)
 
   # if this sheet has no comment entry in relationships, add a new relationship
   # 1) to Content_Types
@@ -349,8 +350,17 @@ do_write_comment <- function(
 
       next_rid <- next_rid + 1
     } else {
-      vml_id <- wb$worksheets[[sheet]]$relships$vmlDrawing
-      wb$vml[[vml_id]] <- xml_add_child(wb$vml[[vml_id]], vml_xml)
+      vml_id  <- wb$worksheets[[sheet]]$relships$vmlDrawing
+      vml_old <- wb$vml[[vml_id]]
+      vml_add <- vml_shape
+      if (!grepl('<o:idmap v:ext="edit" data="1"/>', vml_old, fixed = TRUE)) vml_add <- paste0(vml_add, vml_layout)
+      if (!grepl('id="_x0000_t202"', vml_old, fixed = TRUE)) vml_add <- paste0(vml_add, vml_type)
+      vml_end <- stringi::stri_locate_last_fixed(vml_old, "</xml>")[1, "start"]
+      if (is.na(vml_end)) {
+        wb$vml[[vml_id]] <- xml_add_child(vml_old, vml_add)
+      } else {
+        wb$vml[[vml_id]] <- stringi::stri_sub_replace(vml_old, vml_end, vml_end - 1L, value = vml_add)
+      }
       if (!is.null(rID)) {
         wb$vml_rels[[vml_id]] <- append(
           wb$vml_rels[[vml_id]],
@@ -368,8 +378,17 @@ do_write_comment <- function(
       )
     )
   } else {
-    vml_id <- wb$worksheets[[sheet]]$relships$vmlDrawing
-    wb$vml[[vml_id]] <- xml_add_child(wb$vml[[vml_id]], vml_xml)
+    vml_id  <- wb$worksheets[[sheet]]$relships$vmlDrawing
+    vml_old <- wb$vml[[vml_id]]
+    vml_add <- vml_shape
+    if (!grepl('<o:idmap v:ext="edit" data="1"/>', vml_old, fixed = TRUE)) vml_add <- paste0(vml_add, vml_layout)
+    if (!grepl('id="_x0000_t202"', vml_old, fixed = TRUE)) vml_add <- paste0(vml_add, vml_type)
+    vml_end <- stringi::stri_locate_last_fixed(vml_old, "</xml>")[1, "start"]
+    if (is.na(vml_end)) {
+      wb$vml[[vml_id]] <- xml_add_child(vml_old, vml_add)
+    } else {
+      wb$vml[[vml_id]] <- stringi::stri_sub_replace(vml_old, vml_end, vml_end - 1L, value = vml_add)
+    }
       if (!is.null(rID)) {
         wb$vml_rels[[vml_id]] <- append(
           wb$vml_rels[[vml_id]],
@@ -437,15 +456,24 @@ vml_rm_note <- function(x, dims) {
     as.numeric(shapes$rows) + 1
   )
 
-  sel <- which(shapes$dims == dims & shapes$type == "#_x0000_t202")
+  sel <- which(shapes$dims %in% dims & shapes$type == "#_x0000_t202")
   if (length(sel) == 0) {
-    warning("no comment to remove in cell ", dims, call. = FALSE)
+    warning("no comment to remove in cell ", paste(dims, collapse = ", "), call. = FALSE)
     return(x)
   }
 
-  x <- xml_rm_child(
-    x, xml_child = "v:shape", which = sel
-  )
+  for (cell in unique(dims[!dims %in% shapes$dims[sel]])) {
+    warning("no comment to remove in cell ", cell, call. = FALSE)
+  }
+
+  # parse once and remove from the last to the first shape, so the remaining
+  # indices stay valid. only the final removal serializes the vml again
+  sel <- rev(sel)
+  x <- read_xml(x)
+  for (i in sel[-length(sel)]) {
+    x <- xml_rm_child(x, xml_child = "v:shape", which = i, pointer = TRUE)
+  }
+  x <- xml_rm_child(x, xml_child = "v:shape", which = sel[length(sel)])
 
   # if no comment is left, remove the comment shapetype
   if (nrow(shapes[-sel, ]) == 0) {
@@ -511,7 +539,7 @@ do_remove_comment <- function(
   vml_id <- wb$worksheets[[sheet]]$relships$vmlDrawing
   removed <- unlist(refs[!toKeep])
   if (length(removed)) {
-    for (cell in removed) wb$vml[[vml_id]] <- vml_rm_note(wb$vml[[vml_id]], dims = cell)
+    wb$vml[[vml_id]] <- vml_rm_note(wb$vml[[vml_id]], dims = unique(removed))
   } else {
     wb$vml[[vml_id]] <- vml_rm_note(wb$vml[[vml_id]], dims = dims)
   }
@@ -537,7 +565,7 @@ do_remove_comment <- function(
     # endif
   }
 
-  test_nchar <- function(x) ifelse(length(nchar(x)) == 0, 0L, 1L)
+  test_nchar <- function(x) ifelse(length(x) == 0, 0L, 1L)
 
   if (sum(vapply(wb$comments, test_nchar, NA_integer_)) == 0)
     wb$comments <- list()
