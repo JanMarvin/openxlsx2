@@ -471,14 +471,24 @@ test_that("threaded comment: excaping XML works", {
   expect_true(grepl(cmt, wb$get_comment()$comment))
 })
 
-test_that("comments are attached to a single cell", {
+test_that("comments can be added to several cells at once", {
 
   wb <- wb_workbook()$add_worksheet()
+  wb$add_comment(dims = c("A1", "A1", "C3"), comment = "x")
+  expect_equal(wb_get_comment(wb)$ref, c("A1", "C3"))
 
-  expect_error(wb$add_comment(dims = c("A1", "A1"), comment = "x"), "must be a single cell")
-  expect_error(wb$add_comment(dims = "A1:B2", comment = "x"), "must be a single cell")
-  expect_error(wb$add_comment(dims = "A1,B2", comment = "x"), "must be a single cell")
-  expect_error(wb$add_comment(dims = NA_character_, comment = "x"), "must be a single cell")
+  wb <- wb_workbook()$add_worksheet()
+  wb$add_comment(dims = "A1:B2", comment = "x")
+  expect_equal(wb_get_comment(wb)$ref, c("A1", "A2", "B1", "B2"))
+
+  wb <- wb_workbook()$add_worksheet()
+  wb$add_comment(dims = "A1,B2", comment = "x")
+  expect_equal(wb_get_comment(wb)$ref, c("A1", "B2"))
+
+  wb$remove_comment(dims = c("A1", "B2"))
+  expect_length(wb_get_comment(wb), 0L)
+
+  expect_error(wb$add_comment(dims = NA_character_, comment = "x"), "must be a character vector")
 
 })
 

@@ -17,7 +17,7 @@ wb_remove_comment(wb, sheet = current_sheet(), dims = "A1", ...)
 
 \item{sheet}{A worksheet of the workbook}
 
-\item{dims}{Optional row and column as spreadsheet dimension, e.g. "A1"}
+\item{dims}{One or more cells as spreadsheet dimension, e.g. "A1", \code{c("A1", "C3")} or a range like "A1:A10". The same comment is added to every cell}
 
 \item{comment}{A comment to apply to \code{dims} created by \code{\link[=wb_comment]{wb_comment()}}, a string or a \code{\link[=fmt_txt]{fmt_txt()}} object}
 

@@ -1874,7 +1874,9 @@ are repeated across length of \code{cols}}
     \if{html}{\out{<div class="arguments">}}
     \describe{
       \item{\code{sheet}}{The name of the sheet}
-      \item{\code{dims}}{row and column as spreadsheet dimension, e.g. "A1"}
+      \item{\code{dims}}{one or more cells as spreadsheet dimension, e.g. "A1",
+\code{c("A1", "C3")} or a range like "A1:A10". The same comment is added to
+every cell.}
       \item{\code{comment}}{a comment to apply to the worksheet}
       \item{\code{...}}{additional arguments}
     }

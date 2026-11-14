@@ -209,8 +209,12 @@ do_write_comment <- function(
 
   if (!is.null(dims)) {
     ref <- dims
-    col <- col2int(dims_to_rowcol(dims)[["col"]])
-    row <- as.integer(dims_to_rowcol(dims)[["row"]])
+    rc  <- lapply(ref, dims_to_rowcol)
+    col <- col2int(unlist(lapply(rc, "[[", "col")))
+    row <- as.integer(unlist(lapply(rc, "[[", "row")))
+    if (length(col) != length(ref) || length(row) != length(ref)) {
+      stop("each element of `dims` must be a single cell like \"A1\".", call. = FALSE)
+    }
   } else {
     if (!is.numeric(col)) {
       col <- col2int(col)
@@ -218,13 +222,24 @@ do_write_comment <- function(
     ref <- paste0(int2col(col), row)
   }
 
-  comment_list <- list(list(
-    "ref" = ref,
-    "author" = comment$author,
-    "comment" = comment$text,
-    "style" = rPr,
-    "clientData" = genClientData(col, row, visible = comment$visible, height = comment$height, width = comment$width)
-  ))
+  # an image fill needs its own relationship per shape
+  if (!is.null(file) && length(ref) > 1L) {
+    for (cell in ref) {
+      do_write_comment(wb, sheet, comment = comment, dims = cell, color = color, file = file)
+    }
+    return(invisible(wb))
+  }
+
+  cd <- genClientData(col, row, visible = comment$visible, height = comment$height, width = comment$width)
+  comment_list <- lapply(seq_along(ref), function(i) {
+    list(
+      "ref" = ref[i],
+      "author" = comment$author,
+      "comment" = comment$text,
+      "style" = rPr,
+      "clientData" = cd[i]
+    )
+  })
 
   # guard against integer(0) which is returned if no comment is found
   iterator <- function(x) {
@@ -246,7 +261,7 @@ do_write_comment <- function(
     next_rid <- iterator(rels$id)
   }
 
-  id <- 1025 + sum(lengths(wb$comments))
+  id <- 1025L + sum(lengths(wb$comments)) + seq_along(ref) - 1L
 
   fillcolor <- color %||% "#ffffe1"
   # looks like vml accepts only "#RGB" and not "ARGB"
@@ -280,8 +295,8 @@ do_write_comment <- function(
 
 
   # create new commment vml
-  cd <- unapply(comment_list, "[[", "clientData")
-  vml_shape  <- read_xml(genBaseShapeVML(cd, id, fillcolor, rID), pointer = FALSE)
+  vml_shape  <- vapply(seq_along(ref), function(i) genBaseShapeVML(cd[i], id[i], fillcolor, rID), NA_character_)
+  vml_shape  <- read_xml(vml_shape, pointer = FALSE)
   vml_layout <- '<o:shapelayout v:ext="edit"><o:idmap v:ext="edit" data="1"/></o:shapelayout>'
   vml_type   <- '<v:shapetype id="_x0000_t202" coordsize="21600,21600" o:spt="202" path="m,l,21600r21600,l21600,xe"><v:stroke joinstyle="miter"/><v:path gradientshapeok="t" o:connecttype="rect"/></v:shapetype>'
   vml_xml    <- paste0(vml_shape, vml_layout, vml_type)

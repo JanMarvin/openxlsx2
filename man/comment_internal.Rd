@@ -35,7 +35,7 @@ remove_comment(
 
 \item{comment}{An object created by \code{\link[=create_comment]{create_comment()}}}
 
-\item{dims}{Optional row and column as spreadsheet dimension, e.g. "A1"}
+\item{dims}{One or more cells as spreadsheet dimension, e.g. "A1", \code{c("A1", "C3")} or a range like "A1:A10". The same comment is added to every cell}
 
 \item{color}{optional background color}
 
