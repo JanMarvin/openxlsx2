@@ -55,7 +55,7 @@ read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE, 
   }
 
   if (!isfile)
-    xml <- stringi::stri_join(xml, collapse = "")
+    xml <- stri_join(xml, collapse = "")
 
   if (identical(xml, ""))
     xml <- "<NA_character_ />"
@@ -65,13 +65,13 @@ read_xml <- function(xml, pointer = TRUE, escapes = FALSE, declaration = FALSE, 
   xml_ns <- getOption("openxlsx2.namespace_xml")
   if (!is.null(xml_ns) && isfile && !isvml) {
 
-    xml_file <- stringi::stri_join(
-      stringi::stri_read_lines(xml, encoding = "UTF-8"),
+    xml_file <- stri_join(
+      stri_read_lines(xml, encoding = "UTF-8"),
       collapse = "")
 
     if (grepl(sprintf('xmlns:%s="http://schemas.openxmlformats.org/spreadsheetml/2006/main"', xml_ns), xml_file, fixed = TRUE)) {
 
-      xml_file <- stringi::stri_replace_all_fixed(
+      xml_file <- stri_replace_all_fixed(
         xml_file,
         pattern = sprintf(c("xmlns:%s=", "<%s:", "</%s:"), xml_ns),
         replacement = c("xmlns=", "<", "</"),
@@ -270,7 +270,7 @@ as_xml <- function(x, ...) {
 #' @noRd
 write_file <- function(head = "", body = "", tail = "", fl = "", escapes = FALSE) {
   # TODO `write_file()` needs a unit test
-  xml_content <- stringi::stri_join(head, body, tail, collapse = "")
+  xml_content <- stri_join(head, body, tail, collapse = "")
   xml_content <- strip_xml_control_chars(xml_content)
   xml_content <- write_xml_file(xml_content = xml_content, escapes = escapes)
   write_xmlPtr(xml_content, fl)

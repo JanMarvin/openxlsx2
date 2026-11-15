@@ -403,7 +403,7 @@ test_that("cloning charts and chartEx works", {
   expect_equal(exp, got)
 
   xl_names <- function(x) {
-    unique(stringi::stri_extract_all_regex(x, "_xlchart\\.v1\\.[0-9]+", omit_no_match = TRUE)[[1]])
+    unique(stri_extract_all_regex(x, "_xlchart\\.v1\\.[0-9]+", omit_no_match = TRUE)[[1]])
   }
   expect_length(intersect(xl_names(wb2$charts$chartEx[1]), xl_names(wb2$charts$chartEx[2])), 0)
 
@@ -688,7 +688,7 @@ test_that("cloning a chart and an image declares each extension once", {
   wb2$clone_worksheet("data", "data", from = wb)
   wb2$clone_worksheet("data", "data2", from = wb)
 
-  ext <- stringi::stri_match_first_regex(wb2$Content_Types, "<Default Extension=\"([^\"]+)\"")[, 2]
+  ext <- stri_match_first_regex(wb2$Content_Types, "<Default Extension=\"([^\"]+)\"")[, 2]
   ext <- ext[!is.na(ext)]
   expect_false(anyDuplicated(ext) > 0)
   expect_true("jpg" %in% ext)

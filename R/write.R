@@ -292,7 +292,7 @@ write_data2 <- function(
   if (any(is_list)) {
     lsts <- names(dc[is_list])
     data[lsts] <- lapply(data[lsts], function(col) {
-      vapply(col, FUN = stringi::stri_join, collapse = sep, FUN.VALUE = NA_character_)
+      vapply(col, FUN = stri_join, collapse = sep, FUN.VALUE = NA_character_)
     })
     dc[is_list] <- openxlsx2_celltype[["character"]]
   }
@@ -321,7 +321,7 @@ write_data2 <- function(
   }
 
   hconvert_date1904 <- grepl('date1904="1"|date1904="true"',
-                             stringi::stri_join(unlist(wb$workbook), collapse = ""),
+                             stri_join(unlist(wb$workbook), collapse = ""),
                              ignore.case = TRUE)
 
   # TODO need to tell spreadsheet software that we have a date, apply some kind of numFmt
@@ -752,7 +752,7 @@ write_data2 <- function(
     sel <- grepl("<si>", cc$v)
     v <- cc$v[sel]
 
-    wb$sharedStrings <- stringi::stri_unique(c(wb$sharedStrings, stringi::stri_unique(v)))
+    wb$sharedStrings <- stri_unique(c(wb$sharedStrings, stri_unique(v)))
 
     cc$v[sel] <- as.character(match(v, wb$sharedStrings) - 1L)
 
@@ -1029,12 +1029,12 @@ write_data_table <- function(
     ## write autoFilter, can only have a single filter per worksheet
     if (withFilter) { # TODO: replace ref calculation with wb_dims()
       coords <- data.frame("x" = c(startRow, startRow + nRow + colNames - 1L), "y" = c(startCol, startCol + nCol - 1L), stringsAsFactors = FALSE)
-      ref <- stringi::stri_join(get_cell_refs(coords), collapse = ":")
+      ref <- stri_join(get_cell_refs(coords), collapse = ":")
 
       wb$worksheets[[sheet]]$autoFilter <- sprintf('<autoFilter ref="%s"/>', ref)
 
       l   <- int2col(unlist(coords[, 2]))
-      dfn <- sprintf("'%s'!%s", wb$sheet_names[sheet], stringi::stri_join("$", l, "$", coords[, 1], collapse = ":"))
+      dfn <- sprintf("'%s'!%s", wb$sheet_names[sheet], stri_join("$", l, "$", coords[, 1], collapse = ":"))
 
       lid <- match(sheet, wb$sheetOrder) - 1L
       dn  <- sprintf('<definedName name="_xlnm._FilterDatabase" localSheetId="%s" hidden="1">%s</definedName>', lid, dfn)

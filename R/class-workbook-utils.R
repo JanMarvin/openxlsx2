@@ -253,7 +253,7 @@ replace_waiver <- function(x, wb) {
 
   sheetno <- wb$clone()$.__enclos_env__$private$get_sheet_index(sheet)
   sheet_name <- wb$sheet_names[[sheetno]]
-  stringi::stri_replace_all_fixed(x, rpl, sheet_name)
+  stri_replace_all_fixed(x, rpl, sheet_name)
 }
 
 # create parts of app.xml

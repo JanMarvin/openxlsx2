@@ -284,7 +284,7 @@ genBasePic <- function(imageNo, next_id, address_id) {
 # not "15". Probably it does not matter.
 genBaseTheme <- function() {
   read_xml(
-  stringi::stri_unescape_unicode(
+  stri_unescape_unicode(
     '<a:theme xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" name="Office Theme">
   <a:themeElements>
   <a:clrScheme name="Office">

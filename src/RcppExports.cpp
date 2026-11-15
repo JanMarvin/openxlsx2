@@ -481,6 +481,119 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// stri_join_cpp
+Rcpp::CharacterVector stri_join_cpp(Rcpp::List args, Rcpp::CharacterVector sep);
+RcppExport SEXP _openxlsx2_stri_join_cpp(SEXP argsSEXP, SEXP sepSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< Rcpp::List >::type args(argsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type sep(sepSEXP);
+    rcpp_result_gen = Rcpp::wrap(stri_join_cpp(args, sep));
+    return rcpp_result_gen;
+END_RCPP
+}
+// stri_collapse_cpp
+Rcpp::CharacterVector stri_collapse_cpp(Rcpp::CharacterVector x, Rcpp::CharacterVector collapse);
+RcppExport SEXP _openxlsx2_stri_collapse_cpp(SEXP xSEXP, SEXP collapseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type collapse(collapseSEXP);
+    rcpp_result_gen = Rcpp::wrap(stri_collapse_cpp(x, collapse));
+    return rcpp_result_gen;
+END_RCPP
+}
+// stri_replace_all_fixed_cpp
+Rcpp::CharacterVector stri_replace_all_fixed_cpp(Rcpp::CharacterVector str, Rcpp::CharacterVector pattern, Rcpp::CharacterVector replacement);
+RcppExport SEXP _openxlsx2_stri_replace_all_fixed_cpp(SEXP strSEXP, SEXP patternSEXP, SEXP replacementSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type str(strSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type pattern(patternSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type replacement(replacementSEXP);
+    rcpp_result_gen = Rcpp::wrap(stri_replace_all_fixed_cpp(str, pattern, replacement));
+    return rcpp_result_gen;
+END_RCPP
+}
+// stri_sub_replace_cpp
+Rcpp::CharacterVector stri_sub_replace_cpp(Rcpp::CharacterVector str, Rcpp::IntegerVector from, Rcpp::IntegerVector to, Rcpp::CharacterVector value);
+RcppExport SEXP _openxlsx2_stri_sub_replace_cpp(SEXP strSEXP, SEXP fromSEXP, SEXP toSEXP, SEXP valueSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type str(strSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type from(fromSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type to(toSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type value(valueSEXP);
+    rcpp_result_gen = Rcpp::wrap(stri_sub_replace_cpp(str, from, to, value));
+    return rcpp_result_gen;
+END_RCPP
+}
+// stri_locate_last_fixed_cpp
+Rcpp::IntegerMatrix stri_locate_last_fixed_cpp(Rcpp::CharacterVector str, Rcpp::CharacterVector pattern);
+RcppExport SEXP _openxlsx2_stri_locate_last_fixed_cpp(SEXP strSEXP, SEXP patternSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type str(strSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type pattern(patternSEXP);
+    rcpp_result_gen = Rcpp::wrap(stri_locate_last_fixed_cpp(str, pattern));
+    return rcpp_result_gen;
+END_RCPP
+}
+// stri_detect_fixed_cpp
+Rcpp::LogicalVector stri_detect_fixed_cpp(SEXP str_in, SEXP pattern_in);
+RcppExport SEXP _openxlsx2_stri_detect_fixed_cpp(SEXP str_inSEXP, SEXP pattern_inSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< SEXP >::type str_in(str_inSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type pattern_in(pattern_inSEXP);
+    rcpp_result_gen = Rcpp::wrap(stri_detect_fixed_cpp(str_in, pattern_in));
+    return rcpp_result_gen;
+END_RCPP
+}
+// stri_unique_cpp
+Rcpp::CharacterVector stri_unique_cpp(Rcpp::CharacterVector str);
+RcppExport SEXP _openxlsx2_stri_unique_cpp(SEXP strSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type str(strSEXP);
+    rcpp_result_gen = Rcpp::wrap(stri_unique_cpp(str));
+    return rcpp_result_gen;
+END_RCPP
+}
+// stri_pad_left_cpp
+Rcpp::CharacterVector stri_pad_left_cpp(Rcpp::CharacterVector str, Rcpp::IntegerVector width, Rcpp::CharacterVector pad);
+RcppExport SEXP _openxlsx2_stri_pad_left_cpp(SEXP strSEXP, SEXP widthSEXP, SEXP padSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type str(strSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type width(widthSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type pad(padSEXP);
+    rcpp_result_gen = Rcpp::wrap(stri_pad_left_cpp(str, width, pad));
+    return rcpp_result_gen;
+END_RCPP
+}
+// stri_extract_first_cpp
+Rcpp::CharacterVector stri_extract_first_cpp(Rcpp::CharacterVector str, Rcpp::IntegerVector start, Rcpp::IntegerVector len);
+RcppExport SEXP _openxlsx2_stri_extract_first_cpp(SEXP strSEXP, SEXP startSEXP, SEXP lenSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type str(strSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type start(startSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type len(lenSEXP);
+    rcpp_result_gen = Rcpp::wrap(stri_extract_first_cpp(str, start, len));
+    return rcpp_result_gen;
+END_RCPP
+}
+// stri_order_numeric_cpp
+Rcpp::IntegerVector stri_order_numeric_cpp(Rcpp::CharacterVector str);
+RcppExport SEXP _openxlsx2_stri_order_numeric_cpp(SEXP strSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type str(strSEXP);
+    rcpp_result_gen = Rcpp::wrap(stri_order_numeric_cpp(str));
+    return rcpp_result_gen;
+END_RCPP
+}
 // is_to_txt
 SEXP is_to_txt(Rcpp::CharacterVector is_vec);
 RcppExport SEXP _openxlsx2_is_to_txt(SEXP is_vecSEXP) {
@@ -1114,6 +1227,16 @@ static const R_CallMethodDef CallEntries[] = {
     {"_openxlsx2_xml_node_create", (DL_FUNC) &_openxlsx2_xml_node_create, 5},
     {"_openxlsx2_xml_append_child_path", (DL_FUNC) &_openxlsx2_xml_append_child_path, 4},
     {"_openxlsx2_xml_remove_child_path", (DL_FUNC) &_openxlsx2_xml_remove_child_path, 5},
+    {"_openxlsx2_stri_join_cpp", (DL_FUNC) &_openxlsx2_stri_join_cpp, 2},
+    {"_openxlsx2_stri_collapse_cpp", (DL_FUNC) &_openxlsx2_stri_collapse_cpp, 2},
+    {"_openxlsx2_stri_replace_all_fixed_cpp", (DL_FUNC) &_openxlsx2_stri_replace_all_fixed_cpp, 3},
+    {"_openxlsx2_stri_sub_replace_cpp", (DL_FUNC) &_openxlsx2_stri_sub_replace_cpp, 4},
+    {"_openxlsx2_stri_locate_last_fixed_cpp", (DL_FUNC) &_openxlsx2_stri_locate_last_fixed_cpp, 2},
+    {"_openxlsx2_stri_detect_fixed_cpp", (DL_FUNC) &_openxlsx2_stri_detect_fixed_cpp, 2},
+    {"_openxlsx2_stri_unique_cpp", (DL_FUNC) &_openxlsx2_stri_unique_cpp, 1},
+    {"_openxlsx2_stri_pad_left_cpp", (DL_FUNC) &_openxlsx2_stri_pad_left_cpp, 3},
+    {"_openxlsx2_stri_extract_first_cpp", (DL_FUNC) &_openxlsx2_stri_extract_first_cpp, 3},
+    {"_openxlsx2_stri_order_numeric_cpp", (DL_FUNC) &_openxlsx2_stri_order_numeric_cpp, 1},
     {"_openxlsx2_is_to_txt", (DL_FUNC) &_openxlsx2_is_to_txt, 1},
     {"_openxlsx2_si_to_txt", (DL_FUNC) &_openxlsx2_si_to_txt, 1},
     {"_openxlsx2_txt_to_is", (DL_FUNC) &_openxlsx2_txt_to_is, 4},

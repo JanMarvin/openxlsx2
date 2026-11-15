@@ -20,7 +20,7 @@ naToNULLList <- function(x) {
 # is zero length.  Much faster than multiple if/else (re)assignments
 paste_c <- function(..., sep = "", collapse = " ") {
   x <- c(...)
-  stringi::stri_join(x[nzchar(x)], sep = sep, collapse = collapse)
+  stri_join(x[nzchar(x)], sep = sep, collapse = collapse)
 }
 
 if (getRversion() < "4.4.0") {
@@ -143,9 +143,9 @@ as_xml_attr <- function(x) {
 
 #' random string function that does not alter the seed.
 #'
-#' simple wrapper around `stringi::stri_rand_strings()`
+#' simple wrapper around `stri_rand_strings()`
 #'
-#' @inheritParams stringi::stri_rand_strings
+#' @param n,length,pattern number of strings, their length and a regular expression for the allowed ASCII characters
 #' @param keep_seed logical should the default seed be kept unaltered
 #' @noRd
 random_string <- function(n = 1, length = 16, pattern = "[A-Za-z0-9]", keep_seed = TRUE) {
@@ -165,7 +165,7 @@ random_string <- function(n = 1, length = 16, pattern = "[A-Za-z0-9]", keep_seed
   }
 
   # create the random string, this alters the global seed
-  res <- stringi::stri_rand_strings(n = n, length = length, pattern = pattern)
+  res <- stri_rand_strings(n = n, length = length, pattern = pattern)
 
   if (keep_seed && !is.null(seed)) {
     # store the altered seed and reset the global seed
@@ -299,14 +299,14 @@ rowcol_to_dim <- function(row, col, fix = NULL) {
   if (!is.null(fix)) {
     match.arg(fix, c("all", "col", "row", "none"))
     if (fix == "all")
-      return(stringi::stri_join("$", min_col, "$", min_row))
+      return(stri_join("$", min_col, "$", min_row))
     if (fix == "col")
-      return(stringi::stri_join("$", min_col, min_row))
+      return(stri_join("$", min_col, min_row))
     if (fix == "row")
-      return(stringi::stri_join(min_col, "$", min_row))
+      return(stri_join(min_col, "$", min_row))
   }
 
-  stringi::stri_join(min_col, min_row)
+  stri_join(min_col, min_row)
 }
 
 
@@ -322,7 +322,7 @@ rc_to_dims <- function(cb, rb, ce, re, fix = NULL) {
   fixl <- fix[sell]
   fixr <- fix[selr]
 
-  stringi::stri_join(rowcol_to_dim(rb, cb, fixl), ":", rowcol_to_dim(re, ce, fixr))
+  stri_join(rowcol_to_dim(rb, cb, fixl), ":", rowcol_to_dim(re, ce, fixr))
 }
 
 #' @rdname dims_helper
@@ -1393,7 +1393,7 @@ is_dims  <- function(x) {
 #' @noRd
 find_a1_notation <- function(string) {
   pattern <- "\\$?[A-Z]\\$?[0-9]+(:\\$?[A-Z]\\$?[0-9]+)?"
-  stringi::stri_extract_all_regex(string, pattern)
+  stri_extract_all_regex(string, pattern)
 }
 
 #' the function to replace the next cell
@@ -1407,7 +1407,7 @@ next_cell <- function(cell, cols = 0L, rows = 0L) {
   z <- vector("character", length(cell))
   for (i in seq_along(cell)) {
     # Match individual cells and ranges
-    match <- stringi::stri_match_first_regex(cell[[i]], "^(\\$?)([A-Z]+)(\\$?)(\\d+)(:(\\$?)([A-Z]+)(\\$?)(\\d+))?$")
+    match <- stri_match_first_regex(cell[[i]], "^(\\$?)([A-Z]+)(\\$?)(\\d+)(:(\\$?)([A-Z]+)(\\$?)(\\d+))?$")
 
     # if shared formula contains no A1 reference
     if (is.na(match[1, 1])) return(NA_character_)
@@ -1454,7 +1454,7 @@ next_cell <- function(cell, cols = 0L, rows = 0L) {
 replace_a1_notation <- function(strings, replacements) {
 
   # create sprintf-able strings
-  strings <- stringi::stri_replace_all_regex(
+  strings <- stri_replace_all_regex(
     strings,
     "\\$?[A-Z]\\$?[0-9]+(:\\$?[A-Z]\\$?[0-9]+)?",
     "%s"
