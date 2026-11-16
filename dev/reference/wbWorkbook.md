@@ -2695,7 +2695,8 @@ Add comment
 
 - `dims`:
 
-  row and column as spreadsheet dimension, e.g. "A1"
+  one or more cells as spreadsheet dimension, e.g. "A1", `c("A1", "C3")`
+  or a range like "A1:A10". The same comment is added to every cell.
 
 - `comment`:
 

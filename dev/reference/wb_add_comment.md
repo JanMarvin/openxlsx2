@@ -24,7 +24,8 @@ wb_remove_comment(wb, sheet = current_sheet(), dims = "A1", ...)
 
 - dims:
 
-  Optional row and column as spreadsheet dimension, e.g. "A1"
+  One or more cells as spreadsheet dimension, e.g. "A1", `c("A1", "C3")`
+  or a range like "A1:A10". The same comment is added to every cell
 
 - comment:
 
@@ -79,7 +80,7 @@ png(file = tmp, bg = "transparent")
 plot(1:10)
 rect(1, 5, 3, 7, col = "white")
 dev.off()
-#> agg_record_188428b4f46e 
+#> agg_record_18cb730aa39a 
 #>                       2 
 
 c1 <- wb_comment(text = "this is a comment", author = "", visible = TRUE)
