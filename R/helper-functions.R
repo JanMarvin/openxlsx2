@@ -181,9 +181,11 @@ write_comment_xml <- function(comment_list, file_name) {
   xml <- '<comments xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="xr" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing">'
   xml <- c(xml, paste0("<authors>", paste(sprintf("<author>%s</author>", authors), collapse = ""), "</authors><commentList>"))
 
+  comments_xml <- vector("list", length(comment_list))
+
   for (i in seq_along(comment_list)) {
-    authorInd <- which(authors == comment_list[[i]]$author) - 1L
-    xml <- c(xml, sprintf('<comment ref="%s" authorId="%s"><text>', comment_list[[i]]$ref, authorInd)) #  shapeId="0"
+    authorInd <- match(comment_list[[i]]$author, authors) - 1L
+    cmt <- sprintf('<comment ref="%s" authorId="%s"><text>', comment_list[[i]]$ref, authorInd) #  shapeId="0"
 
     ## Comment can have optional authors. Style and text is mandatory
     for (j in seq_along(comment_list[[i]]$comment)) {
@@ -201,18 +203,18 @@ write_comment_xml <- function(comment_list, file_name) {
         is_fmt_txt <- all(xml_node_name(comment) == "r") || isFALSE(comment_list[[i]]$style[[j]])
 
       if (is_fmt_txt) {
-        xml <- c(xml, comment)
+        cmt <- c(cmt, comment)
       } else {
-        xml <- c(xml, sprintf('<r>%s%s</r>',
+        cmt <- c(cmt, sprintf('<r>%s%s</r>',
                               comment_list[[i]]$style[[j]],
                               comment))
       }
     }
 
-    xml <- c(xml, "</text></comment>")
+    comments_xml[[i]] <- c(cmt, "</text></comment>")
   }
 
-  write_file(body = paste(xml, collapse = ""), tail = "</commentList></comments>", fl = file_name)
+  write_file(body = paste(c(xml, unlist(comments_xml)), collapse = ""), tail = "</commentList></comments>", fl = file_name)
 
   NULL
 }

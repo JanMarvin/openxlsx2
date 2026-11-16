@@ -6581,7 +6581,9 @@ wbWorkbook <- R6::R6Class(
     ## comment ----
 
     #' @description Add comment
-    #' @param dims row and column as spreadsheet dimension, e.g. "A1"
+    #' @param dims one or more cells as spreadsheet dimension, e.g. "A1",
+    #'   `c("A1", "C3")` or a range like "A1:A10". The same comment is added to
+    #'   every cell.
     #' @param comment a comment to apply to the worksheet
     #' @return The `wbWorkbook` object
     add_comment = function(
@@ -6601,10 +6603,18 @@ wbWorkbook <- R6::R6Class(
         dims <- rowcol_to_dim(row, col)
       }
 
-      # a comment is attached to a single cell
-      if (!is.character(dims) || length(dims) != 1L || is.na(dims) || grepl("[:,;]", dims)) {
-        stop("add_comment(): `dims` must be a single cell like \"A1\".", call. = FALSE)
+      if (!is.character(dims) || !length(dims) || anyNA(dims)) {
+        stop("add_comment(): `dims` must be a character vector of cells like \"A1\".", call. = FALSE)
       }
+
+      # ranges are expanded to their cells, dims_to_dataframe() leaves cells
+      # that are not part of dims empty
+      dims <- unlist(lapply(dims, function(d) {
+        if (!grepl("[:,;]", d)) return(d)
+        cells <- unlist(dims_to_dataframe(d, fill = TRUE), use.names = FALSE)
+        cells[nzchar(cells)]
+      }))
+      dims <- unique(dims)
 
       if (is.character(comment)) {
         comment <- wb_comment(text = comment, author = getOption("openxlsx2.creator"))

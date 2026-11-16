@@ -4579,7 +4579,7 @@ wb_add_dxfs_style <- function(
 #'
 #' @param wb A workbook object
 #' @param sheet A worksheet of the workbook
-#' @param dims Optional row and column as spreadsheet dimension, e.g. "A1"
+#' @param dims One or more cells as spreadsheet dimension, e.g. "A1", `c("A1", "C3")` or a range like "A1:A10". The same comment is added to every cell
 #' @param comment A comment to apply to `dims` created by [wb_comment()], a string or a [fmt_txt()] object
 #' @param ... additional arguments
 #' @returns The Workbook object, invisibly.
