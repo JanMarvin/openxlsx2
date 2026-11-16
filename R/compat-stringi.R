@@ -34,6 +34,8 @@
 #' @noRd
 stri_join <- function(..., sep = "", collapse = NULL) {
   args <- list(...)
+  obj <- vapply(args, is.object, NA)
+  if (any(obj)) args[obj] <- lapply(args[obj], as.character)
   if (is.null(collapse)) return(stri_join_cpp(args, sep))
 
   # NA is contagious, like in stringi. paste() would write "NA"
@@ -70,7 +72,11 @@ pcre_pattern <- function(x) {
 #' stri_detect_fixed(c("a&b", "ab", NA), "&")
 #' #> [1]  TRUE FALSE    NA
 #' @noRd
-stri_detect_fixed <- function(str, pattern) stri_detect_fixed_cpp(str, pattern)
+stri_detect_fixed <- function(str, pattern) {
+  if (is.object(str)) str <- as.character(str)
+  if (is.object(pattern)) pattern <- as.character(pattern)
+  stri_detect_fixed_cpp(str, pattern)
+}
 
 #' Detect a regular expression
 #'

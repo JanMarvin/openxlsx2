@@ -17,11 +17,11 @@ static SEXP make_utf8(const std::string& x) {
   return Rf_mkCharLenCE(x.data(), static_cast<int>(x.size()), CE_UTF8);
 }
 
-// as.character() for anything that is not a character vector yet
+// as.character() for plain vectors. Classed objects (factor, Date) must be
+// converted with as.character() in R before they get here
 static Rcpp::CharacterVector as_chr(SEXP x) {
   if (TYPEOF(x) == STRSXP) return Rcpp::CharacterVector(x);
-  Rcpp::Function as_character("as.character");
-  return Rcpp::CharacterVector(as_character(x));
+  return Rcpp::CharacterVector(Rf_coerceVector(x, STRSXP));
 }
 
 static bool is_ascii(const char* x) {

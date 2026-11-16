@@ -3,6 +3,14 @@ test_that("stri_join handles NA and zero length input", {
   expect_equal(stri_join(c("a", NA), collapse = ""), NA_character_)
   expect_equal(stri_join("a", character()), character())
   expect_equal(stri_join(c("a", "b"), 1:2, sep = "-"), c("a-1", "b-2"))
+  expect_equal(stri_join("x", c(0.1, 1e5, NA), TRUE), c("x0.1TRUE", "x1e+05TRUE", NA))
+  expect_equal(stri_join("x", NULL), character())
+})
+
+test_that("classed objects are converted with as.character()", {
+  expect_equal(stri_join(factor(c("b", "a")), 1:2), c("b1", "a2"))
+  expect_equal(stri_join("d", as.Date("2026-11-16")), "d2026-11-16")
+  expect_equal(stri_detect_fixed(factor(c("ab", "cd")), "b"), c(TRUE, FALSE))
 })
 
 test_that("regex helpers", {
