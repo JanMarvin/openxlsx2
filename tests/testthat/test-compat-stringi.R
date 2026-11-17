@@ -11,6 +11,7 @@ test_that("classed objects are converted with as.character()", {
   expect_equal(stri_join(factor(c("b", "a")), 1:2), c("b1", "a2"))
   expect_equal(stri_join("d", as.Date("2026-11-16")), "d2026-11-16")
   expect_equal(stri_detect_fixed(factor(c("ab", "cd")), "b"), c(TRUE, FALSE))
+  expect_equal(stri_detect_fixed(c("ab", "cd"), factor("b")), c(TRUE, FALSE))
 })
 
 test_that("regex helpers", {
@@ -64,6 +65,15 @@ test_that("stri_sub and stri_sub_replace", {
   expect_equal(stri_sub_replace_all("abc", integer(), integer(), character()), "abc")
 })
 
+test_that("stri_match_first_regex", {
+  expect_equal(
+    stri_match_first_regex(c("A1:B2", "C3", "x"), "([A-Z]+)([0-9]+)(:([A-Z]+)([0-9]+))?"),
+    matrix(c("A1:B2", "C3", NA, "A", "C", NA, "1", "3", NA, ":B2", NA, NA, "B", NA, NA, "2", NA, NA), 3)
+  )
+  # a pattern without groups gives only the full match
+  expect_equal(stri_match_first_regex(c("ab", "x", NA), "b"), matrix(c("b", NA, NA), 3))
+})
+
 test_that("stri_locate_last_fixed and stri_detect_fixed", {
   expect_equal(unname(stri_locate_last_fixed("a</x>b</x>c", "</x>")[1, ]), c(7L, 10L))
   expect_true(is.na(stri_locate_last_fixed("ab", "abc")[1, "start"]))
@@ -109,6 +119,16 @@ test_that("stri_read_lines", {
 
   writeBin(c(as.raw(c(0xEF, 0xBB, 0xBF)), charToRaw("a\nb\n")), f)
   expect_equal(stri_read_lines(f), c("a", "b"))
+
+  # readLines() removes the mark itself in a UTF-8 session. In any other
+  # session it is still there and has to be removed here
+  writeBin(c(as.raw(c(0xEF, 0xBB, 0xBF, 0xC3, 0xA4)), charToRaw("\nb\n")), f)
+  old <- Sys.getlocale("LC_CTYPE")
+  skip_if(identical(Sys.setlocale("LC_CTYPE", "C"), ""))
+  on.exit(Sys.setlocale("LC_CTYPE", old), add = TRUE)
+  res <- stri_read_lines(f)
+  expect_equal(res, c("\u00e4", "b"))
+  expect_equal(Encoding(res[1]), "UTF-8")
 })
 
 test_that("stri_escape_unicode and stri_unescape_unicode", {
