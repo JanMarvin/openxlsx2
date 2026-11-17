@@ -19,7 +19,7 @@ for (i in seq_along(fls)) {
   xml_name <- xml_attr(xml_theme, "a:theme")[[1]][["name"]]
   message(xml_name, " ", fls[i])
 
-  themes[[i]] <- stringi::stri_escape_unicode(xml_theme)
+  themes[[i]] <- openxlsx2:::stri_escape_unicode(xml_theme)
   nms[[i]] <- xml_name
 }
 nms[length(nms)] <- "Old Office Theme"
@@ -35,5 +35,5 @@ saveRDS(themes, "inst/extdata/themes.rds")
 
 
 # x <- themes$`Office Theme`
-# x <- stringi::stri_unescape_unicode(x)
+# x <- openxlsx2:::stri_unescape_unicode(x)
 # as_xml(x)

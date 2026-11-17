@@ -525,7 +525,7 @@ test_that("named region checks work", {
 
   expect_error(wb$add_named_region(dims = "A1", name = 1), "letter or an underscore")
   expect_error(wb$add_named_region(dims = "B1", name = "1"), "letter or an underscore")
-  expect_silent(wb$add_named_region(dims = "C1", name = stringi::stri_unescape_unicode("\\u00e4")))
+  expect_silent(wb$add_named_region(dims = "C1", name = stri_unescape_unicode("\\u00e4")))
   expect_error(wb$add_named_region(dims = "D1", name = "a b"), "letter or an underscore")
   expect_error(wb$add_named_region(dims = "D1", name = "A1"), "cell reference")
 })

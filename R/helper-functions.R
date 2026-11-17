@@ -142,7 +142,7 @@ validate_color <- function(
   }
 
   ## create a total size of 8 in ARGB format
-  color <- stringi::stri_pad_left(str = color, width = 8, pad = "F")
+  color <- stri_pad_left(str = color, width = 8, pad = "F")
 
   if (!all(grepl("^[A-F0-9]{8}$", color))) {
     if (is.null(msg)) msg <- sprintf("`%s` ['%s'] is not a valid color", sx, color)
@@ -239,20 +239,20 @@ amp_split <- function(x) {
   # Extract each component if present and remove &amp;[LCR]
   if (grepl("&amp;L", x)) {
     has[1] <- 1
-    res[1] <- stringi::stri_extract_first_regex(x, "&amp;L[\\s\\S]*?(?=&amp;C|&amp;R|$)")
+    res[1] <- stri_extract_first_regex(x, "&amp;L[\\s\\S]*?(?=&amp;C|&amp;R|$)")
   }
   if (grepl("&amp;C", x)) {
     has[2] <- 1
-    res[2] <- stringi::stri_extract_first_regex(x, "&amp;C[\\s\\S]*?(?=&amp;R|$)")
+    res[2] <- stri_extract_first_regex(x, "&amp;C[\\s\\S]*?(?=&amp;R|$)")
   }
   if (grepl("&amp;R", x)) {
     has[3] <- 1
-    res[3] <- stringi::stri_extract_first_regex(x, "&amp;R[\\s\\S]*?$")
+    res[3] <- stri_extract_first_regex(x, "&amp;R[\\s\\S]*?$")
   }
 
   if (sum(has) == 0) return(character(0))
 
-  res <- stringi::stri_replace_all_regex(res, "&amp;[LCR]", "")
+  res <- stri_replace_all_regex(res, "&amp;[LCR]", "")
 
   # return the string vector
   unname(res)

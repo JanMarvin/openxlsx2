@@ -72,7 +72,7 @@ xls_unpack <- function(file, xmlDir, data_only = FALSE, debug = FALSE, sheet = N
     wb_head <- paste(readLines(path("xl", "workbook.xml"), warn = FALSE, encoding = "UTF-8"), collapse = "")
     head_tags <- regmatches(wb_head, gregexpr("<sheet [^>]*/>", wb_head))[[1]]
     head_names <- sub(".*name=\"([^\"]*)\".*", "\\1", head_tags)
-    head_names <- stringi::stri_replace_all_fixed(head_names, rev(legal_sub()[1:5]), rev(legal_chars()[1:5]), vectorize_all = FALSE)
+    head_names <- stri_replace_all_fixed(head_names, rev(legal_sub()[1:5]), rev(legal_chars()[1:5]), vectorize_all = FALSE)
     keep <- if (is.numeric(sheet)) as.integer(sheet) else match(sheet, head_names)
     keep <- keep[!is.na(keep) & keep >= 1L & keep <= nsheets]
   }
@@ -208,7 +208,7 @@ xls_chart_caches <- function(xmlDir) {
   if (!length(charts)) return(invisible(NULL))
 
   unescape <- function(x) {
-    stringi::stri_replace_all_fixed(x, rev(legal_sub()[1:5]), rev(legal_chars()[1:5]), vectorize_all = FALSE)
+    stri_replace_all_fixed(x, rev(legal_sub()[1:5]), rev(legal_chars()[1:5]), vectorize_all = FALSE)
   }
 
   wb_xml <- paste(readLines(file.path(xmlDir, "xl", "workbook.xml"), warn = FALSE, encoding = "UTF-8"), collapse = "")
@@ -300,7 +300,7 @@ xls_filter_names <- function(xmlDir, nsheets, types) {
   wb_xml <- paste(readLines(wb_file, warn = FALSE, encoding = "UTF-8"), collapse = "\n")
   sheet_tags <- regmatches(wb_xml, gregexpr("<sheet [^>]*/>", wb_xml))[[1]]
   sheet_names <- sub(".*name=\"([^\"]*)\".*", "\\1", sheet_tags)
-  sheet_names <- stringi::stri_replace_all_fixed(sheet_names, rev(legal_sub()[1:5]), rev(legal_chars()[1:5]), vectorize_all = FALSE)
+  sheet_names <- stri_replace_all_fixed(sheet_names, rev(legal_sub()[1:5]), rev(legal_chars()[1:5]), vectorize_all = FALSE)
 
   new_names <- character()
   for (i in seq_len(nsheets)) {

@@ -222,6 +222,46 @@ xml_remove_child_path <- function(node, child, path, which, pointer) {
     .Call(`_openxlsx2_xml_remove_child_path`, node, child, path, which, pointer)
 }
 
+stri_join_cpp <- function(args, sep) {
+    .Call(`_openxlsx2_stri_join_cpp`, args, sep)
+}
+
+stri_collapse_cpp <- function(x, collapse) {
+    .Call(`_openxlsx2_stri_collapse_cpp`, x, collapse)
+}
+
+stri_replace_all_fixed_cpp <- function(str, pattern, replacement) {
+    .Call(`_openxlsx2_stri_replace_all_fixed_cpp`, str, pattern, replacement)
+}
+
+stri_sub_replace_cpp <- function(str, from, to, value) {
+    .Call(`_openxlsx2_stri_sub_replace_cpp`, str, from, to, value)
+}
+
+stri_locate_last_fixed_cpp <- function(str, pattern) {
+    .Call(`_openxlsx2_stri_locate_last_fixed_cpp`, str, pattern)
+}
+
+stri_detect_fixed_cpp <- function(str_in, pattern_in) {
+    .Call(`_openxlsx2_stri_detect_fixed_cpp`, str_in, pattern_in)
+}
+
+stri_unique_cpp <- function(str) {
+    .Call(`_openxlsx2_stri_unique_cpp`, str)
+}
+
+stri_pad_left_cpp <- function(str, width, pad) {
+    .Call(`_openxlsx2_stri_pad_left_cpp`, str, width, pad)
+}
+
+stri_extract_first_cpp <- function(str, start, len) {
+    .Call(`_openxlsx2_stri_extract_first_cpp`, str, start, len)
+}
+
+stri_order_numeric_cpp <- function(str) {
+    .Call(`_openxlsx2_stri_order_numeric_cpp`, str)
+}
+
 is_to_txt <- function(is_vec) {
     .Call(`_openxlsx2_is_to_txt`, is_vec)
 }

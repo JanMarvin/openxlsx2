@@ -1,6 +1,6 @@
 # unique is not enough! gh#713
 distinct <- function(x) {
-  unis <- stringi::stri_unique(x)
+  unis <- stri_unique(x)
   lwrs <- tolower(unis)
   dups <- duplicated(lwrs)
   unis[!dups]
@@ -13,7 +13,7 @@ fix_pt_names <- function(x) {
   lwrs <- tolower(x)
 
   dups <- duplicated(lwrs)
-  dups <- stringi::stri_unique(lwrs[dups])
+  dups <- stri_unique(lwrs[dups])
 
   for (dup in dups) {
     sel <- which(lwrs == dup)

@@ -504,7 +504,7 @@ wbWorkbook <- R6::R6Class(
         if (err) {
           message("theme ", theme, " not found falling back to default theme")
         } else {
-          self$theme <- stringi::stri_unescape_unicode(themes[[sel]])
+          self$theme <- stri_unescape_unicode(themes[[sel]])
 
           # create the default font for the style
           font_scheme <- xml_node(self$theme, "a:theme", "a:themeElements", "a:fontScheme")
@@ -1059,7 +1059,7 @@ wbWorkbook <- R6::R6Class(
 
       ## create sheet.rels to simplify id assignment. Targets relative to the
       ## package root are written relative to the sheet, as the parts below expect
-      self$worksheets_rels[[newSheetIndex]] <- stringi::stri_replace_all_fixed(
+      self$worksheets_rels[[newSheetIndex]] <- stri_replace_all_fixed(
         from$worksheets_rels[[old]],
         'Target="/xl/',
         'Target="../'
@@ -1078,7 +1078,7 @@ wbWorkbook <- R6::R6Class(
       # matches references to the old sheet in defined names, quoted or not
       old_ref_name    <- paste0("\\Q", from$sheet_names[[old]], "\\E")
       ref_pattern     <- paste0("(?:'", old_ref_name, "'|(?<![\\p{L}\\p{N}_.'])", old_ref_name, ")!")
-      ref_replacement <- stringi::stri_replace_all_fixed(paste0("'", new, "'!"), "$", "\\$")
+      ref_replacement <- stri_replace_all_fixed(paste0("'", new, "'!"), "$", "\\$")
 
       # data, styles, tables, comments, images and charts are cloned as they
       # are. Cloning other elements is experimental, these are named in a warning
@@ -1099,7 +1099,7 @@ wbWorkbook <- R6::R6Class(
         has_names <- any(
           !startsWith(dn_attr$name, "_xlchart.v1.") &
             (dn_local == as.character(match(old, from$sheetOrder) - 1L) |
-               stringi::stri_detect_regex(xml_value(from$workbook$definedNames, "definedName"), ref_pattern))
+               stri_detect_regex(xml_value(from$workbook$definedNames, "definedName"), ref_pattern))
         )
       }
       # query tables are not cloned. For another workbook, custom table styles
@@ -1199,7 +1199,7 @@ wbWorkbook <- R6::R6Class(
                 new_part <- min(which(!nzchar(self$charts[[part]])), NROW(self$charts) + 1L)
                 if (new_part > NROW(self$charts)) self$charts <- rbind(self$charts, empty_chart)
                 self$charts[[part]][new_part] <- from$charts[[part]][as.integer(part_id)]
-                chart_rels <- stringi::stri_replace_all_fixed(
+                chart_rels <- stri_replace_all_fixed(
                   chart_rels,
                   paste0(part, part_id, ".xml\""),
                   paste0(part, new_part, ".xml\"")
@@ -1211,7 +1211,7 @@ wbWorkbook <- R6::R6Class(
             for (us_id in us_ids) {
               user_shapes      <- c(user_shapes, list(from$drawings[[as.integer(us_id)]]))
               user_shapes_rels <- c(user_shapes_rels, list(from$drawings_rels[[as.integer(us_id)]]))
-              chart_rels <- stringi::stri_replace_all_fixed(
+              chart_rels <- stri_replace_all_fixed(
                 chart_rels,
                 paste0("drawings/drawing", us_id, ".xml\""),
                 paste0("drawings/drawing", new_drawing_sheet + length(user_shapes), ".xml\"")
@@ -1220,15 +1220,15 @@ wbWorkbook <- R6::R6Class(
 
             # references to the old sheet in chart formulas point to the new
             # sheet, quoted or not
-            f_old <- unique(stringi::stri_extract_all_regex(
+            f_old <- unique(stri_extract_all_regex(
               chart,
               "<([A-Za-z0-9]+):f(?: [^>]*)?>[^<]*</\\1:f>",
               omit_no_match = TRUE
             )[[1]])
-            f_new <- stringi::stri_replace_all_regex(f_old, ref_pattern, ref_replacement)
+            f_new <- stri_replace_all_regex(f_old, ref_pattern, ref_replacement)
             changed <- f_old != f_new
             if (any(changed)) {
-              chart <- stringi::stri_replace_all_fixed(chart, f_old[changed], f_new[changed], vectorize_all = FALSE)
+              chart <- stri_replace_all_fixed(chart, f_old[changed], f_new[changed], vectorize_all = FALSE)
             }
 
             # chartEx data is referenced via hidden _xlchart.v1.N defined names.
@@ -1236,10 +1236,10 @@ wbWorkbook <- R6::R6Class(
             # keeping the distance between the ids of this chart.
             if (is_chartEx) {
               xl_pattern <- "_xlchart\\.v1\\.[0-9]+"
-              xl_old <- unique(stringi::stri_extract_all_regex(chart, xl_pattern, omit_no_match = TRUE)[[1]])
+              xl_old <- unique(stri_extract_all_regex(chart, xl_pattern, omit_no_match = TRUE)[[1]])
 
               if (length(xl_old)) {
-                used_names <- unlist(stringi::stri_extract_all_regex(self$charts$chartEx, xl_pattern, omit_no_match = TRUE))
+                used_names <- unlist(stri_extract_all_regex(self$charts$chartEx, xl_pattern, omit_no_match = TRUE))
                 if (length(self$workbook$definedNames)) {
                   used_names <- c(used_names, rbindlist(xml_attr(self$workbook$definedNames, "definedName"))$name)
                 }
@@ -1249,13 +1249,13 @@ wbWorkbook <- R6::R6Class(
                 xl_new   <- paste0("_xlchart.v1.", new_ids)
                 xl_tmp   <- paste0("_xlchart_clone_", seq_along(xl_old), "_")
 
-                chart <- stringi::stri_replace_all_regex(
+                chart <- stri_replace_all_regex(
                   chart,
                   paste0("\\Q", xl_old, "\\E(?![0-9])"),
                   xl_tmp,
                   vectorize_all = FALSE
                 )
-                chart <- stringi::stri_replace_all_fixed(chart, xl_tmp, xl_new, vectorize_all = FALSE)
+                chart <- stri_replace_all_fixed(chart, xl_tmp, xl_new, vectorize_all = FALSE)
 
                 if (length(from$workbook$definedNames)) {
                   from_dn       <- from$workbook$definedNames
@@ -1265,7 +1265,7 @@ wbWorkbook <- R6::R6Class(
                     if (length(sel) == 0) next
                     dn_attr <- xml_attr(from_dn[sel[1]], "definedName")[[1]]
                     dn_attr[["name"]] <- xl_new[i]
-                    dn_value <- stringi::stri_replace_all_regex(
+                    dn_value <- stri_replace_all_regex(
                       xml_value(from_dn[sel[1]], "definedName"),
                       ref_pattern,
                       ref_replacement
@@ -1282,7 +1282,7 @@ wbWorkbook <- R6::R6Class(
             self$charts[[col_xml]][chartid]  <- chart
             self$charts[[col_rels]][chartid] <- chart_rels
 
-            drawings_rels[dl] <- gsub(stringi::stri_join("(?<=charts/)", cf), paste0(col_xml, chartid, ".xml"), drawings_rels[dl], perl = TRUE)
+            drawings_rels[dl] <- gsub(stri_join("(?<=charts/)", cf), paste0(col_xml, chartid, ".xml"), drawings_rels[dl], perl = TRUE)
           }
         }
 
@@ -1314,8 +1314,8 @@ wbWorkbook <- R6::R6Class(
             }
           }
           dgm_tmp <- paste0("../diagrams/clone_", seq_along(dgm_old), "\"")
-          drawings_rels <- stringi::stri_replace_all_fixed(drawings_rels, paste0("../diagrams/", dgm_old, "\""), dgm_tmp, vectorize_all = FALSE)
-          drawings_rels <- stringi::stri_replace_all_fixed(drawings_rels, dgm_tmp, paste0("../diagrams/", dgm_new, "\""), vectorize_all = FALSE)
+          drawings_rels <- stri_replace_all_fixed(drawings_rels, paste0("../diagrams/", dgm_old, "\""), dgm_tmp, vectorize_all = FALSE)
+          drawings_rels <- stri_replace_all_fixed(drawings_rels, dgm_tmp, paste0("../diagrams/", dgm_new, "\""), vectorize_all = FALSE)
         }
 
         self$drawings_rels[[new_drawing_rels]] <- drawings_rels
@@ -1424,7 +1424,7 @@ wbWorkbook <- R6::R6Class(
         self$append("vml",      from$vml[[vml_id]])
         self$append("vml_rels", from$vml_rels[[vml_id]])
         self$worksheets[[newSheetIndex]]$relships$vmlDrawing <- length(self$vml)
-        self$worksheets_rels[[newSheetIndex]] <- stringi::stri_replace_all_fixed(
+        self$worksheets_rels[[newSheetIndex]] <- stri_replace_all_fixed(
           self$worksheets_rels[[newSheetIndex]],
           sprintf('Target="../drawings/vmlDrawing%s.vml"', vml_id),
           sprintf('Target="../drawings/vmlDrawing%s.vml"', length(self$vml))
@@ -1453,28 +1453,28 @@ wbWorkbook <- R6::R6Class(
           spid_new   <- blocks_new[match(spid_old %/% 1024L, blocks_old)] * 1024L + spid_old %% 1024L
           spid_tmp   <- sprintf("clone_spid_%s_", seq_along(spid_old))
 
-          vml_new <- stringi::stri_replace_all_regex(
+          vml_new <- stri_replace_all_regex(
             vml_new,
             '(?<=<o:idmap v:ext="edit" data=")[0-9,]+',
             paste(blocks_new, collapse = ",")
           )
-          vml_new <- stringi::stri_replace_all_regex(vml_new, paste0("_x0000_s", spid_old, "(?![0-9])"), paste0("_x0000_s", spid_tmp), vectorize_all = FALSE)
-          self$vml[[new_vml]] <- stringi::stri_replace_all_fixed(vml_new, paste0("_x0000_s", spid_tmp), paste0("_x0000_s", spid_new), vectorize_all = FALSE)
+          vml_new <- stri_replace_all_regex(vml_new, paste0("_x0000_s", spid_old, "(?![0-9])"), paste0("_x0000_s", spid_tmp), vectorize_all = FALSE)
+          self$vml[[new_vml]] <- stri_replace_all_fixed(vml_new, paste0("_x0000_s", spid_tmp), paste0("_x0000_s", spid_new), vectorize_all = FALSE)
 
           # ole objects and form controls on the sheet and in its drawing
           # refer to these shapes
           for (field in c("oleObjects", "controls")) {
             x <- self$worksheets[[newSheetIndex]][[field]]
             if (length(x) == 0) next
-            x <- stringi::stri_replace_all_regex(x, paste0('shapeId="', spid_old, '"'), paste0('shapeId="', spid_tmp, '"'), vectorize_all = FALSE)
-            self$worksheets[[newSheetIndex]][[field]] <- stringi::stri_replace_all_fixed(x, paste0('shapeId="', spid_tmp, '"'), paste0('shapeId="', spid_new, '"'), vectorize_all = FALSE)
+            x <- stri_replace_all_regex(x, paste0('shapeId="', spid_old, '"'), paste0('shapeId="', spid_tmp, '"'), vectorize_all = FALSE)
+            self$worksheets[[newSheetIndex]][[field]] <- stri_replace_all_fixed(x, paste0('shapeId="', spid_tmp, '"'), paste0('shapeId="', spid_new, '"'), vectorize_all = FALSE)
           }
 
           new_drawing <- self$worksheets[[newSheetIndex]]$relships$drawing
           if (length(new_drawing)) {
             x <- self$drawings[[new_drawing]]
-            x <- stringi::stri_replace_all_regex(x, paste0("_x0000_s", spid_old, "(?![0-9])"), paste0("_x0000_s", spid_tmp), vectorize_all = FALSE)
-            self$drawings[[new_drawing]] <- stringi::stri_replace_all_fixed(x, paste0("_x0000_s", spid_tmp), paste0("_x0000_s", spid_new), vectorize_all = FALSE)
+            x <- stri_replace_all_regex(x, paste0("_x0000_s", spid_old, "(?![0-9])"), paste0("_x0000_s", spid_tmp), vectorize_all = FALSE)
+            self$drawings[[new_drawing]] <- stri_replace_all_fixed(x, paste0("_x0000_s", spid_tmp), paste0("_x0000_s", spid_new), vectorize_all = FALSE)
           }
         }
       }
@@ -1482,7 +1482,7 @@ wbWorkbook <- R6::R6Class(
       if (length(cmt_id)) {
         self$append("comments", from$comments[cmt_id])
         self$worksheets[[newSheetIndex]]$relships$comments <- length(self$comments)
-        self$worksheets_rels[[newSheetIndex]] <- stringi::stri_replace_all_fixed(
+        self$worksheets_rels[[newSheetIndex]] <- stri_replace_all_fixed(
           self$worksheets_rels[[newSheetIndex]],
           sprintf('Target="../comments%s.xml"', cmt_id),
           sprintf('Target="../comments%s.xml"', length(self$comments))
@@ -1498,18 +1498,18 @@ wbWorkbook <- R6::R6Class(
         new_trd <- length(self$threadComments)
         trd_old <- rbindlist(xml_attr(self$threadComments[[new_trd]], "threadedComment"))$id
         trd_new <- vapply(trd_old, function(x) st_guid(), NA_character_, USE.NAMES = FALSE)
-        self$threadComments[[new_trd]] <- stringi::stri_replace_all_fixed(
+        self$threadComments[[new_trd]] <- stri_replace_all_fixed(
           self$threadComments[[new_trd]], trd_old, trd_new, vectorize_all = FALSE
         )
         new_cmt <- self$worksheets[[newSheetIndex]]$relships$comments
         if (length(new_cmt)) {
           for (i in seq_along(self$comments[[new_cmt]])) {
-            self$comments[[new_cmt]][[i]]$author <- stringi::stri_replace_all_fixed(
+            self$comments[[new_cmt]][[i]]$author <- stri_replace_all_fixed(
               self$comments[[new_cmt]][[i]]$author, trd_old, trd_new, vectorize_all = FALSE
             )
           }
         }
-        self$worksheets_rels[[newSheetIndex]] <- stringi::stri_replace_all_fixed(
+        self$worksheets_rels[[newSheetIndex]] <- stri_replace_all_fixed(
           self$worksheets_rels[[newSheetIndex]],
           sprintf('Target="../threadedComments/threadedComment%s.xml"', trd_id),
           sprintf('Target="../threadedComments/threadedComment%s.xml"', length(self$threadComments))
@@ -1557,13 +1557,13 @@ wbWorkbook <- R6::R6Class(
           sprintf('<Override PartName="/xl/%s/%s%s.xml" ContentType="%s"/>', field, part, new_ids, content_type)
         )
         part_tmp <- sprintf('Target="../%s/clone_%s"', field, seq_along(part_ids))
-        self$worksheets_rels[[newSheetIndex]] <- stringi::stri_replace_all_fixed(
+        self$worksheets_rels[[newSheetIndex]] <- stri_replace_all_fixed(
           self$worksheets_rels[[newSheetIndex]],
           sprintf('Target="../%s/%s%s.xml"', field, part, part_ids),
           part_tmp,
           vectorize_all = FALSE
         )
-        self$worksheets_rels[[newSheetIndex]] <- stringi::stri_replace_all_fixed(
+        self$worksheets_rels[[newSheetIndex]] <- stri_replace_all_fixed(
           self$worksheets_rels[[newSheetIndex]],
           part_tmp,
           sprintf('Target="../%s/%s%s.xml"', field, part, new_ids),
@@ -1596,8 +1596,8 @@ wbWorkbook <- R6::R6Class(
           }
         }
         emb_tmp <- sprintf('Target="../embeddings/clone_%s"', seq_along(emb_old))
-        ws_rels <- stringi::stri_replace_all_fixed(ws_rels, sprintf('Target="../embeddings/%s"', emb_old), emb_tmp, vectorize_all = FALSE)
-        ws_rels <- stringi::stri_replace_all_fixed(ws_rels, emb_tmp, sprintf('Target="../embeddings/%s"', emb_new), vectorize_all = FALSE)
+        ws_rels <- stri_replace_all_fixed(ws_rels, sprintf('Target="../embeddings/%s"', emb_old), emb_tmp, vectorize_all = FALSE)
+        ws_rels <- stri_replace_all_fixed(ws_rels, emb_tmp, sprintf('Target="../embeddings/%s"', emb_new), vectorize_all = FALSE)
         self$worksheets_rels[[newSheetIndex]] <- ws_rels
       }
 
@@ -1626,12 +1626,12 @@ wbWorkbook <- R6::R6Class(
           }
         }
         med_tmp <- sprintf('Target="../media/clone_%s"', seq_along(med_old))
-        ws_rels <- stringi::stri_replace_all_fixed(ws_rels, sprintf('Target="../media/%s"', med_old), med_tmp, vectorize_all = FALSE)
-        ws_rels <- stringi::stri_replace_all_fixed(ws_rels, med_tmp, sprintf('Target="../media/%s"', med_new), vectorize_all = FALSE)
+        ws_rels <- stri_replace_all_fixed(ws_rels, sprintf('Target="../media/%s"', med_old), med_tmp, vectorize_all = FALSE)
+        ws_rels <- stri_replace_all_fixed(ws_rels, med_tmp, sprintf('Target="../media/%s"', med_new), vectorize_all = FALSE)
         self$worksheets_rels[[newSheetIndex]] <- ws_rels
         if (length(new_vml)) {
-          vml_rels <- stringi::stri_replace_all_fixed(vml_rels, sprintf('Target="../media/%s"', med_old), med_tmp, vectorize_all = FALSE)
-          self$vml_rels[[new_vml]] <- stringi::stri_replace_all_fixed(vml_rels, med_tmp, sprintf('Target="../media/%s"', med_new), vectorize_all = FALSE)
+          vml_rels <- stri_replace_all_fixed(vml_rels, sprintf('Target="../media/%s"', med_old), med_tmp, vectorize_all = FALSE)
+          self$vml_rels[[new_vml]] <- stri_replace_all_fixed(vml_rels, med_tmp, sprintf('Target="../media/%s"', med_new), vectorize_all = FALSE)
         }
       }
 
@@ -1660,12 +1660,12 @@ wbWorkbook <- R6::R6Class(
         is_global <- local_id == "" &
           !startsWith(from_dn_attr$name, "_xlchart.v1.") &
           !tolower(from_dn_attr$name) %in% tolower(from_dn_attr$name[is_local]) &
-          stringi::stri_detect_regex(from_dn_value, ref_pattern)
+          stri_detect_regex(from_dn_value, ref_pattern)
 
         for (i in which(is_local | is_global)) {
           dn_attr <- xml_attr(from_dn[i], "definedName")[[1]]
           dn_attr[["localSheetId"]] <- as.character(newSheetIndex - 1L)
-          dn_value <- stringi::stri_replace_all_regex(from_dn_value[i], ref_pattern, ref_replacement)
+          dn_value <- stri_replace_all_regex(from_dn_value[i], ref_pattern, ref_replacement)
           private$append_workbook_field(
             "definedNames",
             xml_node_create("definedName", xml_children = dn_value, xml_attributes = dn_attr)
@@ -1724,12 +1724,12 @@ wbWorkbook <- R6::R6Class(
           else
             newid <- 1L
 
-          if (any(stringi::stri_join(tbls$tab_name, suffix) %in% self$tables$tab_name)) {
-            tbls$tab_name <- stringi::stri_join(tbls$tab_name, "1")
+          if (any(stri_join(tbls$tab_name, suffix) %in% self$tables$tab_name)) {
+            tbls$tab_name <- stri_join(tbls$tab_name, "1")
           }
 
           # add _n to all table names found
-          tbls$tab_name <- stringi::stri_join(tbls$tab_name, suffix)
+          tbls$tab_name <- stri_join(tbls$tab_name, suffix)
           tbls$tab_sheet <- newSheetIndex
           # modify tab_xml with updated name, displayName and id
           tbls$tab_xml <- vapply(
@@ -1797,7 +1797,7 @@ wbWorkbook <- R6::R6Class(
               # only images need a default content type, charts have their own
               # override and an extension can be declared once only
               fe <- unique(file_ext2(drels$Target[basename(drels$Type) == "image"]))
-              declared <- stringi::stri_match_first_regex(self$Content_Types, "<Default Extension=\"([^\"]+)\"")[, 2]
+              declared <- stri_match_first_regex(self$Content_Types, "<Default Extension=\"([^\"]+)\"")[, 2]
               fe <- setdiff(fe, declared)
 
               if (length(fe)) {
@@ -1828,13 +1828,13 @@ wbWorkbook <- R6::R6Class(
 
                 # update relationship, in two steps to avoid renaming twice
                 media_tmp <- sprintf("clone_media_%s_", seq_along(onams))
-                self$drawings_rels[[new_drawing_rels]] <- stringi::stri_replace_all_fixed(
+                self$drawings_rels[[new_drawing_rels]] <- stri_replace_all_fixed(
                   self$drawings_rels[[new_drawing_rels]],
                   pattern = onams,
                   replacement = media_tmp,
                   vectorize_all = FALSE
                 )
-                self$drawings_rels[[new_drawing_rels]] <- stringi::stri_replace_all_fixed(
+                self$drawings_rels[[new_drawing_rels]] <- stri_replace_all_fixed(
                   self$drawings_rels[[new_drawing_rels]],
                   pattern = media_tmp,
                   replacement = mnams,
@@ -1943,22 +1943,22 @@ wbWorkbook <- R6::R6Class(
 
           # conditional formatting is kept as data frame with sqref and cf rule
           if (NROW(cf)) {
-            cf$cf <- stringi::stri_replace_all_regex(cf$cf, dxf_old, dxf_tmp, vectorize_all = FALSE)
-            cf$cf <- stringi::stri_replace_all_fixed(cf$cf, dxf_tmp, new_dxf, vectorize_all = FALSE)
+            cf$cf <- stri_replace_all_regex(cf$cf, dxf_old, dxf_tmp, vectorize_all = FALSE)
+            cf$cf <- stri_replace_all_fixed(cf$cf, dxf_tmp, new_dxf, vectorize_all = FALSE)
             self$worksheets[[newSheetIndex]]$conditionalFormatting <- cf
           }
 
           for (field in c("autoFilter", "sortState")) {
             x <- self$worksheets[[newSheetIndex]][[field]]
             if (length(x) == 0) next
-            x <- stringi::stri_replace_all_regex(x, dxf_old, dxf_tmp, vectorize_all = FALSE)
-            self$worksheets[[newSheetIndex]][[field]] <- stringi::stri_replace_all_fixed(x, dxf_tmp, new_dxf, vectorize_all = FALSE)
+            x <- stri_replace_all_regex(x, dxf_old, dxf_tmp, vectorize_all = FALSE)
+            self$worksheets[[newSheetIndex]][[field]] <- stri_replace_all_fixed(x, dxf_tmp, new_dxf, vectorize_all = FALSE)
           }
 
           if (length(sel)) {
             tab_xml <- self$tables$tab_xml[sel]
-            tab_xml <- stringi::stri_replace_all_regex(tab_xml, dxf_old, dxf_tmp, vectorize_all = FALSE)
-            self$tables$tab_xml[sel] <- stringi::stri_replace_all_fixed(tab_xml, dxf_tmp, new_dxf, vectorize_all = FALSE)
+            tab_xml <- stri_replace_all_regex(tab_xml, dxf_old, dxf_tmp, vectorize_all = FALSE)
+            self$tables$tab_xml[sel] <- stri_replace_all_fixed(tab_xml, dxf_tmp, new_dxf, vectorize_all = FALSE)
           }
         }
 
@@ -2031,14 +2031,14 @@ wbWorkbook <- R6::R6Class(
             ext_tmp <- sprintf("[clone_ext_%s_]", seq_along(ext_old))
             ext_pat <- sprintf(ext_pattern, ext_old, ext_old)
             if (!is.null(cc$f)) {
-              cc$f <- stringi::stri_replace_all_regex(cc$f, ext_pat, ext_tmp, vectorize_all = FALSE)
-              cc$f <- stringi::stri_replace_all_fixed(cc$f, ext_tmp, sprintf("[%s]", ext_new), vectorize_all = FALSE)
+              cc$f <- stri_replace_all_regex(cc$f, ext_pat, ext_tmp, vectorize_all = FALSE)
+              cc$f <- stri_replace_all_fixed(cc$f, ext_tmp, sprintf("[%s]", ext_new), vectorize_all = FALSE)
               self$worksheets[[newSheetIndex]]$sheet_data$cc <- cc
             }
             if (length(dn_local)) {
               dn <- self$workbook$definedNames[dn_local]
-              dn <- stringi::stri_replace_all_regex(dn, ext_pat, ext_tmp, vectorize_all = FALSE)
-              self$workbook$definedNames[dn_local] <- stringi::stri_replace_all_fixed(dn, ext_tmp, sprintf("[%s]", ext_new), vectorize_all = FALSE)
+              dn <- stri_replace_all_regex(dn, ext_pat, ext_tmp, vectorize_all = FALSE)
+              self$workbook$definedNames[dn_local] <- stri_replace_all_fixed(dn, ext_tmp, sprintf("[%s]", ext_new), vectorize_all = FALSE)
             }
           }
         }
@@ -2458,7 +2458,7 @@ wbWorkbook <- R6::R6Class(
       sel <- which(pt$name == replace_legal_chars(pivot_table))
       cid <- pt$cacheId[sel]
 
-      uni_name <- paste0(stringi::stri_replace_all_fixed(slicer, " ", "_"), cid)
+      uni_name <- paste0(stri_replace_all_fixed(slicer, " ", "_"), cid)
 
       check_params(
         params, "add_slicer",
@@ -2848,7 +2848,7 @@ wbWorkbook <- R6::R6Class(
       sel <- which(pt$name == replace_legal_chars(pivot_table))
       cid <- pt$cacheId[sel]
 
-      uni_name <- paste0(stringi::stri_replace_all_fixed(timeline, " ", "_"), cid)
+      uni_name <- paste0(stri_replace_all_fixed(timeline, " ", "_"), cid)
 
       # TODO we might be able to initialize the field from here. Something like
       # get_item(...) and insert it to the pivotDefinition
@@ -3734,7 +3734,7 @@ wbWorkbook <- R6::R6Class(
       } else {
         # TODO replace with seq_len() or seq_along()
         lapply(seq_len(nThemes), function(i) {
-          con <- file(file.path(xlthemeDir, stringi::stri_join("theme", i, ".xml")), open = "wb")
+          con <- file(file.path(xlthemeDir, stri_join("theme", i, ".xml")), open = "wb")
           writeBin(charToRaw(strip_xml_control_chars(pxml(self$theme[[i]]))), con)
           close(con)
         })
@@ -4342,7 +4342,7 @@ wbWorkbook <- R6::R6Class(
             length(self$sharedStrings),
             attr(self$sharedStrings, "uniqueCount")
           ),
-          body = stringi::stri_join(self$sharedStrings, collapse = "", sep = ""),
+          body = stri_join(self$sharedStrings, collapse = "", sep = ""),
           tail = "</sst>",
           fl = file.path(xlDir, "sharedStrings.xml")
         )
@@ -4377,26 +4377,26 @@ wbWorkbook <- R6::R6Class(
       styleXML <- self$styles_mgr$styles
       if (length(styleXML$numFmts)) {
         styleXML$numFmts <-
-          stringi::stri_join(
+          stri_join(
             sprintf('<numFmts count="%s">', length(styleXML$numFmts)),
             pxml(styleXML$numFmts),
             "</numFmts>"
           )
       }
       styleXML$fonts <-
-        stringi::stri_join(
+        stri_join(
           sprintf('<fonts count="%s">', length(styleXML$fonts)),
           pxml(styleXML$fonts),
           "</fonts>"
         )
       styleXML$fills <-
-        stringi::stri_join(
+        stri_join(
           sprintf('<fills count="%s">', length(styleXML$fills)),
           pxml(styleXML$fills),
           "</fills>"
         )
       styleXML$borders <-
-        stringi::stri_join(
+        stri_join(
           sprintf('<borders count="%s">', length(styleXML$borders)),
           pxml(styleXML$borders),
           "</borders>"
@@ -4408,13 +4408,13 @@ wbWorkbook <- R6::R6Class(
           "</cellStyleXfs>"
         )
       styleXML$cellXfs <-
-        stringi::stri_join(
+        stri_join(
           sprintf('<cellXfs count="%s">', length(styleXML$cellXfs)),
           paste0(styleXML$cellXfs, collapse = ""),
           "</cellXfs>"
         )
       styleXML$cellStyles <-
-        stringi::stri_join(
+        stri_join(
           sprintf('<cellStyles count="%s">', length(styleXML$cellStyles)),
           pxml(styleXML$cellStyles),
           "</cellStyles>"
@@ -4422,9 +4422,9 @@ wbWorkbook <- R6::R6Class(
 
       styleXML$dxfs <-
         if (length(styleXML$dxfs)) {
-          stringi::stri_join(
+          stri_join(
             sprintf('<dxfs count="%s">', length(styleXML$dxfs)),
-            stringi::stri_join(unlist(styleXML$dxfs), sep = " ", collapse = ""),
+            stri_join(unlist(styleXML$dxfs), sep = " ", collapse = ""),
             "</dxfs>"
           )
         } else {
@@ -4494,10 +4494,10 @@ wbWorkbook <- R6::R6Class(
 
       ## write workbook.xml
       workbookXML <- self$workbook
-      workbookXML$sheets <- stringi::stri_join("<sheets>", pxml(workbookXML$sheets), "</sheets>")
+      workbookXML$sheets <- stri_join("<sheets>", pxml(workbookXML$sheets), "</sheets>")
 
       if (length(workbookXML$definedNames)) {
-        workbookXML$definedNames <- stringi::stri_join("<definedNames>", pxml(workbookXML$definedNames), "</definedNames>")
+        workbookXML$definedNames <- stri_join("<definedNames>", pxml(workbookXML$definedNames), "</definedNames>")
       }
 
       # openxml 2.8.1 expects the following order of xml nodes. While we create this per default, it is not
@@ -4570,7 +4570,7 @@ wbWorkbook <- R6::R6Class(
           WR <- dir(path_ws_rels, full.names = TRUE)
           WR <- paste(vapply(WR, FUN = function(x) {
             paste(
-              stringi::stri_read_lines(x, encoding = "UTF-8"),
+              stri_read_lines(x, encoding = "UTF-8"),
               collapse = ""
             )
           }, FUN.VALUE = ""), collapse = "")
@@ -5261,7 +5261,7 @@ wbWorkbook <- R6::R6Class(
       if (is.null(self$theme)) self$theme <- genBaseTheme()
 
       current    <- xml_node(self$theme, "a:theme", "a:themeElements", "a:clrScheme")
-      self$theme <- stringi::stri_replace_all_fixed(self$theme, current, new)
+      self$theme <- stri_replace_all_fixed(self$theme, current, new)
 
       invisible(self)
     },
@@ -5496,9 +5496,9 @@ wbWorkbook <- R6::R6Class(
         if (length(self$workbook$definedNames)) {
           new_ref <- paste0("'", new_name[i], "'!")
           dn <- self$workbook$definedNames
-          dn <- stringi::stri_replace_all_fixed(dn, paste0("'", old_name, "'!"), new_ref)
-          dn <- stringi::stri_replace_all_fixed(dn, paste0(">", old_name, "!"), paste0(">", new_ref))
-          dn <- stringi::stri_replace_all_fixed(dn, paste0(",", old_name, "!"), paste0(",", new_ref))
+          dn <- stri_replace_all_fixed(dn, paste0("'", old_name, "'!"), new_ref)
+          dn <- stri_replace_all_fixed(dn, paste0(">", old_name, "!"), paste0(">", new_ref))
+          dn <- stri_replace_all_fixed(dn, paste0(",", old_name, "!"), paste0(",", new_ref))
           self$workbook$definedNames <- dn
         }
       }
@@ -5868,7 +5868,7 @@ wbWorkbook <- R6::R6Class(
           mc <- unlist(xml_attr(mc, "mergeCell"))
 
           for (i in seq_along(mc)) {
-            filler <- stringi::stri_split_fixed(mc[i], pattern = ":")[[1]][1]
+            filler <- stri_split_fixed(mc[i], pattern = ":")[[1]][1]
 
             dms <- dims_to_dataframe(mc[i])
 
@@ -6189,13 +6189,13 @@ wbWorkbook <- R6::R6Class(
         fileNo <- reg_match0(removeRels, "(?<=pivotTable)[0-9]+(?=\\.xml)")
         fileNo <- as.integer(unlist(fileNo))
 
-        toRemove <- stringi::stri_join(
+        toRemove <- stri_join(
           sprintf("(pivotCacheDefinition%i\\.xml)", fileNo),
           sep = " ",
           collapse = "|"
         )
 
-        toRemove <- stringi::stri_join(
+        toRemove <- stri_join(
           sprintf("(pivotCacheDefinition%i\\.xml)", grep(toRemove, self$pivotTables.xml.rels)),
           sep = " ",
           collapse = "|"
@@ -6265,8 +6265,8 @@ wbWorkbook <- R6::R6Class(
       if (nSheets > 1) {
         for (i in (sheet + 1L):nSheets) {
           self$workbook$sheets <- gsub(
-            stringi::stri_join("rId", i),
-            stringi::stri_join("rId", i - 1L),
+            stri_join("rId", i),
+            stri_join("rId", i - 1L),
             self$workbook$sheets,
             fixed = TRUE
           )
@@ -6567,7 +6567,7 @@ wbWorkbook <- R6::R6Class(
 
           sprintf(
             '<pane %s topLeftCell="%s" activePane="%s" state="frozen"/><selection pane="%s"/>',
-            stringi::stri_join(attrs, collapse = " ", sep = " "),
+            stri_join(attrs, collapse = " ", sep = " "),
             get_cell_refs(data.frame(first_active_row, first_active_col, stringsAsFactors = FALSE)),
             activePane,
             activePane
@@ -7411,7 +7411,7 @@ wbWorkbook <- R6::R6Class(
 
       pos <- '<xdr:pos x="0" y="0" />'
 
-      drawingsXML <- stringi::stri_join(
+      drawingsXML <- stri_join(
         "<xdr:absoluteAnchor>",
         pos,
         sprintf('<xdr:ext cx="%s" cy="%s"/>', width, height),
@@ -7807,13 +7807,13 @@ wbWorkbook <- R6::R6Class(
 
       # a drawing numbers its shapes on its own, shapes inside of groups
       # included. Ids already used in the drawing of the sheet are replaced
-      id_regex <- "(?<=<xdr:cNvPr\\s[^>]{0,1000}\\bid=\")\\d+(?=\")"
-      used_ids <- stringi::stri_extract_all_regex(self$drawings[[sheet_drawing]], id_regex)[[1]]
-      new_ids  <- stringi::stri_extract_all_regex(xml, id_regex)[[1]]
+      id_regex <- "<xdr:cNvPr\\s[^>]{0,1000}\\bid=\"\\K\\d+(?=\")"
+      used_ids <- stri_extract_all_regex(self$drawings[[sheet_drawing]], id_regex)[[1]]
+      new_ids  <- stri_extract_all_regex(xml, id_regex)[[1]]
       if (!anyNA(used_ids) && !anyNA(new_ids) && any(new_ids %in% used_ids)) {
-        loc <- stringi::stri_locate_all_regex(xml, id_regex)[[1]]
+        loc <- stri_locate_all_regex(xml, id_regex)[[1]]
         ids <- max(as.numeric(used_ids)) + seq_len(nrow(loc))
-        xml <- stringi::stri_sub_replace_all(xml, from = loc[, 1], to = loc[, 2], replacement = sprintf("%.0f", ids))
+        xml <- stri_sub_replace_all(xml, from = loc[, 1], to = loc[, 2], replacement = sprintf("%.0f", ids))
       }
 
       # check if sheet already contains drawing. if yes, try to integrate
@@ -8310,7 +8310,7 @@ wbWorkbook <- R6::R6Class(
         showText <-
           c(showText, sprintf(
             "Write order: %s",
-            stringi::stri_join(self$sheetOrder, sep = " ", collapse = ", ")
+            stri_join(self$sheetOrder, sep = " ", collapse = ", ")
           ))
       }
 
@@ -11071,7 +11071,7 @@ wbWorkbook <- R6::R6Class(
 
       if (nchar(sheet) > 31) {
         warning("Fixing: shortening sheet name to 31 characters.")
-        sheet <- stringi::stri_sub(sheet, 1, 31)
+        sheet <- stri_sub(sheet, 1, 31)
         if (anyDuplicated(c(sheet, other_names)))
           stop(
             "Cannot shorten sheet name to a unique string. ",
@@ -11289,7 +11289,7 @@ wbWorkbook <- R6::R6Class(
       }
 
       ## write file path to media slot
-      new_name <- stringi::stri_join("image", mediaNo, ".", imageType)
+      new_name <- stri_join("image", mediaNo, ".", imageType)
       new_file <- file.path(media_dir, new_name)
       file.copy(file, new_file)
       names(new_file) <- new_name
@@ -11375,7 +11375,7 @@ wbWorkbook <- R6::R6Class(
 
             write_file(
               body = self$charts$chart[crt],
-              fl = file.path(xlchartsDir, stringi::stri_join("chart", crt, ".xml"))
+              fl = file.path(xlchartsDir, stri_join("chart", crt, ".xml"))
             )
           }
 
@@ -11384,7 +11384,7 @@ wbWorkbook <- R6::R6Class(
 
             write_file(
               body = self$charts$chartEx[crt],
-              fl = file.path(xlchartsDir, stringi::stri_join("chartEx", crt, ".xml"))
+              fl = file.path(xlchartsDir, stri_join("chartEx", crt, ".xml"))
             )
           }
 
@@ -11393,7 +11393,7 @@ wbWorkbook <- R6::R6Class(
 
             write_file(
               body = self$charts$colors[crt],
-              fl = file.path(xlchartsDir, stringi::stri_join("colors", crt, ".xml"))
+              fl = file.path(xlchartsDir, stri_join("colors", crt, ".xml"))
             )
           }
 
@@ -11402,21 +11402,21 @@ wbWorkbook <- R6::R6Class(
 
             write_file(
               body = self$charts$style[crt],
-              fl = file.path(xlchartsDir, stringi::stri_join("style", crt, ".xml"))
+              fl = file.path(xlchartsDir, stri_join("style", crt, ".xml"))
             )
           }
 
           if (self$charts$rels[crt] != "") {
             write_file(
               body = self$charts$rels[crt],
-              fl = file.path(xlchartsRelsDir, stringi::stri_join("chart", crt, ".xml.rels"))
+              fl = file.path(xlchartsRelsDir, stri_join("chart", crt, ".xml.rels"))
             )
           }
 
           if (self$charts$relsEx[crt] != "") {
             write_file(
               body = self$charts$relsEx[crt],
-              fl = file.path(xlchartsRelsDir, stringi::stri_join("chartEx", crt, ".xml.rels"))
+              fl = file.path(xlchartsRelsDir, stri_join("chartEx", crt, ".xml.rels"))
             )
           }
         }
@@ -11435,14 +11435,14 @@ wbWorkbook <- R6::R6Class(
             head = "",
             body = pxml(self$drawings[[i]]),
             tail = "",
-            fl = file.path(xldrawingsDir, stringi::stri_join("drawing", i, ".xml"))
+            fl = file.path(xldrawingsDir, stri_join("drawing", i, ".xml"))
           )
           if (!all(self$drawings_rels[[i]] == "")) {
             write_file(
               head = '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">',
               body = pxml(self$drawings_rels[[i]]),
               tail = '</Relationships>',
-              fl = file.path(xldrawingsRelsDir, stringi::stri_join("drawing", i, ".xml.rels"))
+              fl = file.path(xldrawingsRelsDir, stri_join("drawing", i, ".xml.rels"))
             )
           }
 
@@ -11478,7 +11478,7 @@ wbWorkbook <- R6::R6Class(
 
           write_file(
             body = self$worksheets[[i]]$get_prior_sheet_data(),
-            fl = file.path(chartSheetDir, stringi::stri_join("sheet", i, ".xml"))
+            fl = file.path(chartSheetDir, stri_join("sheet", i, ".xml"))
           )
 
           if (length(self$worksheets_rels[[i]])) {
@@ -11973,9 +11973,9 @@ wbWorkbook <- R6::R6Class(
       ## update workbook r:id to match reordered workbook.xml.rels externalLink element
       if (length(extRefInds)) {
         newInds <- seq_along(extRefInds) + length(sheetInds)
-        self$workbook$externalReferences <- stringi::stri_join(
+        self$workbook$externalReferences <- stri_join(
           "<externalReferences>",
-          stringi::stri_join(sprintf('<externalReference r:id=\"rId%s\"/>', newInds), collapse = ""),
+          stri_join(sprintf('<externalReference r:id=\"rId%s\"/>', newInds), collapse = ""),
           "</externalReferences>"
         )
       }

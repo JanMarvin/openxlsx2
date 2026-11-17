@@ -23,7 +23,6 @@ Imports:
     R6,
     Rcpp,
     grDevices,
-    stringi,
     utils
 LinkingTo:
     Rcpp

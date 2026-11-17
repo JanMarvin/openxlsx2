@@ -518,7 +518,7 @@ wbWorksheet <- R6::R6Class(
         rows <- range(as.integer(ddims[["row"]]))
 
         sqref <- paste0(int2col(cols), rows)
-        sqref <- stringi::stri_join(sqref, collapse = ":", sep = " ")
+        sqref <- stri_join(sqref, collapse = ":", sep = " ")
 
         # regmatch0 will return character(0) when x is NULL
         if (length(current)) {
@@ -543,7 +543,7 @@ wbWorksheet <- R6::R6Class(
             } else {
               msg <- sprintf(
                 "Merge intersects with existing merged cells: \n\t\t%s.\nRemove existing merge first.",
-                stringi::stri_join(current[intersects], collapse = "\n\t\t")
+                stri_join(current[intersects], collapse = "\n\t\t")
               )
               stop(msg, call. = FALSE)
             }
@@ -582,7 +582,7 @@ wbWorksheet <- R6::R6Class(
         rows <- range(as.integer(ddims[["row"]]))
 
         sqref <- paste0(int2col(cols), rows)
-        sqref <- stringi::stri_join(sqref, collapse = ":", sep = " ")
+        sqref <- stri_join(sqref, collapse = ":", sep = " ")
 
         current       <- rbindlist(xml_attr(xml = self$mergeCells, "mergeCell"))$ref
         current_cells <- lapply(current, function(x) unlist(dims_to_dataframe(x, fill = TRUE)))

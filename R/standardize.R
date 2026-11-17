@@ -17,7 +17,7 @@ standardize_color_names <- function(..., return = FALSE) {
   if (length(got_color)) {
     for (got_col in got_color) {
       color <- got[got_col]
-      name_color <- stringi::stri_replace_all_fixed(color, "olour", "olor")
+      name_color <- stri_replace_all_fixed(color, "olour", "olor")
 
       if (return) {
         names(args)[got_col] <- name_color

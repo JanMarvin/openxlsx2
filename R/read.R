@@ -759,7 +759,7 @@ wb_to_df <- function(
       mc <- unlist(xml_attr(mc, "mergeCell"))
 
       for (i in seq_along(mc)) {
-        filler <- stringi::stri_split_fixed(mc[i], pattern = ":")[[1]][1]
+        filler <- stri_split_fixed(mc[i], pattern = ":")[[1]][1]
 
 
         dms <- dims_to_dataframe(mc[i])

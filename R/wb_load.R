@@ -132,7 +132,7 @@ wb_load <- function(
   }
 
   # we need to read the files in human order: 1, 2, 10 and not 1, 10, 2.
-  ordr <- stringi::stri_order(xmlFiles, opts_collator = stringi::stri_opts_collator(numeric = TRUE))
+  ordr <- stri_order(xmlFiles, opts_collator = stri_opts_collator(numeric = TRUE))
   xmlFiles <- xmlFiles[ordr]
 
   wb <- wbWorkbook$new()
@@ -542,7 +542,7 @@ wb_load <- function(
     xml_name <- xml_node_name(workbook_xml)[1]
 
     if (xml_name != "workbook") {
-      xml_ns <- stringi::stri_split_fixed(xml_name, ":")[[1]][[1]]
+      xml_ns <- stri_split_fixed(xml_name, ":")[[1]][[1]]
       op <- options("openxlsx2.namespace_xml" = xml_ns)
       on.exit(options(op), add = TRUE)
       msg <- paste0(
@@ -595,7 +595,7 @@ wb_load <- function(
     ## sheet rId links to the workbook.xml.resl which links worksheets/sheet(i).xml file
     ## order they appear here gives order of worksheets in xlsx file
     sheets$typ <- basename(sheets$Type)
-    sheets$target <- stringi::stri_join(xmlDir, xl_path, sheets$Target)
+    sheets$target <- stri_join(xmlDir, xl_path, sheets$Target)
     sheets$id <- as.numeric(sheets$sheetId)
 
     if (is.null(sheets$state)) sheets$state <- "visible"
@@ -1498,7 +1498,7 @@ wb_load <- function(
         if (is.na(vml_file)) vml_file <- 1L
 
         # fix broken xml in vml buttons
-        vml <- stringi::stri_read_lines(vml, encoding = "UTF-8")
+        vml <- stri_read_lines(vml, encoding = "UTF-8")
         vml <- paste(vml, sep = "", collapse = "")
         vml <- gsub("<br>(?!</br>)", "<br/>", vml, perl = TRUE)
         wb$vml[vml_file] <- read_xml(vml, pointer = FALSE)
@@ -1534,19 +1534,19 @@ wb_load <- function(
 
         SST      <- c(comments)
 
-        matches <- stringi::stri_extract_all_regex(SST[sel], "<FONT_\\d+/>")
+        matches <- stri_extract_all_regex(stri_join(SST[sel], collapse = "\n"), "<FONT_\\d+/>")
         matches <- unique(unlist(matches))
 
         values  <- cdigit(matches, as_integer = TRUE)
 
-        xmls    <- stringi::stri_replace_all_fixed(
+        xmls    <- stri_replace_all_fixed(
           wb$styles_mgr$styles$fonts[values + 1],
           c("<name", "font>"),
           c("<rFont", "rPr>"),
           vectorize_all = FALSE
         )
 
-        sst <- stringi::stri_replace_all_fixed(
+        sst <- stri_replace_all_fixed(
           str           = SST[sel],
           pattern       = matches,
           replacement   = xmls,
@@ -1804,12 +1804,12 @@ wb_load <- function(
     for (j in seq_along(wb$worksheets)) {
       cc <- wb$worksheets[[j]]$sheet_data$cc
       if (any(sel <- grepl("User_Defined_Function(", cc$f, fixed = TRUE))) {
-        cc$f[sel] <- stringi::stri_replace_all_regex(
+        cc$f[sel] <- stri_replace_all_regex(
           cc$f[sel],
           "User_Defined_Function\\(([^,()]+)\\)",
           "$1()"
         )
-        cc$f[sel] <- stringi::stri_replace_all_regex(
+        cc$f[sel] <- stri_replace_all_regex(
           cc$f[sel],
           "User_Defined_Function\\(([^,()]+),",
           "$1("
@@ -1831,19 +1831,19 @@ wb_load <- function(
       attr_sst <- attributes(wb$sharedStrings)
       SST      <- c(wb$sharedStrings)
 
-      matches <- stringi::stri_extract_all_regex(SST[sel], "<FONT_\\d+/>")
+      matches <- stri_extract_all_regex(stri_join(SST[sel], collapse = "\n"), "<FONT_\\d+/>")
       matches <- unique(unlist(matches))
 
       values  <- cdigit(matches, as_integer = TRUE)
 
-      xmls    <- stringi::stri_replace_all_fixed(
+      xmls    <- stri_replace_all_fixed(
         wb$styles_mgr$styles$fonts[values + 1],
         c("<name", "font>"),
         c("<rFont", "rPr>"),
         vectorize_all = FALSE
       )
 
-      sst <- stringi::stri_replace_all_fixed(
+      sst <- stri_replace_all_fixed(
         str           = SST[sel],
         pattern       = matches,
         replacement   = xmls,

@@ -5,7 +5,7 @@
 has_illegal_chars <- function(x) {
   res <- vapply(
     illegal_chars(),
-    function(i) stringi::stri_detect_fixed(x, i),
+    function(i) stri_detect_fixed(x, i),
     logical(length(x)),
     USE.NAMES = FALSE
   )
@@ -35,7 +35,7 @@ strip_xml_control_chars <- function(x) {
   # U+FFFE and U+FFFF are the UTF-8 byte sequences EF BF BE and EF BF BF
   hit <- grepl("[\\x{01}-\\x{08}\\x{0B}\\x{0C}\\x{0E}-\\x{1F}]|\\xEF\\xBF[\\xBE\\xBF]|&#", x, perl = TRUE, useBytes = TRUE)
   if (any(hit)) {
-    x[hit] <- stringi::stri_replace_all_regex(
+    x[hit] <- stri_replace_all_regex(
       x[hit],
       paste0(
         "[\\x{01}-\\x{08}\\x{0B}\\x{0C}\\x{0E}-\\x{1F}\\x{FFFE}\\x{FFFF}]",
@@ -52,18 +52,18 @@ strip_xml_control_chars <- function(x) {
 #' @noRd
 replace_legal_chars <- function(x) {
   x <- as.character(x)
-  stringi::stri_replace_all_fixed(x, legal_chars(), legal_sub(), vectorize_all = FALSE)
+  stri_replace_all_fixed(x, legal_chars(), legal_sub(), vectorize_all = FALSE)
 }
 
 replace_illegal_chars <- function(x, replacement = " ") {
   x <- as.character(x)
-  x <- stringi::stri_escape_unicode(x)
-  stringi::stri_replace_all_fixed(x, illegal_chars(), replacement, vectorize_all = FALSE)
+  x <- stri_escape_unicode(x)
+  stri_replace_all_fixed(x, illegal_chars(), replacement, vectorize_all = FALSE)
 }
 
 # TODO investigate if this should be integrated into replace_legal_chars()
 escape_newline_and_tab <- function(x) {
-  stringi::stri_replace_all_fixed(
+  stri_replace_all_fixed(
     x,
     c("\n",       "\t"),
     c("_x000a_", "_x0009_"),
@@ -91,7 +91,7 @@ clean_worksheet_name <- function(x, replacement = " ") {
 #' @param x some xml string
 #' @noRd
 replaceXMLEntities <- function(x) {
-  stringi::stri_replace_all_fixed(
+  stri_replace_all_fixed(
     x,
     c("&quot;", "&apos;", "&lt;", "&gt;", "&amp;"),
     c('"',      "'",      "<",    ">",    "&"),

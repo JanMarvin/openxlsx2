@@ -370,11 +370,11 @@ do_write_comment <- function(
       vml_add <- vml_shape
       if (!grepl('<o:idmap v:ext="edit" data="1"/>', vml_old, fixed = TRUE)) vml_add <- paste0(vml_add, vml_layout)
       if (!grepl('id="_x0000_t202"', vml_old, fixed = TRUE)) vml_add <- paste0(vml_add, vml_type)
-      vml_end <- stringi::stri_locate_last_fixed(vml_old, "</xml>")[1, "start"]
+      vml_end <- stri_locate_last_fixed(vml_old, "</xml>")[1, "start"]
       if (is.na(vml_end)) {
         wb$vml[[vml_id]] <- xml_add_child(vml_old, vml_add)
       } else {
-        wb$vml[[vml_id]] <- stringi::stri_sub_replace(vml_old, vml_end, vml_end - 1L, value = vml_add)
+        wb$vml[[vml_id]] <- stri_sub_replace(vml_old, vml_end, vml_end - 1L, value = vml_add)
       }
       if (!is.null(rID)) {
         wb$vml_rels[[vml_id]] <- append(
@@ -398,11 +398,11 @@ do_write_comment <- function(
     vml_add <- vml_shape
     if (!grepl('<o:idmap v:ext="edit" data="1"/>', vml_old, fixed = TRUE)) vml_add <- paste0(vml_add, vml_layout)
     if (!grepl('id="_x0000_t202"', vml_old, fixed = TRUE)) vml_add <- paste0(vml_add, vml_type)
-    vml_end <- stringi::stri_locate_last_fixed(vml_old, "</xml>")[1, "start"]
+    vml_end <- stri_locate_last_fixed(vml_old, "</xml>")[1, "start"]
     if (is.na(vml_end)) {
       wb$vml[[vml_id]] <- xml_add_child(vml_old, vml_add)
     } else {
-      wb$vml[[vml_id]] <- stringi::stri_sub_replace(vml_old, vml_end, vml_end - 1L, value = vml_add)
+      wb$vml[[vml_id]] <- stri_sub_replace(vml_old, vml_end, vml_end - 1L, value = vml_add)
     }
       if (!is.null(rID)) {
         wb$vml_rels[[vml_id]] <- append(
