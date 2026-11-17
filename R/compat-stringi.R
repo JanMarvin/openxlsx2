@@ -435,8 +435,9 @@ stri_sub <- function(str, from = 1L, to = -1L) {
 #' Replacement for `stringi::stri_sub_replace()` with `from`, `to` and `value`.
 #' `to = from - 1` inserts `value` in front of `from`. The C++ version is used
 #' for positive positions, anything else (negative positions, `NA`) goes
-#' through a slower R version. Both recycle `from`, `to` and `value` along
-#' `str`, but not `str` along longer positions.
+#' through a slower R version. Like in stringi all arguments are recycled to
+#' the longest one, `str` included. stringi warns if the lengths are not
+#' multiples of each other, this version does not.
 #' @inheritParams stri_sub
 #' @param value replacement
 #' @examples

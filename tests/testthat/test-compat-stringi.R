@@ -52,6 +52,11 @@ test_that("stri_sub and stri_sub_replace", {
   expect_equal(stri_sub_replace(NA_character_, 1, 1, value = "X"), NA_character_)
   expect_equal(stri_sub_replace("abc", NA, 1, value = "X"), NA_character_)
 
+  # all arguments are recycled to the longest, str included
+  expect_equal(stri_sub_replace(c("abc", "def"), c(1, 2, 3), c(1, 2, 3), value = "X"), c("Xbc", "dXf", "abX"))
+  expect_equal(stri_sub_replace(c("abc", "def"), 1, 1, value = c("X", "Y", "Z")), c("Xbc", "Yef", "Zbc"))
+  expect_equal(stri_sub_replace("abc", c(1, 2), c(1, 2), value = "X"), c("Xbc", "aXc"))
+
   # characters above ASCII are counted as characters
   expect_equal(stri_sub_replace("äbc", 2, 1, value = "X"), "äXbc")
   expect_equal(stri_sub_replace("äbc", 2, 2, value = "X"), "äXc")
