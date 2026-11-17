@@ -3,6 +3,11 @@
 ## Fixes
 
 * Speedup `wb_add_border()`. [#1728](https://github.com/JanMarvin/openxlsx2/pull/1728)
+* Speedup for `wb_add_comment()`. [#1731](https://github.com/JanMarvin/openxlsx2/pull/1731)
+
+## Internal Changes
+
+* Instead of importing `stringi`, a set of shims was added. [#1734](https://github.com/JanMarvin/openxlsx2/pull/1734)
 
 
 ***************************************************************************
