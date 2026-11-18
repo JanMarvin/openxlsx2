@@ -39,3 +39,7 @@ test_that("match_oneof() works", {
   expect_error(match_oneof("d", letters[1:3]))
   expect_error(match_oneof("d", letters[1:3], several = TRUE))
 })
+
+test_that("assert_chart_sheet checks the class", {
+  expect_error(assert_chart_sheet(1), "argument must be class wbChartSheet or R6")
+})

@@ -1793,3 +1793,32 @@ test_that("create_cell_style() rejects empty and NULL values", {
   expect_silent(create_cell_style(num_fmt_id = character()))
 
 })
+
+test_that("style manager getters on a new workbook", {
+  sm <- wb_workbook()$styles_mgr
+
+  expect_equal(sm$get_font()$name, "font-0")
+  expect_equal(sm$get_fill()$name, c("fill-0", "fill-1"))
+  expect_equal(sm$get_border()$name, "border-0")
+  expect_equal(sm$get_xf()$name, "xf-0")
+  expect_equal(sm$get_cellStyle()$name, "Normal")
+  expect_equal(sm$get_cellStyleXf()$name, "xf-0")
+  expect_null(sm$get_dxf())
+})
+
+test_that("style manager next ids on a new workbook", {
+  sm <- wb_workbook()$styles_mgr
+
+  expect_equal(sm$next_font_id(), "1")
+  expect_equal(sm$next_fill_id(), "2")
+  expect_equal(sm$next_border_id(), "1")
+  expect_equal(sm$next_xf_id(), "1")
+  expect_equal(sm$next_cellstyle_id(), "1")
+  expect_equal(sm$next_cellstylexf_id(), "1")
+  expect_equal(sm$next_dxf_id(), "0")
+})
+
+test_that("style manager add checks input length", {
+  sm <- wb_workbook()$styles_mgr
+  expect_error(sm$add("a", c("x", "y")), "style length and name do not match")
+})

@@ -903,3 +903,15 @@ test_that("table names and named regions must be unique", {
     "named region with name 'iris' already exists"
   )
 })
+
+test_that("wrappers require a workbook", {
+  exp <- "wb must be class wbWorkbook or R6"
+  expect_error(wb_remove_slicer("a"), exp)
+  expect_error(wb_remove_timeline("a"), exp)
+  expect_error(wb_remove_hyperlink("a"), exp)
+  expect_error(wb_get_base_colors("a"), exp)
+  expect_error(wb_get_bookview("a"), exp)
+  expect_error(wb_get_properties("a"), exp)
+  expect_error(wb_remove_conditional_formatting("a"), exp)
+  expect_error(wb_add_form_control("a"), exp)
+})
