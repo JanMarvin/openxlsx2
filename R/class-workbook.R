@@ -5751,17 +5751,13 @@ wbWorkbook <- R6::R6Class(
         cols <- col2int(cols)
       }
 
-      customCols <- as.integer(names(self$colWidths[[sheet]]))
-      removeInds <- which(customCols %in% cols)
-      if (length(removeInds)) {
-        remainingCols <- customCols[-removeInds]
-        if (length(remainingCols) == 0) {
-          self$colWidths[[sheet]] <- list()
-        } else {
-          rem_widths <- self$colWidths[[sheet]][-removeInds]
-          names(rem_widths) <- as.character(remainingCols)
-          self$colWidths[[sheet]] <- rem_widths
-        }
+      col_attr <- self$worksheets[[sheet]]$unfold_cols()
+      col_attr <- col_attr[!col_attr$min %in% as.character(cols), , drop = FALSE]
+
+      if (nrow(col_attr) == 0) {
+        self$worksheets[[sheet]]$cols_attr <- character()
+      } else {
+        self$worksheets[[sheet]]$fold_cols(col_attr)
       }
 
       invisible(self)
