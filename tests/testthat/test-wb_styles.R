@@ -1822,3 +1822,16 @@ test_that("style manager add checks input length", {
   sm <- wb_workbook()$styles_mgr
   expect_error(sm$add("a", c("x", "y")), "style length and name do not match")
 })
+
+test_that("a cell style can be copied from another cell", {
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = 1:2, dims = "A1")$
+    add_fill(dims = "A1", color = wb_color("red"))
+
+  wb$set_cell_style(dims = "B1", style = "A1")
+  expect_equal(wb$get_cell_style(dims = "B1"), c(B1 = "1"))
+
+  wb$set_cell_style(dims = data.frame(a = "A2", b = "B2"), style = wb$get_cell_style(dims = "A1"))
+  expect_equal(wb$get_cell_style(dims = c("A2", "B2")), c(A2 = "1", B2 = "1"))
+})

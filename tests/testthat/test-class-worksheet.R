@@ -334,3 +334,35 @@ test_that("set_grid_lines() works", {
   expect_equal(exp, got)
 
 })
+
+test_that("sparkline options and row wise sparklines", {
+  s1 <- create_sparklines(
+    "Sheet 1", "A3:C3", "D3", type = "column", last = "1", negative = "1",
+    date_axis = "1", display_x_axis = "1", display_hidden = "1",
+    right_to_left = "1", min_axis_type = "group", max_axis_type = "custom",
+    line_weight = 2
+  )
+  s1 <- sub('xr2:uid="[^"]+"', 'xr2:uid="uid"', s1)
+
+  exp <- paste0(
+    '<x14:sparklineGroup type="column" displayEmptyCellsAs="gap" last="1" negative="1" lineWeight="2" ',
+    'dateAxis="1" displayXAxis="1" displayHidden="1" minAxisType="group" maxAxisType="custom" ',
+    'rightToLeft="1" xr2:uid="uid">'
+  )
+  expect_equal(substr(s1, 1, nchar(exp)), exp)
+
+  s2 <- create_sparklines("Sheet 1", "A1:C3", "D1:D3", direction = "row")
+  exp <- paste0(
+    "<x14:sparklines>",
+    "<x14:sparkline><xm:f>'Sheet 1'!A1:C1</xm:f><xm:sqref>D1</xm:sqref></x14:sparkline>",
+    "<x14:sparkline><xm:f>'Sheet 1'!A2:C2</xm:f><xm:sqref>D2</xm:sqref></x14:sparkline>",
+    "<x14:sparkline><xm:f>'Sheet 1'!A3:C3</xm:f><xm:sqref>D3</xm:sqref></x14:sparkline>",
+    "</x14:sparklines>"
+  )
+  expect_true(grepl(exp, s2, fixed = TRUE))
+
+  expect_error(
+    create_sparklines("Sheet 1", c("A1:C1", "A2:C2"), c("D1", "D2", "D3")),
+    "dims and sqref must be equal length."
+  )
+})

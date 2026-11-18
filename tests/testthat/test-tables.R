@@ -420,3 +420,34 @@ test_that("total_row accepts the builtin summary functions", {
   expect_equal(got, exp)
 })
 
+test_that("get_tables works for all sheets and without tables", {
+  wb <- wb_workbook()$add_worksheet()
+  expect_equal(wb$get_tables(), character())
+
+  wb$add_worksheet("s2")$
+    add_data_table(sheet = 1, x = mtcars[1:3, 1:2], table_name = "tbl_a")$
+    add_data_table(sheet = 2, x = iris[1:3, 1:2], table_name = "tbl_b")
+
+  exp <- data.frame(tab_name = c("tbl_a", "tbl_b"), tab_ref = c("A1:B4", "A1:B4"), stringsAsFactors = FALSE)
+  got <- wb$get_tables(sheet = NULL)
+  expect_equal(got, exp, ignore_attr = TRUE)
+
+  expect_equal(wb$get_tables(sheet = 2)$tab_name, "tbl_b")
+})
+
+test_that("update_table warns about unknown nodes", {
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data_table(x = data.frame(x = 1:2, y = 3:4), table_name = "tbl")
+  wb$tables$tab_xml <- sub("</table>", "<extLst/></table>", wb$tables$tab_xml, fixed = TRUE)
+  wb$add_data(x = data.frame(1:3, 1:3), dims = "A5", col_names = FALSE)
+
+  expect_warning(
+    wb$update_table(dims = "A1:B5", tabname = "tbl"),
+    "Found unknown table xml nodes. These are lost using update_table:  extLst"
+  )
+
+  exp <- "A1:B5"
+  got <- xml_attr(wb$tables$tab_xml, "table")[[1]][["ref"]]
+  expect_equal(got, exp)
+})
