@@ -1283,7 +1283,7 @@ known_subtotal_funs <- function(x, total, table, row_names = FALSE) {
 
     for (i in seq_len(ncol_x)) {
 
-      if (any(names(total)[i] == "") && (ttl[i] %in% builtinIds || ttl[i] %in% builtins)) {
+      if ((is.null(names(total)) || names(total)[i] == "") && (ttl[i] %in% builtinIds || ttl[i] %in% builtins)) {
         if (ttl[i] == "101" || ttl[i] == "average") {
           fml[i] <- paste0("SUBTOTAL(", 101, ",", table, "[", nms_x[i], "])")
           atr[i] <- "average"
