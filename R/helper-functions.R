@@ -957,13 +957,13 @@ solve_merge <- function(have, want) {
 
   # all columns are overlapped onesided
   if (fullsided(cols_overlap) && onesided(rows_overlap)) {
-    pieces[[1]] <- got[!rows_overlap, drop = FALSE]
+    pieces[[1]] <- got[!rows_overlap, , drop = FALSE]
   }
 
   # all columns are overlapped twosided
   if (fullsided(cols_overlap) && twosided(rows_overlap)) {
-    pieces[[1]] <- got[top_half(rows_overlap), drop = FALSE]
-    pieces[[2]] <- got[bottom_half(rows_overlap), drop = FALSE]
+    pieces[[1]] <- got[top_half(rows_overlap), , drop = FALSE]
+    pieces[[2]] <- got[bottom_half(rows_overlap), , drop = FALSE]
   }
 
   # all rows are overlapped onesided
