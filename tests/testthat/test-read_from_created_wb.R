@@ -106,9 +106,25 @@ test_that("dims != rows & cols", {
   got5 <- wb_to_df(wb, cols = 1:5, col_names = FALSE)
   expect_equal(dim(got5), c(2, 5))
 
+  # nothing is initialized at start_row, the requested columns remain
   got6 <- wb_to_df(wb, start_row = 4, cols = 1:4, col_names = FALSE)
-  expect_true(all(is.na(got6)))
-  expect_equal(rownames(got6), "4")
+  expect_equal(dim(got6), c(0L, 4L))
+  expect_equal(colnames(got6), c("A", "B", "C", "D"))
+
+  got <- wb_to_df(wb, start_row = 8, col_names = FALSE)
+  expect_equal(dim(got), c(0L, 1L))
+
+  # explicitly requested rows and cols are returned
+  got7 <- wb_to_df(wb, rows = 8:14, cols = 1:4, col_names = FALSE)
+  expect_equal(dim(got7), c(7L, 4L))
+  expect_true(all(is.na(got7)))
+
+  # but not behind a start_row or start_col
+  got8 <- wb_to_df(wb, start_row = 4, rows = 8:14, cols = 1:4, col_names = FALSE)
+  expect_equal(dim(got8), c(0L, 4L))
+
+  got9 <- wb_to_df(wb, start_col = "A", rows = 8, col_names = FALSE)
+  expect_equal(nrow(got9), 0L)
 
 })
 
