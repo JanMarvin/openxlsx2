@@ -665,6 +665,31 @@ test_that("test 7zip", {
 
 })
 
+test_that("saving using a 7z command line tool", {
+
+  skip_if(Sys.which("7z") == "", "7z is not available")
+
+  r_zipcmd <- Sys.getenv("R_ZIPCMD")
+  Sys.setenv("R_ZIPCMD" = Sys.which("7z"))
+  on.exit(Sys.setenv("R_ZIPCMD" = r_zipcmd), add = TRUE)
+
+  op <- options(
+    "openxlsx2.debug" = TRUE,
+    "openxlsx2.no_utils_zip" = TRUE,
+    "openxlsx2.no_bsdtar" = TRUE
+  )
+  on.exit(options(op), add = TRUE)
+
+  tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
+  expect_message(write_xlsx(x = mtcars, tmp), "7zip")
+
+  exp <- mtcars
+  got <- wb_to_df(tmp)
+  expect_equal(got, exp, ignore_attr = TRUE)
+})
+
 test_that("saving using zip::zip", {
 
   skip_if_not_installed("zip")

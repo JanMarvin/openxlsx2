@@ -1783,3 +1783,27 @@ test_that("strings exceeding the cell limit warn", {
   expect_silent(wb$add_data(x = strrep("a", 32767L), dims = "B1"))
 
 })
+
+test_that("data table filters support %in%, != and mixed string cases", {
+  x <- data.frame(a = c("x", "Y", "z", "y"), b = c(1, 5, 9, 3), stringsAsFactors = FALSE)
+
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data_table(x = x, params = list(choose = c(a = "x == \"y\"", b = "x > 2 | x < 1")))
+
+  exp <- x[c(2, 4), ]
+  got <- wb_to_df(wb, skip_hidden_rows = TRUE)
+  expect_equal(got, exp, ignore_attr = TRUE)
+
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data_table(x = x, params = list(choose = c(a = "x %in% c(\"y\", \"z\")", b = "x != 5 & x >= 3")))
+
+  exp <- "<filterColumn colId=\"0\"><filters><filter val=\"y\"/><filter val=\"z\"/></filters></filterColumn>"
+  got <- xml_node(wb$tables$tab_xml, c("table", "autoFilter", "filterColumn"))[1]
+  expect_equal(got, exp)
+
+  exp <- x[c(3, 4), ]
+  got <- wb_to_df(wb, skip_hidden_rows = TRUE)
+  expect_equal(got, exp, ignore_attr = TRUE)
+})

@@ -993,3 +993,13 @@ test_that("as_xml_attr() rejects unsupported types", {
   expect_error(wb$set_sheetview(zoom_scale = mean), "`zoom_scale` must be a number")
 
 })
+
+test_that("wb_dims with non consecutive rows and columns", {
+  expect_equal(wb_dims(rows = c(1, 3), cols = c(1, 3)), "A1,C1,A3,C3")
+  expect_equal(wb_dims(rows = c(1, 3), cols = 1:2), "A1:B1,A3:B3")
+  expect_equal(wb_dims(rows = 1:2, cols = c(1, 3)), "A1:A2,C1:C2")
+
+  expect_equal(wb_dims(rows = c(1, 3), cols = c(1, 3), fix = "all"), "$A$1,$C$1,$A$3,$C$3")
+  expect_equal(wb_dims(rows = c(1, 3), cols = 2, fix = "row"), "B$1,B$3")
+  expect_equal(wb_dims(rows = 2, cols = c(1, 3), fix = "col"), "$A2,$C2")
+})
