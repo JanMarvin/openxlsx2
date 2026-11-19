@@ -503,7 +503,11 @@ wb_to_df <- function(
   }
 
   if (!is.null(start_col)) {
-    keep_cols <- int2col(seq(col2int(start_col), maxCol))
+    if (col2int(start_col) <= maxCol) {
+      keep_cols <- int2col(seq(col2int(start_col), maxCol))
+    } else {
+      keep_cols <- character()
+    }
 
     if (!all(sel <- keep_cols %in% colnames(z))) {
       keep_col <- keep_cols[!sel]
