@@ -55,6 +55,14 @@
 </li>
 <li>Speedup for <code><a href="../reference/wb_add_comment.html">wb_add_comment()</a></code>. <a href="https://github.com/JanMarvin/openxlsx2/pull/1731" class="external-link">#1731</a>
 </li>
+<li>
+<code>wb_merge_cells(..., solve = TRUE)</code> failed if the new range was inside the rows of an existing merged range. <a href="https://github.com/JanMarvin/openxlsx2/pull/1735" class="external-link">#1735</a>
+</li>
+<li>
+<code><a href="../reference/col_widths-wb.html">wb_remove_col_widths()</a></code> was not functional at all. <a href="https://github.com/JanMarvin/openxlsx2/pull/1735" class="external-link">#1735</a>
+</li>
+<li>Behavior of <code><a href="../reference/wb_to_df.html">wb_to_df()</a></code> with <code>start_row</code> or <code>start_col</code> in regions without data has been aligned. <a href="https://github.com/JanMarvin/openxlsx2/pull/1735" class="external-link">#1735</a>
+</li>
 </ul></div>
 <div class="section level3">
 <h3 id="internal-changes-development-version">Internal Changes<a class="anchor" aria-label="anchor" href="#internal-changes-development-version"></a></h3>
