@@ -1003,3 +1003,41 @@ test_that("wb_dims with non consecutive rows and columns", {
   expect_equal(wb_dims(rows = c(1, 3), cols = 2, fix = "row"), "B$1,B$3")
   expect_equal(wb_dims(rows = 2, cols = c(1, 3), fix = "col"), "$A2,$C2")
 })
+
+test_that("cell_to_key() and cell_to_info_df() validate cell addresses", {
+
+  expect_equal(cell_to_key(c("B17", NA, "b2")), c(17 * 16384 + 2, NA, 2 * 16384 + 2))
+
+  expect_error(cell_to_key("B"), "incomplete cell address")
+  expect_error(cell_to_key("17"), "incomplete cell address")
+  expect_error(cell_to_key("A-1"), "non alphanumeric")
+  expect_error(cell_to_key("XFE1"), "Column exceeds")
+  expect_error(cell_to_key("A0"), "Row exceeds")
+  expect_error(cell_to_key("A1048577"), "Row exceeds")
+
+  got <- cell_to_info_df(c("B2", NA))
+  expect_equal(got$key, c(2 * 16384 + 2, NA))
+  expect_equal(got$c_r, c("B", NA))
+  expect_equal(got$row_r, c("2", NA))
+
+  expect_error(cell_to_info_df("17"), "out of valid range")
+  expect_error(cell_to_info_df("XFE1"), "out of valid range")
+  expect_error(cell_to_info_df("A0"), "out of valid range")
+  expect_error(cell_to_info_df("A1048577"), "out of valid range")
+  expect_error(cell_to_info_df("B"), "out of valid range")
+
+})
+
+test_that("cdigit() handles missing and non numeric input", {
+  expect_equal(cdigit(c("a12", NA, "x"), as_integer = TRUE), c(12L, NA, NA))
+  expect_equal(cdigit(c("a12", NA, "x")), c("12", NA, ""))
+  expect_equal(cdigit(c("a12", NA), reverse = TRUE), c("a", NA))
+  expect_error(cdigit("a1", as_integer = TRUE, reverse = TRUE), "do not go along")
+})
+
+test_that("dims helpers handle empty and infinite input", {
+  expect_null(get_dims(character()))
+  expect_error(get_dims(c("A1:B2", "")), "Invalid input")
+  expect_error(dims_to_row_col_fill("Inf:-Inf"), "dims are inf:-inf")
+  expect_equal(copy(1:2), 1:2)
+})

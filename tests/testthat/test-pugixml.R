@@ -429,3 +429,15 @@ test_that("xml_rm_child requires input", {
   expect_error(xml_rm_child(), "need xml_node")
   expect_error(xml_rm_child("<a><b/></a>"), "need xml_child")
 })
+
+test_that("read_xml2df() warns about unknown attributes and children", {
+  xml <- read_xml("<a x=\"1\" y=\"2\"><k>v</k></a>")
+  expect_warning(
+    expect_warning(
+      got <- read_xml2df(xml, "a", vec_attrs = "x", vec_chlds = "c"),
+      "y: not found in a name table"
+    ),
+    "k: not found in a name table"
+  )
+  expect_equal(got$x, "1")
+})

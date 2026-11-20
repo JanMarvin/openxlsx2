@@ -1807,3 +1807,82 @@ test_that("data table filters support %in%, != and mixed string cases", {
   got <- wb_to_df(wb, skip_hidden_rows = TRUE)
   expect_equal(got, exp, ignore_attr = TRUE)
 })
+
+test_that("cell attributes and formulas are written by both writers", {
+
+  for (flush in c(FALSE, TRUE)) {
+    wb <- wb_workbook()$add_worksheet()$add_data(x = data.frame(a = 1:2, b = 3:4))$add_worksheet()
+
+    cc <- wb$worksheets[[1]]$sheet_data$cc
+    cc$c_cm <- cc$c_ph <- cc$c_vm <- ""
+    cc[, c("c_t", "is")] <- ""
+    cc$v <- c("", "1", "1", "1", " ", "1")
+    cc$c_s[2] <- "0"
+    cc$c_cm[2] <- "1"
+    cc$c_ph[3] <- "2"
+    cc$c_vm[4] <- "3"
+    cc$f[6] <- "A1"
+    cc$f_attr[6] <- "t=\"array\" ref=\"B3\""
+    wb$worksheets[[1]]$sheet_data$cc <- cc
+    wb$set_row_heights(sheet = 1, rows = 5, heights = 20)
+
+    tmp <- temp_xlsx()
+    wb$save(tmp, flush = flush)
+
+    unzip(tmp, exdir = tmp_dir <- temp_dir())
+    read_sheet <- function(i) {
+      paste(readLines(file.path(tmp_dir, "xl", "worksheets", sprintf("sheet%s.xml", i)), warn = FALSE), collapse = "")
+    }
+
+    xml <- read_sheet(1)
+    expect_false(grepl("r=\"A1\"", xml, fixed = TRUE))
+    expect_match(xml, "<c r=\"B1\" s=\"0\" cm=\"1\"><v>1</v></c>", fixed = TRUE)
+    expect_match(xml, "<c r=\"A2\" ph=\"2\"><v>1</v></c>", fixed = TRUE)
+    expect_match(xml, "<c r=\"B2\" vm=\"3\"><v>1</v></c>", fixed = TRUE)
+    expect_match(xml, "<v xml:space=\"preserve\"> </v>", fixed = TRUE)
+    expect_match(xml, "t=\"array\" ref=\"B3\">A1</f><v>1</v>", fixed = TRUE)
+
+    expect_match(xml, "<row [^>]*ht=\"20\"[^>]*r=\"5\"|<row [^>]*r=\"5\"[^>]*ht=\"20\"")
+
+    expect_match(read_sheet(2), "<sheetData/>", fixed = TRUE)
+  }
+
+})
+
+test_that("columns with an unknown class are written as values", {
+  x <- data.frame(a = I(structure(c(1.5, 2), class = "foo")))
+  wb <- wb_workbook()$add_worksheet()$add_data(x = x)
+  expect_equal(wb$worksheets[[1]]$sheet_data$cc$v[2:3], c("1.5", "2"))
+})
+
+test_that("a blank value of a shared formula is not preserved", {
+  wb <- wb_workbook()$add_worksheet()$add_data(x = data.frame(a = 1:2))
+  cc <- wb$worksheets[[1]]$sheet_data$cc
+  cc$f[3] <- "A1"
+  cc$f_attr[3] <- "t=\"shared\" ref=\"A3\" si=\"0\""
+  cc$v[3] <- " "
+  wb$worksheets[[1]]$sheet_data$cc <- cc
+
+  tmp <- temp_xlsx()
+  wb$save(tmp)
+  unzip(tmp, exdir = tmp_dir <- temp_dir())
+  xml <- paste(readLines(file.path(tmp_dir, "xl", "worksheets", "sheet1.xml"), warn = FALSE), collapse = "")
+  expect_match(xml, "si=\"0\">A1</f><v> </v>", fixed = TRUE)
+})
+
+test_that("complex, classed logical and rich shared strings are written", {
+  x <- data.frame(
+    a = I(structure(c(TRUE, NA), class = "foo")),
+    b = c(1i, 2)
+  )
+  cc <- wb_workbook()$add_worksheet()$add_data(x = x)$worksheets[[1]]$sheet_data$cc
+  expect_equal(cc$is[cc$r %in% c("A2", "B2", "B3")], c("<is><t>TRUE</t></is>", "<is><t>0+1i</t></is>", "<is><t>2+0i</t></is>"))
+
+  txt <- fmt_txt("a", bold = TRUE) + fmt_txt("b")
+  wb <- wb_workbook()$add_worksheet()$add_data(x = txt, inline_strings = FALSE)
+  expect_equal(wb$worksheets[[1]]$sheet_data$cc$c_t, "s")
+  expect_equal(
+    as.character(wb$sharedStrings),
+    "<si><r><rPr><b/></rPr><t>a</t></r><r><rPr/><t>b</t></r></si>"
+  )
+})

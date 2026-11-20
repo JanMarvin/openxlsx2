@@ -153,3 +153,9 @@ test_that("txt_to_is throws error on malformed XML-like input", {
     "Could not parse xml in txt_to_xml\\(\\)"
   )
 })
+
+test_that("xml noncharacters are removed", {
+  skip_if_not(l10n_info()[["UTF-8"]])
+  txt <- intToUtf8(c(97, 0xFFFE, 98, 0xFFFF, 99))
+  expect_equal(txt_to_is(txt, skip_control = TRUE), "<is><t>abc</t></is>")
+})
