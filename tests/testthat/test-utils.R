@@ -1027,3 +1027,17 @@ test_that("cell_to_key() and cell_to_info_df() validate cell addresses", {
   expect_error(cell_to_info_df("B"), "out of valid range")
 
 })
+
+test_that("cdigit() handles missing and non numeric input", {
+  expect_equal(cdigit(c("a12", NA, "x"), as_integer = TRUE), c(12L, NA, NA))
+  expect_equal(cdigit(c("a12", NA, "x")), c("12", NA, ""))
+  expect_equal(cdigit(c("a12", NA), reverse = TRUE), c("a", NA))
+  expect_error(cdigit("a1", as_integer = TRUE, reverse = TRUE), "do not go along")
+})
+
+test_that("dims helpers handle empty and infinite input", {
+  expect_null(get_dims(character()))
+  expect_error(get_dims(c("A1:B2", "")), "Invalid input")
+  expect_error(dims_to_row_col_fill("Inf:-Inf"), "dims are inf:-inf")
+  expect_equal(copy(1:2), 1:2)
+})

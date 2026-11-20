@@ -1869,3 +1869,20 @@ test_that("a blank value of a shared formula is not preserved", {
   xml <- paste(readLines(file.path(tmp_dir, "xl", "worksheets", "sheet1.xml"), warn = FALSE), collapse = "")
   expect_match(xml, "si=\"0\">A1</f><v> </v>", fixed = TRUE)
 })
+
+test_that("complex, classed logical and rich shared strings are written", {
+  x <- data.frame(
+    a = I(structure(c(TRUE, NA), class = "foo")),
+    b = c(1i, 2)
+  )
+  cc <- wb_workbook()$add_worksheet()$add_data(x = x)$worksheets[[1]]$sheet_data$cc
+  expect_equal(cc$is[cc$r %in% c("A2", "B2", "B3")], c("<is><t>TRUE</t></is>", "<is><t>0+1i</t></is>", "<is><t>2+0i</t></is>"))
+
+  txt <- fmt_txt("a", bold = TRUE) + fmt_txt("b")
+  wb <- wb_workbook()$add_worksheet()$add_data(x = txt, inline_strings = FALSE)
+  expect_equal(wb$worksheets[[1]]$sheet_data$cc$c_t, "s")
+  expect_equal(
+    as.character(wb$sharedStrings),
+    "<si><r><rPr><b/></rPr><t>a</t></r><r><rPr/><t>b</t></r></si>"
+  )
+})
