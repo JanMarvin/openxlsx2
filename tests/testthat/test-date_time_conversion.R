@@ -275,3 +275,11 @@ test_that("date_to_unix() works", {
   got <- date_to_unix(c("49999", "#VALUE!", "23414.1313"))
   expect_equal(got, exp)
 })
+
+test_that("dates before 1900 can not be converted", {
+  df <- data.frame(a = as.Date("1850-01-01"))
+  expect_warning(
+    convert_to_excel_date(df, FALSE),
+    "Date < 1900-01-01 found. This can not be converted."
+  )
+})

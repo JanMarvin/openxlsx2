@@ -903,3 +903,33 @@ test_that("table names and named regions must be unique", {
     "named region with name 'iris' already exists"
   )
 })
+
+test_that("wrappers require a workbook", {
+  exp <- "wb must be class wbWorkbook or R6"
+  expect_error(wb_remove_slicer("a"), exp)
+  expect_error(wb_remove_timeline("a"), exp)
+  expect_error(wb_remove_hyperlink("a"), exp)
+  expect_error(wb_get_base_colors("a"), exp)
+  expect_error(wb_get_bookview("a"), exp)
+  expect_error(wb_get_properties("a"), exp)
+  expect_error(wb_remove_conditional_formatting("a"), exp)
+  expect_error(wb_add_form_control("a"), exp)
+})
+
+test_that("removing column widths works", {
+  wb <- wb_workbook()$
+    add_worksheet()$
+    set_col_widths(cols = 1:4, widths = c(10, 11, 12, 13))
+
+  wb$remove_col_widths(cols = "B")
+  exp <- c(
+    '<col min="1" max="1" bestFit="1" customWidth="1" hidden="false" width="10.711"/>',
+    '<col min="3" max="3" bestFit="1" customWidth="1" hidden="false" width="12.711"/>',
+    '<col min="4" max="4" bestFit="1" customWidth="1" hidden="false" width="13.711"/>'
+  )
+  got <- wb$worksheets[[1]]$cols_attr
+  expect_equal(got, exp)
+
+  wb$remove_col_widths(cols = c(1, 3, 4))
+  expect_equal(wb$worksheets[[1]]$cols_attr, character())
+})

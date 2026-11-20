@@ -762,3 +762,27 @@ test_that("cloning warns about rich values only for sheets with rich values", {
   cc <- wb$worksheets[[4]]$sheet_data$cc
   expect_equal(sum(nzchar(cc$c_vm)), 12L)
 })
+
+test_that("dxf styles of cloned tables are added to the new workbook", {
+  from <- wb_workbook()$
+    add_worksheet("a")$
+    add_data_table(x = data.frame(x = 1:2, y = 3:4), table_name = "tbl")$
+    add_dxfs_style(name = "dx0", font_color = wb_color("blue"))$
+    add_dxfs_style(name = "dx1", font_color = wb_color("red"))
+  from$tables$tab_xml <- sub('name="y"', 'name="y" dataDxfId="1"', from$tables$tab_xml, fixed = TRUE)
+
+  to <- wb_workbook()$
+    add_worksheet("z")$
+    add_dxfs_style(name = "green", font_color = wb_color("green"))$
+    add_dxfs_style(name = "yellow", font_color = wb_color("yellow"))
+
+  to$clone_worksheet("a", "b", from = from)
+
+  exp <- "<dxf><font><color rgb=\"FFFF0000\"/></font></dxf>"
+  got <- to$styles_mgr$styles$dxfs[3]
+  expect_equal(got, exp)
+
+  exp <- "<tableColumns count=\"2\"><tableColumn id=\"1\" name=\"x\"/><tableColumn id=\"2\" name=\"y\" dataDxfId=\"2\"/></tableColumns>"
+  got <- regmatches(to$tables$tab_xml, regexpr("<tableColumns.*</tableColumns>", to$tables$tab_xml))
+  expect_equal(got, exp)
+})

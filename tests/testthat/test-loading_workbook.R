@@ -665,6 +665,31 @@ test_that("test 7zip", {
 
 })
 
+test_that("saving using a 7z command line tool", {
+
+  skip_if(Sys.which("7z") == "", "7z is not available")
+
+  r_zipcmd <- Sys.getenv("R_ZIPCMD")
+  Sys.setenv("R_ZIPCMD" = Sys.which("7z"))
+  on.exit(Sys.setenv("R_ZIPCMD" = r_zipcmd), add = TRUE)
+
+  op <- options(
+    "openxlsx2.debug" = TRUE,
+    "openxlsx2.no_utils_zip" = TRUE,
+    "openxlsx2.no_bsdtar" = TRUE
+  )
+  on.exit(options(op), add = TRUE)
+
+  tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+
+  expect_message(write_xlsx(x = mtcars, tmp), "7zip")
+
+  exp <- mtcars
+  got <- wb_to_df(tmp)
+  expect_equal(got, exp, ignore_attr = TRUE)
+})
+
 test_that("saving using zip::zip", {
 
   skip_if_not_installed("zip")
@@ -880,4 +905,162 @@ test_that("cells without r inherit the resolved row number", {
   expect_equal(sd$row_attr$r, c("1", "2", "3", "5", "6", "7"))
   expect_equal(sd$cc$r, c("A2", "A3", "A6", "A7"))
   expect_equal(sd$cc$row_r, c("2", "3", "6", "7"))
+})
+
+test_that("optional workbook elements are kept when loading and saving", {
+
+  tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+  wb_workbook()$add_worksheet()$add_data(x = 1)$save(tmp)
+
+  tmp_dir <- temp_dir("workbook_elements")
+  on.exit(unlink(tmp_dir, recursive = TRUE), add = TRUE)
+  utils::unzip(tmp, exdir = tmp_dir)
+
+  path <- file.path(tmp_dir, "xl", "workbook.xml")
+  xml <- paste(readLines(path, warn = FALSE), collapse = "")
+
+  fileSharing <- "<fileSharing readOnlyRecommended=\"1\"/>"
+  workbookProtection <- "<workbookProtection lockStructure=\"1\"/>"
+  functionGroups <- "<functionGroups builtInGroupCount=\"16\"/>"
+  smartTagPr <- "<smartTagPr embed=\"1\"/>"
+  smartTagTypes <- "<smartTagTypes><smartTagType namespaceUri=\"urn:x\" name=\"n\"/></smartTagTypes>"
+  webPublishing <- "<webPublishing css=\"0\"/>"
+  fileRecoveryPr <- "<fileRecoveryPr autoRecover=\"0\"/>"
+  webPublishObjects <- "<webPublishObjects count=\"1\"><webPublishObject id=\"1\" divId=\"d\" sourceObject=\"\" destinationFile=\"x.htm\"/></webPublishObjects>"
+  oleSize <- "<oleSize ref=\"A1:B2\"/>"
+  customWorkbookViews <- paste0(
+    "<customWorkbookViews><customWorkbookView name=\"v\" ",
+    "guid=\"{00000000-0000-0000-0000-000000000001}\" windowWidth=\"100\" ",
+    "windowHeight=\"100\" activeSheetId=\"1\"/></customWorkbookViews>"
+  )
+
+  xml <- sub("<workbookPr", paste0(fileSharing, "<workbookPr"), xml, fixed = TRUE)
+  xml <- sub("<bookViews>", paste0(workbookProtection, "<bookViews>"), xml, fixed = TRUE)
+  xml <- sub(
+    "</sheets>",
+    paste0(
+      "</sheets>", functionGroups, smartTagPr, smartTagTypes, webPublishing,
+      fileRecoveryPr, webPublishObjects, oleSize, customWorkbookViews
+    ),
+    xml, fixed = TRUE
+  )
+  writeLines(xml, path)
+
+  tmp_zip <- tempfile(fileext = ".xlsx")
+  on.exit(unlink(tmp_zip), add = TRUE)
+  zip_output(zip_path = tmp_zip, source_dir = tmp_dir, compression_level = 1)
+
+  wb <- wb_load(tmp_zip)
+  expect_equal(wb$workbook$fileSharing, fileSharing)
+  expect_equal(wb$workbook$workbookProtection, workbookProtection)
+  expect_equal(wb$workbook$functionGroups, functionGroups)
+  expect_equal(wb$workbook$smartTagPr, smartTagPr)
+  expect_equal(wb$workbook$smartTagTypes, smartTagTypes)
+  expect_equal(wb$workbook$webPublishing, webPublishing)
+  expect_equal(wb$workbook$fileRecoveryPr, fileRecoveryPr)
+  expect_equal(wb$workbook$webPublishObjects, webPublishObjects)
+  expect_equal(wb$workbook$oleSize, oleSize)
+  expect_equal(wb$workbook$customWorkbookViews, customWorkbookViews)
+
+  tmp_out <- temp_xlsx()
+  on.exit(unlink(tmp_out), add = TRUE)
+  wb$save(tmp_out)
+
+  out_dir <- temp_dir("workbook_elements_out")
+  on.exit(unlink(out_dir, recursive = TRUE), add = TRUE)
+  utils::unzip(tmp_out, exdir = out_dir)
+  got <- paste(readLines(file.path(out_dir, "xl", "workbook.xml"), warn = FALSE), collapse = "")
+
+  for (exp in c(
+    fileSharing, workbookProtection, functionGroups, smartTagPr, smartTagTypes,
+    webPublishing, fileRecoveryPr, webPublishObjects, oleSize, customWorkbookViews
+  )) {
+    expect_true(grepl(exp, got, fixed = TRUE))
+  }
+})
+
+test_that("a namespace prefix in workbook.xml is removed with a warning", {
+
+  tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+  wb_workbook()$add_worksheet("a")$add_data(x = data.frame(b = 1:2))$save(tmp)
+
+  tmp_dir <- temp_dir("workbook_namespace")
+  on.exit(unlink(tmp_dir, recursive = TRUE), add = TRUE)
+  utils::unzip(tmp, exdir = tmp_dir)
+
+  path <- file.path(tmp_dir, "xl", "workbook.xml")
+  xml <- paste(readLines(path, warn = FALSE), collapse = "")
+  xml <- gsub("<(workbookPr|bookViews|workbookView|sheets|sheet)([ />])", "<x:\\1\\2", xml)
+  xml <- gsub("</(bookViews|sheets)>", "</x:\\1>", xml)
+  xml <- sub(
+    "<workbook xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"",
+    "<x:workbook xmlns:x=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"",
+    xml, fixed = TRUE
+  )
+  xml <- sub("</workbook>", "</x:workbook>", xml, fixed = TRUE)
+  writeLines(xml, path)
+
+  tmp_zip <- tempfile(fileext = ".xlsx")
+  on.exit(unlink(tmp_zip), add = TRUE)
+  zip_output(zip_path = tmp_zip, source_dir = tmp_dir, compression_level = 1)
+
+  expect_warning(wb <- wb_load(tmp_zip), "The `{x}` namespace(s) has been removed", fixed = TRUE)
+
+  expect_equal(wb$get_sheet_names(), c(a = "a"))
+  expect_equal(wb_to_df(wb), data.frame(b = 1:2), ignore_attr = TRUE)
+})
+
+test_that("loading without sheets keeps the sheet names only", {
+
+  tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+  wb_workbook()$
+    add_worksheet("a")$
+    add_data(x = data.frame(b = 1:2))$
+    add_worksheet("b")$
+    save(tmp)
+
+  wb <- wb_load(tmp, sheet = NULL)
+
+  expect_equal(wb$get_sheet_names(), c(a = "a", b = "b"))
+  expect_null(wb$worksheets[[1]]$sheet_data$cc)
+})
+
+test_that("the Google Sheets extension is removed from the workbook", {
+
+  tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+  wb_workbook()$add_worksheet("a")$save(tmp)
+
+  tmp_dir <- temp_dir("workbook_extlst")
+  on.exit(unlink(tmp_dir, recursive = TRUE), add = TRUE)
+  utils::unzip(tmp, exdir = tmp_dir)
+
+  path <- file.path(tmp_dir, "xl", "workbook.xml")
+  xml <- paste(readLines(path, warn = FALSE), collapse = "")
+
+  keep <- paste0(
+    "<ext uri=\"{00000000-0000-0000-0000-000000000001}\" ",
+    "xmlns:x15=\"http://schemas.microsoft.com/office/spreadsheetml/2010/11/main\">",
+    "<x15:workbookPr chartTrackingRefBase=\"1\"/></ext>"
+  )
+  google <- paste0(
+    "<ext uri=\"GoogleSheetsCustomDataVersion2\" ",
+    "xmlns:goog=\"http://customooxmlschemas.google.com/\">",
+    "<goog:version>1</goog:version></ext>"
+  )
+  xml <- sub("</workbook>", paste0("<extLst>", keep, google, "</extLst></workbook>"), xml, fixed = TRUE)
+  writeLines(xml, path)
+
+  tmp_zip <- tempfile(fileext = ".xlsx")
+  on.exit(unlink(tmp_zip), add = TRUE)
+  zip_output(zip_path = tmp_zip, source_dir = tmp_dir, compression_level = 1)
+
+  wb <- wb_load(tmp_zip)
+
+  exp <- paste0("<extLst>", keep, "</extLst>")
+  got <- wb$workbook$extLst
+  expect_equal(got, exp)
 })

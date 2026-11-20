@@ -123,3 +123,33 @@ test_that("merging with direction works", {
   got <- wb$worksheets[[1]]$mergeCells
   expect_equal(exp, got)
 })
+
+test_that("solving merges that overlap an existing merge", {
+  wb <- wb_workbook()$add_worksheet()$merge_cells(dims = "A1:C5")
+  wb$merge_cells(dims = "A2:C3", solve = TRUE)
+  exp <- c('<mergeCell ref="A1:C1"/>', '<mergeCell ref="A4:C5"/>', '<mergeCell ref="A2:C3"/>')
+  got <- wb$worksheets[[1]]$mergeCells
+  expect_equal(got, exp)
+
+  wb <- wb_workbook()$add_worksheet()$merge_cells(dims = "A1:C5")
+  wb$merge_cells(dims = "A1:C2", solve = TRUE)
+  exp <- c('<mergeCell ref="A3:C5"/>', '<mergeCell ref="A1:C2"/>')
+  got <- wb$worksheets[[1]]$mergeCells
+  expect_equal(got, exp)
+
+  wb <- wb_workbook()$add_worksheet()$merge_cells(dims = "A1:E3")
+  wb$merge_cells(dims = "B1:C3", solve = TRUE)
+  exp <- c('<mergeCell ref="A1:A3"/>', '<mergeCell ref="D1:E3"/>', '<mergeCell ref="B1:C3"/>')
+  got <- wb$worksheets[[1]]$mergeCells
+  expect_equal(got, exp)
+
+  wb <- wb_workbook()$add_worksheet()$merge_cells(dims = "A1:E5")
+  wb$merge_cells(dims = "B2:C3", solve = TRUE)
+  exp <- c(
+    '<mergeCell ref="A1:A5"/>', '<mergeCell ref="D1:E5"/>',
+    '<mergeCell ref="B1:C1"/>', '<mergeCell ref="B4:C5"/>',
+    '<mergeCell ref="B2:C3"/>'
+  )
+  got <- wb$worksheets[[1]]$mergeCells
+  expect_equal(got, exp)
+})

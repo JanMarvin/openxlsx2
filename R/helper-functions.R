@@ -957,13 +957,13 @@ solve_merge <- function(have, want) {
 
   # all columns are overlapped onesided
   if (fullsided(cols_overlap) && onesided(rows_overlap)) {
-    pieces[[1]] <- got[!rows_overlap, drop = FALSE]
+    pieces[[1]] <- got[!rows_overlap, , drop = FALSE]
   }
 
   # all columns are overlapped twosided
   if (fullsided(cols_overlap) && twosided(rows_overlap)) {
-    pieces[[1]] <- got[top_half(rows_overlap), drop = FALSE]
-    pieces[[2]] <- got[bottom_half(rows_overlap), drop = FALSE]
+    pieces[[1]] <- got[top_half(rows_overlap), , drop = FALSE]
+    pieces[[2]] <- got[bottom_half(rows_overlap), , drop = FALSE]
   }
 
   # all rows are overlapped onesided
@@ -1283,7 +1283,7 @@ known_subtotal_funs <- function(x, total, table, row_names = FALSE) {
 
     for (i in seq_len(ncol_x)) {
 
-      if (any(names(total)[i] == "") && (ttl[i] %in% builtinIds || ttl[i] %in% builtins)) {
+      if ((is.null(names(total)) || names(total)[i] == "") && (ttl[i] %in% builtinIds || ttl[i] %in% builtins)) {
         if (ttl[i] == "101" || ttl[i] == "average") {
           fml[i] <- paste0("SUBTOTAL(", 101, ",", table, "[", nms_x[i], "])")
           atr[i] <- "average"

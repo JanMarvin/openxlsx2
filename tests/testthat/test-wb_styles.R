@@ -1793,3 +1793,73 @@ test_that("create_cell_style() rejects empty and NULL values", {
   expect_silent(create_cell_style(num_fmt_id = character()))
 
 })
+
+test_that("style manager getters on a new workbook", {
+  sm <- wb_workbook()$styles_mgr
+
+  expect_equal(sm$get_font()$name, "font-0")
+  expect_equal(sm$get_fill()$name, c("fill-0", "fill-1"))
+  expect_equal(sm$get_border()$name, "border-0")
+  expect_equal(sm$get_xf()$name, "xf-0")
+  expect_equal(sm$get_cellStyle()$name, "Normal")
+  expect_equal(sm$get_cellStyleXf()$name, "xf-0")
+  expect_null(sm$get_dxf())
+})
+
+test_that("style manager next ids on a new workbook", {
+  sm <- wb_workbook()$styles_mgr
+
+  expect_equal(sm$next_font_id(), "1")
+  expect_equal(sm$next_fill_id(), "2")
+  expect_equal(sm$next_border_id(), "1")
+  expect_equal(sm$next_xf_id(), "1")
+  expect_equal(sm$next_cellstyle_id(), "1")
+  expect_equal(sm$next_cellstylexf_id(), "1")
+  expect_equal(sm$next_dxf_id(), "0")
+})
+
+test_that("style manager add checks input length", {
+  sm <- wb_workbook()$styles_mgr
+  expect_error(sm$add("a", c("x", "y")), "style length and name do not match")
+})
+
+test_that("a cell style can be copied from another cell", {
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = 1:2, dims = "A1")$
+    add_fill(dims = "A1", color = wb_color("red"))
+
+  wb$set_cell_style(dims = "B1", style = "A1")
+  expect_equal(wb$get_cell_style(dims = "B1"), c(B1 = "1"))
+
+  wb$set_cell_style(dims = data.frame(a = "A2", b = "B2"), style = wb$get_cell_style(dims = "A1"))
+  expect_equal(wb$get_cell_style(dims = c("A2", "B2")), c(A2 = "1", B2 = "1"))
+})
+
+test_that("add_cell_style sets all xf attributes", {
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = "a")$
+    add_cell_style(
+      dims = "A1",
+      apply_alignment = TRUE, apply_border = TRUE, apply_fill = TRUE,
+      apply_font = TRUE, apply_number_format = TRUE, apply_protection = TRUE,
+      border_id = 0, fill_id = 1, font_id = 0, hidden = TRUE,
+      horizontal = "center", vertical = "top", indent = 2,
+      justify_last_line = TRUE, locked = FALSE, num_fmt_id = 2,
+      pivot_button = TRUE, quote_prefix = TRUE, reading_order = 1,
+      relative_indent = 1, shrink_to_fit = TRUE, text_rotation = 45,
+      wrap_text = TRUE, xf_id = 0
+    )
+
+  exp <- paste0(
+    '<xf applyAlignment="1" applyBorder="1" applyFill="1" applyFont="1" ',
+    'applyNumberFormat="1" applyProtection="1" borderId="0" fillId="1" fontId="0" ',
+    'numFmtId="2" pivotButton="1" quotePrefix="1" xfId="0">',
+    '<alignment horizontal="center" indent="2" justifyLastLine="1" readingOrder="1" ',
+    'relativeIndent="1" shrinkToFit="1" textRotation="45" vertical="top" wrapText="1"/>',
+    '<protection hidden="1" locked="0"/></xf>'
+  )
+  got <- wb$styles_mgr$styles$cellXfs[length(wb$styles_mgr$styles$cellXfs)]
+  expect_equal(got, exp)
+})

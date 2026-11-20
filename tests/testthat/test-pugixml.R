@@ -424,3 +424,8 @@ test_that("reading comments works", {
   expect_equal(got, exp)
 
 })
+
+test_that("xml_rm_child requires input", {
+  expect_error(xml_rm_child(), "need xml_node")
+  expect_error(xml_rm_child("<a><b/></a>"), "need xml_child")
+})

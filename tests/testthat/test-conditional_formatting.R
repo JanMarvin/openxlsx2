@@ -1917,3 +1917,45 @@ test_that("combined cells with uneven cf work", {
   expect_equal(exp, got)
 
 })
+
+test_that("conditional formatting checks rule and style", {
+  wb <- wb_workbook()$add_worksheet()$add_data(x = 1:3)
+
+  expect_error(
+    wb$add_conditional_formatting(dims = "A1:A3", type = "expression", rule = c("A1>1", "A1>2"), style = "x"),
+    "When type == 'expression', rule must be a single length character vector"
+  )
+
+  expect_error(
+    wb$add_conditional_formatting(dims = "A1:A3", type = "colorScale", style = "red"),
+    "When type == 'colorScale', style must be a vector of length 2 or 3."
+  )
+
+  expect_error(
+    wb$add_conditional_formatting(dims = "A1:A3", type = "colorScale", style = c("red", "blue"), rule = 1),
+    "When type == 'colorScale', rule and style must have equal lengths."
+  )
+
+  expect_error(
+    wb$add_conditional_formatting(dims = "A1:A3", type = "dataBar", style = c("red", "blue", "green")),
+    "When type == 'dataBar', style must be a vector of length 1 or 2."
+  )
+
+  expect_error(
+    wb$add_conditional_formatting(dims = "A1:A3", type = "dataBar", style = c("red", "blue"), rule = 1),
+    "When type == 'dataBar', rule and style must have equal lengths."
+  )
+})
+
+test_that("conditional formatting with rows and cols is deprecated", {
+  wb <- wb_workbook()$add_worksheet()$add_data(x = 1:3)
+
+  expect_warning(
+    wb$add_conditional_formatting(cols = 1, rows = 1:3, rule = ">1"),
+    "'cols/rows' is deprecated"
+  )
+
+  exp <- "A1:A3"
+  got <- wb$worksheets[[1]]$conditionalFormatting$sqref
+  expect_equal(got, exp)
+})

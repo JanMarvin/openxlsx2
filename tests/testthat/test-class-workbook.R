@@ -1920,3 +1920,34 @@ test_that("shapes of several drawings on a sheet get unique ids", {
   expect_length(ids, 9)
   expect_false(anyDuplicated(ids) > 0)
 })
+
+test_that("page setup sets outline summary position, tab color and print titles", {
+  wb <- wb_workbook()$
+    add_worksheet()$
+    set_page_setup(summary_row = "Below", summary_col = "Right", tab_color = wb_color("red"))
+
+  exp <- "<sheetPr><tabColor rgb=\"FFFF0000\"/><outlinePr summaryBelow=\"1\" summaryRight=\"1\"/></sheetPr>"
+  got <- wb$worksheets[[1]]$sheetPr
+  expect_equal(got, exp)
+
+  wb$set_page_setup(summary_row = "Above", summary_col = "Left", tab_color = "")
+  exp <- "<sheetPr><outlinePr summaryBelow=\"0\" summaryRight=\"0\"/></sheetPr>"
+  got <- wb$worksheets[[1]]$sheetPr
+  expect_equal(got, exp)
+
+  wb <- wb_workbook()$add_worksheet()$set_page_setup(print_title_cols = 1:2)
+  exp <- "<definedName localSheetId=\"0\" name=\"_xlnm.Print_Titles\">'Sheet 1'!$A:$B</definedName>"
+  got <- wb$workbook$definedNames
+  expect_equal(got, exp)
+
+  wb <- wb_workbook()$add_worksheet()$set_page_setup(print_title_rows = 1:2, print_title_cols = 1:2)
+  exp <- "<definedName name=\"_xlnm.Print_Titles\" localSheetId=\"0\">'Sheet 1'!$A:$B,'Sheet 1'!$1:$2</definedName>"
+  got <- wb$workbook$definedNames
+  expect_equal(got, exp)
+
+  expect_warning(
+    wb$set_page_setup(tab_color = "red"),
+    "tab_color should be a wb_color() object",
+    fixed = TRUE
+  )
+})

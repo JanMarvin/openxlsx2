@@ -389,3 +389,65 @@ test_that("custom formulas in total rows work", {
 test_that("writing long tables with total row works", {
   expect_silent(wb <- wb_workbook()$add_worksheet()$add_data_table(x = data.frame(x = 1:17000), total_row = "SUM"))
 })
+
+test_that("total_row accepts the builtin summary functions", {
+  x <- data.frame(a = 1:3, b = 4:6, c = 7:9, d = 1:3, e = 1:3, f = 1:3, g = 1:3, h = 1:3)
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data_table(
+      x = x,
+      table_name = "tbl",
+      total_row = c("average", "countNums", "count", "max", "min", "stdDev", "sum", "var")
+    )
+
+  cc <- wb$worksheets[[1]]$sheet_data$cc
+  exp <- paste0("SUBTOTAL(", c(101, 102, 103, 104, 105, 107, 109, 110), ",tbl[", letters[1:8], "])")
+  got <- cc$f[cc$row_r == "5"]
+  expect_equal(got, exp)
+
+  exp <- c("average", "countNums", "count", "max", "min", "stdDev", "sum", "var")
+  got <- xml_attr(wb$tables$tab_xml, "table", "tableColumns", "tableColumn")
+  got <- vapply(got, function(x) x[["totalsRowFunction"]], "")
+  expect_equal(unname(got), exp)
+
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data_table(x = x[1:2], table_name = "tbl", total_row = c("101", "110"))
+
+  cc <- wb$worksheets[[1]]$sheet_data$cc
+  exp <- c("SUBTOTAL(101,tbl[a])", "SUBTOTAL(110,tbl[b])")
+  got <- cc$f[cc$row_r == "5"]
+  expect_equal(got, exp)
+})
+
+test_that("get_tables works for all sheets and without tables", {
+  wb <- wb_workbook()$add_worksheet()
+  expect_equal(wb$get_tables(), character())
+
+  wb$add_worksheet("s2")$
+    add_data_table(sheet = 1, x = mtcars[1:3, 1:2], table_name = "tbl_a")$
+    add_data_table(sheet = 2, x = iris[1:3, 1:2], table_name = "tbl_b")
+
+  exp <- data.frame(tab_name = c("tbl_a", "tbl_b"), tab_ref = c("A1:B4", "A1:B4"), stringsAsFactors = FALSE)
+  got <- wb$get_tables(sheet = NULL)
+  expect_equal(got, exp, ignore_attr = TRUE)
+
+  expect_equal(wb$get_tables(sheet = 2)$tab_name, "tbl_b")
+})
+
+test_that("update_table warns about unknown nodes", {
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data_table(x = data.frame(x = 1:2, y = 3:4), table_name = "tbl")
+  wb$tables$tab_xml <- sub("</table>", "<extLst/></table>", wb$tables$tab_xml, fixed = TRUE)
+  wb$add_data(x = data.frame(1:3, 1:3), dims = "A5", col_names = FALSE)
+
+  expect_warning(
+    wb$update_table(dims = "A1:B5", tabname = "tbl"),
+    "Found unknown table xml nodes. These are lost using update_table:  extLst"
+  )
+
+  exp <- "A1:B5"
+  got <- xml_attr(wb$tables$tab_xml, "table")[[1]][["ref"]]
+  expect_equal(got, exp)
+})

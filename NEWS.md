@@ -4,6 +4,9 @@
 
 * Speedup `wb_add_border()`. [#1728](https://github.com/JanMarvin/openxlsx2/pull/1728)
 * Speedup for `wb_add_comment()`. [#1731](https://github.com/JanMarvin/openxlsx2/pull/1731)
+* `wb_merge_cells(..., solve = TRUE)` failed if the new range was inside the rows of an existing merged range. [#1735](https://github.com/JanMarvin/openxlsx2/pull/1735)
+* `wb_remove_col_widths()` was not functional at all. [#1735](https://github.com/JanMarvin/openxlsx2/pull/1735)
+* Behavior of `wb_to_df()` with `start_row` or `start_col` in regions without data has been aligned. [#1735](https://github.com/JanMarvin/openxlsx2/pull/1735)
 
 ## Internal Changes
 

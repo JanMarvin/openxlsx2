@@ -456,12 +456,8 @@ wb_to_df <- function(
       z  <- z[sel, , drop = FALSE]
       tt <- tt[sel, , drop = FALSE]
     } else {
-      keep_rows <- as.character(start_row)
-      z  <- z[keep_rows, , drop = FALSE]
-      tt <- tt[keep_rows, , drop = FALSE]
-
-      rownames(z)  <- as.integer(keep_rows)
-      rownames(tt) <- as.integer(keep_rows)
+      z  <- z[0L, , drop = FALSE]
+      tt <- tt[0L, , drop = FALSE]
     }
   }
 
@@ -486,6 +482,11 @@ wb_to_df <- function(
         z  <- z[sel, , drop = FALSE]
         tt <- tt[sel, , drop = FALSE]
       } else {
+        # with a start_row or start_col nothing is returned behind the data
+        if (!is.null(start_row) || !is.null(start_col)) {
+          keep_rows <- keep_rows[keep_rows %in% rownames(z)]
+        }
+
         z  <- z[keep_rows, , drop = FALSE]
         tt <- tt[keep_rows, , drop = FALSE]
 
@@ -503,16 +504,10 @@ wb_to_df <- function(
   }
 
   if (!is.null(start_col)) {
-    keep_cols <- int2col(seq(col2int(start_col), maxCol))
-
-    if (!all(sel <- keep_cols %in% colnames(z))) {
-      keep_col <- keep_cols[!sel]
-
-      z[keep_col]  <- NA_character_
-      tt[keep_col] <- NA_integer_
-
-      z  <- z[keep_cols]
-      tt <- tt[keep_cols]
+    if (col2int(start_col) <= maxCol) {
+      keep_cols <- int2col(seq(col2int(start_col), maxCol))
+    } else {
+      keep_cols <- character()
     }
 
     sel <- match(keep_cols, colnames(z))
@@ -540,8 +535,8 @@ wb_to_df <- function(
     if (!all(keep_cols %in% colnames(z))) {
       keep_col <- keep_cols[!keep_cols %in% colnames(z)]
 
-      z[keep_col] <- NA_character_
-      tt[keep_col] <- NA_integer_
+      z[keep_col]  <- rep(list(rep_len(NA_character_, nrow(z))), length(keep_col))
+      tt[keep_col] <- rep(list(rep_len(NA_integer_, nrow(tt))), length(keep_col))
     }
 
     sel <- match(keep_cols, colnames(z))

@@ -106,9 +106,25 @@ test_that("dims != rows & cols", {
   got5 <- wb_to_df(wb, cols = 1:5, col_names = FALSE)
   expect_equal(dim(got5), c(2, 5))
 
+  # nothing is initialized at start_row, the requested columns remain
   got6 <- wb_to_df(wb, start_row = 4, cols = 1:4, col_names = FALSE)
-  expect_true(all(is.na(got6)))
-  expect_equal(rownames(got6), "4")
+  expect_equal(dim(got6), c(0L, 4L))
+  expect_equal(colnames(got6), c("A", "B", "C", "D"))
+
+  got <- wb_to_df(wb, start_row = 8, col_names = FALSE)
+  expect_equal(dim(got), c(0L, 1L))
+
+  # explicitly requested rows and cols are returned
+  got7 <- wb_to_df(wb, rows = 8:14, cols = 1:4, col_names = FALSE)
+  expect_equal(dim(got7), c(7L, 4L))
+  expect_true(all(is.na(got7)))
+
+  # but not behind a start_row or start_col
+  got8 <- wb_to_df(wb, start_row = 4, rows = 8:14, cols = 1:4, col_names = FALSE)
+  expect_equal(dim(got8), c(0L, 4L))
+
+  got9 <- wb_to_df(wb, start_col = "A", rows = 8, col_names = FALSE)
+  expect_equal(nrow(got9), 0L)
 
 })
 
@@ -497,4 +513,38 @@ test_that("wb_to_df() checks its arguments", {
   expect_equal(dim(wb_to_df(wb, col_names = 0)), c(4L, 5L))
   expect_equal(dim(wb_to_df(wb, start_col = "B")), c(3L, 4L))
 
+})
+
+test_that("wb_to_df selects and drops rows and columns", {
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = data.frame(a = 1:4, b = 5:8, c = 9:12))
+
+  # negative rows are dropped
+  exp <- data.frame(A = c("a", "3", "4"), B = c("b", "7", "8"), C = c("c", "11", "12"), stringsAsFactors = FALSE)
+  got <- wb_to_df(wb, rows = c(-2, -3), col_names = FALSE)
+  expect_equal(got, exp, ignore_attr = TRUE)
+
+  # rows outside of the data are returned as missing
+  got <- wb_to_df(wb, rows = c(1, 2, 7))
+  expect_equal(rownames(got), c("2", "7"))
+  expect_equal(got[2, ], data.frame(a = NA_integer_, b = NA_integer_, c = NA_integer_), ignore_attr = TRUE)
+
+  # negative cols are dropped
+  exp <- data.frame(b = 5:8, c = 9:12)
+  got <- wb_to_df(wb, cols = -1)
+  expect_equal(got, exp, ignore_attr = TRUE)
+})
+
+test_that("wb_to_df with start_col behind the data returns no columns", {
+  wb <- wb_workbook()$
+    add_worksheet()$
+    add_data(x = data.frame(a = 1:4, b = 5:8, c = 9:12))
+
+  got <- wb_to_df(wb, start_col = "E")
+  expect_equal(ncol(got), 0L)
+
+  exp <- data.frame(c = as.numeric(9:12))
+  got <- wb_to_df(wb, start_col = "C")
+  expect_equal(got, exp, ignore_attr = TRUE)
 })
