@@ -510,16 +510,6 @@ wb_to_df <- function(
       keep_cols <- character()
     }
 
-    if (!all(sel <- keep_cols %in% colnames(z))) {
-      keep_col <- keep_cols[!sel]
-
-      z[keep_col]  <- rep(list(rep_len(NA_character_, nrow(z))), length(keep_col))
-      tt[keep_col] <- rep(list(rep_len(NA_integer_, nrow(tt))), length(keep_col))
-
-      z  <- z[keep_cols]
-      tt <- tt[keep_cols]
-    }
-
     sel <- match(keep_cols, colnames(z))
     z  <- z[, sel, drop = FALSE]
     tt <- tt[, sel, drop = FALSE]
