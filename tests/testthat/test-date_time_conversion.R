@@ -274,6 +274,10 @@ test_that("date_to_unix() works", {
   exp <- c("2110752000.000000", NA_character_, "-186180656.000000")
   got <- date_to_unix(c("49999", "#VALUE!", "23414.1313"))
   expect_equal(got, exp)
+
+  expect_equal(date_to_unix("1.5", origin = "1904-01-01"), "-2082715200.000000")
+  expect_equal(date_to_unix("1.5", origin = "1970-01-01", datetime = FALSE), "1.000000")
+  expect_error(date_to_unix("1.5", origin = "2000-01-01"), "origin_system must be")
 })
 
 test_that("dates before 1900 can not be converted", {
