@@ -874,6 +874,32 @@ test_that("wb_add_mschart() is a wrapper", {
 
 })
 
+test_that("wb_add_mschart() writes chartEx charts", {
+
+  skip_if_not_installed("mschart")
+  skip_if_not("ms_waterfallchart" %in% getNamespaceExports("mschart"))
+
+  df <- data.frame(x = c("A", "B", "C", "D"), y = c(10, -3, 5, 12))
+  waterfall <- mschart::ms_waterfallchart(df, x = "x", y = "y")
+
+  wb <- wb_workbook()$
+    add_worksheet("s1")$
+    add_mschart(dims = "D2:K18", graph = waterfall)
+
+  expect_equal(NROW(wb$charts), 1L)
+  expect_true(nzchar(wb$charts$chartEx[[1]]))
+  expect_true(nzchar(wb$charts$colors[[1]]))
+  expect_true(nzchar(wb$charts$style[[1]]))
+  expect_false(grepl("externalData", wb$charts$chartEx[[1]], fixed = TRUE))
+  expect_equal(wb_to_df(wb)$x, df$x)
+
+  tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
+  wb$save(tmp)
+  expect_equal(NROW(wb_load(tmp)$charts), 1L)
+
+})
+
 # wb_add_ignore_error() ---------------------------------------------------
 
 test_that("add_ignore_error is a wrapper", {
