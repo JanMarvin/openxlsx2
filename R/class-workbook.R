@@ -8051,38 +8051,47 @@ wbWorkbook <- R6::R6Class(
       sheetname <- private$get_sheet_name(sheet)
 
       # format.ms_chart is exported in mschart >= 0.4
+      is_ex <- inherits(graph, "ms_chart_ex")
+
       ids <- random_string(n = 2, length = 8, pattern = "[1-9]")
       out_xml <- read_xml(
         format(
           graph,
           sheetname = sheetname,
           id_x = ids[1],
-          id_y = ids[2]
+          id_y = ids[2],
+          drop_ext_data = is_ex
         ),
         pointer = FALSE
       )
 
-      # write the chart data to the workbook
-      if (inherits(graph$data_series, "wb_data")) {
-        self$
-          add_chart_xml(
-            sheet      = sheet,
-            dims       = dims,
-            xml        = out_xml,
-            col_offset = col_offset,
-            row_offset = row_offset
-          )
-      } else {
-        self$
-          add_data(sheet = sheet, x = graph$data_series)$
-          add_chart_xml(
-            sheet      = sheet,
-            dims       = dims,
-            xml        = out_xml,
-            col_offset = col_offset,
-            row_offset = row_offset
-          )
+      color <- ""
+      style <- ""
+      if (is_ex) {
+        color <- paste(
+          readLines(system.file("template", "chartex_colors.xml", package = "mschart"), warn = FALSE),
+          collapse = ""
+        )
+        style <- paste(
+          readLines(system.file("template", "chartex_style.xml", package = "mschart"), warn = FALSE),
+          collapse = ""
+        )
       }
+
+      # write the chart data to the workbook
+      if (!inherits(graph$data_series, "wb_data")) {
+        self$add_data(sheet = sheet, x = graph$data_series)
+      }
+
+      self$add_chart_xml(
+        sheet      = sheet,
+        dims       = dims,
+        xml        = out_xml,
+        color      = color,
+        style      = style,
+        col_offset = col_offset,
+        row_offset = row_offset
+      )
     },
 
     #' @description Add form control to workbook
