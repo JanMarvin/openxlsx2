@@ -804,14 +804,14 @@ wb_dims <- function(..., select = NULL) {
   if (!is.null(cols_arg)) {
     is_lwr_one <- FALSE
     # cols_arg could be name(s) in x or must indicate a positive integer
-    if (is.null(args$x) || (!is.null(args$x) && !all(cols_arg %in% names(args$x))))
+    if (length(cols_arg) && ((is.null(args$x) || (!is.null(args$x) && !all(cols_arg %in% names(args$x))))))
       is_lwr_one <- if (is.numeric(cols_arg))
           min(cols_arg) < 1L
         else
           min(col2int(cols_arg)) < 1L
 
-    if (is_lwr_one)
-      stop("You must supply positive values to `cols`")
+    if (is_lwr_one || length(cols_arg) == 0)
+      stop("You must supply positive values to `cols`", call. = FALSE)
   }
 
   # in case the user mixes up column and row
@@ -830,7 +830,7 @@ wb_dims <- function(..., select = NULL) {
     stop("`rows` is character and contains nothing that can be interpreted as number.", call. = FALSE)
   }
 
-  if (!is.null(rows_arg) && (min(as.integer(rows_arg)) < 1L)) {
+  if (!is.null(rows_arg) && (length(rows_arg) == 0 || min(as.integer(rows_arg)) < 1L)) {
     stop("You must supply positive values to `rows`.")
   }
 

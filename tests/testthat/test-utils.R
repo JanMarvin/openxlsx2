@@ -467,6 +467,16 @@ test_that("row and col selection works", {
     wb_dims(rows = seq_len(nrow(mtcars)) + 1L, cols = c(1, 4:7, 9), from_col = 2)
   )
 
+  expect_error(
+    wb_dims(rows = integer(), cols = 2),
+    "You must supply positive values to"
+  )
+
+  expect_error(
+    wb_dims(rows = 2:101, cols = integer()),
+    "You must supply positive values to"
+  )
+
 })
 
 test_that("create_char_dataframe", {

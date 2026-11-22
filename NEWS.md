@@ -12,6 +12,10 @@
 
 * Instead of importing `stringi`, a set of shims was added. [#1734](https://github.com/JanMarvin/openxlsx2/pull/1734)
 
+## Breaking changes
+
+* `wb_dims()` errors now, if `integer()` is passed to either rows or cols. Previously it would have warned and returned either `1` or `"A"`.
+
 
 ***************************************************************************
 
