@@ -115,7 +115,12 @@ wb_load <- function(
   # xls files are not zip files, they start with the signature of an OLE2 container
   ole2_magic <- as.raw(c(0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1))
 
-  if (identical(readBin(file, "raw", 8L), ole2_magic)) {
+  # BIFF2 to BIFF4 files are plain record streams, starting with a BOF record
+  head <- readBin(file, "raw", 8L)
+  biff_bof <- length(head) == 8L && head[2] %in% as.raw(c(0x00, 0x02, 0x04)) && head[1] == as.raw(0x09) &&
+    head[3] %in% as.raw(c(0x04, 0x06, 0x08, 0x10)) && head[4] == as.raw(0x00)
+
+  if (identical(head, ole2_magic) || biff_bof) {
     if (.Platform$endian == "big")
       stop("XLS is not supported on big endian.", call. = FALSE)
 
