@@ -507,6 +507,14 @@ test_that("comment text with several elements uses one style per element", {
   expect_match(got$style[2], "<i val=\"true\"/>", fixed = TRUE)
   expect_match(got$style[3], "<u val=\"single\"/>", fixed = TRUE)
 
+  cmt <- wb_comment(text = c("a", "b", "c"), author = "")
+  wb <- wb_workbook()$add_worksheet()$add_comment(dims = "A1", comment = cmt)
+
+  got <- wb$comments[[1]][[1]]
+  expect_equal(got$comment, c("a", "b", "c"))
+  expect_equal(length(got$style), 3L)
+  expect_equal(length(unique(got$style)), 1L)
+
   expect_error(
     wb_comment(text = c("a", "b", "c"), style = c(s1, s2), author = ""),
     "`style` must be of length one or of the same length as `text`"
