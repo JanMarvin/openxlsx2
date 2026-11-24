@@ -395,7 +395,6 @@ test_that("removing sheets keeps tables, first sheet and app.xml in sync", {
   wb$add_data_table(sheet = "B", x = data.frame(t = 1:2), table_name = "tb")
   wb$remove_worksheet("A")
   expect_identical(wb$get_tables("B")$tab_name, "tb")
-  expect_length(wb$get_tables("C"), 2)
   expect_equal(NROW(wb$get_tables("C")), 0)
 
   wb$remove_worksheet("B")

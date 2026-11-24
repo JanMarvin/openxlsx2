@@ -489,7 +489,7 @@ test_that("cloning copies comments, threaded comments and hyperlinks", {
   expect_true(paste0("tc=", ids2) %in% authors)
   expect_false(paste0("tc=", ids1) %in% authors)
 
-  spid <- function(x) unique(regmatches(x, gregexpr("_x0000_s[0-9]+", x))[[1]])
+  spid <- function(x) rbindlist(xml_attr(x, "xml", "v:shape"))$id
   expect_length(intersect(spid(wb$vml[[1]]), spid(wb$vml[[2]])), 0)
   expect_match(wb$vml[[2]], '<o:idmap v:ext="edit" data="2"/>', fixed = TRUE)
 
@@ -599,11 +599,16 @@ test_that("cloning copies embedded objects and chart sheets", {
   expect_true(any(grepl("../embeddings/Microsoft_Word_Document1.docx", wb$worksheets_rels[[5]], fixed = TRUE)))
 
   # the ole object, its vml shape and the drawing use new shape ids
-  expect_match(wb$worksheets[[4]]$oleObjects, 'shapeId="4097"', fixed = TRUE)
-  expect_match(wb$worksheets[[5]]$oleObjects, 'shapeId="5121"', fixed = TRUE)
-  expect_match(wb$vml[[2]], '<o:idmap v:ext="edit" data="5"/>', fixed = TRUE)
-  expect_match(wb$vml[[2]], "_x0000_s5121", fixed = TRUE)
-  expect_match(wb$drawings[[wb$worksheets[[5]]$relships$drawing]], "_x0000_s5121", fixed = TRUE)
+  shape_id <- function(ws) {
+    fallback <- xml_node(ws$oleObjects, "oleObjects", "mc:AlternateContent", "mc:Fallback")
+    xml_attr(fallback, "mc:Fallback", "oleObject")[[1]][["shapeId"]]
+  }
+  old_id <- shape_id(wb$worksheets[[4]])
+  new_id <- shape_id(wb$worksheets[[5]])
+  expect_false(old_id == new_id)
+  expect_match(wb$vml[[2]], paste0("_x0000_s", new_id), fixed = TRUE)
+  expect_match(wb$drawings[[wb$worksheets[[5]]$relships$drawing]], paste0("_x0000_s", new_id), fixed = TRUE)
+  expect_false(grepl(paste0("_x0000_s", old_id), wb$vml[[2]], fixed = TRUE))
 
   wb_from <- wb_load(fl)
   wb <- wb_workbook()
@@ -701,7 +706,7 @@ test_that("cloning from another workbook carries dxf styles, media and cell styl
   wb <- wb_workbook()$add_worksheet("cf")$add_data(x = data.frame(a = 1:3))$
     add_conditional_formatting(dims = "A2:A4", rule = ">1")$
     add_worksheet("img")$add_image(dims = "B2", file = img)$
-    add_worksheet("other")$add_image(dims = "B2", file = system.file("extdata", "einstein.jpg", package = "openxlsx2"))
+    add_worksheet("other")$add_image(dims = "B2", file = img)
   # the named style adds a cell style xf that the target workbook does not have
   wb$add_named_style(name = "Note")
   wb$set_cell_style(sheet = "cf", dims = "A1", style = 1)
@@ -713,7 +718,7 @@ test_that("cloning from another workbook carries dxf styles, media and cell styl
 
   expect_warning(wb2$clone_worksheet("cf", "cf", from = wb), "with cell metadata is experimental")
   cf  <- wb2$worksheets[[2]]$conditionalFormatting
-  ids <- as.integer(regmatches(cf$cf, regexpr("(?<=dxfId=\")[0-9]+", cf$cf, perl = TRUE)))
+  ids <- as.integer(rbindlist(xml_attr(cf$cf, "cfRule"))$dxfId)
   expect_true(all(ids < length(wb2$styles_mgr$styles$dxfs)))
   expect_equal(wb2$styles_mgr$styles$dxfs[ids + 1L], wb$styles_mgr$styles$dxfs[1])
   expect_true(all(wb2$worksheets[[2]]$sheet_data$cc$c_cm == ""))

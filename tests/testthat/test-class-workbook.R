@@ -1864,7 +1864,9 @@ test_that("markup in workbook properties is written as text", {
   got <- wb_load(temp)$get_properties()
   expect_equal(got[names(props)], unlist(props))
 
-  app <- read_xml(unzip(temp, "docProps/app.xml", exdir = temp_dir("props")), pointer = FALSE)
+  props_dir <- temp_dir("props")
+  on.exit(unlink(props_dir, recursive = TRUE), add = TRUE)
+  app <- read_xml(unzip(temp, "docProps/app.xml", exdir = props_dir), pointer = FALSE)
   expect_equal(xml_value(app, "Properties", "Company"), "&lt;co&gt;")
 })
 

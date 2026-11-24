@@ -670,61 +670,44 @@ test_that("file asserts", {
 
 })
 
-test_that("xlsx is not deterministic by default", {
-  skip_on_cran()
+test_that("use_modification_date sets the time of the zip entries", {
 
-  tempFile1 <- temp_xlsx()
-  on.exit(unlink(tempFile1), add = TRUE)
-  tempFile2 <- temp_xlsx()
-  on.exit(unlink(tempFile2), add = TRUE)
-
-  wb <- wb_workbook(creator = "test", datetime_created = as.POSIXct("2026-01-01 00:00:00"))$
+  wb <- wb_workbook(datetime_created = as.POSIXct("2026-01-01 00:00:00", tz = "UTC"))$
     add_worksheet()$
-    add_data(x = 1)
+    add_data(x = 1)$
+    set_properties(datetime_modified = as.POSIXct("2026-02-03 04:05:06", tz = "UTC"))
 
-  wb_save(wb, tempFile1)
-  Sys.sleep(2)
-  wb_save(wb, tempFile2)
+  tmp <- temp_xlsx()
+  on.exit(unlink(tmp), add = TRUE)
 
-  expect_false(tools::md5sum(tempFile1) == tools::md5sum(tempFile2))
+  wb$save(tmp, use_modification_date = TRUE)
+  exp <- format(as.POSIXct("2026-02-03 04:05:06", tz = "UTC"), "%Y-%m-%d %H:%M", tz = "")
+  got <- unique(format(utils::unzip(tmp, list = TRUE)$Date, "%Y-%m-%d %H:%M"))
+  expect_equal(got, exp)
+
+  wb$save(tmp)
+  got <- unique(format(utils::unzip(tmp, list = TRUE)$Date, "%Y-%m-%d %H:%M"))
+  expect_false(exp %in% got)
+
 })
 
 test_that("xlsx is deterministic when use_modification_date is TRUE", {
   skip_on_cran()
 
-  tempFile1 <- temp_xlsx()
-  on.exit(unlink(tempFile1), add = TRUE)
-  tempFile2 <- temp_xlsx()
-  on.exit(unlink(tempFile2), add = TRUE)
+  tmp1 <- temp_xlsx()
+  on.exit(unlink(tmp1), add = TRUE)
+  tmp2 <- temp_xlsx()
+  on.exit(unlink(tmp2), add = TRUE)
 
-  wb <- wb_workbook(creator = "test", datetime_created = as.POSIXct("2026-01-01 00:00:00"))$
+  wb <- wb_workbook(creator = "test", datetime_created = as.POSIXct("2026-01-01 00:00:00", tz = "UTC"))$
     add_worksheet()$
     add_data(x = 1)
 
-  wb_save(wb, tempFile1, use_modification_date = TRUE)
+  wb$save(tmp1, use_modification_date = TRUE)
   Sys.sleep(2)
-  wb_save(wb, tempFile2, use_modification_date = TRUE)
+  wb$save(tmp2, use_modification_date = TRUE)
 
-  expect_equal(tools::md5sum(tempFile1), tools::md5sum(tempFile2), ignore_attr = TRUE)
-})
-
-test_that("timestamps differ when use_modification_date is TRUE", {
-  skip_on_cran()
-
-  tempFile1 <- temp_xlsx()
-  on.exit(unlink(tempFile1), add = TRUE)
-  tempFile2 <- temp_xlsx()
-  on.exit(unlink(tempFile2), add = TRUE)
-
-  wb <- wb_workbook(creator = "test", datetime_created = as.POSIXct("2026-01-01 00:00:00"))$
-    add_worksheet()$
-    add_data(x = 1)
-
-  wb_save(wb, tempFile1, use_modification_date = TRUE)
-  Sys.sleep(2)
-  wb_save(wb, tempFile2, use_modification_date = TRUE)
-
-  expect_false(file.mtime(tempFile1) == file.mtime(tempFile2))
+  expect_equal(tools::md5sum(tmp1), tools::md5sum(tmp2), ignore_attr = TRUE)
 })
 
 test_that("long hyperlinks with digits work", {
