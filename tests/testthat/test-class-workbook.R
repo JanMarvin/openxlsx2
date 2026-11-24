@@ -1918,8 +1918,8 @@ test_that("shapes of several drawings on a sheet get unique ids", {
     add_drawing(xml = xml, dims = "D1")$
     add_drawing(xml = xml, dims = "G1")
 
-  ids <- regmatches(wb$drawings[[1]], gregexpr("(?<=cNvPr id=\")[0-9]+", wb$drawings[[1]], perl = TRUE))[[1]]
-  expect_length(ids, 9)
+  ids <- regmatches(wb$drawings[[1]], gregexpr("cNvPr id=\"[0-9]+\"", wb$drawings[[1]]))[[1]]
+  expect_equal(length(ids), 9L)
   expect_false(anyDuplicated(ids) > 0)
 })
 

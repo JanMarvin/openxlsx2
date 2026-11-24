@@ -747,6 +747,11 @@ test_that("no relationship to a missing shared strings part is written", {
 
   files <- unzip(tmp, list = TRUE)$Name
   expect_false("xl/sharedStrings.xml" %in% files)
-  rels <- readLines(unz(tmp, "xl/_rels/workbook.xml.rels"), warn = FALSE)
-  expect_false(any(grepl("sharedStrings", rels, fixed = TRUE)))
+  dir <- tempfile()
+  on.exit(unlink(dir, recursive = TRUE), add = TRUE)
+  unzip(tmp, files = "xl/_rels/workbook.xml.rels", exdir = dir)
+  rels <- read_xml(file.path(dir, "xl/_rels/workbook.xml.rels"), pointer = FALSE)
+  targets <- rbindlist(xml_attr(rels, "Relationships", "Relationship"))$Target
+  expect_true("worksheets/sheet1.xml" %in% targets)
+  expect_false("sharedStrings.xml" %in% targets)
 })
