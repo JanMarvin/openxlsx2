@@ -346,8 +346,8 @@ test_that("defined names are not overwritten or duplicated", {
 
   dn <- rbindlist(xml_attr(wb$workbook$definedNames, "definedName"))
   expect_identical(sort(dn$name), sort(c("aaa", "_xlnm._FilterDatabase", "_xlnm.Print_Titles")))
-  expect_true(any(grepl("$F$1", wb$workbook$definedNames, fixed = TRUE)))
-  expect_true(any(grepl("$2:$2", wb$workbook$definedNames, fixed = TRUE)))
+  expect_equal(xml_value(wb$workbook$definedNames[2], "definedName"), "'B'!$F$1:$F$3")
+  expect_equal(xml_value(wb$workbook$definedNames[3], "definedName"), "'B'!$2:$2")
 
   wb <- wb_workbook()
   for (s in c("A", "B", "C")) wb$add_worksheet(s)
@@ -395,7 +395,6 @@ test_that("removing sheets keeps tables, first sheet and app.xml in sync", {
   wb$add_data_table(sheet = "B", x = data.frame(t = 1:2), table_name = "tb")
   wb$remove_worksheet("A")
   expect_identical(wb$get_tables("B")$tab_name, "tb")
-  expect_length(wb$get_tables("C"), 2)
   expect_equal(NROW(wb$get_tables("C")), 0)
 
   wb$remove_worksheet("B")

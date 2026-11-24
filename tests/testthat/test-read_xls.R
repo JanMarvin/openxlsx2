@@ -25,14 +25,17 @@ test_that("reading xls styles works", {
 
   expect_equal(wb$worksheets[[1]]$mergeCells, "<mergeCell ref=\"G1:H2\"/>")
 
-  fills <- paste(wb$styles_mgr$styles$fills, collapse = "")
-  expect_match(fills, "FFFFFF00")
-  expect_match(fills, "FF99CCFF")
-  expect_match(fills, "FFFF99CC")
+  exp <- c(
+    "<fill><patternFill patternType=\"solid\"><fgColor rgb=\"FFFFFF00\"/><bgColor rgb=\"FFFFFF00\"/></patternFill></fill>",
+    "<fill><patternFill patternType=\"solid\"><fgColor rgb=\"FFFF99CC\"/><bgColor rgb=\"FFFF8080\"/></patternFill></fill>",
+    "<fill><patternFill patternType=\"solid\"><fgColor rgb=\"FF99CCFF\"/><bgColor rgb=\"FFCCCCFF\"/></patternFill></fill>"
+  )
+  got <- wb$styles_mgr$styles$fills[3:5]
+  expect_equal(got, exp)
 
-  nf <- paste(wb$styles_mgr$styles$numFmts, collapse = "")
-  expect_match(nf, "0.0%", fixed = TRUE)
-  expect_match(nf, "EUR", fixed = TRUE)
+  exp <- c("0.0%", "#,##0.00&quot; EUR&quot;")
+  got <- rbindlist(xml_attr(wb$styles_mgr$styles$numFmts[4:5], "numFmt"))$formatCode
+  expect_equal(got, exp)
 
   ra <- wb$worksheets[[1]]$sheet_data$row_attr
   expect_equal(as.numeric(ra[ra$r == "3", "ht"]), 40, tolerance = 0.01)
@@ -57,11 +60,10 @@ test_that("reading xls formulas works", {
   arr <- wb_to_df(wb, sheet = 1, col_names = FALSE, dims = "J1:J3")
   expect_equal(arr$J, c(3, 6, 9))
 
-  dn <- paste(wb$workbook$definedNames, collapse = "")
-  expect_match(dn, "Total", fixed = TRUE)
-  expect_match(dn, "Rng", fixed = TRUE)
-  expect_match(dn, "LocalTotal", fixed = TRUE)
-  expect_match(dn, "localSheetId=\"0\"", fixed = TRUE)
+  nr <- wb_get_named_regions(wb)
+  expect_equal(nr$name, c("Rng", "Total", "LocalTotal"))
+  expect_equal(nr$value, c("Sheet2!$A$1:$A$5", "Data!$C$1", "Data!$A$1:$A$3"))
+  expect_equal(nr$localSheetId, c("", "", "0"))
 })
 
 test_that("reading an xls saved by Excel works", {
@@ -98,24 +100,23 @@ test_that("reading xls hyperlinks, comments and validation works", {
   wb <- wb_load(fl)
 
   hl <- wb$worksheets[[4]]$hyperlinks
-  expect_length(hl, 3)
-  expect_match(hl[1], "ref=\"A1\"", fixed = TRUE)
-  expect_match(hl[1], "tooltip=\"tip\"", fixed = TRUE)
-  expect_match(hl[2], "location=\"Values!A1\"", fixed = TRUE)
+  hl <- rbindlist(xml_attr(hl, "hyperlink"))
+  expect_equal(hl$ref, c("A1", "A2", "A3"))
+  expect_equal(hl$tooltip, c("tip", "", ""))
+  expect_equal(hl$location, c("", "Values!A1", ""))
 
-  rels <- paste(wb$worksheets_rels[[4]], collapse = "")
-  expect_match(rels, "Target=\"https://example.com/\"", fixed = TRUE)
-  expect_match(rels, "Target=\"mailto:a@example.com\"", fixed = TRUE)
+  rels <- rbindlist(xml_attr(wb$worksheets_rels[[4]], "Relationship"))
+  expect_equal(rels$Target[1:2], c("https://example.com/", "mailto:a@example.com"))
 
   cmt <- wb_get_comment(wb, sheet = 4)
-  expect_true(cmt$ref %in% c("B1", "B2"))
-  expect_match(paste(unlist(wb$comments), collapse = ""), "a comment", fixed = TRUE)
+  expect_equal(cmt$ref, "B2")
+  expect_equal(wb$comments[[1]][[1]]$comment[3], "<t xml:space=\"preserve\">a comment</t>")
 
-  dv <- wb$worksheets[[4]]$dataValidations
-  expect_length(dv, 1)
-  expect_match(dv, "type=\"whole\"", fixed = TRUE)
-  expect_match(dv, "sqref=\"F1:F5\"", fixed = TRUE)
-  expect_match(dv, "<formula1>1</formula1><formula2>10</formula2>", fixed = TRUE)
+  exp <- paste0(
+    "<dataValidation type=\"whole\" allowBlank=\"1\" showInputMessage=\"1\" showErrorMessage=\"1\" sqref=\"F1:F5\">",
+    "<formula1>1</formula1><formula2>10</formula2></dataValidation>"
+  )
+  expect_equal(wb$worksheets[[4]]$dataValidations, exp)
 })
 
 test_that("reading an xls table works", {
@@ -128,8 +129,8 @@ test_that("reading an xls table works", {
 
   expect_equal(tabs$tab_name, "tab")
   expect_equal(tabs$tab_ref, "D1:E4")
-  expect_match(tabs$tab_xml, "<tableColumn id=\"1\" name=\"g\"/>", fixed = TRUE)
-  expect_match(tabs$tab_xml, "<tableColumn id=\"2\" name=\"v\"/>", fixed = TRUE)
+  cols <- rbindlist(xml_attr(tabs$tab_xml, "table", "tableColumns", "tableColumn"))
+  expect_equal(cols$name, c("g", "v"))
 })
 
 test_that("reading xls conditional formatting works", {

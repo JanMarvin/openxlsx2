@@ -1864,7 +1864,9 @@ test_that("markup in workbook properties is written as text", {
   got <- wb_load(temp)$get_properties()
   expect_equal(got[names(props)], unlist(props))
 
-  app <- read_xml(unzip(temp, "docProps/app.xml", exdir = temp_dir("props")), pointer = FALSE)
+  props_dir <- temp_dir("props")
+  on.exit(unlink(props_dir, recursive = TRUE), add = TRUE)
+  app <- read_xml(unzip(temp, "docProps/app.xml", exdir = props_dir), pointer = FALSE)
   expect_equal(xml_value(app, "Properties", "Company"), "&lt;co&gt;")
 })
 
@@ -1916,8 +1918,8 @@ test_that("shapes of several drawings on a sheet get unique ids", {
     add_drawing(xml = xml, dims = "D1")$
     add_drawing(xml = xml, dims = "G1")
 
-  ids <- regmatches(wb$drawings[[1]], gregexpr("(?<=cNvPr id=\")[0-9]+", wb$drawings[[1]], perl = TRUE))[[1]]
-  expect_length(ids, 9)
+  ids <- regmatches(wb$drawings[[1]], gregexpr("cNvPr id=\"[0-9]+\"", wb$drawings[[1]]))[[1]]
+  expect_equal(length(ids), 9L)
   expect_false(anyDuplicated(ids) > 0)
 })
 

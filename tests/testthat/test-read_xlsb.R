@@ -307,8 +307,9 @@ test_that("xlsb styles use documented attribute values", {
   skip_if_big_endian("XLSB")
   skip_on_cran()
   wb <- wb_load(testfile_path("test_coverage.xlsb"))
-  expect_true(any(grepl("horizontal=\"centerContinuous\"", wb$styles_mgr$styles$cellXfs, fixed = TRUE)))
-  expect_false(any(grepl("center-across", wb$styles_mgr$styles$cellXfs, fixed = TRUE)))
+  horizontal <- rbindlist(xml_attr(wb$styles_mgr$styles$cellXfs, "xf", "alignment"))$horizontal
+  expect_true("centerContinuous" %in% horizontal)
+  expect_false("center-across" %in% horizontal)
 
   wb <- wb_load(testfile_path("nhs-core-standards-for-eprr-v6.1.xlsb"))
   expect_false(any(grepl("<color hex=", wb$styles_mgr$styles$borders, fixed = TRUE)))
@@ -379,7 +380,7 @@ test_that("xlsb formulas, names and page breaks are imported", {
   wb_x <- wb_load(testfile_path("xls_cov_features.xlsx"))
   types <- function(wb) {
     cf <- unlist(wb$worksheets[[3]]$conditionalFormatting)
-    sort(unname(unlist(regmatches(cf, gregexpr('type="[A-Za-z0-9]+"', cf)))))
+    sort(rbindlist(xml_attr(cf, "cfRule"))$type)
   }
   expect_equal(types(wb_b), types(wb_x))
 })
@@ -393,10 +394,9 @@ test_that("xlsb conditional formatting rule types match the xlsx", {
 
   rules <- function(wb, i) {
     cf <- wb$worksheets[[i]]$conditionalFormatting$cf
-    r <- unlist(regmatches(cf, gregexpr("<cfRule [^>]*>", cf)))
-    r <- gsub(" (dxfId|priority)=\"[0-9]+\"", "", r)
-    r <- gsub(" aboveAverage=\"1\"|/?>$", "", r)
-    vapply(strsplit(r, " "), function(x) paste(sort(x), collapse = " "), "")
+    attrs <- xml_attr(cf, "cfRule")
+    drop <- function(x) x[!(names(x) %in% c("dxfId", "priority") | (names(x) == "aboveAverage" & x == "1"))]
+    vapply(attrs, function(x) paste(sort(paste0(names(drop(x)), "=", drop(x))), collapse = " "), "")
   }
 
   for (i in 1:5) {
@@ -405,10 +405,11 @@ test_that("xlsb conditional formatting rule types match the xlsx", {
 
   icons <- function(wb) {
     cf <- wb$worksheets[[3]]$conditionalFormatting$cf
-    unlist(regmatches(cf, gregexpr("<iconSet iconSet=\"[^\"]+\"( reverse=\"1\")?", cf)))
+    sets <- rbindlist(xml_attr(cf, "cfRule", "iconSet"))
+    paste0(sets$iconSet, ifelse(sets$reverse == "1", " reverse", ""))
   }
   expect_equal(icons(wb_b), icons(wb_x))
-  expect_true(any(grepl("3TrafficLights2", icons(wb_b), fixed = TRUE)))
+  expect_true("3TrafficLights2 reverse" %in% icons(wb_b))
 })
 
 test_that("xlsb x14 data bars are imported", {

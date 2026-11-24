@@ -1246,7 +1246,7 @@ test_that("rules are anchored to the first range of non consecutive dims", {
       style = "hit"
     )
 
-    got <- gsub('.* text="([^"]*)".*', "\\1", wb$worksheets[[1]]$conditionalFormatting$cf)
+    got <- rbindlist(xml_attr(wb$worksheets[[1]]$conditionalFormatting$cf, "cfRule"))$text
     expect_identical("b", got, info = type)
     expect_identical("A2:A2 C2:C2", wb$worksheets[[1]]$conditionalFormatting$sqref, info = type)
   }
