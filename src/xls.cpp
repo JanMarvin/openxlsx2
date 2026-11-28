@@ -14,6 +14,7 @@
 #include "xlsb_flags.h"
 #include "xlsb_funs.h"
 #include "xls_cfb.h"
+#include "xls_legacy.h"
 #include "xls_defines.h"
 #include "xls_funs.h"
 #include "xls_drawing.h"
@@ -606,6 +607,8 @@ bool xls_has_vba_code(const std::vector<uint8_t>& file) {
   return false;
 }
 
+std::string xls_codepage_text(const uint8_t* p, size_t n, uint32_t codepage);
+
 }  // namespace
 
 // The stream called Workbook inside of the xls file, saved to outPath. This is
@@ -622,28 +625,26 @@ int32_t xls_extract(native_path filePath, native_path outPath, bool warn_vba, bo
   // password protected xlsx and xlsb files are compound files too: the workbook is
   // encrypted in the stream EncryptedPackage
   // #nocov start: encrypted files are rejected
-  if (!cfb_stream(file, "EncryptedPackage").empty()) Rcpp::stop("encrypted files are not supported");
+  bool is_cfb = file.size() >= 4 && file[0] == 0xD0 && file[1] == 0xCF && file[2] == 0x11 && file[3] == 0xE0;
+  if (is_cfb && !cfb_stream(file, "EncryptedPackage").empty()) Rcpp::stop("encrypted files are not supported");
   // #nocov end
 
-  std::vector<uint8_t> workbook = cfb_stream(file, "Workbook");
-  if (workbook.empty()) {
-    // Excel 5 and 95 files call it Book. They have a different record layout
-    // #nocov start: file without a Workbook stream
-    if (!cfb_stream(file, "Book").empty()) Rcpp::stop("xls: only Excel 97-2003 files are supported");
-    Rcpp::stop("xls: file has no Workbook stream");
-    // #nocov end
+  std::vector<uint8_t> workbook;
+  if (xls_legacy_detect(file)) {
+    XlsLegacy legacy(xls_codepage_text);
+    workbook = legacy.run(file);
+  } else {
+    workbook = cfb_stream(file, "Workbook");
   }
-
-  // the stream starts with a BOF record, version 0x0600 is BIFF8
-  // #nocov start: not a BIFF8 workbook
+  // #nocov start: not a workbook
   if (workbook.size() < 8 || cfb_u16(workbook, 0) != XlsBOF || cfb_u16(workbook, 4) != 0x0600)
-    Rcpp::stop("xls: only Excel 97-2003 files are supported");
+    Rcpp::stop("xls: file is not a supported workbook");
   // #nocov end
 
   // only used for a warning, a damaged project is handled like one without code
   bool has_code = false;
   try {
-    has_code = warn_vba && xls_has_vba_code(file);
+    has_code = warn_vba && is_cfb && xls_has_vba_code(file);
   } catch (const Rcpp::exception&) {
     has_code = false;
   }
@@ -824,6 +825,8 @@ int32_t docprops_xls(native_path filePath, native_path corePath, native_path app
   std::vector<uint8_t> file(static_cast<size_t>(xls.tellg()));
   xls.seekg(0, std::ios_base::beg);
   xls.read(reinterpret_cast<char*>(file.data()), static_cast<std::streamsize>(file.size()));
+
+  if (file.size() < 4 || file[0] != 0xD0 || file[1] != 0xCF || file[2] != 0x11 || file[3] != 0xE0) return 0;
 
   int32_t result = 0;
 

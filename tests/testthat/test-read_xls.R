@@ -742,3 +742,576 @@ test_that("sheet names with an apostrophe are quoted in the filter database name
   got <- paste(readLines(file.path(xml_dir, "xl", "workbook.xml"), warn = FALSE), collapse = "")
   expect_match(got, "'O&apos;&apos;Brien &amp; Co'!$A$1:$C$5", fixed = TRUE)
 })
+
+# little endian record builders for streams of older xls files
+xls_u8 <- function(x) as.raw(x)
+xls_u16 <- function(x) writeBin(as.integer(x), raw(), size = 2L)
+xls_u32 <- function(x) {
+  x <- x %% 4294967296
+  as.raw(c(x %% 256, (x %/% 256) %% 256, (x %/% 65536) %% 256, (x %/% 16777216) %% 256))
+}
+xls_rec <- function(id, ...) {
+  p <- c(raw(), ...)
+  c(xls_u16(id), xls_u16(length(p)), p)
+}
+xls_txt <- function(x) c(xls_u8(nchar(x)), charToRaw(x))
+
+
+xls_ole <- function(book, stream) {
+  u8 <- xls_u8
+  u16 <- xls_u16
+  u32 <- xls_u32
+  book <- c(book, raw(max(0L, 4096L - length(book))))
+  book <- c(book, raw(ceiling(length(book) / 512) * 512 - length(book)))
+  ns <- length(book) / 512
+
+  fat <- rep(0xFFFFFFFF, 128)
+  fat[1:2] <- c(0xFFFFFFFD, 0xFFFFFFFE)
+  fat[2 + seq_len(ns)] <- c(2 + seq_len(ns - 1L), 0xFFFFFFFE)
+  header <- c(
+    as.raw(c(0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1)), raw(16), u16(0x3E), u16(3), u16(0xFFFE), u16(9), u16(6), raw(6),
+    u32(0), u32(1), u32(1), u32(0), u32(4096), u32(0xFFFFFFFE), u32(0), u32(0xFFFFFFFE), u32(0), u32(0),
+    rep(u32(0xFFFFFFFF), 108)
+  )
+  entry <- function(name, type, child, start, size) {
+    nm <- c(as.raw(rbind(as.integer(charToRaw(name)), 0L)), raw(2))
+    c(nm, raw(64 - length(nm)), u16(length(nm)), u8(c(type, 1)), u32(0xFFFFFFFF), u32(0xFFFFFFFF), u32(child),
+      raw(16), u32(0), raw(16), u32(start), u32(size), u32(0))
+  }
+  empty <- c(raw(66), raw(2), u32(0xFFFFFFFF), u32(0xFFFFFFFF), u32(0xFFFFFFFF), raw(48))
+
+  directory <- c(entry("Root Entry", 5, 1, 0xFFFFFFFE, 0), entry(stream, 2, 0xFFFFFFFF, 2, length(book)), empty, empty)
+  c(header, unlist(lapply(fat, u32)), directory, book)
+}
+
+test_that("reading a hand made Excel 2 file works", {
+  u16 <- xls_u16
+  u8 <- xls_u8
+  rec <- xls_rec
+  txt <- xls_txt
+  attr3 <- function(xf = 0L, fmt = 0L, font = 0L, al = 0L) u8(c(xf, bitwAnd(fmt, 63L) + bitwShiftL(font, 6L), al))
+  cell <- function(id, r, c, a, ...) rec(id, u16(r), u16(c), a, ...)
+  ref <- function(r, c) c(u16(r), u8(c))
+  fml <- function(...) {
+    t <- c(...)
+    c(u8(length(t)), t)
+  }
+
+  x <- c(
+    rec(0x0009, u16(0), u16(0x10)),
+    rec(0x0031, u16(200), u16(0), txt("Arial")),
+    rec(0x0031, u16(240), u16(1), txt("Courier")),
+    rec(0x001E, txt("General")), rec(0x001E, txt("0")), rec(0x001E, txt("0.00")), rec(0x001E, txt("0.00%")),
+    rec(0x0043, u8(0), u8(0), u8(0), u8(0)),
+    rec(0x0043, u8(1), u8(0), u8(0x40 + 2), u8(0x01 + 0x08 + 0x80)),
+    rec(0x0043, u8(0), u8(0), u8(0x40 + 3), u8(0x02)),
+    rec(0x0024, u8(0), u8(1), u16(3000)),
+    rec(0x0000, u16(0), u16(8), u16(0), u16(6)),
+    cell(0x0002, 0, 0, attr3(1), u16(42)),
+    cell(0x0003, 0, 1, attr3(2), writeBin(3.25, raw())),
+    rec(0x0044, u16(1)),
+    cell(0x0004, 0, 2, attr3(0x3F), txt("hello")),
+    cell(0x0005, 0, 4, attr3(0), u8(1), u8(0)),
+    cell(0x0005, 0, 5, attr3(0), u8(0x07), u8(1)),
+    cell(0x0001, 1, 0, attr3(2)),
+    cell(0x0006, 1, 1, attr3(0), writeBin(45, raw()), u8(0),
+         fml(u8(0x44), ref(0, 0), u8(0x44), ref(0, 1), u8(0x1E), u16(2), u8(0x05), u8(0x03))),
+    cell(0x0006, 1, 2, attr3(0), u8(c(0, 0, 0, 0, 0, 0, 0xFF, 0xFF)), u8(0),
+         fml(u8(0x17), u8(5), charToRaw("a b c"), u8(0x17), u8(0), u8(0x08))),
+    rec(0x0007, txt("text result")),
+    cell(0x0006, 1, 3, attr3(0), writeBin(7, raw()), u8(0),
+         fml(u8(0x25), u16(0), u16(0), u8(0), u8(1), u8(0x42), u8(1), u8(4))),
+    cell(0x0006, 2, 0, attr3(0), writeBin(1, raw()), u8(0), fml(u8(0x1D), u8(1))),
+    cell(0x0006, 2, 1, attr3(0), writeBin(5, raw()), u8(0), fml(u8(0x01), u16(2), u8(0))),
+    cell(0x0006, 3, 0, attr3(0), writeBin(1, raw()), u8(0), fml(u8(0x01), u16(3), u8(0))),
+    rec(0x0021, u16(3), u16(4), u8(0), u8(0), u8(0), fml(u8(0x25), u16(0), u16(1), u8(0), u8(0))),
+    cell(0x0006, 4, 0, attr3(0), writeBin(1.5, raw()), u8(0), fml(u8(0x43), u16(1), raw(5))),
+    cell(0x0006, 5, 0, attr3(0), writeBin(8, raw()), u8(0), fml(u8(0x60))),
+    cell(0x0006, 5, 1, attr3(0), u8(c(0, 0, 0, 0, 0, 0, 0xFF, 0xFF)), u8(0), fml(u8(0x60))),
+    rec(0x0007, txt("kept")),
+    cell(0x0006, 5, 2, attr3(0), u8(c(1, 0, 1, 0, 0, 0, 0xFF, 0xFF)), u8(0), fml(u8(0x60))),
+    cell(0x0006, 5, 3, attr3(0), u8(c(2, 0, 7, 0, 0, 0, 0xFF, 0xFF)), u8(0), fml(u8(0x60))),
+    rec(0x001C, u16(0), u16(0), u16(7), charToRaw("a note!")),
+    rec(0x0008, u16(0), u16(0), u16(1), u16(0), u16(0), u8(0)),
+    rec(0x0014, txt("head")), rec(0x0015, txt("foot")),
+    rec(0x003E, u8(0), u8(1), u8(1), u8(0), u8(0), u16(0), u16(0), u8(0), u8(0), u8(0), u8(0)),
+    rec(0x000A)
+  )
+
+  fl <- tempfile(fileext = ".xls")
+  on.exit(unlink(fl), add = TRUE)
+  writeBin(x, fl)
+
+  wb <- wb_load(fl)
+  got <- wb_to_df(wb, col_names = FALSE, show_formula = TRUE, convert = FALSE)
+  expect_equal(unname(unlist(got[1, ])), c("42", "3.25", "hello", NA, "TRUE", "#DIV/0!"))
+  expect_equal(got[2, 2], "$A$1+$B$1*2")
+  expect_equal(got[2, 3], "\"a b c\"&\"\"")
+  expect_equal(got[2, 4], "SUM($A$1:$B$1)")
+  expect_equal(got[3, 1], "TRUE")
+  expect_equal(got[3, 2], "5")
+  expect_equal(got[4, 1], "$A$1:$A$2")
+  expect_equal(unname(unlist(got[5:6, 1])), c("1.5", "8"))
+  expect_equal(unname(unlist(got[6, 2:4])), c("kept", "TRUE", "#DIV/0!"))
+
+  cmt <- wb_get_comment(wb)
+  expect_equal(cmt$ref, "A1")
+  expect_equal(cmt$comment, "a note!")
+})
+
+
+test_that("reading a hand made Excel 2 file without cell formats works", {
+  u16 <- xls_u16
+  u8 <- xls_u8
+  rec <- xls_rec
+  txt <- xls_txt
+  attr3 <- function(flags, fmt, font, al) u8(c(flags, bitwAnd(fmt, 63L) + bitwShiftL(font, 6L), al))
+  cell <- function(id, r, c, a, ...) rec(id, u16(r), u16(c), a, ...)
+
+  shaded <- attr3(0x40, 2, 1, 0x80 + 0x08 + 0x02)
+  x <- c(
+    rec(0x0009, u16(0), u16(0x10)),
+    rec(0x0031, u16(200), u16(0), txt("Arial")),
+    rec(0x0031, u16(240), u16(1), txt("Courier")),
+    rec(0x001E, txt("General")), rec(0x001E, txt("0")), rec(0x001E, txt("0.00")),
+    rec(0x0000, u16(0), u16(1), u16(0), u16(3)),
+    cell(0x0002, 0, 0, shaded, u16(42)),
+    cell(0x0002, 0, 1, shaded, u16(43)),
+    cell(0x0004, 0, 2, attr3(0xC0, 0, 0, 0), txt("hello")),
+    rec(0x0025, u16(255)),
+    rec(0x0036, u16(0)),
+    rec(0x0018, u8(0), u8(0), u8(5), u8(7), charToRaw("total"), u8(0x25), u16(0), u16(0), u8(0), u8(1)),
+    rec(0x000A)
+  )
+
+  fl <- tempfile(fileext = ".xls")
+  on.exit(unlink(fl), add = TRUE)
+  writeBin(x, fl)
+
+  wb <- wb_load(fl)
+  cc <- wb$worksheets[[1]]$sheet_data$cc
+  expect_equal(cc$v, c("42", "43", ""))
+  expect_equal(cc$c_s[1], cc$c_s[2])
+  expect_false(cc$c_s[1] == cc$c_s[3])
+  xf <- wb$styles_mgr$styles$cellXfs[as.integer(cc$c_s[1]) + 1L]
+  expect_match(xf, "<alignment horizontal=\"center\"/>", fixed = TRUE)
+  expect_match(wb$styles_mgr$styles$fonts[2], "<b/><sz val=\"12\"/><name val=\"Courier\"/>", fixed = TRUE)
+  expect_match(wb$styles_mgr$styles$borders[2], "<left style=\"thin\">", fixed = TRUE)
+  expect_true("<numFmt numFmtId=\"166\" formatCode=\"0.00\"/>" %in% wb$styles_mgr$styles$numFmts)
+  expect_match(wb$styles_mgr$styles$cellXfs[as.integer(cc$c_s[3]) + 1L], "<protection locked=\"1\" hidden=\"1\"/>", fixed = TRUE)
+  expect_equal(length(wb$workbook$definedNames), 0L)
+})
+
+test_that("reading hand made Excel 3 and 4 files works", {
+  u16 <- xls_u16
+  u8 <- xls_u8
+  u32 <- xls_u32
+  rec <- xls_rec
+  txt <- xls_txt
+  dbl <- function(x) writeBin(x, raw())
+  fml <- function(...) {
+    t <- c(...)
+    c(u16(length(t)), t)
+  }
+  cell <- function(r, c, ...) c(u16(r), u16(c), ...)
+
+  obj <- function(ot, id, ..., visible = 6L) {
+    rec(0x005D, u32(1), u16(ot), u16(id), u8(c(0x16, visible)), u16(c(1, 10, 2, 10, 4, 10, 6, 10)), u16(0), u16(0), ...)
+  }
+  build <- function(b4, codepage = 1252, label = charToRaw("ab")) {
+    xf <- function(font, fmt, flags, al, brd) {
+      if (b4) {
+        rec(0x0443, u8(c(font, fmt)), u16(flags), u8(c(al, 0)), u16(0), u32(brd))
+      } else {
+        rec(0x0243, u8(c(font, fmt, flags, 0)), u16(al), u16(0), u32(brd))
+      }
+    }
+    format <- function(key, x) if (b4) rec(0x041E, u16(key), txt(x)) else rec(0x001E, txt(x))
+    formula <- if (b4) 0x0406 else 0x0206
+    c(
+      rec(if (b4) 0x0409 else 0x0209, u16(0), u16(0x10)),
+      rec(0x0042, u16(codepage)),
+      rec(0x0022, u16(1)),
+      rec(0x0012, u16(1)),
+      rec(0x0013, u16(0x1234)),
+      rec(0x003D, u16(0), u16(0), u16(1000), u16(1000), u8(0)),
+      rec(0x0231, u16(200), u16(1), u16(8), txt("Arial")),
+      rec(0x0231, u16(200), u16(0), u16(0), txt("Arial")),
+      format(0, "General"), format(1, "0.00"), format(2, "0.0%"),
+      xf(0, 0, 0x0004, 0, 0),
+      xf(0, 1, 0x0001, 2 + 8, 0x01010101 + 0x00000102),
+      xf(1, 2, 0, if (b4) 0x10 else 0x30, 0),
+      rec(0x0293, u16(0), txt("Normal")),
+      rec(0x0293, u16(0x8000), u8(0), u8(255)),
+      rec(0x0092, u16(1), u8(c(255, 0, 0, 0))),
+      rec(0x0218, u16(0), u8(0), u8(5), u16(7), charToRaw("total"), u8(0x25), u16(0), u16(0), u8(0), u8(1)),
+      rec(0x0218, u16(0x20), u8(0), u8(1), u16(7), u8(6), u8(0x25), u16(0), u16(1), u8(0), u8(1)),
+      rec(0x0218, u16(0), u8(0), u8(3), u16(4), charToRaw("one"), u8(0x24), u16(0), u8(0)),
+      rec(0x0200, u16(0), u16(3), u16(0), u16(4), u16(0)),
+      rec(0x0041, u16(1), u16(1), u16(1), u16(1), u8(0)),
+      rec(0x001A, u16(1), u16(5)),
+      rec(0x001B, u16(1), u16(2)),
+      rec(0x007D, u16(0), u16(1), u16(2000), u16(0), u16(0), u16(0)),
+      rec(0x0208, u16(0), u16(0), u16(4), u16(0xFF), u32(0), u32(0)),
+      rec(0x0203, cell(0, 0, u16(1), dbl(1.5))),
+      rec(0x0204, cell(0, 1, u16(0), u16(length(label)), label)),
+      rec(0x0205, cell(0, 2, u16(2), u8(1), u8(0))),
+      rec(0x0201, cell(0, 3, u16(2))),
+      rec(formula, cell(1, 0, u16(1), dbl(3), u16(0),
+                        fml(u8(0x44), u16(0), u8(0), u8(0x1E), u16(2), u8(0x05),
+                            u8(0x42), u8(1), if (b4) u16(4) else u8(4), u8(0x15)))),
+      rec(formula, cell(1, 1, u16(0), u8(c(0, 0, 0, 0, 0, 0, 0xFF, 0xFF)), u16(0), fml(u8(0x17), u8(2), charToRaw("hi")))),
+      rec(0x0207, u16(3), charToRaw("res")),
+      rec(formula, cell(1, 2, u16(0), dbl(1.5), u16(0), fml(u8(0x43), u16(1), raw(8)))),
+      rec(0x001C, u16(0), u16(0), u16(7), charToRaw("a note!")),
+      rec(0x001C, u16(1), u16(1), u16(6), charToRaw("long a")),
+      rec(0x001C, u16(0xFFFF), u16(0), u16(6), charToRaw("nd cut")),
+      rec(formula, cell(1, 3, u16(0), dbl(3.14), u16(0), fml(u8(0x21), if (b4) u16(19) else u8(19)))),
+      obj(2, 1, u8(c(9, 10, 1, 0, 12, 0, 1, 0)), u16(1)),
+      obj(3, 2, u8(c(9, 10, 0, 0, 12, 1, 2, 0)), u16(0)),
+      obj(1, 3, u8(c(12, 0, 1, 0)), u16(2), u8(c(1, 0))),
+      obj(6, 4, raw(60)),
+      obj(8, 5, raw(60)),
+      obj(2, 6, u8(c(9, 10, 1, 0, 12, 0, 1, 0)), u16(0), visible = 1L),
+      rec(0x005D, raw(10)),
+      rec(if (b4) 0x0409 else 0x0209, u16(0), u16(0x20)),
+      rec(0x0203, cell(9, 9, u16(0), dbl(1))),
+      rec(0x000A),
+      rec(0x023E, u16(0x2EC), u16(0), u16(0), u16(0), u16(0), u16(0), u16(0)),
+      rec(0x000A)
+    )
+  }
+
+  fl <- tempfile(fileext = ".xls")
+  on.exit(unlink(fl), add = TRUE)
+
+  for (b4 in c(FALSE, TRUE)) {
+    writeBin(build(b4), fl)
+    wb <- wb_load(fl)
+    got <- wb_to_df(wb, col_names = FALSE, show_formula = TRUE, convert = FALSE, skip_empty_cols = FALSE)
+    expect_equal(unname(unlist(got[1, 1:3])), c("1.5", "ab", "TRUE"))
+    expect_equal(got[2, 1], "(SUM($A$1*2))")
+    expect_equal(got[2, 2], "\"hi\"")
+    expect_equal(got[2, 3], "total")
+    expect_equal(got[2, 4], "PI()")
+    expect_equal(nrow(got), 2L)
+    expect_equal(wb$workbook$workbookPr, "<workbookPr date1904=\"1\"/>")
+    expect_equal(wb$worksheets[[1]]$sheetProtection, "<sheetProtection sheet=\"1\" password=\"1234\"/>")
+    expect_equal(wb$worksheets[[1]]$rowBreaks, "<brk id=\"2\" max=\"16383\" man=\"1\"/>")
+    expect_equal(wb$worksheets[[1]]$colBreaks, "<brk id=\"5\" max=\"1048575\" man=\"1\"/>")
+    expect_match(wb$worksheets[[1]]$freezePane, "state=\"frozen\"", fixed = TRUE)
+
+    dn <- wb$workbook$definedNames
+    expect_equal(dn[1], "<definedName name=\"total\">Sheet1!$A$1:$B$1</definedName>")
+    expect_equal(dn[2], "<definedName name=\"_xlnm.Print_Area\" localSheetId=\"0\">Sheet1!$A$1:$B$2</definedName>")
+    expect_equal(dn[3], "<definedName name=\"one\">Sheet1!$A$1</definedName>")
+
+    cmt <- wb_get_comment(wb)
+    expect_equal(cmt$ref, c("A1", "B2"))
+    expect_equal(cmt$comment, c("a note!", "long and cut"))
+
+    drawing <- paste(unlist(wb$drawings), collapse = "")
+    expect_equal(lengths(regmatches(drawing, gregexpr("<xdr:sp ", drawing, fixed = TRUE))), 2L)
+    expect_equal(lengths(regmatches(drawing, gregexpr("<xdr:cxnSp ", drawing, fixed = TRUE))), 1L)
+    expect_match(drawing, "prst=\"roundRect\"", fixed = TRUE)
+    expect_match(drawing, "prst=\"ellipse\"", fixed = TRUE)
+    expect_match(drawing, "<a:ln w=\"25400\">", fixed = TRUE)
+  }
+
+  # text is converted with the code page of the file
+  writeBin(build(FALSE, 1252, as.raw(c(0xE4, 0x80))), fl)
+  expect_equal(wb_to_df(wb_load(fl), col_names = FALSE, skip_empty_cols = FALSE)[1, 2], "\u00e4\u20ac")
+  writeBin(build(TRUE, 65001, as.raw(c(0xF0, 0x9F, 0x98, 0x80))), fl)
+  expect_equal(wb_to_df(wb_load(fl), col_names = FALSE, skip_empty_cols = FALSE)[1, 2], "\U0001F600")
+})
+
+test_that("reading a hand made Excel 5 file works", {
+  u16 <- xls_u16
+  u8 <- xls_u8
+  u32 <- xls_u32
+  rec <- xls_rec
+  txt <- xls_txt
+  dbl <- function(x) writeBin(x, raw())
+  fml <- function(...) {
+    t <- c(...)
+    c(u16(length(t)), t)
+  }
+  ref3 <- function(op, first, last, ...) c(u8(op), u16(0xFFFF), raw(8), u16(first), u16(last), ...)
+  cell <- function(r, c, ...) c(u16(r), u16(c), ...)
+  formula <- function(r, c, value, ...) rec(0x0006, cell(r, c, u16(0), dbl(value), u16(0), u32(0), fml(...)))
+  xf <- function(font, fmt, tp, al) rec(0x00E0, u16(font), u16(fmt), u16(tp), u8(c(al, 0, 0, 0)), u32(0), u32(0), u16(0))
+  bof <- function(type) rec(0x0809, u16(0x0500), u16(type), u16(0), u16(0))
+
+  sheet1 <- c(
+    bof(0x0010),
+    rec(0x0200, u16(0), u16(8), u16(0), u16(8), u16(0)),
+    rec(0x0203, cell(0, 0, u16(1), dbl(1))),
+    rec(0x0203, cell(0, 1, u16(1), dbl(2))),
+    rec(0x0204, cell(0, 2, u16(1), u16(1), charToRaw("x"))),
+    formula(1, 0, 10, ref3(0x7A, 1, 1, u16(0), u8(0))),
+    formula(1, 1, 3, ref3(0x7B, 1, 1, u16(0), u16(1), u8(0), u8(0)), u8(0x42), u8(1), u16(4)),
+    formula(1, 2, 3, u8(0x43), u16(1), raw(12)),
+    formula(2, 0, 2, u8(0x01), u16(2), u16(0)),
+    rec(0x04BC, u16(2), u16(3), u8(0), u8(0), u8(0), u8(2), u16(8), u8(0x4C), u16(0xFFFE), u8(0), u8(0x1E), u16(2), u8(0x05)),
+    formula(3, 0, 4, u8(0x01), u16(2), u16(0)),
+    formula(0, 3, 1, u8(0x01), u16(0), u16(3)),
+    rec(0x0221, u16(0), u16(1), u8(3), u8(3), u16(0), u32(0), u16(7), u8(0x25), u16(0), u16(1), u8(0), u8(0)),
+    formula(5, 0, 7, u8(0x29), u16(7), u8(0x25), u16(0), u16(1), u8(0), u8(1), u8(0x42), u8(1), u16(4)),
+    formula(5, 1, 8, u8(0x44), u16(0), u8(0), u8(0x29), u16(4), u8(0x44), u16(1), u8(0)),
+    formula(5, 2, 9, u8(0x2A), u16(0), u8(0), u8(0x2B), u16(0), u16(0), u8(0), u8(0), u8(0x03)),
+    formula(5, 3, 11, u8(0x1E), u16(1), u8(0x19), u8(0x04), u16(1), u16(0), u16(0)),
+    formula(5, 4, 12, u8(0x7A), u16(1), raw(8), u16(0), u16(0), u16(0), u8(0)),
+    formula(5, 5, 13, ref3(0x7C, 0, 0, u16(0), u8(0)), ref3(0x7D, 0, 0, u16(0), u16(0), u16(0))),
+    formula(0, 6, 5, u8(0x01), u16(0), u16(6)),
+    rec(0x04BC, u16(0), u16(1), u8(6), u8(6), u8(0), u8(2), u16(11), u8(0x4D), u16(0xC000), u16(0xC001), u8(0xFA), u8(0xFB),
+        u8(0x42), u8(1), u16(4)),
+    formula(1, 6, 6, u8(0x01), u16(0), u16(6)),
+    formula(0, 7, 3, u8(0x01), u16(0), u16(7)),
+    rec(0x0221, u16(0), u16(1), u8(7), u8(7), u16(0), u32(0), u16(1), u8(0x60)),
+    rec(0x001C, u16(0), u16(0), u16(5), charToRaw("BIFF5")),
+    rec(0x00A1, u16(9), u16(100), u16(1), u16(1), u16(1), u16(0), u16(600), u16(600), raw(18)),
+    rec(0x1234, u16(1)),
+    bof(0x0020),
+    rec(0x0203, cell(9, 9, u16(1), dbl(1))),
+    rec(0x000A),
+    rec(0x000A)
+  )
+  sheet2 <- c(
+    bof(0x0010),
+    rec(0x0203, cell(0, 0, u16(1), dbl(5))),
+    rec(0x0203, cell(1, 0, u16(1), dbl(6))),
+    rec(0x000A)
+  )
+  sheet3 <- c(bof(0x0020), rec(0x000A))
+  name <- function() {
+    f <- c(u8(0x3B), u16(0xFFFF), raw(8), u16(0), u16(0), u16(0), u16(0), u8(0), u8(1))
+    rec(0x0018, u16(0), u8(0), u8(5), u16(length(f)), u16(0), u16(0), raw(4), charToRaw("total"), f)
+  }
+  bad_name <- rec(0x0018, u16(0), u8(0), u8(3), u16(1), u16(0), u16(0), raw(4), charToRaw("bad"), u8(0x60))
+  globals <- function(o1, o2, o3) {
+    c(
+      bof(0x0005),
+      rec(0x0042, u16(1252)),
+      rec(0x0012, u16(0)),
+      rec(0x003D, u16(0), u16(0), u16(1000), u16(1000), u16(0), u16(0), u16(1), u16(600), u16(0)),
+      rec(0x0031, u16(200), u16(0), u16(0x7FFF), u16(400), u16(0), u8(c(0, 0, 0, 0)), txt("Arial")),
+      rec(0x041E, u16(164), txt("0.000")),
+      xf(0, 0, 0xFFF5, 0), xf(0, 164, 0x0001, 2),
+      rec(0x0085, u32(o1), u8(0), u8(0), txt("Data")),
+      rec(0x0085, u32(o2), u8(0), u8(0), txt("Other")),
+      rec(0x0085, u32(o3), u8(0), u8(2), txt("Chart")),
+      name(), bad_name, bof(0x0020), rec(0x000A), rec(0x1234, u16(1)), rec(0x000A)
+    )
+  }
+  o1 <- length(globals(0, 0, 0))
+  o2 <- o1 + length(sheet1)
+  o3 <- o2 + length(sheet2)
+  book <- c(globals(o1, o2, o3), sheet1, sheet2, sheet3)
+  fl <- tempfile(fileext = ".xls")
+  on.exit(unlink(fl), add = TRUE)
+
+  # BIFF5 workbooks are stored in a stream called Book, but some writers use the name Workbook
+  for (stream in c("Book", "Workbook")) {
+    writeBin(xls_ole(book, stream), fl)
+
+    wb <- wb_load(fl)
+    expect_equal(wb_get_sheet_names(wb), c(Data = "Data", Other = "Other", Chart = "Chart"))
+    got <- wb_to_df(wb, sheet = 1, col_names = FALSE, show_formula = TRUE, convert = FALSE, skip_empty_cols = FALSE)
+    expect_equal(got[2, 1], "Other!$A$1")
+    expect_equal(got[2, 2], "SUM(Other!$A$1:$A$2)")
+    expect_equal(got[2, 3], "total")
+    expect_equal(got[3, 1], "A1*2")
+    expect_equal(got[4, 1], "A2*2")
+    expect_equal(got[1, 4], "$A$1:$A$2")
+    expect_equal(got[6, 1], "SUM($A$1:$B$2)")
+    expect_equal(got[6, 3], "#REF!+#REF!")
+    expect_equal(unname(unlist(got[6, c(4, 5)])), c("1", "12"))
+    expect_match(got[6, 6], "#REF!", fixed = TRUE)
+    expect_equal(unname(unlist(got[1:2, 7])), c("SUM(A1:B2)", "SUM(A2:B3)"))
+    expect_null(wb_to_df(wb, sheet = 3, col_names = FALSE))
+
+    dn <- wb$workbook$definedNames
+    expect_equal(dn[1], "<definedName name=\"total\">Data!$A$1:$B$1</definedName>")
+    expect_equal(dn[2], "<definedName name=\"bad\">#REF!</definedName>")
+
+    cmt <- wb_get_comment(wb, sheet = 1)
+    expect_equal(cmt$ref, "A1")
+    expect_equal(cmt$comment, "BIFF5")
+  }
+})
+
+test_that("reading drawings and charts of an Excel 5 file works", {
+  u16 <- xls_u16
+  u8 <- xls_u8
+  u32 <- xls_u32
+  rec <- xls_rec
+  txt <- xls_txt
+  dbl <- function(x) writeBin(x, raw())
+  bof <- function(type) rec(0x0809, u16(0x0500), u16(type), u16(0), u16(0))
+  obj <- function(ot, id, anchor, ..., visible = 6L) {
+    rec(0x005D, u32(1), u16(ot), u16(id), u8(c(0x16, visible)), u16(anchor), u16(0), raw(6), ...)
+  }
+  styles <- function(back, fore, fls, auto, icv, lns, lnw, lauto) u8(c(back, fore, fls, auto, icv, lns, lnw, lauto))
+  textbox <- function(s, id, rot = 0) {
+    t <- charToRaw(s)
+    runs <- c(u16(0), u16(0), u32(0), u16(length(t)), u16(0), u32(0))
+    obj(6, id, c(1, 100, 1, 50, 4, 100, 5, 200), styles(9, 10, 1, 0, 12, 0, 1, 0), u16(0), u16(length(t)), u16(0),
+        u16(length(runs)), u16(0), u16(0), u8(c(0x12, 2)), u16(rot), raw(12), u8(0), u8(0), t, raw(length(t) %% 2L), runs)
+  }
+  picture <- function(id, anchor, cf, header, pixels, palette = raw(), split = 0L) {
+    data <- c(header, palette, pixels)
+    c(obj(8, id, anchor, styles(9, 10, 0, 0, 12, 0, 1, 0), u16(0), u16(cf), raw(20)),
+      rec(0x007F, u16(cf), u16(1), u32(length(data)), data[seq_len(length(data) - split)]),
+      if (split > 0L) rec(0x003C, data[length(data) - split + 1L]))
+  }
+  core <- function(w, h, bits) c(u32(12), u16(w), u16(h), u16(1), u16(bits))
+  num <- function(r, c, v) rec(0x0203, u16(r), u16(c), u16(1), dbl(v))
+
+  area3 <- function(r1, r2, c) c(u8(0x7B), u16(0xFFFF), raw(8), u16(0), u16(0), u16(r1), u16(r2), u8(c), u8(c))
+  ai <- function(id, rt, f = raw()) rec(0x1051, u8(c(id, rt)), u16(0), u16(0), u16(length(f)), f)
+  begin <- rec(0x1033)
+  end <- rec(0x1034)
+  external <- c(u8(0x7B), u16(1), raw(8), u16(0), u16(0), u16(0), u16(2), u8(1), u8(1))
+  series <- function(name, values = area3(0, 2, 1), ...) {
+    c(rec(0x1003, u16(1), u16(1), u16(3), u16(3)), begin, ai(0, 1), ai(1, 2, values), ai(2, 2, area3(0, 2, 0)), ai(3, 1),
+      rec(0x100D, u16(0xFFFF), u8(nchar(name)), charToRaw(name)), ..., rec(0x1045, u16(0)), end)
+  }
+  axes <- c(
+    rec(0x101D, u16(0), raw(16)), begin, rec(0x1020, u16(1), u16(1), u16(1), u16(1)), rec(0x101E, u8(c(2, 0, 3, 1)), u32(0), raw(16), u16(0)), end,
+    rec(0x101D, u16(1), raw(16)), begin, rec(0x101F, dbl(0), dbl(100), dbl(10), dbl(1), dbl(0), u16(0x1F)), rec(0x1021, u16(1)), end
+  )
+  frame <- function(...) c(rec(0x1002, u32(0), u32(0), u32(400 * 65536), u32(250 * 65536)), begin, ..., end)
+  bars <- frame(
+    series("Qty", area3(0, 2, 1), rec(0x1006, u16(0xFFFF), u16(0), u16(0), u16(0)), begin, rec(0x100A, u32(0x0000FF), u32(0), u16(1), u16(0)), end),
+    rec(0x1041, u16(0), raw(16)), begin, axes, rec(0x1014, raw(16), u16(1), u16(0)), begin, rec(0x1017, u16(0), u16(150), u16(0)), end, end
+  )
+  lines <- frame(
+    series("Failing", external, rec(0x1006, u16(0xFFFF), u16(0), u16(0), u16(0)), begin, rec(0x1009, u32(0), u32(0xFFFFFF), u16(1), u16(0)),
+           rec(0x1007, u32(0), u16(0), u16(0), u16(1)), end),
+    rec(0x1041, u16(0), raw(16)), begin, axes, rec(0x1014, raw(16), u16(0), u16(0)), begin, rec(0x1018, u16(0)), end, end,
+    rec(0x1025, u8(c(2, 2)), u16(1), u32(0), raw(16), u16(0x0100 + 0x0010)), begin, rec(0x100D, u16(0xFFFF), u8(5), charToRaw("Title")), end,
+    rec(0x1027, u16(1), u16(0), u16(0)),
+    rec(0x1065, u16(2)), rec(0x0204, u16(0), u16(0), u16(1), u16(1), charToRaw("a")), rec(0x0203, u16(1), u16(0), u16(1), dbl(2)),
+    rec(0x0201, u16(2), u16(0), u16(1)), rec(0x1234, u16(1))
+  )
+
+  pixels24 <- c(0, 0, 255, 0, 255, 0, 0, 0, 255, 0, 0, 255, 255, 255, 0, 0)
+  sheet1 <- c(
+    bof(0x0010), rec(0x0200, u16(0), u16(3), u16(0), u16(2), u16(0)),
+    num(0, 0, 1), num(1, 0, 2), num(2, 0, 3), num(0, 1, 10), num(1, 1, 20), num(2, 1, 30),
+    obj(0, 9, c(0, 0, 0, 0, 0, 0, 0, 0), raw(20)),
+    obj(2, 1, c(0, 10, 7, 10, 2, 10, 9, 10), styles(9, 8, 1, 0, 12, 0, 2, 0), u16(0), u8(0), u8(0)),
+    obj(2, 23, c(0, 10, 7, 10, 2, 10, 9, 10), styles(9, 65, 1, 0, 65, 0, 1, 0), u16(0), u8(0), u8(0)),
+    obj(2, 2, c(0, 10, 7, 10, 2, 10, 9, 10), styles(9, 10, 1, 0, 12, 0, 2, 0), u16(1), u8(0), u8(0)),
+    obj(3, 3, c(3, 10, 7, 10, 5, 10, 9, 10), styles(9, 10, 0, 0, 12, 1, 1, 0), u16(0), u8(0), u8(0)),
+    obj(3, 4, c(3, 10, 7, 10, 5, 10, 9, 10), styles(9, 10, 1, 1, 12, 5, 1, 0), u16(0), u8(0), u8(0)),
+    obj(1, 5, c(6, 0, 1, 0, 8, 0, 3, 0), u8(c(12, 0, 3, 0)), u16(2), u8(c(1, 0)), u8(0), u8(0)),
+    obj(1, 6, c(6, 0, 1, 0, 8, 0, 3, 0), u8(c(12, 2, 2, 1)), u16(0x0012), u8(c(2, 0)), u8(0), u8(0)),
+    obj(1, 7, c(6, 0, 1, 0, 8, 0, 3, 0), u8(c(12, 1, 1, 1)), u16(1), u8(c(3, 0)), u8(0), u8(0)),
+    obj(1, 8, c(6, 0, 1, 0, 8, 0, 3, 0), u8(c(12, 3, 0, 0)), u16(0), u8(c(0, 0)), u8(0), u8(0)),
+    obj(4, 10, c(0, 0, 0, 0, 1, 0, 1, 0), styles(9, 10, 0, 0, 12, 0, 1, 0), u16(0), u8(0), u8(0)),
+    obj(2, 11, c(0, 0, 0, 0, 1, 0, 1, 0), styles(9, 10, 1, 0, 12, 0, 1, 0), u16(0), u8(0), u8(0), visible = 1L),
+    textbox("Hello", 12),
+    textbox("odd", 13),
+    obj(6, 14, c(1, 0, 1, 0, 2, 0, 2, 0), styles(9, 10, 1, 0, 12, 0, 1, 0), u16(0), u16(100), raw(100)),
+    picture(15, c(1, 0, 12, 0, 3, 0, 15, 0), 9, core(2, 2, 24), as.raw(pixels24), split = 1L),
+    picture(16, c(1, 0, 12, 0, 3, 0, 15, 0), 9, core(2, 2, 1), as.raw(c(0, 0, 0, 0, 0xC0, 0, 0, 0)), as.raw(c(0, 0, 0, 255, 255, 255))),
+    picture(17, c(1, 0, 12, 0, 3, 0, 15, 0), 2, core(2, 2, 24), as.raw(pixels24)),
+    picture(18, c(1, 0, 12, 0, 3, 0, 15, 0), 9, core(2, 2, 16), as.raw(pixels24)),
+    picture(19, c(1, 0, 12, 0, 3, 0, 15, 0), 9, core(0, 2, 24), as.raw(pixels24)),
+    picture(20, c(1, 0, 12, 0, 3, 0, 15, 0), 9, core(2, 2, 24), as.raw(pixels24[1:8])),
+    picture(21, c(1, 0, 12, 0, 3, 0, 15, 0), 9, u32(40), as.raw(pixels24)),
+    obj(8, 22, c(1, 0, 12, 0, 3, 0, 15, 0), styles(9, 10, 0, 0, 12, 0, 1, 0), u16(0), u16(9), raw(20)),
+    obj(5, 30, c(3, 0, 1, 0, 9, 0, 14, 0), styles(9, 10, 1, 0, 12, 0, 1, 0), u16(0), raw(40)),
+    bof(0x0020), bars, rec(0x000A),
+    obj(5, 31, c(3, 0, 16, 0, 9, 0, 30, 0), styles(9, 10, 1, 0, 12, 0, 1, 0), u16(0), raw(40)),
+    bof(0x0020), lines, bof(0x0020), rec(0x1234, u16(1)), rec(0x000A), rec(0x000A),
+    rec(0x000A)
+  )
+  sheet2 <- c(bof(0x0020), rec(0x0014, u8(0)), bars, rec(0x1234, u16(1)), rec(0x000A))
+  sheet4 <- c(bof(0x0006), rec(0x000A))
+  sheet3 <- c(bof(0x0010), rec(0x0200, u16(0), u16(0), u16(0), u16(0), u16(0)), obj(2, 1, c(0, 0, 0, 0, 1, 0, 1, 0), styles(9, 10, 1, 0, 12, 0, 1, 0), u16(0), u8(0), u8(0)), rec(0x000A))
+  globals <- function(o1, o2, o3, o4) {
+    c(
+      bof(0x0005), rec(0x0042, u16(1252)),
+      rec(0x0092, u16(2), u8(c(0, 0, 255, 0)), u8(c(0, 255, 0, 0))),
+      rec(0x0031, u16(200), u16(0), u16(0x7FFF), u16(400), u16(0), u8(c(0, 0, 0, 0)), txt("Arial")),
+      rec(0x00E0, u16(0), u16(0), u16(0xFFF5), u8(c(0, 0, 0, 0)), u32(0), u32(0), u16(0)),
+      rec(0x0085, u32(o1), u8(0), u8(0), txt("Data")), rec(0x0085, u32(o2), u8(0), u8(2), txt("Chart1")),
+      rec(0x0085, u32(o3), u8(0), u8(0), txt("Late")), rec(0x0085, u32(o4), u8(0), u8(6), txt("Module")), rec(0x000A)
+    )
+  }
+  o1 <- length(globals(0, 0, 0, 0))
+  o2 <- o1 + length(sheet1)
+  o3 <- o2 + length(sheet2)
+  o4 <- o3 + length(sheet3)
+  fl <- tempfile(fileext = ".xls")
+  on.exit(unlink(fl), add = TRUE)
+  writeBin(xls_ole(c(globals(o1, o2, o3, o4), sheet1, sheet2, sheet3, sheet4), "Book"), fl)
+
+  wb <- wb_load(fl)
+  expect_equal(unname(wb_get_sheet_names(wb)), c("Data", "Chart1", "Late", "Module"))
+
+  drawings <- unlist(wb$drawings)
+  count <- function(pattern, x = drawings) sum(lengths(regmatches(x, gregexpr(pattern, x, fixed = TRUE))))
+  expect_equal(count("<xdr:sp "), 8L)
+  expect_equal(count("<xdr:cxnSp "), 4L)
+  expect_equal(count("<xdr:pic>"), 2L)
+  expect_equal(count("<xdr:graphicFrame"), 3L)
+  expect_equal(count("prst=\"ellipse\""), 2L)
+  expect_equal(count("prst=\"roundRect\""), 1L)
+  expect_equal(count("<a:t>Hello</a:t>"), 1L)
+  expect_equal(count("<a:t>odd</a:t>"), 1L)
+  expect_equal(count("<a:srgbClr val=\"0000FF\"/>"), 9L)
+  expect_equal(count("<a:srgbClr val=\"FFFFFF\"/>"), 3L)
+  expect_equal(count("<a:srgbClr val=\"FF0000\"/>"), 4L)
+  expect_equal(count("<a:ln w=\"25400\">"), 2L)
+  expect_equal(count("<a:ln w=\"38100\">"), 1L)
+  expect_equal(count("<a:ln w=\"3175\">"), 1L)
+  expect_equal(count("<a:noFill/>"), 2L)
+  expect_equal(count("<a:tailEnd type=\"triangle\"/>"), 2L)
+  expect_equal(count("<a:tailEnd type=\"arrow\"/>"), 1L)
+  expect_equal(count("flipH=\"1\""), 2L)
+  expect_equal(count("flipV=\"1\""), 2L)
+  expect_equal(count("prstDash val=\"sysDash\""), 1L)
+
+  expect_equal(length(wb$media), 2L)
+  bmp <- lapply(wb$media, readBin, what = "raw", n = 200L)
+  expect_equal(rawToChar(bmp[[1]][1:2]), "BM")
+  expect_equal(as.integer(bmp[[1]][55:62]), pixels24[1:8])
+  expect_equal(as.integer(bmp[[2]][55:58]), c(0, 0, 0, 0))
+  expect_equal(as.integer(bmp[[2]][27:30]), c(1, 0, 1, 0))
+
+  charts <- unlist(wb$charts)
+  expect_equal(count("<c:barChart>", charts), 2L)
+  expect_equal(count("<c:lineChart>", charts), 1L)
+  expect_equal(count("<c:f>Data!$B$1:$B$3</c:f>", charts), 2L)
+  expect_equal(count("<c:f>Data!$A$1:$A$3</c:f>", charts), 3L)
+  expect_equal(count("<c:v>Qty</c:v>", charts), 2L)
+  expect_equal(count("<c:v>Failing</c:v>", charts), 1L)
+})
+
+test_that("reading xls files of older versions works", {
+  # BIFF3 and BIFF4 are plain record streams, BIFF5 and BIFF7 are compound files
+  for (nm in c("testEXCEL_3.xls", "testEXCEL_4.xls", "testEXCEL_5.xls", "testEXCEL_95.xls", "biff4_no_format_no_window2.xls")) {
+    fl <- testfile_path(nm)
+    wb <- wb_load(fl)
+    expect_true(length(wb$get_sheet_names()) >= 1L, info = nm)
+    expect_true(nrow(wb_to_df(wb, col_names = FALSE)) > 1L, info = nm)
+  }
+
+  wb <- wb_load(testfile_path("testEXCEL_3.xls"))
+  got <- wb_to_df(wb, col_names = FALSE)
+  expect_equal(dim(got), c(35L, 10L))
+  expect_equal(got[1, 1], "Table C-13--Lemons: Utilization of production, by State, 1977/78 to date")
+
+  wb <- wb_load(testfile_path("testEXCEL_5.xls"))
+  got <- wb_to_df(wb, col_names = FALSE)
+  expect_equal(got[1, 1], "Sample Excel Worksheet - Numbers and their Squares")
+  expect_equal(got[4, 2:3], data.frame(B = "Number", C = "Square", row.names = 4L))
+
+  wb <- wb_load(testfile_path("biff4_no_format_no_window2.xls"))
+  got <- wb_to_df(wb, col_names = FALSE)
+  expect_equal(dim(got), c(27L, 4L))
+  expect_equal(got[2, 2], "DOG & CAT PRODUCTS")
+})
